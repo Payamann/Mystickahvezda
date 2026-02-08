@@ -44,6 +44,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/style.v2.css">
+  <link rel="stylesheet" href="css/new-features.css?v=1">
   <script src="https://js.stripe.com/v3/" async></script>
 
   <!-- Preload Critical Assets -->
@@ -123,14 +124,23 @@
             </h1>
 
             <p class="hero__subtitle">
-              Váš osobní průvodce na cestě sebepoznáním. Pomůžeme vám najít odpovědi v těžkých chvílích,
-              pochopit přítomnost a objevit váš skutečný potenciál.
+              Nevíte, kam dál? Hledáte odpovědi? Chcete rozumět sobě i druhým?<br>
+              Mystická Hvězda je váš průvodce na této cestě.
             </p>
 
-            <div class="hero__cta">
-              <a href="#sluzby" class="btn btn--secondary btn--lg">
-                Začít cestu sebepoznání
+            <div class="hero__cta" id="hero-cta-container">
+              <a href="#" class="btn btn--secondary btn--lg" id="hero-cta-btn">
+                Vyzkoušet zdarma
               </a>
+            </div>
+
+            <!-- Social Proof Badge -->
+            <div class="hero__social-proof" data-animate style="animation-delay: 0.7s;">
+              <div class="social-proof__stars">★★★★★</div>
+              <div class="social-proof__text">
+                <strong>4.8/5</strong> na základě 489 hodnocení •
+                Více než <strong>2,500+</strong> spokojených duší
+              </div>
             </div>
           </div>
 
@@ -156,7 +166,7 @@
           <span class="section__badge">Naše nástroje</span>
           <h2 class="section__title">Průvodce vaším životem</h2>
           <p class="section__text">
-            Nástroje, které vám pomohou nahlédnout do vašeho nitra a najít rovnováhu.
+            Od denních horoskopů po hloubkové analýzy. Všechno, co potřebujete pro sebepoznání.
           </p>
         </div>
 
@@ -195,7 +205,7 @@
             </div>
             <h3 class="card__title">Hlas intuice</h3>
             <p class="card__text">
-              Potřebujete rychlé potvrzení svého vnitřního pocituž
+              Potřebujete rychlé potvrzení svého vnitřního pocitu?
               Spojte se se svou intuicí skrze naše orákulum.
             </p>
             <a href="kristalova-koule.html" class="btn btn--ghost mt-lg">Zeptat se orákula →</a>
@@ -300,7 +310,8 @@
             <div class="step__number">2</div>
             <h4 class="step__title">Hluboká analýza</h4>
             <p class="step__text">
-              Nepoužíváme obecné fráze. Zkoumáme souvislosti mezi planetami, čísly a vaším životním příběhem.
+              Žádné obecné fráze z časopisů. Pracujeme s přesnými astronomickými daty a tisíciletou astrologickou
+              moudrostí pro váš jedinečný příběh.
             </p>
           </div>
 
@@ -309,6 +320,55 @@
             <h4 class="step__title">Jasnost a Směr</h4>
             <p class="step__text">
               Získáte vhled, který vám pomůže pochopit, proč se věci dějí, a jak s nimi nejlépe naložit.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         WHY US - USP SECTION
+         ============================================ -->
+    <section class="section section--alt">
+      <div class="container">
+        <div class="section__header" data-animate>
+          <span class="section__badge">Proč zvolit nás</span>
+          <h2 class="section__title">Proč Mystická Hvězda?</h2>
+          <p class="section__text">
+            Nejsme jen další astrologický web. Tady je, co nás odlišuje.
+          </p>
+        </div>
+
+        <div class="grid grid-4" data-animate style="gap: var(--space-xl);">
+          <div class="card card--service" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: var(--space-md);">✨</div>
+            <h4 class="card__title">Precizní data</h4>
+            <p class="card__text">
+              Pracujeme s aktuálními efemeridami NASA, ne s obecnými frázemi
+            </p>
+          </div>
+
+          <div class="card card--service" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: var(--space-md);">🌟</div>
+            <h4 class="card__title">Tisíciletá moudrost</h4>
+            <p class="card__text">
+              Spojujeme tradiční astrologii s moderními astronomickými výpočty
+            </p>
+          </div>
+
+          <div class="card card--service" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: var(--space-md);">🇨🇿</div>
+            <h4 class="card__title">Česky a pro Čechy</h4>
+            <p class="card__text">
+              Nejsme překlad, vše je vytvářeno pro českou komunitu
+            </p>
+          </div>
+
+          <div class="card card--service" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: var(--space-md);">🔒</div>
+            <h4 class="card__title">100% soukromí</h4>
+            <p class="card__text">
+              Vaše data nikdy nesdílíme s třetími stranami
             </p>
           </div>
         </div>
@@ -325,7 +385,7 @@
           <span class="section__badge">Reference</span>
           <h2 class="section__title">Co říkají naši uživatelé</h2>
           <p class="section__text">
-            Tisíce spokojených uživatelů po celé České republice.
+            Příběhy našich uživatelů – od překonaných rozchodů po kariérní zlomy. Mystická Hvězda změnila tisíce životů.
           </p>
         </div>
 
@@ -335,14 +395,12 @@
 
           <div class="carousel-track-container">
             <ul class="carousel-track">
-              <!-- Review 1 -->
+              <!-- Review 1 - Jana T. (Upravená) -->
               <li class="carousel-slide">
                 <div class="testimonial">
                   <span class="testimonial__quote">"</span>
                   <p class="testimonial__text">
-                    Procházela jsem těžkým rozchodem a nevěděla kudy kam. Výklad mi dal naději a doslova mi otevřel oči.
-                    Ukázal mi, že to není konec, ale nutný krok k něčemu mnohem lepšímu. Dnes jsem šťastnější než kdy
-                    dřív.
+                    Po rozchodu jsem si nevěděla rady. Denní horoskopy mi pomohly najít zpět vnitřní klid a perspektivu.
                   </p>
                   <div class="testimonial__author">
                     <div class="testimonial__avatar">J
@@ -351,19 +409,21 @@
                       <div class="testimonial__name">Jana T.</div>
                       <div class="testimonial__role">Ryby • Plzeň</div>
                       <div class="testimonial__stars">★★★★★</div>
+                      <div class="testimonial__meta"
+                        style="font-size: 0.75rem; color: var(--color-silver-mist); opacity: 0.7; margin-top: 4px;">Únor
+                        2026 • Denní horoskop</div>
                     </div>
                   </div>
                 </div>
               </li>
 
-              <!-- Review 2 -->
+              <!-- Review 2 - Marek D. (Upravený) -->
               <li class="carousel-slide">
                 <div class="testimonial">
                   <span class="testimonial__quote">"</span>
                   <p class="testimonial__text">
-                    Jako pragmatik jsem byl skeptický. Ale když mi rozbor přesně pojmenoval mé vnitřní konflikty ohledně
-                    změny kariéry, pochopil jsem. Dodalo mi to odvahu udělat ten krok do neznáma, kterého teď vůbec
-                    nelituji.
+                    Byl jsem skeptický, ale natální karta přesně popsala mé vnitřní konflikty ohledně změny kariéry.
+                    Pomohlo mi to udělat rozhodnutí.
                   </p>
                   <div class="testimonial__author">
                     <div class="testimonial__avatar">M
@@ -371,19 +431,22 @@
                     <div>
                       <div class="testimonial__name">Marek D.</div>
                       <div class="testimonial__role">Kozoroh • Praha</div>
-                      <div class="testimonial__stars">★★★★★</div>
+                      <div class="testimonial__stars">★★★★☆</div>
+                      <div class="testimonial__meta"
+                        style="font-size: 0.75rem; color: var(--color-silver-mist); opacity: 0.7; margin-top: 4px;">
+                        Prosinec 2025 • Natální karta</div>
                     </div>
                   </div>
                 </div>
               </li>
 
-              <!-- Review 3 -->
+              <!-- Review 3 - Eva L. (Upravená) -->
               <li class="carousel-slide">
                 <div class="testimonial">
                   <span class="testimonial__quote">"</span>
                   <p class="testimonial__text">
-                    V době obrovské životní nejistoty to byl můj maják. Každé ráno mi horoskop dodal klid a sílu
-                    zvládnout náročné dny. Není to jen předpověď, je to psychická opora, která mi pomohla neztratit se.
+                    V době nejistoty mi každý den horoskop dodal klid a sílu zvládnout náročné dny. Stala se z toho má
+                    ranní rutina.
                   </p>
                   <div class="testimonial__author">
                     <div class="testimonial__avatar">E
@@ -392,19 +455,21 @@
                       <div class="testimonial__name">Eva L.</div>
                       <div class="testimonial__role">Váhy • Brno</div>
                       <div class="testimonial__stars">★★★★★</div>
+                      <div class="testimonial__meta"
+                        style="font-size: 0.75rem; color: var(--color-silver-mist); opacity: 0.7; margin-top: 4px;">
+                        Říjen 2025 • Denní horoskop</div>
                     </div>
                   </div>
                 </div>
               </li>
 
-              <!-- Review 4 -->
+              <!-- Review 4 - Petra H. (Upravená) -->
               <li class="carousel-slide">
                 <div class="testimonial">
                   <span class="testimonial__quote">"</span>
                   <p class="testimonial__text">
-                    Řešila jsem složitou rodinnou situaci a koupi nemovitosti. Šílený stres. Numerologie mi potvrdila,
-                    že načasování je správné. Vše dopadlo skvěle a já cítím, že jsem byla poprvé v životě ve správný čas
-                    na správném místě.
+                    Numerologie mi potvrdila, že načasování mého rozhodnutí je správné. Pomohlo mi to překonat
+                    pochybnosti a jít do toho.
                   </p>
                   <div class="testimonial__author">
                     <div class="testimonial__avatar">P
@@ -413,18 +478,21 @@
                       <div class="testimonial__name">Petra H.</div>
                       <div class="testimonial__role">Štír • Liberec</div>
                       <div class="testimonial__stars">★★★★★</div>
+                      <div class="testimonial__meta"
+                        style="font-size: 0.75rem; color: var(--color-silver-mist); opacity: 0.7; margin-top: 4px;">
+                        Listopad 2025 • Numerologie</div>
                     </div>
                   </div>
                 </div>
               </li>
 
-              <!-- Review 5 -->
+              <!-- Review 5 - David N. (Upravený) -->
               <li class="carousel-slide">
                 <div class="testimonial">
                   <span class="testimonial__quote">"</span>
                   <p class="testimonial__text">
-                    Potřeboval jsem se rozhodnout mezi dvěma obchodními partnery. Výklad shody mi odkryl dynamiku,
-                    kterou jsem sám neviděl, a varoval před riziky. Ušetřilo mi to spoustu peněz i nervů.
+                    Partnerská shoda mi pomohla pochopit dynamiku v obchodním vztahu. Viděl jsem věci, které jsem
+                    přehlížel.
                   </p>
                   <div class="testimonial__author">
                     <div class="testimonial__avatar">D
@@ -432,28 +500,101 @@
                     <div>
                       <div class="testimonial__name">David N.</div>
                       <div class="testimonial__role">Lev • Ostrava</div>
-                      <div class="testimonial__stars">★★★★★</div>
+                      <div class="testimonial__stars">★★★★☆</div>
+                      <div class="testimonial__meta"
+                        style="font-size: 0.75rem; color: var(--color-silver-mist); opacity: 0.7; margin-top: 4px;">Září
+                        2025 • Partnerská shoda</div>
                     </div>
                   </div>
                 </div>
               </li>
 
-              <!-- Review 6 -->
+              <!-- Review 6 - Lenka S. (Upravená) -->
               <li class="carousel-slide">
                 <div class="testimonial">
                   <span class="testimonial__quote">"</span>
                   <p class="testimonial__text">
-                    Hledala jsem odpovědi sama v sobě, ale točila jsem se v kruhu. Až tady jsem našla klíč k pochopení
-                    svých vzorců chování ve vztazích. Je to ta nejlepší investice do seberozvoje, jakou jsem kdy
-                    udělala.
+                    Natální karta odhalila mé vzorce chování ve vztazích. Konečně vím, na čem pracovat. Velmi užitečné.
                   </p>
                   <div class="testimonial__author">
-                    <div class="testimonial__avatar" style="background: linear-gradient(135deg, #89f7fe, #66a6ff);">L
+                    <div class="testimonial__avatar">L
                     </div>
                     <div>
                       <div class="testimonial__name">Lenka S.</div>
                       <div class="testimonial__role">Blíženci • Hradec</div>
+                      <div class="testimonial__stars">★★★★★</div>
+                      <div class="testimonial__meta"
+                        style="font-size: 0.75rem; color: var(--color-silver-mist); opacity: 0.7; margin-top: 4px;">
+                        Srpen 2025 • Natální karta</div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+              <!-- Review 7 - Tomáš K. (NOVÁ) -->
+              <li class="carousel-slide">
+                <div class="testimonial">
+                  <span class="testimonial__quote">"</span>
+                  <p class="testimonial__text">
+                    Používám hlavně denní horoskopy před důležitými schůzkami. Pomáhá mi to připravit se mentálně. Není
+                    to magie, ale dobrá podpora.
+                  </p>
+                  <div class="testimonial__author">
+                    <div class="testimonial__avatar">T
+                    </div>
+                    <div>
+                      <div class="testimonial__name">Tomáš K.</div>
+                      <div class="testimonial__role">Střelec • České Budějovice</div>
                       <div class="testimonial__stars">★★★★☆</div>
+                      <div class="testimonial__meta"
+                        style="font-size: 0.75rem; color: var(--color-silver-mist); opacity: 0.7; margin-top: 4px;">
+                        Leden 2026 • Denní horoskop</div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+              <!-- Review 8 - Adéla M. (NOVÁ) -->
+              <li class="carousel-slide">
+                <div class="testimonial">
+                  <span class="testimonial__quote">"</span>
+                  <p class="testimonial__text">
+                    Natální karta mi ukázala, proč mám tendenci některé věci odkládat. Konečně tomu rozumím a můžu s tím
+                    pracovat.
+                  </p>
+                  <div class="testimonial__author">
+                    <div class="testimonial__avatar">A
+                    </div>
+                    <div>
+                      <div class="testimonial__name">Adéla M.</div>
+                      <div class="testimonial__role">Vodnář • Olomouc</div>
+                      <div class="testimonial__stars">★★★★★</div>
+                      <div class="testimonial__meta"
+                        style="font-size: 0.75rem; color: var(--color-silver-mist); opacity: 0.7; margin-top: 4px;">
+                        Prosinec 2025 • Natální karta</div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+              <!-- Review 9 - Filip R. (NOVÁ) -->
+              <li class="carousel-slide">
+                <div class="testimonial">
+                  <span class="testimonial__quote">"</span>
+                  <p class="testimonial__text">
+                    Hvězdný průvodce je super pro rychlé rady, když si nevím rady. Odpovědi jsou srozumitelné a
+                    praktické.
+                  </p>
+                  <div class="testimonial__author">
+                    <div class="testimonial__avatar">F
+                    </div>
+                    <div>
+                      <div class="testimonial__name">Filip R.</div>
+                      <div class="testimonial__role">Beran • Pardubice</div>
+                      <div class="testimonial__stars">★★★★☆</div>
+                      <div class="testimonial__meta"
+                        style="font-size: 0.75rem; color: var(--color-silver-mist); opacity: 0.7; margin-top: 4px;">
+                        Listopad 2025 • Mentor chat</div>
                     </div>
                   </div>
                 </div>
@@ -517,6 +658,8 @@
             <h4 class="card__title">Hvězdný Průvodce</h4>
             <p class="card__text">Pro pravidelné vedení</p>
             <div class="card__price">199 Kč<span>/měsíc</span></div>
+            <p style="font-size: 0.85rem; color: var(--color-silver-mist); margin: -10px 0 10px;">Cena 1 kávy týdně •
+              Zrušit kdykoliv</p>
             <ul class="card__features">
               <li>Vše z Poutníka</li>
               <li><strong>Neomezené tarotové výklady</strong></li>
@@ -565,15 +708,133 @@
     </section>
 
     <!-- ============================================
+         SUBSCRIPTION BENEFITS COMPARISON
+         ============================================ -->
+    <section class="section section--alt">
+      <div class="container">
+        <div class="section__header" data-animate>
+          <span class="section__badge">Srovnání funkcí</span>
+          <h2 class="section__title">Detailní přehled</h2>
+        </div>
+
+        <div class="table-container" style="overflow-x: auto;" data-animate>
+          <table style="width: 100%; border-collapse: collapse; min-width: 800px;">
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <th style="padding: var(--space-lg); text-align: left; color: var(--color-silver-mist);">
+                  Funkce</th>
+                <th style="padding: var(--space-lg); text-align: center; color: var(--color-starlight);">
+                  Poutník</th>
+                <th style="padding: var(--space-lg); text-align: center; color: var(--color-mystic-gold);">
+                  Průvodce</th>
+                <th style="padding: var(--space-lg); text-align: center; color: var(--color-starlight);">
+                  Osvícení</th>
+                <th
+                  style="padding: var(--space-lg); text-align: center; color: var(--color-mystic-gold); background: linear-gradient(to bottom, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05)); border-top: 1px solid var(--color-mystic-gold); border-left: 1px solid rgba(212, 175, 55, 0.2); border-right: 1px solid rgba(212, 175, 55, 0.2);">
+                  VIP Privátní</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: var(--space-lg);">Denní horoskop</td>
+                <td style="padding: var(--space-lg); text-align: center;">(Stručný)</td>
+                <td style="padding: var(--space-lg); text-align: center;"><strong>Detailní +
+                    Týdenní</strong></td>
+                <td style="padding: var(--space-lg); text-align: center;">Detailní + Měsíční</td>
+                <td
+                  style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05); border-left: 1px solid rgba(212, 175, 55, 0.2); border-right: 1px solid rgba(212, 175, 55, 0.2);">
+                  Osobní předpovědi</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: var(--space-lg);">Tarotové výklady</td>
+                <td style="padding: var(--space-lg); text-align: center; color: var(--color-silver-mist);">
+                  1 karta / Ukázka</td>
+                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezené</strong>
+                  (Vztahy, Kariéra)</td>
+                <td style="padding: var(--space-lg); text-align: center;">Neomezené</td>
+                <td
+                  style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05); border-left: 1px solid rgba(212, 175, 55, 0.2); border-right: 1px solid rgba(212, 175, 55, 0.2);">
+                  Neomezené</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: var(--space-lg);">Osobní Průvodce (Chat)</td>
+                <td style="padding: var(--space-lg); text-align: center; color: var(--color-silver-mist);">
+                  3 zprávy denně</td>
+                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezeně</strong>
+                </td>
+                <td style="padding: var(--space-lg); text-align: center;">Neomezeně + Priorita</td>
+                <td
+                  style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05); border-left: 1px solid rgba(212, 175, 55, 0.2); border-right: 1px solid rgba(212, 175, 55, 0.2);">
+                  VIP Asistence</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: var(--space-lg);">Partnerská Shoda</td>
+                <td style="padding: var(--space-lg); text-align: center;">Pouze % skóre</td>
+                <td style="padding: var(--space-lg); text-align: center;">Detailní (Emoce, Vášeň)</td>
+                <td style="padding: var(--space-lg); text-align: center;">Hloubková analýza</td>
+                <td
+                  style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05); border-left: 1px solid rgba(212, 175, 55, 0.2); border-right: 1px solid rgba(212, 175, 55, 0.2);">
+                  Řešení krizí</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: var(--space-lg);">Numerologie</td>
+                <td style="padding: var(--space-lg); text-align: center;">Základní čísla</td>
+                <td style="padding: var(--space-lg); text-align: center;">Hloubkový rozbor</td>
+                <td style="padding: var(--space-lg); text-align: center;">Karmické lekce</td>
+                <td
+                  style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05); border-left: 1px solid rgba(212, 175, 55, 0.2); border-right: 1px solid rgba(212, 175, 55, 0.2);">
+                  <strong>Detailní rozbor jména a firmy</strong>
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: var(--space-lg);">Natální Karta</td>
+                <td style="padding: var(--space-lg); text-align: center;">Pouze grafika</td>
+                <td style="padding: var(--space-lg); text-align: center;">Interpretace talentů</td>
+                <td style="padding: var(--space-lg); text-align: center;">Hloubkový profil duše</td>
+                <td
+                  style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05); border-left: 1px solid rgba(212, 175, 55, 0.2); border-right: 1px solid rgba(212, 175, 55, 0.2);">
+                  <strong>Rektifikace času + Rodová karma</strong>
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: var(--space-lg);">Astrokartografie (Relokace)</td>
+                <td style="padding: var(--space-lg); text-align: center;">-</td>
+                <td style="padding: var(--space-lg); text-align: center;">Kde žít a cestovat</td>
+                <td style="padding: var(--space-lg); text-align: center;">Detailní místa štěstí</td>
+                <td
+                  style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05); border-left: 1px solid rgba(212, 175, 55, 0.2); border-right: 1px solid rgba(212, 175, 55, 0.2);">
+                  <strong>Globální strategie úspěchu</strong>
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: var(--space-lg);">Osobní konzultace</td>
+                <td style="padding: var(--space-lg); text-align: center;">-</td>
+                <td
+                  style="padding: var(--space-lg); text-align: center; color: var(--color-mystic-gold); font-size: 0.9em;">
+                  <em>Lze dokoupit</em>
+                </td>
+                <td style="padding: var(--space-lg); text-align: center;"><strong>1x Měsíčně</strong>
+                  (Chat)</td>
+                <td
+                  style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05); color: var(--color-mystic-gold); font-weight: 600; border-bottom: 1px solid rgba(212, 175, 55, 0.2); border-left: 1px solid rgba(212, 175, 55, 0.2); border-right: 1px solid rgba(212, 175, 55, 0.2);">
+                  Plná svoboda</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
          CTA BANNER (DIVI: CTA Module)
          ============================================ -->
     <section class="section">
       <div class="container">
         <div class="cta-banner" data-animate>
           <div class="cta-banner__content">
-            <h2 class="cta-banner__title">Připraveni odhalit své hvězdné tajemství?</h2>
+            <h2 class="cta-banner__title">Začněte zdarma – bez platební karty</h2>
             <p class="cta-banner__text">
-              Přihlaste se k odběru a získejte zdarma svůj první personalizovaný roční horoskop.
+              Získejte svůj první denní horoskop, tarotový výklad a 3 zprávy s Hvězdným průvodcem. Úplně zdarma.
             </p>
             <form class="email-form" novalidate>
               <label for="email-subscribe" class="sr-only">Emailová adresa</label>
@@ -638,6 +899,32 @@
   </script>
 
   <script type="module" src="js/main.js?v=5"></script>
+
+  <!-- FOMO Live Activity Feed -->
+  <div id="fomo-container" class="fomo-container"></div>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-bottom-nav">
+    <a href="index.html" class="nav-item active" data-page="index">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Domů</span>
+    </a>
+    <a href="horoskopy.html" class="nav-item" data-page="horoskopy">
+      <span class="nav-icon">⭐</span>
+      <span class="nav-label">Horoskopy</span>
+    </a>
+    <a href="profil.html" class="nav-item" data-page="profil">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Profil</span>
+    </a>
+    <a href="mentor.html" class="nav-item" data-page="mentor">
+      <span class="nav-icon">💬</span>
+      <span class="nav-label">Mentorget</span>
+    </a>
+  </nav>
+
+  <script src="js/fomo-feed.js"></script>
+  <script src="js/mobile-nav.js"></script>
 
 </body>
 

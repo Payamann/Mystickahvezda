@@ -235,6 +235,12 @@
                 if (profileLink) profileLink.style.display = 'none';
             }
 
+            // Hero CTA Logic
+            const heroCta = document.getElementById('hero-cta-container');
+            if (heroCta) {
+                heroCta.style.display = this.isLoggedIn() ? 'none' : 'block';
+            }
+
             // Notify other components (like profile.js) that auth state changed
             document.dispatchEvent(new Event('auth:changed'));
         },
@@ -246,6 +252,14 @@
                 // Register Button (Header)
                 const registerBtn = e.target.closest('#auth-register-btn');
                 if (registerBtn) {
+                    e.preventDefault();
+                    this.openModal('register');
+                    return;
+                }
+
+                // Hero CTA Button (Index)
+                const heroBtn = e.target.closest('#hero-cta-btn');
+                if (heroBtn) {
                     e.preventDefault();
                     this.openModal('register');
                     return;
