@@ -105,7 +105,7 @@ async function initProfile() {
     updateStats(readings);
 
     // NEW: Load Journal and Biorhythms
-    if (user.birth_date) {
+    if (user && user.birth_date) {
         initBiorhythms(user.birth_date);
     }
     loadJournal();
@@ -565,9 +565,9 @@ function renderReadingContent(reading) {
 
         // Check if content looks like HTML (contains tags)
         if (typeof content === 'string' && /<[a-z][\s\S]*>/i.test(content)) {
-            // It's HTML - cleanup HTML/BODY tags if present to avoid nesting issues
-            content = content.replace(/<\/?(?:html|head|body)[^>]*>/gi, '');
-            // Render as HTML
+            // Sanitize: strip dangerous tags/attributes but keep formatting
+            content = content.replace(/<\/?(?:html|head|body|script|iframe|object|embed|form|input|link|meta|style)[^>]*>/gi, '');
+            content = content.replace(/\s*on\w+\s*=\s*["'][^"']*["']/gi, ''); // Strip event handlers
             contentHtml += `<div class="formatted-content" style="line-height: 1.7; color: var(--color-starlight);">${content}</div>`;
         } else {
             // It's plain text - escape it
@@ -707,7 +707,7 @@ async function saveSettings() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${window.Auth?.token}`
                 },
-                body: JSON.stringify({ password: newPassword })
+                body: JSON.stringify({ currentPassword: document.getElementById('settings-current-password')?.value || '', password: newPassword })
             });
             if (!res.ok) throw new Error('Password update failed');
         } catch (e) {
@@ -1034,9 +1034,4 @@ async function saveJournalEntry() {
         }
     }
 }
-
-// Bind Journal Button
-document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('journal-submit');
-    if (btn) btn.addEventListener('click', saveJournalEntry);
-});
+// Duplicate journal binding removed (already bound above)

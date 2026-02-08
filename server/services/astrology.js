@@ -54,7 +54,7 @@ export async function getCachedHoroscope(cacheKey) {
     try {
         const { data, error } = await supabase
             .from('cache_horoscopes')
-            .select('*')
+            .select('cache_key, response, period_label, generated_at')
             .eq('cache_key', cacheKey)
             .single();
 

@@ -26,17 +26,17 @@ export function debounce(func, wait) {
 /* ============================================
    UTILITY: Sanitize text to prevent XSS
    ============================================ */
+const _escapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 export function sanitizeText(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    return String(text).replace(/[&<>"']/g, c => _escapeMap[c]);
 }
 
 /* ============================================
    SMOOTH SCROLL (for anchor links)
    ============================================ */
 export function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    document.querySelectorAll('a[href^="#"]:not([data-scroll-init])').forEach(anchor => {
+        anchor.dataset.scrollInit = 'true';
         anchor.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href');
             if (targetId === '#') return;

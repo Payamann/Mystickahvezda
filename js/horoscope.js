@@ -215,8 +215,10 @@ function initHoroscope() {
                     }
                 }
 
-                // Save reading and add favorite button
-                if (window.Auth && window.Auth.saveReading) {
+                // Save reading and add favorite button (skip if already saved for same sign/period)
+                const saveKey = `horoscope_saved_${signName}_${currentPeriod}_${new Date().toISOString().split('T')[0]}`;
+                if (window.Auth && window.Auth.saveReading && !sessionStorage.getItem(saveKey)) {
+                    sessionStorage.setItem(saveKey, '1');
                     const saveResult = await window.Auth.saveReading('horoscope', {
                         sign: signName,
                         period: currentPeriod,

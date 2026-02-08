@@ -16,12 +16,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.Auth?.showToast?.('Přihlášení vyžadováno', 'Pro vstup do Hvězdného Průvodce se prosím přihlaste.', 'info');
         window.Auth?.openModal?.('login');
 
-        // Reload on login to initialize chat
+        // Reload on login to initialize chat (once only to prevent listener leak)
         document.addEventListener('auth:changed', () => {
             if (localStorage.getItem('auth_token')) {
                 window.location.reload();
             }
-        });
+        }, { once: true });
         return;
     }
 
@@ -276,9 +276,9 @@ function addMessage(text, type, shouldScroll = true) {
     const div = document.createElement('div');
     div.className = `message message--${type}`;
 
-    // Convert newlines to breaks for proper display
-    const formattedText = text.replace(/\n/g, '<br>');
-    div.innerHTML = formattedText;
+    // Safely render text: escape HTML first, then convert newlines to <br>
+    div.textContent = text;
+    div.innerHTML = div.innerHTML.replace(/\n/g, '<br>');
 
     // Insert before typing indicator
     messagesContainer.insertBefore(div, typingIndicator);

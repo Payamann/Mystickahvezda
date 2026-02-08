@@ -17,8 +17,12 @@ const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 import fs from 'fs';
 
-// Warn but don't crash yet (keys might be added later)
+// Validate credentials - crash in production if missing
 if (!projectUrl || !serviceKey) {
+    if (process.env.NODE_ENV === 'production') {
+        console.error('FATAL: Supabase credentials missing (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY). Cannot start in production.');
+        process.exit(1);
+    }
     console.warn('⚠️ WARNING: Supabase credentials missing in .env (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)');
 } else {
     console.log('✅ Supabase initialized.');

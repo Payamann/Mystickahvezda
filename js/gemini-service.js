@@ -10,13 +10,25 @@ const API_BASE_URL = window.API_CONFIG?.BASE_URL || 'http://localhost:3001/api';
  */
 async function callAPI(endpoint, data) {
     try {
+        const headers = { 'Content-Type': 'application/json' };
+        // Include auth token for endpoints that require authentication
+        const token = localStorage.getItem('auth_token') || window.Auth?.token;
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers,
             body: JSON.stringify(data)
         });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            let errorMsg;
+            try { errorMsg = JSON.parse(errorText).error; } catch { errorMsg = errorText; }
+            throw new Error(errorMsg || `Chyba serveru (${response.status})`);
+        }
 
         const result = await response.json();
 

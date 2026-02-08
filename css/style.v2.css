@@ -178,7 +178,6 @@ body::after {
   z-index: -2;
   pointer-events: none;
   animation: aurora-pulse 15s ease-in-out infinite alternate;
-  will-change: transform, opacity;
 }
 
 body::after {
@@ -1668,7 +1667,7 @@ body.page-mentor .header {
   }
 }
 
-@keyframes float {
+@keyframes float-medium {
 
   0%,
   100% {
@@ -2071,10 +2070,10 @@ body.page-mentor .header {
   display: block;
   margin-bottom: var(--space-md);
   filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
-  animation: float 3s ease-in-out infinite;
+  animation: float-subtle 3s ease-in-out infinite;
 }
 
-@keyframes float {
+@keyframes float-subtle {
 
   0%,
   100% {
@@ -2249,12 +2248,7 @@ body.page-mentor .header {
   animation: fadeInUp 0.6s ease forwards;
 }
 
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* fadeInUp already defined in section 18 - removed duplicate */
 
 /* Shaking Animation (Shuffle) */
 .tarot-deck.shaking {
@@ -3853,7 +3847,7 @@ body {
 .premium-lock-overlay .lock-icon {
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  animation: pulse 2s infinite;
+  animation: pulse-scale 2s infinite;
 }
 
 .premium-lock-overlay h3 {
@@ -3868,7 +3862,7 @@ body {
   margin-bottom: 1rem;
 }
 
-@keyframes pulse {
+@keyframes pulse-scale {
   0% {
     transform: scale(1);
   }
