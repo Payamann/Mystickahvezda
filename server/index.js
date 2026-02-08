@@ -81,6 +81,16 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+// AI-generation endpoints - expensive, limit more aggressively
+const aiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    message: { error: 'Příliš mnoho požadavků. Zkuste to za chvíli.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+
 // Gzip Compression
 app.use(compression());
 
@@ -197,18 +207,22 @@ app.post('/api/tarot-summary', authenticateToken, async (req, res) => {
     }
 });
 
-// Natal Chart Analysis (requires auth)
-app.post('/api/natal-chart', authenticateToken, async (req, res) => {
+// Natal Chart Analysis
+app.post('/api/natal-chart', aiLimiter, async (req, res) => {
     try {
         const { birthDate, birthTime, birthPlace, name } = req.body;
-        console.log(`[NatalChart] Request received for ${name}`);
 
-        const message = `Jméno: ${name || 'Tazatel'}\nDatum narození: ${birthDate}\nČas narození: ${birthTime}\nMísto narození: ${birthPlace}`;
+        if (!birthDate || typeof birthDate !== 'string') {
+            return res.status(400).json({ success: false, error: 'Datum narození je povinné.' });
+        }
 
-        console.log(`[NatalChart] Calling Gemini...`);
+        const safeName = String(name || 'Tazatel').substring(0, 100);
+        const safeBirthDate = String(birthDate).substring(0, 30);
+        const safeBirthTime = String(birthTime || '').substring(0, 20);
+        const safeBirthPlace = String(birthPlace || '').substring(0, 200);
+        const message = `Jméno: ${safeName}\\nDatum narození: ${safeBirthDate}\\nČas narození: ${safeBirthTime}\\nMísto narození: ${safeBirthPlace}`;
+
         const response = await callGemini(SYSTEM_PROMPTS.natalChart, message);
-        console.log(`[NatalChart] Gemini response received (length: ${response.length})`);
-
         res.json({ success: true, response });
     } catch (error) {
         console.error('Natal Chart Error:', error);
