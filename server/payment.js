@@ -1,6 +1,6 @@
 import express from 'express';
 import { supabase } from './db-supabase.js';
-import { authenticateToken } from './middleware.js';
+import { authenticateToken, PREMIUM_PLAN_TYPES } from './middleware.js';
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -12,9 +12,10 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const router = express.Router();
 
-// Helper to check premium status (aligned with middleware logic)
+// Helper to check premium status (uses shared PREMIUM_PLAN_TYPES from middleware)
 export async function isPremiumUser(userId) {
     try {
         const { data: subscription } = await supabase
@@ -27,9 +28,7 @@ export async function isPremiumUser(userId) {
 
         const isActive = subscription.status === 'active';
         const notExpired = new Date(subscription.current_period_end) > new Date();
-        const isPremium = ['premium_monthly', 'exclusive_monthly', 'vip', 'premium_yearly', 'premium_pro'].some(p =>
-            subscription.plan_type && subscription.plan_type.toLowerCase().includes(p)
-        );
+        const isPremium = PREMIUM_PLAN_TYPES.includes(subscription.plan_type);
 
         return isActive && notExpired && isPremium;
     } catch (e) {
@@ -116,8 +115,11 @@ export async function handleStripeWebhook(rawBody, sig) {
             console.error('[STRIPE] Webhook signature verification failed:', err.message);
             throw new Error('Webhook signature verification failed');
         }
+    } else if (IS_PRODUCTION) {
+        console.error('[STRIPE] STRIPE_WEBHOOK_SECRET is required in production. Rejecting webhook.');
+        throw new Error('Webhook secret not configured');
     } else {
-        console.warn('[STRIPE] WARNING: STRIPE_WEBHOOK_SECRET not set, skipping signature verification!');
+        console.warn('[STRIPE] Dev mode: STRIPE_WEBHOOK_SECRET not set, skipping signature verification.');
         event = JSON.parse(rawBody.toString());
     }
 

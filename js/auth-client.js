@@ -125,13 +125,24 @@
             if (type === 'success') icon = '✅';
             if (type === 'error') icon = '❌';
 
-            toast.innerHTML = `
-            <div class="toast__icon">${icon}</div>
-            <div>
-                <div class="toast__title">${title}</div>
-                <div class="toast__message">${message}</div>
-            </div>
-        `;
+            const iconEl = document.createElement('div');
+            iconEl.className = 'toast__icon';
+            iconEl.textContent = icon;
+
+            const titleEl = document.createElement('div');
+            titleEl.className = 'toast__title';
+            titleEl.textContent = title;
+
+            const msgEl = document.createElement('div');
+            msgEl.className = 'toast__message';
+            msgEl.textContent = message;
+
+            const textWrapper = document.createElement('div');
+            textWrapper.appendChild(titleEl);
+            textWrapper.appendChild(msgEl);
+
+            toast.appendChild(iconEl);
+            toast.appendChild(textWrapper);
 
             container.appendChild(toast);
 

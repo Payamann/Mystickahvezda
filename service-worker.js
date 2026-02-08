@@ -3,13 +3,14 @@
  * Provides offline caching for static assets
  */
 
-const CACHE_NAME = 'mysticka-hvezda-v7';
+const CACHE_NAME = 'mysticka-hvezda-v8';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
     '/css/style.v2.css',
     '/js/main.js',
-    '/js/components.js',
+    '/js/ui/components.js',
+    '/js/auth-client.js',
     '/img/logo-3d.webp',
     '/img/hero-3d.webp',
     '/manifest.json'

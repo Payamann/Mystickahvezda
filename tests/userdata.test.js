@@ -15,7 +15,16 @@ jest.unstable_mockModule('../server/middleware.js', () => ({
         next();
     },
     requirePremium: (req, res, next) => next(),
-    requirePremiumSoft: (req, res, next) => next()
+    requirePremiumSoft: (req, res, next) => next(),
+    requireAdmin: (req, res, next) => next(),
+    PREMIUM_PLAN_TYPES: ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip']
+}));
+
+jest.unstable_mockModule('../server/payment.js', () => ({
+    __esModule: true,
+    default: jest.fn((req, res, next) => next()),
+    isPremiumUser: jest.fn(),
+    handleStripeWebhook: jest.fn()
 }));
 
 const { supabase } = await import('../server/db-supabase.js');

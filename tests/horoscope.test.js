@@ -8,6 +8,17 @@ jest.unstable_mockModule('../server/db-supabase.js', () => ({
     }
 }));
 
+jest.unstable_mockModule('../server/config/secrets.js', () => ({
+    JWT_SECRET: 'test-secret'
+}));
+
+jest.unstable_mockModule('../server/payment.js', () => ({
+    __esModule: true,
+    default: jest.fn((req, res, next) => next()),
+    isPremiumUser: jest.fn(),
+    handleStripeWebhook: jest.fn()
+}));
+
 // Mock Fetch for Gemini
 global.fetch = jest.fn();
 

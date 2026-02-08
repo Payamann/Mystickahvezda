@@ -12,14 +12,17 @@ jest.unstable_mockModule('../server/middleware.js', () => ({
         next();
     },
     requirePremium: (req, res, next) => next(),
-    requirePremiumSoft: (req, res, next) => next()
+    requirePremiumSoft: (req, res, next) => next(),
+    requireAdmin: (req, res, next) => next(),
+    PREMIUM_PLAN_TYPES: ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip']
 }));
 
 // Mock Payment Module for Premium Checks
 jest.unstable_mockModule('../server/payment.js', () => ({
     __esModule: true,
     default: jest.fn((req, res, next) => next()), // Mock router
-    isPremiumUser: jest.fn()
+    isPremiumUser: jest.fn(),
+    handleStripeWebhook: jest.fn()
 }));
 
 // Mock Fetch for Gemini
