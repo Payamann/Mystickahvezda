@@ -1,7 +1,17 @@
 import jwt from 'jsonwebtoken';
 import { supabase } from './db-supabase.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'tajne-heslo-hvezdy-123';
+// Security: Unified JWT secret handling - no hardcoded fallback
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+let JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    if (IS_PRODUCTION) {
+        console.error('FATAL: JWT_SECRET is required in production!');
+        process.exit(1);
+    }
+    console.warn('WARNING: JWT_SECRET missing. Using dev-only placeholder.');
+    JWT_SECRET = 'dev-insecure-secret-placeholder';
+}
 
 /**
  * Standard JWT authentication middleware
@@ -15,7 +25,7 @@ export const authenticateToken = (req, res, next) => {
         return res.sendStatus(401);
     }
 
-    jwt.verify(token, JWT_SECRET, (err, user) => {
+    jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] }, (err, user) => {
         if (err) return res.sendStatus(403);
         req.user = user;
         next();
@@ -178,10 +188,9 @@ export const requireAdmin = (req, res, next) => {
     const userId = req.user?.id;
     const email = req.user?.email;
 
-    // Hardcoded Admin Emails for MVP security
+    // Admin Emails (consider moving to database for production)
     const ADMIN_EMAILS = [
-        'pavel.hajek1989@gmail.com',
-        'test_admin@example.com'
+        'pavel.hajek1989@gmail.com'
     ];
 
     if (!userId || !email || !ADMIN_EMAILS.includes(email)) {

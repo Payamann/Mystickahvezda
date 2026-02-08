@@ -27,8 +27,19 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
-app.use(cors());
+// Middleware - Restrict CORS to same-origin by default
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : ['http://localhost:3001', 'http://localhost:3000'];
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (server-to-server, mobile apps)
+        if (!origin) return callback(null, true);
+        if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+        callback(new Error('CORS not allowed'));
+    },
+    credentials: true
+}));
 
 // Stripe Webhook MUST be before express.json() to get raw body
 app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
@@ -37,7 +48,7 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
         res.sendStatus(200);
     } catch (err) {
         console.error('[STRIPE] Webhook error:', err.message);
-        res.status(400).send(`Webhook Error: ${err.message}`);
+        res.status(400).send('Webhook Error');
     }
 });
 
@@ -107,6 +118,8 @@ app.use('/api/admin', adminRoutes);
 
 // Helper function to call Gemini API
 import { callGemini } from './services/gemini.js';
+import { isPremiumUser } from './payment.js';
+import crypto from 'crypto';
 
 // ============================================
 // API ENDPOINTS
@@ -117,9 +130,16 @@ app.post('/api/crystal-ball', async (req, res) => {
     try {
         const { question, history = [] } = req.body;
 
+        if (!question || typeof question !== 'string' || question.length > 1000) {
+            return res.status(400).json({ success: false, error: 'Otázka je povinná (max 1000 znaků).' });
+        }
+
+        // Limit history to prevent abuse
+        const safeHistory = Array.isArray(history) ? history.slice(0, 10) : [];
+
         let contextMessage = question;
-        if (history.length > 0) {
-            contextMessage = `Předchozí otázky v této seanci: ${history.join(', ')}\n\nNová otázka: ${question}`;
+        if (safeHistory.length > 0) {
+            contextMessage = `Předchozí otázky v této seanci: ${safeHistory.join(', ')}\n\nNová otázka: ${question}`;
         }
 
         const moonPhase = calculateMoonPhase();
@@ -140,10 +160,10 @@ app.post('/api/tarot', authenticateToken, async (req, res) => {
         const userId = req.user.id;
 
         // Check limits
-        const isPremium = await import('./payment.js').then(m => m.isPremiumUser(userId));
+        const userIsPremium = await isPremiumUser(userId);
 
         // Free users can only do 1-card spreads
-        if (!isPremium && cards.length > 1) {
+        if (!userIsPremium && cards.length > 1) {
             return res.status(403).json({
                 success: false,
                 error: 'Komplexní výklady jsou dostupné pouze pro Hvězdné Průvodce (Premium).',
@@ -161,8 +181,8 @@ app.post('/api/tarot', authenticateToken, async (req, res) => {
     }
 });
 
-// Tarot Summary (NEW)
-app.post('/api/tarot-summary', async (req, res) => {
+// Tarot Summary (requires auth to prevent API cost abuse)
+app.post('/api/tarot-summary', authenticateToken, async (req, res) => {
     try {
         const { cards, spreadType } = req.body; // cards expects array of objects { name, position, meaning }
 
@@ -177,8 +197,8 @@ app.post('/api/tarot-summary', async (req, res) => {
     }
 });
 
-// Natal Chart Analysis (PREMIUM ONLY)
-app.post('/api/natal-chart', async (req, res) => {
+// Natal Chart Analysis (requires auth)
+app.post('/api/natal-chart', authenticateToken, async (req, res) => {
     try {
         const { birthDate, birthTime, birthPlace, name } = req.body;
         console.log(`[NatalChart] Request received for ${name}`);
@@ -203,10 +223,10 @@ app.post('/api/synastry', authenticateToken, async (req, res) => {
         const userId = req.user.id;
 
         // Check premium status
-        const isPremium = await import('./payment.js').then(m => m.isPremiumUser(userId));
+        const userIsPremium = await isPremiumUser(userId);
 
         // If NOT premium, return simplified response (Teaser Mode)
-        if (!isPremium) {
+        if (!userIsPremium) {
             console.log(`[Synastry] Free user ${userId} - returning teaser`);
             // We return success, but with a flag. The frontend calculates scores locally anyway.
             // We do NOT call Gemini to save costs.
@@ -369,7 +389,6 @@ app.post('/api/numerology', authenticateToken, requirePremium, async (req, res) 
         const { name, birthDate, birthTime, lifePath, destiny, soul, personality } = req.body;
 
         // Create cache key from inputs (deterministic)
-        const crypto = await import('crypto');
         const cacheKey = crypto.createHash('md5')
             .update(`${name}_${birthDate}_${birthTime || 'notime'}_${lifePath}_${destiny}_${soul}_${personality}`)
             .digest('hex');
@@ -412,8 +431,8 @@ Vytvoř komplexní interpretaci tohoto numerologického profilu.${birthTime ? ' 
     }
 });
 
-// Astrocartography
-app.post('/api/astrocartography', async (req, res) => {
+// Astrocartography (requires auth)
+app.post('/api/astrocartography', authenticateToken, async (req, res) => {
     console.log('📍 Astrocartography request received:', req.body);
     try {
         const { birthDate, birthTime, birthPlace, name, intention = 'obecný' } = req.body;
@@ -441,9 +460,7 @@ Vytvoř personalizovanou astrokartografickou mapu s doporučenými lokalitami.`;
 // ROUTES
 // ============================================
 
-app.use('/auth', authRoutes);
-app.use('/newsletter', newsletterRoutes);
-app.use('/api/payment', paymentRoutes);
+// Duplicate route registrations removed - all routes use /api/ prefix with rate limiting
 
 // ============================================
 // ADMIN ROUTES
@@ -552,7 +569,7 @@ app.post('/api/user/readings', authenticateToken, async (req, res) => {
         res.json({ success: true, reading: data });
     } catch (error) {
         console.error('Save Reading Error:', error);
-        res.status(500).json({ success: false, error: 'Nepodařilo se uložit výklad: ' + error.message });
+        res.status(500).json({ success: false, error: 'Nepodařilo se uložit výklad.' });
     }
 });
 
@@ -640,13 +657,27 @@ app.delete('/api/user/readings/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Change user password
+// Change user password (requires current password verification)
 app.put('/api/user/password', authenticateToken, async (req, res) => {
     try {
-        const { password } = req.body;
+        const { currentPassword, password } = req.body;
 
-        if (!password || password.length < 6) {
-            return res.status(400).json({ success: false, error: 'Heslo musí mít alespoň 6 znaků.' });
+        if (!currentPassword) {
+            return res.status(400).json({ success: false, error: 'Zadejte prosím aktuální heslo.' });
+        }
+
+        if (!password || password.length < 8) {
+            return res.status(400).json({ success: false, error: 'Nové heslo musí mít alespoň 8 znaků.' });
+        }
+
+        // Verify current password first
+        const { error: authError } = await supabase.auth.signInWithPassword({
+            email: req.user.email,
+            password: currentPassword
+        });
+
+        if (authError) {
+            return res.status(403).json({ success: false, error: 'Aktuální heslo je nesprávné.' });
         }
 
         // Use Supabase Admin to update password
@@ -668,8 +699,7 @@ app.put('/api/user/password', authenticateToken, async (req, res) => {
 app.get('/api/health', (req, res) => {
     res.json({
         status: 'ok',
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
+        timestamp: new Date().toISOString()
     });
 });
 

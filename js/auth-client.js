@@ -125,13 +125,21 @@
             if (type === 'success') icon = '✅';
             if (type === 'error') icon = '❌';
 
-            toast.innerHTML = `
-            <div class="toast__icon">${icon}</div>
-            <div>
-                <div class="toast__title">${title}</div>
-                <div class="toast__message">${message}</div>
-            </div>
-        `;
+            // Build toast safely using textContent to prevent XSS
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'toast__icon';
+            iconDiv.textContent = icon;
+            const textDiv = document.createElement('div');
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'toast__title';
+            titleDiv.textContent = title;
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'toast__message';
+            msgDiv.textContent = message;
+            textDiv.appendChild(titleDiv);
+            textDiv.appendChild(msgDiv);
+            toast.appendChild(iconDiv);
+            toast.appendChild(textDiv);
 
             container.appendChild(toast);
 
@@ -177,23 +185,9 @@
             window.location.reload();
         },
 
+        // Premium activation removed - redirects to pricing page
         async activatePremium() {
-            if (!this.token) return;
-            try {
-                const res = await fetch(`${API_URL}/auth/activate-premium`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${this.token}` }
-                });
-                const data = await res.json();
-                if (data.success) {
-                    this.user.subscription_status = 'premium';
-                    localStorage.setItem('auth_user', JSON.stringify(this.user));
-                    this.updateUI();
-                    alert('Premium aktivováno! Nyní máte přístup ke všem funkcím.');
-                }
-            } catch (e) {
-                console.error('Premium activation failed', e);
-            }
+            window.location.href = 'cenik.html';
         },
 
         updateUI() {
@@ -409,11 +403,8 @@
                 this.logout();
                 throw new Error('Session expired');
             }
-            if (res.status === 403) {
-                if (confirm('Tato funkce vyžaduje Premium účet. Chcete jej aktivovat zdarma?')) {
-                    await this.activatePremium();
-                    return this.fetchProtected(endpoint, body); // Retry
-                }
+            if (res.status === 402 || res.status === 403) {
+                this.showToast('Premium vyžadováno', 'Tato funkce vyžaduje Premium účet.', 'info');
                 throw new Error('Premium Required');
             }
 

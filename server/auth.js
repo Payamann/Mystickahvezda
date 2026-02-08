@@ -32,38 +32,9 @@ const logDebug = (msg) => {
 
 // ... (register and login routes remain similar, just ensuring no changes there unless necessary) ...
 
-// Activate Premium (Simulation for MVP)
-router.post('/activate-premium', async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.sendStatus(401);
-
-    try {
-        const user = jwt.verify(token, JWT_SECRET);
-
-        // Supabase Update on 'subscriptions' table
-        const { error } = await supabase
-            .from('subscriptions')
-            .update({
-                plan_type: 'premium_monthly',
-                status: 'active',
-                current_period_end: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString()
-            })
-            .eq('user_id', user.id);
-
-        if (error) throw error;
-
-        // Return new token with premium status
-        const newToken = jwt.sign({ id: user.id, email: user.email, subscription_status: 'premium_monthly' }, JWT_SECRET, { expiresIn: '30d' });
-        res.json({ success: true, token: newToken, subscription_status: 'premium_monthly' });
-
-    } catch (e) {
-        if (e.name === 'JsonWebTokenError' || e.name === 'TokenExpiredError') {
-            return res.sendStatus(403);
-        }
-        console.error('Premium Activation Error:', e);
-        res.status(500).json({ error: 'Failed to activate premium' });
-    }
+// Premium activation removed - use Stripe payment flow instead
+router.post('/activate-premium', (req, res) => {
+    res.status(410).json({ error: 'Tento endpoint byl odstraněn. Použijte platební systém.' });
 });
 
 // Register (Supabase Auth)
@@ -72,6 +43,10 @@ router.post('/register', async (req, res) => {
 
     if (!email || !password) {
         return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    if (password.length < 8) {
+        return res.status(400).json({ error: 'Heslo musí mít alespoň 8 znaků.' });
     }
 
     try {
@@ -237,38 +212,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Activate Premium (Simulation for MVP)
-router.post('/activate-premium', (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.sendStatus(401);
-
-    jwt.verify(token, JWT_SECRET, async (err, user) => {
-        if (err) return res.sendStatus(403);
-
-        try {
-            // Supabase Update on 'subscriptions' table
-            const { error } = await supabase
-                .from('subscriptions')
-                .update({
-                    plan_type: 'premium_monthly',
-                    status: 'active',
-                    current_period_end: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString()
-                })
-                .eq('user_id', user.id);
-
-            if (error) throw error;
-
-            // Return new token with premium status
-            const newToken = jwt.sign({ id: user.id, email: user.email, subscription_status: 'premium_monthly' }, JWT_SECRET, { expiresIn: '30d' });
-            res.json({ success: true, token: newToken, subscription_status: 'premium_monthly' });
-
-        } catch (e) {
-            console.error('Premium Activation Error:', e);
-            res.status(500).json({ error: 'Failed to activate premium' });
-        }
-    });
-});
+// Duplicate activate-premium removed (use Stripe payment flow)
 
 // Get User Profile
 router.get('/profile', async (req, res) => {

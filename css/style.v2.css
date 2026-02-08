@@ -93,8 +93,16 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Custom cursor: hide default on body, let it inherit naturally */
+body {
   cursor: none;
-  /* Hide default cursor for custom one */
+}
+
+/* Restore cursor on touch devices (custom cursor JS disabled there) */
+@media (pointer: coarse) {
+  body { cursor: auto; }
 }
 
 /* Restore cursor for interactive elements due to usability */
@@ -146,6 +154,13 @@ body {
   position: relative;
   letter-spacing: normal;
   /* Reset letter spacing */
+}
+
+/* Disable fixed background on mobile - causes severe scroll jank on iOS/Android */
+@media (pointer: coarse) {
+  body {
+    background-attachment: scroll;
+  }
 }
 
 /* Aurora Improvements - Fixed positioning context */

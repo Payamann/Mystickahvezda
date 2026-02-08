@@ -1,5 +1,6 @@
 /* ============================================
-   1. STARS BACKGROUND (Box-shadow Optimization)
+   1. STARS BACKGROUND (Canvas-based for performance)
+   Replaces 300 box-shadow values with a single canvas render
    ============================================ */
 export function initStars() {
     const starsContainer = document.querySelector('.stars');
@@ -8,35 +9,58 @@ export function initStars() {
     // Check for reduced motion preference
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    // Create a single element for all stars using box-shadow
-    // This reduces DOM node count from 150+ to 1
-    const createStarLayer = (starCount, size, duration) => {
-        const layer = document.createElement('div');
-        layer.className = 'star-layer';
+    const canvas = document.createElement('canvas');
+    canvas.style.position = 'absolute';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.pointerEvents = 'none';
+    starsContainer.appendChild(canvas);
 
-        let boxShadow = '';
+    const ctx = canvas.getContext('2d');
+
+    function drawStars() {
         const width = window.innerWidth;
-        const height = window.innerHeight;
+        const height = window.innerHeight * 2; // Extra height for scroll
+        canvas.width = width;
+        canvas.height = height;
 
-        for (let i = 0; i < starCount; i++) {
+        ctx.clearRect(0, 0, width, height);
+
+        // Layer 1: Small distant stars (200 stars)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        for (let i = 0; i < 200; i++) {
             const x = Math.random() * width;
             const y = Math.random() * height;
-            boxShadow += `${x}px ${y}px #FFF, `;
+            ctx.fillRect(x, y, 1, 1);
         }
 
-        // Remove trailing comma
-        layer.style.boxShadow = boxShadow.slice(0, -2);
-        layer.style.width = `${size}px`;
-        layer.style.height = `${size}px`;
-        layer.style.animationDuration = `${duration}s`;
-        layer.style.opacity = '0.7';
+        // Layer 2: Medium stars (100 stars)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        for (let i = 0; i < 100; i++) {
+            const x = Math.random() * width;
+            const y = Math.random() * height;
+            ctx.fillRect(x, y, 2, 2);
+        }
 
-        return layer;
-    };
+        // Layer 3: A few bright stars
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        for (let i = 0; i < 20; i++) {
+            const x = Math.random() * width;
+            const y = Math.random() * height;
+            ctx.beginPath();
+            ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
 
-    // Layer 1: Small distant stars
-    starsContainer.appendChild(createStarLayer(200, 1, 50));
+    drawStars();
 
-    // Layer 2: Medium stars
-    starsContainer.appendChild(createStarLayer(100, 2, 100));
+    // Debounced resize handler
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(drawStars, 250);
+    });
 }

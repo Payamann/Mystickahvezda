@@ -32,6 +32,9 @@ export function initScrollAnimations() {
 
 /* ============================================
    9. COMET CURSOR (Canvas Optimized)
+   - Single rAF loop (combined cursor head + particles)
+   - O(1) particle removal (swap-and-pop instead of splice)
+   - Idle detection to pause when mouse is still
    ============================================ */
 export function initCustomCursor() {
     // Disable on touch devices
@@ -48,7 +51,7 @@ export function initCustomCursor() {
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     canvas.style.pointerEvents = 'none';
-    canvas.style.zIndex = '9999'; // High z-index but behind the main cursor element
+    canvas.style.zIndex = '9999';
     document.body.appendChild(canvas);
 
     // Resize handling
@@ -66,20 +69,27 @@ export function initCustomCursor() {
 
     // Particle system
     const particles = [];
-    const maxParticles = 60; // Limit for performance
+    const maxParticles = 60;
 
     let mouseX = width / 2;
     let mouseY = height / 2;
-    let isMoving = false;
+    let isAnimating = false;
+
+    // Pre-computed alpha color cache (avoids string creation per frame)
+    const alphaColors = [];
+    for (let i = 0; i <= 20; i++) {
+        alphaColors.push(`rgba(212, 175, 55, ${(i / 20) * 0.5})`);
+    }
 
     // Track mouse
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-        isMoving = true;
-
-        // Add particle on move
         addParticle(mouseX, mouseY);
+        if (!isAnimating) {
+            isAnimating = true;
+            requestAnimationFrame(animate);
+        }
     });
 
     // Custom Cursor Head (DOM element for precision)
@@ -87,15 +97,7 @@ export function initCustomCursor() {
     cursorHead.className = 'comet-cursor';
     document.body.appendChild(cursorHead);
 
-    const updateCursorHead = () => {
-        cursorHead.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
-        requestAnimationFrame(updateCursorHead);
-    };
-    requestAnimationFrame(updateCursorHead);
-
-    // Interactive Hover Effects
     // Interactive Hover Effects (Event Delegation)
-    // This supports dynamically loaded content (Header/Footer) automatically
     const isInteractive = (target) => {
         return target.matches('a, button, input, .card, .zodiac-card') ||
             target.closest('a, button, .card, .zodiac-card');
@@ -114,44 +116,51 @@ export function initCustomCursor() {
     }, { passive: true });
 
     function addParticle(x, y) {
-        // Only add if we haven't reached the limit to prevent overloading
         if (particles.length < maxParticles) {
             particles.push({
-                x: x,
-                y: y,
+                x, y,
                 size: Math.random() * 3 + 1,
-                life: 1, // 1 to 0
+                life: 1,
                 decay: 0.03 + Math.random() * 0.03,
-                vx: (Math.random() - 0.5) * 1, // Slight drift
-                vy: (Math.random() - 0.5) * 1
+                vx: (Math.random() - 0.5),
+                vy: (Math.random() - 0.5)
             });
         }
     }
 
     function animate() {
+        // Update cursor head position
+        cursorHead.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+
+        // Draw particles
         ctx.clearRect(0, 0, width, height);
 
-        for (let i = 0; i < particles.length; i++) {
+        for (let i = particles.length - 1; i >= 0; i--) {
             const p = particles[i];
 
-            // Update
             p.life -= p.decay;
             p.x += p.vx;
             p.y += p.vy;
 
-            // Draw
             if (p.life > 0) {
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(212, 175, 55, ${p.life * 0.5})`; // Gold trail
+                // Use cached alpha color (nearest 5% step)
+                const alphaIdx = Math.round(p.life * 20);
+                ctx.fillStyle = alphaColors[alphaIdx] || alphaColors[0];
                 ctx.fill();
             } else {
-                particles.splice(i, 1);
-                i--;
+                // O(1) removal: swap with last element and pop
+                particles[i] = particles[particles.length - 1];
+                particles.pop();
             }
         }
 
-        requestAnimationFrame(animate);
+        // Only continue loop if there are particles to animate
+        if (particles.length > 0) {
+            requestAnimationFrame(animate);
+        } else {
+            isAnimating = false;
+        }
     }
-    animate();
 }

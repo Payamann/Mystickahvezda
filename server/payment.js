@@ -96,7 +96,7 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
         res.json({ id: session.id, url: session.url });
     } catch (error) {
         console.error('Stripe Session Error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Platba se nezdařila. Zkuste to prosím později.' });
     }
 });
 
@@ -108,17 +108,16 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
 export async function handleStripeWebhook(rawBody, sig) {
     let event;
 
-    // Verify webhook signature
-    if (STRIPE_WEBHOOK_SECRET) {
-        try {
-            event = stripe.webhooks.constructEvent(rawBody, sig, STRIPE_WEBHOOK_SECRET);
-        } catch (err) {
-            console.error('[STRIPE] Webhook signature verification failed:', err.message);
-            throw new Error('Webhook signature verification failed');
-        }
-    } else {
-        console.warn('[STRIPE] WARNING: STRIPE_WEBHOOK_SECRET not set, skipping signature verification!');
-        event = JSON.parse(rawBody.toString());
+    // Verify webhook signature - ALWAYS required
+    if (!STRIPE_WEBHOOK_SECRET) {
+        console.error('[STRIPE] CRITICAL: STRIPE_WEBHOOK_SECRET not set. Rejecting webhook.');
+        throw new Error('Webhook secret not configured');
+    }
+    try {
+        event = stripe.webhooks.constructEvent(rawBody, sig, STRIPE_WEBHOOK_SECRET);
+    } catch (err) {
+        console.error('[STRIPE] Webhook signature verification failed:', err.message);
+        throw new Error('Webhook signature verification failed');
     }
 
     if (event.type === 'checkout.session.completed') {

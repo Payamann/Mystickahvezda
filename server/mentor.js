@@ -15,8 +15,12 @@ router.post('/chat', authenticateToken, requirePremiumSoft, async (req, res) => 
         const { message } = req.body;
         const userId = req.user.id;
 
-        if (!message) {
+        if (!message || typeof message !== 'string') {
             return res.status(400).json({ error: 'Zpráva chybí.' });
+        }
+
+        if (message.length > 2000) {
+            return res.status(400).json({ error: 'Zpráva je příliš dlouhá (max 2000 znaků).' });
         }
 
         console.log(`[Mentor] Request received from user ${userId}`);
@@ -148,7 +152,7 @@ ${contextItems.join('\n')}
 
     } catch (error) {
         console.error('Mentor Chat API Critical Error:', error);
-        res.status(500).json({ error: error.message || 'Spojení s mentorem se nezdařilo.' });
+        res.status(500).json({ error: 'Spojení s mentorem se nezdařilo.' });
     }
 });
 
