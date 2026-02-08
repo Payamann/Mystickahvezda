@@ -1,45 +1,22 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { supabase } from './db-supabase.js';
+import { JWT_SECRET } from './config/jwt.js';
+import { authenticateToken } from './middleware.js';
 
 const router = express.Router();
-import fs from 'fs';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
-
-// Security: Enforce strong secret in production
-let JWT_SECRET = process.env.JWT_SECRET;
-if (IS_PRODUCTION && !JWT_SECRET) {
-    console.error('❌ FATAL ERROR: JWT_SECRET is missing in production environment!');
-    process.exit(1); // Fail secure
-}
-if (!JWT_SECRET) {
-    console.warn('⚠️ WARNING: JWT_SECRET is missing in environment variables!');
-    if (IS_PRODUCTION) {
-        console.error('❌ FATAL ERROR: JWT_SECRET is required in production!');
-        process.exit(1);
-    } else {
-        console.warn('⚠️ Development mode: Using temporary insecure secret. DO NOT USE IN PRODUCTION.');
-        JWT_SECRET = 'dev-insecure-secret-placeholder';
-    }
-}
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
 
 const logDebug = (msg) => {
-    if (IS_PRODUCTION) return; // Skip debug logging in production
-    // fs.appendFileSync('debug.log', `[${time}] ${msg}\n`); // Removed to prevent lock issues
+    if (IS_PRODUCTION) return;
     console.log(`[DEBUG] ${msg}`);
 };
 
-// ... (register and login routes remain similar, just ensuring no changes there unless necessary) ...
-
 // Activate Premium (Simulation for MVP)
-router.post('/activate-premium', async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.sendStatus(401);
-
+router.post('/activate-premium', authenticateToken, async (req, res) => {
     try {
-        const user = jwt.verify(token, JWT_SECRET);
+        const user = req.user;
 
         // Supabase Update on 'subscriptions' table
         const { error } = await supabase
@@ -54,13 +31,10 @@ router.post('/activate-premium', async (req, res) => {
         if (error) throw error;
 
         // Return new token with premium status
-        const newToken = jwt.sign({ id: user.id, email: user.email, subscription_status: 'premium_monthly' }, JWT_SECRET, { expiresIn: '30d' });
+        const newToken = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' });
         res.json({ success: true, token: newToken, subscription_status: 'premium_monthly' });
 
     } catch (e) {
-        if (e.name === 'JsonWebTokenError' || e.name === 'TokenExpiredError') {
-            return res.sendStatus(403);
-        }
         console.error('Premium Activation Error:', e);
         res.status(500).json({ error: 'Failed to activate premium' });
     }
@@ -215,7 +189,6 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({
             id: user.id,
             email: user.email,
-            subscription_status: status
         }, JWT_SECRET, { expiresIn: '30d' });
 
         res.json({
@@ -237,47 +210,10 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Activate Premium (Simulation for MVP)
-router.post('/activate-premium', (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.sendStatus(401);
-
-    jwt.verify(token, JWT_SECRET, async (err, user) => {
-        if (err) return res.sendStatus(403);
-
-        try {
-            // Supabase Update on 'subscriptions' table
-            const { error } = await supabase
-                .from('subscriptions')
-                .update({
-                    plan_type: 'premium_monthly',
-                    status: 'active',
-                    current_period_end: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString()
-                })
-                .eq('user_id', user.id);
-
-            if (error) throw error;
-
-            // Return new token with premium status
-            const newToken = jwt.sign({ id: user.id, email: user.email, subscription_status: 'premium_monthly' }, JWT_SECRET, { expiresIn: '30d' });
-            res.json({ success: true, token: newToken, subscription_status: 'premium_monthly' });
-
-        } catch (e) {
-            console.error('Premium Activation Error:', e);
-            res.status(500).json({ error: 'Failed to activate premium' });
-        }
-    });
-});
-
 // Get User Profile
-router.get('/profile', async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.sendStatus(401);
-
+router.get('/profile', authenticateToken, async (req, res) => {
     try {
-        const user = jwt.verify(token, JWT_SECRET);
+        const user = req.user;
 
         const { data, error } = await supabase
             .from('users')
@@ -306,24 +242,15 @@ router.get('/profile', async (req, res) => {
         res.json({ success: true, user: userProfile });
 
     } catch (e) {
-        if (e.name === 'JsonWebTokenError' || e.name === 'TokenExpiredError') {
-            return res.sendStatus(403);
-        }
         console.error('Get Profile Error:', e);
         res.status(500).json({ error: 'Failed to fetch profile' });
     }
 });
 
 // Update User Profile
-router.put('/profile', async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.sendStatus(401);
-
+router.put('/profile', authenticateToken, async (req, res) => {
     try {
-        // Verify token synchronously
-        const user = jwt.verify(token, JWT_SECRET);
-
+        const user = req.user;
         const { first_name, birth_date, birth_time, birth_place } = req.body;
 
         const updateData = {
@@ -345,132 +272,8 @@ router.put('/profile', async (req, res) => {
         res.json({ success: true, user: data });
 
     } catch (e) {
-        if (e.name === 'JsonWebTokenError' || e.name === 'TokenExpiredError') {
-            return res.sendStatus(403);
-        }
         console.error('Update Profile Error:', e);
         res.status(500).json({ error: 'Failed to update profile' });
-    }
-});
-
-// ==========================================
-// USER READINGS ENDPOINTS (Journal, Tarot, etc.)
-// ==========================================
-
-// Save Reading (journal, tarot, crystal-ball, etc.)
-router.post('/user/readings', async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.sendStatus(401);
-
-    const { type, data } = req.body;
-    if (!type || !data) {
-        return res.status(400).json({ error: 'Type and data are required' });
-    }
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const userId = decoded.id;
-
-        const { data: reading, error } = await supabase
-            .from('readings')
-            .insert({
-                user_id: userId,
-                type,
-                data
-            })
-            .select()
-            .single();
-
-        if (error) {
-            console.error('Save reading error:', error);
-            return res.status(500).json({ error: 'Failed to save reading' });
-        }
-
-        res.json({ success: true, id: reading.id, reading });
-    } catch (e) {
-        if (e.name === 'JsonWebTokenError' || e.name === 'TokenExpiredError') {
-            return res.sendStatus(403);
-        }
-        console.error('Save Reading Error:', e);
-        res.status(500).json({ error: 'Failed tosave reading' });
-    }
-});
-
-// Get All Readings
-router.get('/user/readings', async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.sendStatus(401);
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const userId = decoded.id;
-
-        const { data: readings, error } = await supabase
-            .from('readings')
-            .select('*')
-            .eq('user_id', userId)
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error('Get readings error:', error);
-            return res.status(500).json({ error: 'Failed to fetch readings' });
-        }
-
-        res.json({ success: true, readings });
-    } catch (e) {
-        if (e.name === 'JsonWebTokenError' || e.name === 'TokenExpiredError') {
-            return res.sendStatus(403);
-        }
-        console.error('Get Readings Error:', e);
-        res.status(500).json({ error: 'Failed to fetch readings' });
-    }
-});
-
-// Toggle Favorite
-router.patch('/user/readings/:id/favorite', async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.sendStatus(401);
-
-    const { id } = req.params;
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const userId = decoded.id;
-
-        // First check if reading belongs to user
-        const { data: reading, error: fetchError } = await supabase
-            .from('readings')
-            .select('is_favorite')
-            .eq('id', id)
-            .eq('user_id', userId)
-            .single();
-
-        if (fetchError || !reading) {
-            return res.status(404).json({ error: 'Reading not found' });
-        }
-
-        // Toggle favorite
-        const newFavoriteStatus = !reading.is_favorite;
-        const { error: updateError } = await supabase
-            .from('readings')
-            .update({ is_favorite: newFavoriteStatus })
-            .eq('id', id);
-
-        if (updateError) {
-            console.error('Toggle favorite error:', updateError);
-            return res.status(500).json({ error: 'Failed to update favorite' });
-        }
-
-        res.json({ success: true, is_favorite: newFavoriteStatus });
-    } catch (e) {
-        if (e.name === 'JsonWebTokenError' || e.name === 'TokenExpiredError') {
-            return res.sendStatus(403);
-        }
-        console.error('Toggle Favorite Error:', e);
-        res.status(500).json({ error: 'Failed to toggle favorite' });
     }
 });
 

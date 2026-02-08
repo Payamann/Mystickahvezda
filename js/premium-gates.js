@@ -7,6 +7,12 @@
  * @returns {boolean}
  */
 window.Premium = {
+    _escapeHTML(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    },
+
     async checkStatus() {
         // 1. Check local state first (Optimistic & Offline-friendly)
         if (window.Auth && typeof window.Auth.isPremium === 'function') {
@@ -64,6 +70,9 @@ window.Premium = {
         // Track analytics
         this.trackPaywallHit(featureName);
 
+        // Escape user-influenced content to prevent XSS
+        const safeMessage = this._escapeHTML(displayMessage);
+
         // Create overlay
         const overlay = document.createElement('div');
         overlay.className = 'paywall-overlay';
@@ -71,7 +80,7 @@ window.Premium = {
             <div class="paywall-content">
                 <div class="paywall-icon">✨</div>
                 <h3 class="paywall-title">Odemkněte plný potenciál</h3>
-                <p class="paywall-message">${displayMessage}</p>
+                <p class="paywall-message">${safeMessage}</p>
                 <div class="paywall-benefits">
                     <div class="benefit-item">✓ Neomezené výklady</div>
                     <div class="benefit-item">✓ Detailní předpovědi</div>

@@ -12,6 +12,13 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
+if (IS_PRODUCTION && !STRIPE_WEBHOOK_SECRET) {
+    console.error('❌ FATAL: STRIPE_WEBHOOK_SECRET is required in production!');
+    process.exit(1);
+}
+
 const router = express.Router();
 
 // Helper to check premium status (aligned with middleware logic)
@@ -108,17 +115,16 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
 export async function handleStripeWebhook(rawBody, sig) {
     let event;
 
-    // Verify webhook signature
-    if (STRIPE_WEBHOOK_SECRET) {
-        try {
-            event = stripe.webhooks.constructEvent(rawBody, sig, STRIPE_WEBHOOK_SECRET);
-        } catch (err) {
-            console.error('[STRIPE] Webhook signature verification failed:', err.message);
-            throw new Error('Webhook signature verification failed');
-        }
-    } else {
-        console.warn('[STRIPE] WARNING: STRIPE_WEBHOOK_SECRET not set, skipping signature verification!');
-        event = JSON.parse(rawBody.toString());
+    // Verify webhook signature (fail closed - reject if secret not configured)
+    if (!STRIPE_WEBHOOK_SECRET) {
+        throw new Error('STRIPE_WEBHOOK_SECRET not configured. Webhook rejected.');
+    }
+
+    try {
+        event = stripe.webhooks.constructEvent(rawBody, sig, STRIPE_WEBHOOK_SECRET);
+    } catch (err) {
+        console.error('[STRIPE] Webhook signature verification failed:', err.message);
+        throw new Error('Webhook signature verification failed');
     }
 
     if (event.type === 'checkout.session.completed') {

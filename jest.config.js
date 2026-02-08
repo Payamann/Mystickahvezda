@@ -4,6 +4,7 @@ export default {
     moduleNameMapper: {
         '^(\\.{1,2}/.*)\\.js$': '$1', // Support extensionless imports if needed, or map .js
     },
+    modulePaths: ['<rootDir>/server/node_modules'],
     setupFiles: ['./tests/setup.js'], // Global mocks
     testMatch: ['**/tests/**/*.test.js'],
     verbose: true,

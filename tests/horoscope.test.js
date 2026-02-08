@@ -8,6 +8,13 @@ jest.unstable_mockModule('../server/db-supabase.js', () => ({
     }
 }));
 
+jest.unstable_mockModule('../server/payment.js', () => ({
+    __esModule: true,
+    default: jest.fn((req, res, next) => next()),
+    handleStripeWebhook: jest.fn(),
+    isPremiumUser: jest.fn().mockResolvedValue(false)
+}));
+
 // Mock Fetch for Gemini
 global.fetch = jest.fn();
 

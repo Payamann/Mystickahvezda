@@ -1,24 +1,24 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import rateLimit from 'express-rate-limit'; // Security: Rate Limiting
-import helmet from 'helmet'; // Security: HTTP Headers
-import xss from 'xss-clean'; // Security: Input Sanitization
-import compression from 'compression'; // Performance: Gzip compression
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import xss from 'xss-clean';
+import compression from 'compression';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import fs from 'fs';
-import Stripe from 'stripe';
 
-// Auth & DB
+// Auth, DB & Services
 import authRoutes from './auth.js';
 import newsletterRoutes from './newsletter.js';
-import paymentRoutes, { handleStripeWebhook } from './payment.js';
+import paymentRoutes, { handleStripeWebhook, isPremiumUser } from './payment.js';
 import mentorRoutes from './mentor.js';
 import adminRoutes from './admin.js';
-import { authenticateToken, requirePremium, requirePremiumSoft } from './middleware.js';
+import { authenticateToken, requirePremium, requirePremiumSoft, requireAdmin } from './middleware.js';
 import { SYSTEM_PROMPTS } from './config/prompts.js';
 import { calculateMoonPhase, getHoroscopeCacheKey, getCachedHoroscope, saveCachedHoroscope } from './services/astrology.js';
+import { callGemini } from './services/gemini.js';
+import { supabase } from './db-supabase.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,7 +41,7 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
     }
 });
 
-// Increase payload limit for complex requests (e.g. detailed tarot spreads if needed)
+// Increase payload limit for complex requests
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -61,14 +61,36 @@ app.use(helmet({
     crossOriginEmbedderPolicy: false
 }));
 
-// Rate Limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per windowMs
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+// ============================================
+// RATE LIMITING (Granular)
+// ============================================
+
+// Global safety net
+const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
 });
-app.use('/api/', limiter);
+app.use('/api/', globalLimiter);
+
+// Auth endpoints (login/register) - tighter limit to prevent brute-force
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    message: { error: 'Příliš mnoho pokusů o přihlášení. Zkuste to později.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// AI-generation endpoints - expensive, limit more aggressively
+const aiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    message: { error: 'Příliš mnoho požadavků. Zkuste to za chvíli.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 // Gzip Compression
 app.use(compression());
@@ -76,12 +98,8 @@ app.use(compression());
 // XSS Protection
 app.use(xss());
 
-// ============================================
-// HOROSCOPE CACHE SYSTEM (Database-backed)
-// ============================================
-
 console.log(`🔮 Horoscope cache: Using database storage (persistent)`);
-// Helper functions moved to services/astrology.js
+console.log(`🔢 Numerology cache: Using database storage (persistent)`);
 
 // DEVELOPMENT: Disable caching for all static files
 if (process.env.NODE_ENV !== 'production') {
@@ -99,27 +117,35 @@ const staticOptions = process.env.NODE_ENV === 'production'
     : {};
 app.use(express.static(path.join(__dirname, '../'), staticOptions));
 
+// ============================================
+// ROUTE MODULES
+// ============================================
+
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/mentor', mentorRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Helper function to call Gemini API
-import { callGemini } from './services/gemini.js';
-
 // ============================================
 // API ENDPOINTS
 // ============================================
 
 // Crystal Ball Oracle
-app.post('/api/crystal-ball', async (req, res) => {
+app.post('/api/crystal-ball', aiLimiter, async (req, res) => {
     try {
         const { question, history = [] } = req.body;
 
-        let contextMessage = question;
-        if (history.length > 0) {
-            contextMessage = `Předchozí otázky v této seanci: ${history.join(', ')}\n\nNová otázka: ${question}`;
+        if (!question || typeof question !== 'string') {
+            return res.status(400).json({ success: false, error: 'Otázka je povinná.' });
+        }
+
+        let contextMessage = question.substring(0, 500);
+        if (Array.isArray(history) && history.length > 0) {
+            const safeHistory = history.slice(0, 20).map(h => String(h).substring(0, 200));
+            contextMessage = `Předchozí otázky v této seanci: ${safeHistory.join(', ')}\n\nNová otázka: ${contextMessage}`;
         }
 
         const moonPhase = calculateMoonPhase();
@@ -134,16 +160,23 @@ app.post('/api/crystal-ball', async (req, res) => {
 });
 
 // Tarot Reading (FREEMIUM LIMITS)
-app.post('/api/tarot', authenticateToken, async (req, res) => {
+app.post('/api/tarot', aiLimiter, authenticateToken, async (req, res) => {
     try {
         const { question, cards, spreadType = 'tříkartový' } = req.body;
         const userId = req.user.id;
 
+        if (!question || typeof question !== 'string') {
+            return res.status(400).json({ success: false, error: 'Otázka je povinná.' });
+        }
+        if (!Array.isArray(cards) || cards.length === 0 || cards.length > 10) {
+            return res.status(400).json({ success: false, error: 'Karty musí být pole 1-10 prvků.' });
+        }
+
         // Check limits
-        const isPremium = await import('./payment.js').then(m => m.isPremiumUser(userId));
+        const premium = await isPremiumUser(userId);
 
         // Free users can only do 1-card spreads
-        if (!isPremium && cards.length > 1) {
+        if (!premium && cards.length > 1) {
             return res.status(403).json({
                 success: false,
                 error: 'Komplexní výklady jsou dostupné pouze pro Hvězdné Průvodce (Premium).',
@@ -151,7 +184,10 @@ app.post('/api/tarot', authenticateToken, async (req, res) => {
             });
         }
 
-        const message = `Typ výkladu: ${spreadType}\nOtázka: "${question}"\nVytažené karty: ${cards.join(', ')}`;
+        const safeQuestion = String(question).substring(0, 500);
+        const safeCards = cards.map(c => String(c).substring(0, 100));
+        const safeSpread = String(spreadType).substring(0, 50);
+        const message = `Typ výkladu: ${safeSpread}\nOtázka: "${safeQuestion}"\nVytažené karty: ${safeCards.join(', ')}`;
 
         const response = await callGemini(SYSTEM_PROMPTS.tarot, message);
         res.json({ success: true, response });
@@ -161,13 +197,23 @@ app.post('/api/tarot', authenticateToken, async (req, res) => {
     }
 });
 
-// Tarot Summary (NEW)
-app.post('/api/tarot-summary', async (req, res) => {
+// Tarot Summary
+app.post('/api/tarot-summary', aiLimiter, async (req, res) => {
     try {
-        const { cards, spreadType } = req.body; // cards expects array of objects { name, position, meaning }
+        const { cards, spreadType } = req.body;
 
-        let cardContext = cards.map(c => `${c.position}: ${c.name} (${c.meaning})`).join(', ');
-        const message = `Typ výkladu: ${spreadType}\n\nKarty v kontextu pozic:\n${cardContext}\n\nVytvoř krásný, hluboký souhrn tohoto výkladu.`;
+        if (!Array.isArray(cards) || cards.length === 0 || cards.length > 10) {
+            return res.status(400).json({ success: false, error: 'Karty musí být pole 1-10 prvků.' });
+        }
+
+        let cardContext = cards.map(c => {
+            const pos = String(c.position || '').substring(0, 100);
+            const name = String(c.name || '').substring(0, 100);
+            const meaning = String(c.meaning || '').substring(0, 200);
+            return `${pos}: ${name} (${meaning})`;
+        }).join(', ');
+        const safeSpread = String(spreadType || '').substring(0, 50);
+        const message = `Typ výkladu: ${safeSpread}\n\nKarty v kontextu pozic:\n${cardContext}\n\nVytvoř krásný, hluboký souhrn tohoto výkladu.`;
 
         const response = await callGemini(SYSTEM_PROMPTS.tarotSummary, message);
         res.json({ success: true, response });
@@ -177,18 +223,22 @@ app.post('/api/tarot-summary', async (req, res) => {
     }
 });
 
-// Natal Chart Analysis (PREMIUM ONLY)
-app.post('/api/natal-chart', async (req, res) => {
+// Natal Chart Analysis
+app.post('/api/natal-chart', aiLimiter, async (req, res) => {
     try {
         const { birthDate, birthTime, birthPlace, name } = req.body;
-        console.log(`[NatalChart] Request received for ${name}`);
 
-        const message = `Jméno: ${name || 'Tazatel'}\nDatum narození: ${birthDate}\nČas narození: ${birthTime}\nMísto narození: ${birthPlace}`;
+        if (!birthDate || typeof birthDate !== 'string') {
+            return res.status(400).json({ success: false, error: 'Datum narození je povinné.' });
+        }
 
-        console.log(`[NatalChart] Calling Gemini...`);
+        const safeName = String(name || 'Tazatel').substring(0, 100);
+        const safeBirthDate = String(birthDate).substring(0, 30);
+        const safeBirthTime = String(birthTime || '').substring(0, 20);
+        const safeBirthPlace = String(birthPlace || '').substring(0, 200);
+        const message = `Jméno: ${safeName}\nDatum narození: ${safeBirthDate}\nČas narození: ${safeBirthTime}\nMísto narození: ${safeBirthPlace}`;
+
         const response = await callGemini(SYSTEM_PROMPTS.natalChart, message);
-        console.log(`[NatalChart] Gemini response received (length: ${response.length})`);
-
         res.json({ success: true, response });
     } catch (error) {
         console.error('Natal Chart Error:', error);
@@ -197,28 +247,33 @@ app.post('/api/natal-chart', async (req, res) => {
 });
 
 // Synastry / Compatibility (FREEMIUM TEASER)
-app.post('/api/synastry', authenticateToken, async (req, res) => {
+app.post('/api/synastry', aiLimiter, authenticateToken, async (req, res) => {
     try {
         const { person1, person2 } = req.body;
         const userId = req.user.id;
 
+        if (!person1 || !person2 || !person1.name || !person2.name) {
+            return res.status(400).json({ success: false, error: 'Data obou osob jsou povinná.' });
+        }
+
         // Check premium status
-        const isPremium = await import('./payment.js').then(m => m.isPremiumUser(userId));
+        const premium = await isPremiumUser(userId);
 
         // If NOT premium, return simplified response (Teaser Mode)
-        if (!isPremium) {
-            console.log(`[Synastry] Free user ${userId} - returning teaser`);
-            // We return success, but with a flag. The frontend calculates scores locally anyway.
-            // We do NOT call Gemini to save costs.
+        if (!premium) {
             return res.json({
                 success: true,
                 isTeaser: true,
-                response: null // No text analysis
+                response: null
             });
         }
 
         // Premium Logic (Full Analysis)
-        const message = `Osoba A: ${person1.name}, narozena ${person1.birthDate}\nOsoba B: ${person2.name}, narozena ${person2.birthDate}`;
+        const safeName1 = String(person1.name).substring(0, 100);
+        const safeName2 = String(person2.name).substring(0, 100);
+        const safeBD1 = String(person1.birthDate || '').substring(0, 30);
+        const safeBD2 = String(person2.birthDate || '').substring(0, 30);
+        const message = `Osoba A: ${safeName1}, narozena ${safeBD1}\nOsoba B: ${safeName2}, narozena ${safeBD2}`;
         const response = await callGemini(SYSTEM_PROMPTS.synastry, message);
 
         res.json({ success: true, response, isTeaser: false });
@@ -229,18 +284,28 @@ app.post('/api/synastry', authenticateToken, async (req, res) => {
 });
 
 // Horoscope (Daily, Weekly, Monthly) - WITH DATABASE CACHING
-app.post('/api/horoscope', async (req, res) => {
+const VALID_ZODIAC_SIGNS = ['beran', 'býk', 'blíženci', 'rak', 'lev', 'panna', 'váhy', 'štír', 'střelec', 'kozoroh', 'vodnář', 'ryby'];
+const VALID_PERIODS = ['daily', 'weekly', 'monthly'];
+
+app.post('/api/horoscope', aiLimiter, async (req, res) => {
     try {
         const { sign, period = 'daily', context = [] } = req.body;
 
+        if (!sign || typeof sign !== 'string') {
+            return res.status(400).json({ success: false, error: 'Znamení je povinné.' });
+        }
+        if (!VALID_PERIODS.includes(period)) {
+            return res.status(400).json({ success: false, error: 'Neplatné období.' });
+        }
+
         // Generate cache key (include context hash to avoid stale cache if context changes)
-        const contextHash = context.length > 0 ? Buffer.from(context.join('')).toString('base64').substring(0, 10) : 'nocontext';
+        const safeContext = Array.isArray(context) ? context.slice(0, 10).map(c => String(c).substring(0, 200)) : [];
+        const contextHash = safeContext.length > 0 ? Buffer.from(safeContext.join('')).toString('base64').substring(0, 10) : 'nocontext';
         const cacheKey = getHoroscopeCacheKey(sign, period) + `-${contextHash}`;
 
         // Check database cache first
         const cachedData = await getCachedHoroscope(cacheKey);
         if (cachedData) {
-            console.log(`📦 Horoscope Cache HIT: ${cacheKey}`);
             return res.json({
                 success: true,
                 response: cachedData.response,
@@ -249,17 +314,15 @@ app.post('/api/horoscope', async (req, res) => {
             });
         }
 
-        console.log(`🔄 Horoscope Cache MISS: ${cacheKey} - Generating new...`);
-
         // Dynamic prompt based on period
         let periodPrompt;
         let periodLabel;
         let contextInstruction = "";
 
-        if (context && context.length > 0) {
+        if (safeContext.length > 0) {
             contextInstruction = `
 CONTEXT (Z uživatelova deníku):
-"${context.join('", "')}"
+"${safeContext.join('", "')}"
 INSTRUKCE PRO SYNERGII: Pokud je to relevantní, jemně a nepřímo nawazuj na témata z deníku. Neříkej "V deníku vidím...", ale spíše "Hvězdy naznačují posun v tématech, která tě trápí...". Buď empatický.`;
         }
 
@@ -305,7 +368,6 @@ Odpověď česky, poeticky a povzbudivě.${contextInstruction}`;
 
         // Save to database cache
         await saveCachedHoroscope(cacheKey, sign, period, response, periodLabel);
-        console.log(`💾 Horoscope cached in DB: ${cacheKey}`);
 
         res.json({ success: true, response, period: periodLabel });
     } catch (error) {
@@ -314,10 +376,10 @@ Odpověď česky, poeticky a povzbudivě.${contextInstruction}`;
     }
 });
 
-// Numerology (PREMIUM ONLY) - WITH DATABASE CACHING
-console.log(`🔢 Numerology cache: Using database storage (persistent)`);
+// ============================================
+// NUMEROLOGY (PREMIUM ONLY) - WITH DATABASE CACHING
+// ============================================
 
-// Get cached numerology from database
 async function getCachedNumerology(cacheKey) {
     try {
         const { data, error } = await supabase
@@ -327,7 +389,7 @@ async function getCachedNumerology(cacheKey) {
             .single();
 
         if (error) {
-            if (error.code === 'PGRST116') return null; // Not found
+            if (error.code === 'PGRST116') return null;
             throw error;
         }
 
@@ -338,7 +400,6 @@ async function getCachedNumerology(cacheKey) {
     }
 }
 
-// Save numerology to database cache
 async function saveCachedNumerology(cacheKey, inputs, response) {
     try {
         const { error } = await supabase
@@ -364,20 +425,27 @@ async function saveCachedNumerology(cacheKey, inputs, response) {
     }
 }
 
-app.post('/api/numerology', authenticateToken, requirePremium, async (req, res) => {
+app.post('/api/numerology', aiLimiter, authenticateToken, requirePremium, async (req, res) => {
     try {
         const { name, birthDate, birthTime, lifePath, destiny, soul, personality } = req.body;
+
+        if (!name || typeof name !== 'string' || !birthDate || typeof birthDate !== 'string') {
+            return res.status(400).json({ success: false, error: 'Jméno a datum narození jsou povinné.' });
+        }
+
+        const safeName = String(name).substring(0, 100);
+        const safeBirthDate = String(birthDate).substring(0, 30);
+        const safeBirthTime = birthTime ? String(birthTime).substring(0, 20) : null;
 
         // Create cache key from inputs (deterministic)
         const crypto = await import('crypto');
         const cacheKey = crypto.createHash('md5')
-            .update(`${name}_${birthDate}_${birthTime || 'notime'}_${lifePath}_${destiny}_${soul}_${personality}`)
+            .update(`${safeName}_${safeBirthDate}_${safeBirthTime || 'notime'}_${lifePath}_${destiny}_${soul}_${personality}`)
             .digest('hex');
 
         // Check database cache first
         const cachedData = await getCachedNumerology(cacheKey);
         if (cachedData) {
-            console.log(`📦 Numerology Cache HIT (DB): ${cacheKey}`);
             return res.json({
                 success: true,
                 response: cachedData.response,
@@ -385,10 +453,8 @@ app.post('/api/numerology', authenticateToken, requirePremium, async (req, res) 
             });
         }
 
-        console.log(`🔄 Numerology Cache MISS: ${cacheKey} - Generating new interpretation...`);
-
-        const message = `Jméno: ${name}
-Datum narození: ${birthDate}${birthTime ? `\nČas narození: ${birthTime}` : ''}
+        const message = `Jméno: ${safeName}
+Datum narození: ${safeBirthDate}${safeBirthTime ? `\nČas narození: ${safeBirthTime}` : ''}
 
 Vypočítaná čísla:
 - Číslo životní cesty: ${lifePath}
@@ -396,14 +462,13 @@ Vypočítaná čísla:
 - Číslo duše: ${soul}
 - Číslo osobnosti: ${personality}
 
-Vytvoř komplexní interpretaci tohoto numerologického profilu.${birthTime ? ' Vezmi v potaz i čas narození pro hlubší výklad.' : ''}`;
+Vytvoř komplexní interpretaci tohoto numerologického profilu.${safeBirthTime ? ' Vezmi v potaz i čas narození pro hlubší výklad.' : ''}`;
 
         const response = await callGemini(SYSTEM_PROMPTS.numerology, message);
 
         // Save to database cache
-        const inputs = { name, birthDate, birthTime, lifePath, destiny, soul, personality };
+        const inputs = { name: safeName, birthDate: safeBirthDate, birthTime: safeBirthTime, lifePath, destiny, soul, personality };
         await saveCachedNumerology(cacheKey, inputs, response);
-        console.log(`💾 Numerology cached in DB: ${cacheKey}`);
 
         res.json({ success: true, response });
     } catch (error) {
@@ -413,97 +478,35 @@ Vytvoř komplexní interpretaci tohoto numerologického profilu.${birthTime ? ' 
 });
 
 // Astrocartography
-app.post('/api/astrocartography', async (req, res) => {
-    console.log('📍 Astrocartography request received:', req.body);
+app.post('/api/astrocartography', aiLimiter, async (req, res) => {
     try {
         const { birthDate, birthTime, birthPlace, name, intention = 'obecný' } = req.body;
 
-        const message = `Jméno: ${name || 'Tazatel'}
-Datum narození: ${birthDate}
-Čas narození: ${birthTime}
-Místo narození: ${birthPlace}
-Záměr analýzy: ${intention}
+        if (!birthDate || typeof birthDate !== 'string') {
+            return res.status(400).json({ success: false, error: 'Datum narození je povinné.' });
+        }
+
+        const safeName = String(name || 'Tazatel').substring(0, 100);
+        const safeBirthDate = String(birthDate).substring(0, 30);
+        const safeBirthTime = String(birthTime || '').substring(0, 20);
+        const safeBirthPlace = String(birthPlace || '').substring(0, 200);
+        const safeIntention = String(intention).substring(0, 200);
+
+        const message = `Jméno: ${safeName}
+Datum narození: ${safeBirthDate}
+Čas narození: ${safeBirthTime}
+Místo narození: ${safeBirthPlace}
+Záměr analýzy: ${safeIntention}
 
 Vytvoř personalizovanou astrokartografickou mapu s doporučenými lokalitami.`;
 
-        console.log('📍 Calling Gemini with message:', message.substring(0, 100) + '...');
         const response = await callGemini(SYSTEM_PROMPTS.astrocartography, message);
-        console.log('📍 Gemini response received, length:', response.length);
         res.json({ success: true, response });
     } catch (error) {
-        console.error('📍 Astrocartography Error Details:', error.message);
-        console.error('📍 Full error:', error);
+        console.error('Astrocartography Error:', error);
         res.status(500).json({ success: false, error: 'Planetární linie jsou momentálně zahaleny mlhou...' });
     }
 });
-
-// ============================================
-// ROUTES
-// ============================================
-
-app.use('/auth', authRoutes);
-app.use('/newsletter', newsletterRoutes);
-app.use('/api/payment', paymentRoutes);
-
-// ============================================
-// ADMIN ROUTES
-// ============================================
-import { requireAdmin } from './middleware.js';
-
-// Get All Users (Admin)
-app.get('/api/admin/users', authenticateToken, requireAdmin, async (req, res) => {
-    try {
-        const { data: users, error } = await supabase
-            .from('users')
-            .select(`
-                *,
-                subscriptions (
-                    plan_type,
-                    status,
-                    current_period_end,
-                    credits
-                )
-            `)
-            .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        res.json({ success: true, users });
-    } catch (error) {
-        console.error('Admin Users Error:', error);
-        res.status(500).json({ error: 'Failed to fetch users' });
-    }
-});
-
-// Update User Subscription (Admin)
-app.post('/api/admin/user/:id/subscription', authenticateToken, requireAdmin, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { plan_type, credits } = req.body; // e.g., 'premium_monthly', 'free'
-
-        // Update subscription
-        const updateData = {
-            plan_type,
-            status: 'active',
-            credits: credits || (plan_type === 'free' ? 3 : 100),
-            current_period_end: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString()
-        };
-
-        const { error } = await supabase
-            .from('subscriptions')
-            .update(updateData)
-            .eq('user_id', id);
-
-        if (error) throw error;
-
-        res.json({ success: true, message: `Subscription updated to ${plan_type}` });
-    } catch (error) {
-        console.error('Admin Update Error:', error);
-        res.status(500).json({ error: 'Failed to update user' });
-    }
-});
-
-// Supabase Initialization
-import { supabase } from './db-supabase.js';
 
 // ============================================
 // USER READINGS API
@@ -552,7 +555,7 @@ app.post('/api/user/readings', authenticateToken, async (req, res) => {
         res.json({ success: true, reading: data });
     } catch (error) {
         console.error('Save Reading Error:', error);
-        res.status(500).json({ success: false, error: 'Nepodařilo se uložit výklad: ' + error.message });
+        res.status(500).json({ success: false, error: 'Nepodařilo se uložit výklad.' });
     }
 });
 
@@ -586,7 +589,6 @@ app.patch('/api/user/readings/:id/favorite', authenticateToken, async (req, res)
     try {
         const { id } = req.params;
 
-        // First get current state
         const { data: current, error: fetchError } = await supabase
             .from('readings')
             .select('is_favorite')
@@ -600,7 +602,6 @@ app.patch('/api/user/readings/:id/favorite', authenticateToken, async (req, res)
             return res.status(404).json({ success: false, error: 'Výklad nenalezen.' });
         }
 
-        // Toggle the favorite status
         const newStatus = !current.is_favorite;
 
         const { data, error } = await supabase
@@ -629,7 +630,7 @@ app.delete('/api/user/readings/:id', authenticateToken, async (req, res) => {
             .from('readings')
             .delete()
             .eq('id', id)
-            .eq('user_id', req.user.id); // Ensure user owns the reading
+            .eq('user_id', req.user.id);
 
         if (error) throw error;
 
@@ -649,7 +650,6 @@ app.put('/api/user/password', authenticateToken, async (req, res) => {
             return res.status(400).json({ success: false, error: 'Heslo musí mít alespoň 6 znaků.' });
         }
 
-        // Use Supabase Admin to update password
         const { error } = await supabase.auth.admin.updateUserById(
             req.user.id,
             { password: password }
@@ -664,7 +664,7 @@ app.put('/api/user/password', authenticateToken, async (req, res) => {
     }
 });
 
-// Health Check Endpoint (for monitoring/load balancers)
+// Health Check Endpoint
 app.get('/api/health', (req, res) => {
     res.json({
         status: 'ok',
@@ -674,8 +674,6 @@ app.get('/api/health', (req, res) => {
 });
 
 // Start server ONLY if run directly (not imported for tests)
-// Start server ONLY if run directly (not imported for tests)
-// We compare the resolved paths to be safe on Windows
 if (process.argv[1] === __filename) {
     app.listen(PORT, () => {
         console.log(`✨ Mystická Hvězda API running on http://localhost:${PORT}`);

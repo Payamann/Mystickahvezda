@@ -12,12 +12,14 @@ jest.unstable_mockModule('../server/middleware.js', () => ({
         next();
     },
     requirePremium: (req, res, next) => next(),
-    requirePremiumSoft: (req, res, next) => next()
+    requirePremiumSoft: (req, res, next) => next(),
+    requireAdmin: (req, res, next) => next()
 }));
 
 jest.unstable_mockModule('../server/payment.js', () => ({
     __esModule: true,
-    default: jest.fn(),
+    default: jest.fn((req, res, next) => next()),
+    handleStripeWebhook: jest.fn(),
     isPremiumUser: jest.fn()
 }));
 
@@ -88,7 +90,7 @@ describe('Astrology APIs', () => {
 
             const res = await request(app)
                 .post('/api/numerology')
-                .send({ name: 'Test', lifePath: 1 });
+                .send({ name: 'Test', birthDate: '1990-01-01', lifePath: 1, destiny: 2, soul: 3, personality: 4 });
 
             expect(res.status).toBe(200);
             expect(res.body.cached).toBe(true);
@@ -100,7 +102,7 @@ describe('Astrology APIs', () => {
         it('should return astrocartography analysis', async () => {
             const res = await request(app)
                 .post('/api/astrocartography')
-                .send({ birthPlace: 'Prague' });
+                .send({ birthDate: '1990-01-01', birthTime: '12:00', birthPlace: 'Prague', name: 'Test' });
 
             expect(res.status).toBe(200);
             expect(res.body.success).toBe(true);

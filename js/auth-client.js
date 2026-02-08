@@ -110,6 +110,12 @@
             }
         },
 
+        _escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        },
+
         showToast(title, message, type = 'info') {
             let container = document.querySelector('.toast-container');
             if (!container) {
@@ -125,11 +131,14 @@
             if (type === 'success') icon = '✅';
             if (type === 'error') icon = '❌';
 
+            const safeTitle = this._escapeHTML(title);
+            const safeMessage = this._escapeHTML(message);
+
             toast.innerHTML = `
             <div class="toast__icon">${icon}</div>
             <div>
-                <div class="toast__title">${title}</div>
-                <div class="toast__message">${message}</div>
+                <div class="toast__title">${safeTitle}</div>
+                <div class="toast__message">${safeMessage}</div>
             </div>
         `;
 

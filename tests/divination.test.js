@@ -12,13 +12,15 @@ jest.unstable_mockModule('../server/middleware.js', () => ({
         next();
     },
     requirePremium: (req, res, next) => next(),
-    requirePremiumSoft: (req, res, next) => next()
+    requirePremiumSoft: (req, res, next) => next(),
+    requireAdmin: (req, res, next) => next()
 }));
 
 // Mock Payment Module for Premium Checks
 jest.unstable_mockModule('../server/payment.js', () => ({
     __esModule: true,
-    default: jest.fn((req, res, next) => next()), // Mock router
+    default: jest.fn((req, res, next) => next()),
+    handleStripeWebhook: jest.fn(),
     isPremiumUser: jest.fn()
 }));
 

@@ -1,7 +1,11 @@
-// Native fetch is used in Node 18+
-// import fetch from 'node-fetch';
-
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+
+const MAX_RETRIES = 2;
+const RETRY_DELAYS = [1000, 3000];
+
+// Simple circuit breaker
+let consecutiveFailures = 0;
+let circuitOpenUntil = 0;
 
 /**
  * Validates the API key presence.
@@ -15,15 +19,47 @@ function getApiKey() {
 }
 
 /**
+ * Fetch with retry and exponential backoff for transient errors.
+ */
+async function fetchWithRetry(url, options) {
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            const response = await fetch(url, options);
+
+            // Retry on rate limit or server errors
+            if ((response.status === 429 || response.status >= 500) && attempt < MAX_RETRIES) {
+                console.warn(`[Gemini] Retrying (${attempt + 1}/${MAX_RETRIES}) after status ${response.status}...`);
+                await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt]));
+                continue;
+            }
+
+            return response;
+        } catch (error) {
+            if (attempt < MAX_RETRIES) {
+                console.warn(`[Gemini] Network error, retrying (${attempt + 1}/${MAX_RETRIES})...`);
+                await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt]));
+                continue;
+            }
+            throw error;
+        }
+    }
+}
+
+/**
  * Calls the Gemini API with a given system instruction and user message/history.
  * Supports both simple text generation and structured chat history.
- * 
+ *
  * @param {string} systemPrompt - The system instruction/persona.
  * @param {string|Array} messageOrHistory - The user prompt string OR an array of message objects {role, content}.
  * @param {Object} contextData - Optional additional context (user profile, etc.) to append to system prompt.
  * @returns {Promise<string>} - The generated response text.
  */
 export async function callGemini(systemPrompt, messageOrHistory, contextData = null) {
+    // Circuit breaker check
+    if (Date.now() < circuitOpenUntil) {
+        throw new Error('Gemini API temporarily unavailable. Please try again later.');
+    }
+
     const apiKey = getApiKey();
 
     // Construct the full system instruction with context if provided
@@ -44,17 +80,16 @@ export async function callGemini(systemPrompt, messageOrHistory, contextData = n
     let contents = [];
 
     if (Array.isArray(messageOrHistory)) {
-        // Chat History Mode (History + New Message)
+        // Chat History Mode
         contents = messageOrHistory.map(msg => ({
             role: msg.role === 'mentor' || msg.role === 'model' ? 'model' : 'user',
-            parts: [{ text: msg.content }]
+            parts: [{ text: String(msg.content || '').substring(0, 2000) }]
         }));
     } else {
-        // Single Turn Mode (User Message only)
-        // Wrapped in standard user role
+        // Single Turn Mode
         contents = [{
             role: 'user',
-            parts: [{ text: messageOrHistory }]
+            parts: [{ text: String(messageOrHistory || '').substring(0, 2000) }]
         }];
     }
 
@@ -72,7 +107,7 @@ export async function callGemini(systemPrompt, messageOrHistory, contextData = n
     };
 
     try {
-        const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+        const response = await fetchWithRetry(`${GEMINI_API_URL}?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
@@ -80,8 +115,16 @@ export async function callGemini(systemPrompt, messageOrHistory, contextData = n
 
         if (!response.ok) {
             const errorText = await response.text();
+            consecutiveFailures++;
+            if (consecutiveFailures >= 5) {
+                circuitOpenUntil = Date.now() + 60000;
+                console.error('[Gemini] Circuit breaker OPEN for 60s after 5 consecutive failures.');
+            }
             throw new Error(`Gemini API Error (${response.status}): ${errorText}`);
         }
+
+        // Reset circuit breaker on success
+        consecutiveFailures = 0;
 
         const data = await response.json();
         const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -94,6 +137,6 @@ export async function callGemini(systemPrompt, messageOrHistory, contextData = n
 
     } catch (error) {
         console.error('[Gemini Service] Error:', error.message);
-        throw error; // Re-throw for caller to handle
+        throw error;
     }
 }
