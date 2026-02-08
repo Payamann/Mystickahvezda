@@ -29,7 +29,7 @@ router.get('/users', authenticateToken, requireAdmin, async (req, res) => {
         res.json({ success: true, users });
     } catch (error) {
         console.error('Admin Users Error:', error);
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, error: 'Nepodařilo se načíst uživatele.' });
     }
 });
 
@@ -64,7 +64,7 @@ router.post('/user/:userId/subscription', authenticateToken, requireAdmin, async
         res.json({ success: true, message: `User plan updated to ${plan_type}` });
     } catch (error) {
         console.error('Admin Update Error:', error);
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, error: 'Nepodařilo se aktualizovat předplatné.' });
     }
 });
 

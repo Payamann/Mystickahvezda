@@ -1653,7 +1653,7 @@ body.page-mentor .header {
   }
 }
 
-@keyframes float {
+@keyframes float-gentle {
 
   0%,
   100% {
@@ -1695,7 +1695,7 @@ body.page-mentor .header {
 }
 
 .animate-float {
-  animation: float 6s ease-in-out infinite;
+  animation: float-gentle 6s ease-in-out infinite;
 }
 
 /* Stagger delays */
@@ -2056,10 +2056,10 @@ body.page-mentor .header {
   display: block;
   margin-bottom: var(--space-md);
   filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
-  animation: float 3s ease-in-out infinite;
+  animation: float-subtle 3s ease-in-out infinite;
 }
 
-@keyframes float {
+@keyframes float-subtle {
 
   0%,
   100% {
@@ -2232,13 +2232,6 @@ body.page-mentor .header {
   opacity: 0;
   transform: translateY(30px);
   animation: fadeInUp 0.6s ease forwards;
-}
-
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Shaking Animation (Shuffle) */
@@ -3278,7 +3271,7 @@ body {
 
 .loading-crystal {
   font-size: 2rem;
-  animation: float 2s infinite ease-in-out;
+  animation: float-subtle 2s infinite ease-in-out;
 }
 
 /* Responsive adjustments */
@@ -3838,7 +3831,7 @@ body {
 .premium-lock-overlay .lock-icon {
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  animation: pulse 2s infinite;
+  animation: pulse-scale 2s infinite;
 }
 
 .premium-lock-overlay h3 {
@@ -3853,7 +3846,7 @@ body {
   margin-bottom: 1rem;
 }
 
-@keyframes pulse {
+@keyframes pulse-scale {
   0% {
     transform: scale(1);
   }
@@ -3911,16 +3904,6 @@ body {
   animation: spin 0.75s linear infinite;
   margin-right: 8px;
   vertical-align: text-bottom;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 

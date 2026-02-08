@@ -47,12 +47,12 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
         res.sendStatus(200);
     } catch (err) {
         console.error('[STRIPE] Webhook error:', err.message);
-        res.status(400).send(`Webhook Error: ${err.message}`);
+        res.status(400).json({ success: false, error: 'Webhook processing failed' });
     }
 });
 
 app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Security Headers
 app.use(helmet({
@@ -300,11 +300,15 @@ app.post('/api/horoscope', aiLimiter, async (req, res) => {
     try {
         const { sign, period = 'daily', context = [] } = req.body;
 
-        if (!sign || typeof sign !== 'string') {
-            return res.status(400).json({ success: false, error: 'Znamení je povinné.' });
+        const VALID_SIGNS = ['Beran','Býk','Blíženci','Rak','Lev','Panna','Váhy','Štír','Střelec','Kozoroh','Vodnář','Ryby'];
+        if (!sign || !VALID_SIGNS.includes(sign)) {
+            return res.status(400).json({ success: false, error: 'Neplatné znamení.' });
+        }
+        if (!['daily','weekly','monthly'].includes(period)) {
+            return res.status(400).json({ success: false, error: 'Neplatné období.' });
         }
 
-        const contextHash = context.length > 0 ? Buffer.from(context.join('')).toString('base64').substring(0, 10) : 'nocontext';
+        const contextHash = context.length > 0 ? crypto.createHash('md5').update(context.join('|')).digest('hex').substring(0, 12) : 'nocontext';
         const cacheKey = getHoroscopeCacheKey(sign, period) + `-${contextHash}`;
 
         const cachedData = await getCachedHoroscope(cacheKey);
@@ -321,10 +325,15 @@ app.post('/api/horoscope', aiLimiter, async (req, res) => {
         let periodLabel;
         let contextInstruction = "";
 
-        if (context && context.length > 0) {
+        if (context && Array.isArray(context) && context.length > 0) {
+            // Sanitize context: limit length, strip control characters
+            const safeContext = context
+                .slice(0, 3)
+                .map(c => String(c).substring(0, 200).replace(/[\n\r]/g, ' '))
+                .join('", "');
             contextInstruction = `
 CONTEXT (Z uživatelova deníku):
-"${context.join('", "')}"
+"${safeContext}"
 INSTRUKCE PRO SYNERGII: Pokud je to relevantní, jemně a nepřímo nawazuj na témata z deníku. Neříkej "V deníku vidím...", ale spíše "Hvězdy naznačují posun v tématech, která tě trápí...". Buď empatický.`;
         }
 
@@ -580,8 +589,13 @@ app.delete('/api/user/readings/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Change user password
-app.put('/api/user/password', authenticateToken, async (req, res) => {
+// Change user password (rate limited)
+const passwordLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 3,
+    message: { success: false, error: 'Příliš mnoho pokusů o změnu hesla. Zkuste to za hodinu.' }
+});
+app.put('/api/user/password', passwordLimiter, authenticateToken, async (req, res) => {
     try {
         const { password } = req.body;
 

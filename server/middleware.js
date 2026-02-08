@@ -129,7 +129,7 @@ export const requireAdmin = (req, res, next) => {
     const userId = req.user?.id;
     const email = req.user?.email;
 
-    const adminEmailsEnv = process.env.ADMIN_EMAILS || 'pavel.hajek1989@gmail.com';
+    const adminEmailsEnv = process.env.ADMIN_EMAILS || '';
     const ADMIN_EMAILS = adminEmailsEnv.split(',').map(e => e.trim());
 
     if (!userId || !email || !ADMIN_EMAILS.includes(email)) {

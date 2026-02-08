@@ -1,11 +1,23 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
 import { supabase } from './db-supabase.js';
 import { JWT_SECRET } from './config/secrets.js';
 
 const router = express.Router();
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
+
+// Rate limit for auth endpoints (prevent brute force)
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // 10 attempts per window
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Příliš mnoho pokusů. Zkuste to za 15 minut.' }
+});
+router.use('/login', authLimiter);
+router.use('/register', authLimiter);
 
 const logDebug = (msg) => {
     if (IS_PRODUCTION) return;
@@ -37,16 +49,11 @@ router.post('/register', async (req, res) => {
 
         if (error) {
             console.error('Supabase Auth Error:', error);
-            if (error.message.includes('already registered') || error.message.includes('User already registered')) {
-                return res.status(400).json({ error: 'Uživatel s tímto emailem již existuje.' });
-            }
-            if (error.status === 400 || error.code === 400) {
-                return res.status(400).json({ error: 'Chyba registrace: ' + error.message });
-            }
             if (error.code === 'weak_password') {
-                return res.status(400).json({ error: 'Heslo musí mít alespoň 6 znaků.' });
+                return res.status(400).json({ error: 'Heslo musí mít alespoň 8 znaků.' });
             }
-            throw error;
+            // Generic message to prevent user enumeration
+            return res.status(400).json({ error: 'Registrace se nezdařila. Zkontrolujte email a heslo.' });
         }
 
         res.json({
@@ -79,21 +86,15 @@ router.post('/login', async (req, res) => {
         const authUser = authData.user;
         logDebug(`Login attempt for: ${authUser.email} (ID: ${authUser.id})`);
 
-        // Fetch our internal user data
+        // Fetch our internal user data (single join query)
         const { data: users, error: dbError } = await supabase
             .from('users')
-            .select('*')
+            .select('*, subscriptions(plan_type, status, credits)')
             .eq('id', authUser.id);
 
         let user = null;
         if (users && users.length > 0) {
             user = users[0];
-            const { data: sub } = await supabase
-                .from('subscriptions')
-                .select('plan_type, status, credits')
-                .eq('user_id', user.id)
-                .single();
-            if (sub) user.subscriptions = sub;
         }
 
         if (dbError) {
