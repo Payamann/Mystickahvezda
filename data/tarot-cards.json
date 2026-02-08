@@ -1,0 +1,470 @@
+{
+    "Blázen": {
+        "emoji": "🃏",
+        "image": "img/tarot/tarot_blazen.webp",
+        "meaning": "Nové začátky a nekonečné možnosti",
+        "interpretation": "Blázen symbolizuje čistou potenciál a svobodu ducha. Stojíte na prahu nové životní kapitoly plné vzrušujících možností. Tato karta vás vybízí, abyste důvěřovali životu a nebáli se udělat ten první krok do neznáma. Vaše naivita není slabost – je to dar, který vám umožňuje vidět svět bez předsudků. Buďte spontánní, následujte své srdce a nechte se unášet proudem osudu. Velké dobrodružství na vás čeká!"
+    },
+    "Mág": {
+        "emoji": "🪄",
+        "image": "img/tarot/tarot_mag.webp",
+        "meaning": "Síla vůle a manifestace",
+        "interpretation": "Mág představuje vaši schopnost přeměnit myšlenky ve skutečnost. Máte k dispozici všechny nástroje, které potřebujete – vzduch myšlenek, oheň vášně, vodu emocí a zemi praktičnosti. Nyní je čas jednat! Vaše soustředění a odhodlání jsou na vrcholu. Využijte tuto energii k manifestaci svých přání. Pamatujte: 'Jak nahoře, tak dole' – vaše vnitřní přesvědčení se odráží ve vnějším světě. Věřte ve svou sílu!"
+    },
+    "Velekněžka": {
+        "emoji": "🌙",
+        "image": "img/tarot/tarot_veleknezka.webp",
+        "meaning": "Intuice a vnitřní moudrost",
+        "interpretation": "Velekněžka je strážkyní tajemství a skrytých pravd. Vyzývá vás, abyste naslouchali svému vnitřnímu hlasu a důvěřovali své intuici. Odpovědi, které hledáte, nejsou venku – jsou hluboko ve vás. Věnujte čas meditaci, snění a tichu. Nezřídka se stává, že to nejdůležitější zůstává nevyřčeno. Buďte trpěliví, tajemství se vám odhalí, až přijde pravý čas. Váš podvědomí ví více, než tušíte."
+    },
+    "Císařovna": {
+        "emoji": "👑",
+        "image": "img/tarot/tarot_cisarovna.webp",
+        "meaning": "Hojnost a péče",
+        "interpretation": "Císařovna ztělesňuje plodnost, krásu a hojnost ve všech formách. Tato karta naznačuje období růstu a prosperity. Vaše tvořivá energie je nyní velmi silná – ať už se jedná o umělecké projekty, nové vztahy nebo doslova nový život. Pečujte o sebe i o ostatní, ale nezapomínejte přijímat péči zpět. Příroda vám nyní nabízí své dary. Obklopte se krásou, užívejte si smyslové potěšení a nechte lásku proudit."
+    },
+    "Císař": {
+        "emoji": "⚔️",
+        "image": "img/tarot/tarot_cisar.webp",
+        "meaning": "Autorita a struktura",
+        "interpretation": "Císař představuje sílu, disciplínu a řád. Je čas převzít kontrolu nad svým životem a stanovit jasné hranice. Vaše schopnost vést a organizovat je nyní klíčová. Buďte rozhodní, ale spravedliví. Tato karta může také poukazovat na důležitou autoritu ve vašem životě – otce, šéfa nebo mentora. Stabilita přichází skrze plánování a trpělivou práci. Postavte pevné základy pro svou budoucnost."
+    },
+    "Velekněz": {
+        "emoji": "📿",
+        "image": "img/tarot/tarot_veleknez.webp",
+        "meaning": "Tradice a duchovní vedení",
+        "interpretation": "Velekněz symbolizuje moudrost předávanou generacemi a spojení s vyššími pravdami. Možná hledáte duchovního průvodce nebo učitele, který vám pomůže najít cestu. Tato karta vás vybízí k respektu k tradicím, ale také k hledání vlastního duchovního smyslu. Rituály a společenství mohou být zdrojem síly. Někdy je nejlepší následovat osvědčenou cestu, než se vydávat do neznáma bez mapy."
+    },
+    "Milenci": {
+        "emoji": "💕",
+        "image": "img/tarot/tarot_milenci.webp",
+        "meaning": "Láska a volba",
+        "interpretation": "Milenci představují hluboké spojení, harmonii a důležitou volbu. Stojíte před rozhodnutím, které ovlivní vaše srdce. Tato karta může značit romantický vztah, který vás transformuje, nebo vnitřní sjednocení protikladů ve vaší duši. Následujte svou vášeň, ale buďte upřímní k sobě i k druhým. Pravá láska vyžaduje odvahu být zranitelný. Volte s otevřeným srdcem."
+    },
+    "Vůz": {
+        "emoji": "🏆",
+        "image": "img/tarot/tarot_vuz.webp",
+        "meaning": "Vítězství a odhodlání",
+        "interpretation": "Vůz symbolizuje triumf dosažený vůlí a sebekázní. Máte sílu překonat překážky a dosáhnout svých cílů. Klíčem je sjednotit své protichůdné síly – rozum a emoce, strach a odvahu – a nasměrovat je k jednomu cíli. Pohyb vpřed je nyní nevyhnutelný. Buďte připraveni na rychlý postup, ale udržujte kontrolu. Vítězství je na dosah, pokud zůstanete soustředění."
+    },
+    "Síla": {
+        "emoji": "🦁",
+        "image": "img/tarot/tarot_sila.webp",
+        "meaning": "Odvaha a vnitřní síla",
+        "interpretation": "Karta Síly ukazuje, že pravá moc nepochází z hrubé síly, ale z láskyplné trpělivosti a vnitřní odvahy. Dokážete zkrotit i ty nejdivočejší aspekty své povahy jemností a porozuměním. Čelíte výzvě, která vyžaduje vytrvalost a sebedůvěru. Nebojte se svých stínů – přijměte je a transformujte. Vaše ticha síla je mocnější než jakýkoli křik. Důvěřujte svému srdci."
+    },
+    "Poustevník": {
+        "emoji": "🏔️",
+        "image": "img/tarot/tarot_poustevnik.webp",
+        "meaning": "Introspekce a hledání pravdy",
+        "interpretation": "Poustevník vás vybízí k osamělé cestě do hlubin vlastní duše. Je čas ustoupit od hluku vnějšího světa a hledat moudrost v tichu. Vaše světlo – vaše pravda – může osvětlit cestu nejen vám, ale i ostatním. Nebuďte netrpěliví; odpovědi přijdou postupně. Samota není osamělost, ale příležitost k sebepoznání. Naslouchejte šepotu své duše ve tmě."
+    },
+    "Kolo štěstí": {
+        "emoji": "🎡",
+        "image": "img/tarot/tarot_kolo_stesti.webp",
+        "meaning": "Změna a cykly osudu",
+        "interpretation": "Kolo štěstí připomíná, že život je neustálý pohyb vzestupů a pádů. Nacházíte se v bodě obratu – možná k lepšímu, možná jen k jinému. Přijměte změnu jako přirozenou součást existence. To, co je dnes nahoře, může být zítra dole, a naopak. Klíčem je najít klid uprostřed neustálého pohybu. Karma se vrací – co zasejete, to sklidíte. Důvěřujte osudu."
+    },
+    "Spravedlnost": {
+        "emoji": "⚖️",
+        "image": "img/tarot/tarot_spravedlnost.webp",
+        "meaning": "Rovnováha a pravda",
+        "interpretation": "Spravedlnost přináší čas vyrovnání účtů a hledání pravdy. Vaše činy mají důsledky a nyní přichází moment, kdy se projeví. Buďte upřímní k sobě i k ostatním. Rozhodnutí, která učiníte, by měla být založena na faktech a férových principech, ne na emocích. Pokud jste jednali správně, budete odměněni. Pokud ne, je čas napravit své chyby. Rovnováha bude obnovena."
+    },
+    "Viselec": {
+        "emoji": "🙃",
+        "image": "img/tarot/tarot_viselec.webp",
+        "meaning": "Oběť a nový pohled",
+        "interpretation": "Viselec visí obráceně a vidí svět z jiného úhlu. Tato karta vás vybízí k zastavení, odevzdání a změně perspektivy. Někdy je třeba něco obětovat, abyste získali něco významnějšího. Nesnažte se situaci ovládat – pusťte a nechte věci plynout. To, co vypadá jako stagnace, je ve skutečnosti hluboká transformace. Wisdom přichází skrze trpělivost a přijetí."
+    },
+    "Smrt": {
+        "emoji": "🦋",
+        "image": "img/tarot/tarot_smrt.webp",
+        "meaning": "Transformace a nové začátky",
+        "interpretation": "Karta Smrti není o fyzickém konci, ale o hluboké transformaci. Něco ve vašem životě končí, aby mohlo vzniknout něco nového. Pusťte to, co již neslouží vašemu nejvyššímu dobru. Změna může být bolestivá, ale je nezbytná pro růst. Za každým koncem se skrývá nový začátek. Buďte odvážní a dovolte starému já zemřít, aby se mohlo zrodit nové, silnější já."
+    },
+    "Mírnost": {
+        "emoji": "⚗️",
+        "image": "img/tarot/tarot_mirnost.webp",
+        "meaning": "Harmonie a trpělivost",
+        "interpretation": "Mírnost je andělská karta rovnováhy a alchymické transformace. Míšením protikladů vzniká něco zcela nového a krásnějšího. Buďte trpěliví a hledejte střední cestu. Extrémní reakce vás nikam nedovedou. Čas léčí a integruje. Vaše schopnost harmonizovat různé aspekty života je nyní klíčová. Krok za krokem, kapka po kapce – tak se tvoří zázraky."
+    },
+    "Ďábel": {
+        "emoji": "⛓️",
+        "image": "img/tarot/tarot_dabel.webp",
+        "meaning": "Pokušení a stínová stránka",
+        "interpretation": "Ďábel odhaluje vaše stínové stránky, závislosti a omezující vzorce. Ale pozor – řetězy, které vás drží, jsou volnější, než si myslíte. Máte moc se osvobodit! Tato karta vás vybízí k upřímnému pohledu na to, co vás ovládá – strach, touha, materiální lpění. Přijměte svou temnou stránku, abyste ji mohli transformovat. Svoboda začíná uvědoměním."
+    },
+    "Věž": {
+        "emoji": "🌩️",
+        "image": "img/tarot/tarot_vez.webp",
+        "meaning": "Náhlá změna a osvobození",
+        "interpretation": "Věž přináší náhlé otřesy a rozpad starých struktur. To, co bylo postaveno na nepevných základech, se zhroutí. Může to být bolestivé, ale je to nutné očištění. Z trosek povstane něco autentičtějšího a silnějšího. Nepřite se změně – čím více se budete držet starého, tím bolestnější bude pád. Blesk pravdy osvětluje to, co jste nechtěli vidět. Přijměte transformaci."
+    },
+    "Hvězda": {
+        "emoji": "⭐",
+        "image": "img/tarot/tarot_hvezda.webp",
+        "meaning": "Naděje a inspirace",
+        "interpretation": "Hvězda přináší naději po temných časech. Jste na správné cestě a vesmír vás podporuje. Vaše přání mají sílu se vyplnit, pokud věříte. Tato karta symbolizuje uzdravení, duchovní obnovu a spojení s vyšším vedením. Nechte se inspirovat hvězdami – vaše sny nejsou jen fantazie, jsou to šepoty vaší duše. Léčení přichází, mír se vrací. Důvěřujte."
+    },
+    "Luna": {
+        "emoji": "🌕",
+        "image": "img/tarot/tarot_luna.webp",
+        "meaning": "Intuice a podvědomí",
+        "interpretation": "Luna osvětluje svět podvědomí, snů a iluzí. Věci nejsou takové, jaké se zdají – důvěřujte své intuici více než očím. Tato karta může značit období nejistoty nebo zmatení, ale také hluboké tvořivosti a psychických schopností. Nebojte se tmy – v ní se rodí nejhlubší moudrost. Sledujte své sny, naslouchejte svým strachům. Za iluzí se skrývá pravda."
+    },
+    "Slunce": {
+        "emoji": "☀️",
+        "image": "img/tarot/tarot_slunce.webp",
+        "meaning": "Radost a úspěch",
+        "interpretation": "Slunce je nejpozitivnější kartou tarotu! Přináší radost, vitalitu, úspěch a jasnost. Vše se vyjasňuje a vy zářite. Toto je čas oslavy, optimismu a dětské radosti ze života. Vaše pravé já září bez stínů. Užívejte si tento požehnaný čas, sdílejte své štěstí s ostatními. Teplo a světlo jsou všude kolem vás. Radujte se – zasloužíte si to!"
+    },
+    "Soud": {
+        "emoji": "📯",
+        "image": "img/tarot/tarot_soud.webp",
+        "meaning": "Probuzení a odpuštění",
+        "interpretation": "Soud ohlašuje čas velkého probuzení a účtování. Uslyšíte volání k vyššímu účelu a budete vyzváni k transformaci. Je čas odpustit sobě i ostatním a osvobodit se od minulosti. Vaše činy budou posouzeny – ne jako trest, ale jako příležitost k růstu. Povstaňte z omezení starého života a přijměte novou verzi sebe sama. Znovuzrození je na dosah."
+    },
+    "Svět": {
+        "emoji": "🌍",
+        "image": "img/tarot/tarot_svet.webp",
+        "meaning": "Dokončení a naplnění",
+        "interpretation": "Svět je kartou úplnosti a dokončení velkého cyklu. Dosáhli jste významného milníku a můžete oslavit své úspěchy. Cítíte jednotu se vším živým a harmonie prostupuje vaším životem. Ale pamatujte – každý konec je novým začátkem. Tančíte v rytmu vesmíru, jedno s veškerým stvořením. Buďte vděční za cestu a připravte se na nové dobrodružství."
+    },
+    "Eso holí": {
+        "emoji": "🔥",
+        "image": "img/tarot/tarot_eso_holi.webp",
+        "meaning": "Nová inspirace a energie",
+        "interpretation": "Eso holí přináší jiskru nové vášně a tvořivé energie. Je to počátek velkého dobrodružství nebo projektu. Cítíte vzrušení a odhodlání jednat. Chopte se této energie a směle kupředu! Kreativita plane, nápady proudí. Toto je posvátný okamžik zrození něčeho významného. Buďte odvážní a nechte svou vnitřní sílu zazářit."
+    },
+    "Dvojka holí": {
+        "emoji": "🌐",
+        "image": "img/tarot/tarot_dvojka_holi.webp",
+        "meaning": "Plánování a rozhodování",
+        "interpretation": "Stojíte na křižovatce a přemýšlíte o správném směru. Dvojka holí vás vybízí k promyšlenému plánování a zvážení možností. Svět je váš – kam povedou vaše kroky? Nebojte se velkých vizí, ale buďte připraveni na práci, kterou vyžadují. Sebedůvěra je klíčem k úspěchu."
+    },
+    "Trojka holí": {
+        "emoji": "🚢",
+        "image": "img/tarot/tarot_trojka_holi.webp",
+        "meaning": "Expanze a průzkum",
+        "interpretation": "Vaše plány se začínají realizovat a obzory se rozšiřují. Trojka holí značí období růstu, obchodu a objevování nových příležitostí. Vyhlížejte daleko a buďte připraveni na cestu do neznáma. Vaše vize se stává skutečností. Odvaha a podnikavost budou odměněny."
+    },
+    "Čtyřka holí": {
+        "emoji": "🏠",
+        "image": "img/tarot/tarot_ctyrka_holi.webp",
+        "meaning": "Oslava a stabilita",
+        "interpretation": "Je čas na oslavu! Čtyřka holí symbolizuje radostné dokončení fáze a pocit domova. Sdílejte své štěstí s blízkými. Základy jsou pevné, harmonie vládne. Užijte si tento požehnaný čas stability a soudržnosti. Komunita vás podporuje."
+    },
+    "Pětka holí": {
+        "emoji": "⚔️",
+        "image": "img/tarot/tarot_petka_holi.webp",
+        "meaning": "Konflikt a soutěž",
+        "interpretation": "Pětka holí ukazuje na třenice, soutěžení nebo vnitřní boj. Ale pamatujte – zdravá soutěž může být konstruktivní. Stojte si za svým, ale hledejte také kompromis. Konflikt může vést k růstu, pokud je řešen s respektem. Naslouchejte i opačným názorům."
+    },
+    "Šestka holí": {
+        "emoji": "🏆",
+        "image": "img/tarot/tarot_sestka_holi.webp",
+        "meaning": "Vítězství a uznání",
+        "interpretation": "Triumf! Šestka holí přináší veřejné uznání a pocit vítězství. Vaše úsilí bylo odměněno a ostatní vás obdivují. Užijte si chvíli slávy, ale zůstaňte pokorní. Úspěch je sladší, když je sdílen. Jste inspirací pro ostatní."
+    },
+    "Sedmička holí": {
+        "emoji": "🛡️",
+        "image": "img/tarot/tarot_sedmicka_holi.webp",
+        "meaning": "Obrana a vytrvalost",
+        "interpretation": "Čelíte výzvám ze všech stran, ale máte sílu se bránit. Sedmička holí vyžaduje odvahu a odhodlání. Nevzdávejte se – vaše pozice je silnější, než si myslíte. Vytrvejte a prokážete svou hodnotu. Víra v sebe sama je vaší nejlepší zbraní."
+    },
+    "Osmička holí": {
+        "emoji": "✈️",
+        "image": "img/tarot/tarot_osmicka_holi.webp",
+        "meaning": "Rychlý pohyb a akce",
+        "interpretation": "Věci se dávají do pohybu rychleji, než jste očekávali! Osmička holí přináší zprávy, cestování nebo náhlý pokrok. Buďte připraveni rychle reagovat. Energie proudí, zastávky nejsou. Směr je jasný – plným tempem vpřed!"
+    },
+    "Devítka holí": {
+        "emoji": "💪",
+        "image": "img/tarot/tarot_devitka_holi.webp",
+        "meaning": "Odolnost a hranice",
+        "interpretation": "Prošli jste bitvami a máte jizvy, ale stále stojíte. Devítka holí ukazuje vaši sílu a odolnost. Buďte ostražití, ale nedejte strachu vládnout. Vaše zkušenosti vás učinily moudřejšími. Chraňte své hranice, ale buďte otevření léčení."
+    },
+    "Desítka holí": {
+        "emoji": "🎒",
+        "image": "img/tarot/tarot_desitka_holi.webp",
+        "meaning": "Břemeno a zodpovědnost",
+        "interpretation": "Nesete těžké břemeno – možná příliš těžké. Desítka holí vás vybízí k zamyšlení, zda všechny ty povinnosti jsou skutečně vaše. Cíl je blízko, vytrvejte! Ale naučte se také delegovat a odpočívat. Síla je v moudrém rozložení zátěže."
+    },
+    "Páže holí": {
+        "emoji": "📨",
+        "image": "img/tarot/tarot_paze_holi.webp",
+        "meaning": "Nadšení a nové zprávy",
+        "interpretation": "Páže holí přináší vzrušující zprávy nebo nové příležitosti! Tato mladistvá energie je plná nadšení a zvědavosti. Buďte otevření novým nápadům a nebojte se experimentovat. Vaše kreativita je nakažlivá. Dobrodružství volá!"
+    },
+    "Rytíř holí": {
+        "emoji": "🐎",
+        "image": "img/tarot/tarot_rytir_holi.webp",
+        "meaning": "Vášeň a dobrodružství",
+        "interpretation": "Rytíř holí se řítí vpřed s ohněm v očích! Tato karta představuje vášnivou akci a touhu po dobrodružství. Buďte odvážní, ale pozor na impulzivnost. Vaše charisma přitahuje lidi. Energie je vysoká – směřujte ji moudře k svým cílům."
+    },
+    "Královna holí": {
+        "emoji": "🌻",
+        "image": "img/tarot/tarot_kralovna_holi.webp",
+        "meaning": "Vřelost a kreativita",
+        "interpretation": "Královna holí ztělesňuje vřelou, kreativní energii a sebejistotu. Je magnetická a inspirující. Věřte ve své schopnosti a vyzařujte teplo. Vaše přítomnost osvětluje místnost. Tvořivost a vášeň jsou vaše superpoery. Buďte věrní sobě."
+    },
+    "Král holí": {
+        "emoji": "👑",
+        "image": "img/tarot/tarot_kral_holi.webp",
+        "meaning": "Vize a vůdcovství",
+        "interpretation": "Král holí je vizionářský vůdce s neochvějnou sebedůvěrou. Inspirujete ostatní svou odvahou a rozhodností. Vaše vize může změnit svět – věřte jí! Vedení přichází přirozeně. Buďte spravedliví a nezapomínejte na ty, kteří vás následují."
+    },
+    "Eso pohárů": {
+        "emoji": "💖",
+        "image": "img/tarot/tarot_eso_poharu.webp",
+        "meaning": "Nová láska a emoce",
+        "interpretation": "Eso pohárů přináší příliv nových emocí a možnost hluboké lásky. Srdce se otevírá novým spojením. Přijměte tento dar s vděčností a otevřeností. Intuice je silná, city hluboké. Nechte lásku proudit – do vás i z vás."
+    },
+    "Dvojka pohárů": {
+        "emoji": "💑",
+        "image": "img/tarot/tarot_dvojka_poharu.webp",
+        "meaning": "Partnerství a spojení",
+        "interpretation": "Dvojka pohárů symbolizuje hluboké spojení dvou duší. Romantický vztah, přátelství nebo obchodní partnerství založené na vzájemném respektu. Harmonie a rovnováha ve vztazích. Naslouchejte si navzájem. Láska roste skrze sdílení."
+    },
+    "Trojka pohárů": {
+        "emoji": "🥂",
+        "image": "img/tarot/tarot_trojka_poharu.webp",
+        "meaning": "Oslava a přátelství",
+        "interpretation": "Čas oslavy! Trojka pohárů zve k radosti sdílené s přáteli. Komunita, tvořivost a radost ze života jsou v popředí. Užijte si společenské události a posilujte přátelské vazby. Štěstí se násobí, když je sdíleno."
+    },
+    "Čtyřka pohárů": {
+        "emoji": "😔",
+        "image": "img/tarot/tarot_ctyrka_poharu.webp",
+        "meaning": "Nespokojenost a introspekce",
+        "interpretation": "Čtyřka pohárů ukazuje na apatii nebo nespokojenost s tím, co máte. Ale pozor – možná přehlížíte nabízené příležitosti! Podívejte se kolem sebe novýma očima. Vděčnost může změnit perspektivu. Někdy je třeba obrátit pohled zpět k jednoduchým radostem."
+    },
+    "Pětka pohárů": {
+        "emoji": "😢",
+        "image": "img/tarot/tarot_petka_poharu.webp",
+        "meaning": "Ztráta a smutek",
+        "interpretation": "Pětka pohárů přináší bolest ze ztráty nebo zklamání. Je přirozené truchlit, ale nezůstávejte v minulosti navždy. Všimněte si – stále máte čím být požehnáni. Léčení přijde. Smutek je součástí lásky, ale naděje nikdy neumírá."
+    },
+    "Šestka pohárů": {
+        "emoji": "🧒",
+        "image": "img/tarot/tarot_sestka_poharu.webp",
+        "meaning": "Nostalgie a vzpomínky",
+        "interpretation": "Šestka pohárů vás vrací do minulosti – ke sladkým vzpomínkám nebo nevyřešeným vztahům. Někdy je dobré navštívit minulost, ale nežijte v ní. Nevinnost a jednoduchost mají svou hodnotu. Možná vás čeká setkání s někým z dávných časů."
+    },
+    "Sedmička pohárů": {
+        "emoji": "💭",
+        "image": "img/tarot/tarot_sedmicka_poharu.webp",
+        "meaning": "Fantazie a volby",
+        "interpretation": "Sedmička pohárů ukazuje množství možností a snění. Ale pozor – ne všechny jsou reálné! Rozlišujte mezi přáním a skutečností. Soustřeďte se na to, co je skutečně dosažitelné. Někdy je třeba probudit se ze snu a jednat."
+    },
+    "Osmička pohárů": {
+        "emoji": "🚶",
+        "image": "img/tarot/tarot_osmicka_poharu.webp",
+        "meaning": "Odchod a hledání smyslu",
+        "interpretation": "Osmička pohárů značí odvrat od toho, co již nenaplňuje. Máte odvahu opustit to, co znáte, a vydat se hledat hlubší smysl. Cesta může být osamělá, ale nezbytná pro růst. Někdy musíme opustit dobré, abychom našli skvělé."
+    },
+    "Devítka pohárů": {
+        "emoji": "😊",
+        "image": "img/tarot/tarot_devitka_poharu.webp",
+        "meaning": "Splněná přání a spokojenost",
+        "interpretation": "Devítka pohárů je 'karta přání' – vaše touhy se naplňují! Spokojenost, materiální i emocionální hojnost. Užívejte si! Vděčnost zesiluje požehnání. Sdílejte své štěstí a bude se množit. Zasloužíte si tuto radost."
+    },
+    "Desítka pohárů": {
+        "emoji": "👨‍👩‍👧‍👦",
+        "image": "img/tarot/tarot_desitka_poharu.webp",
+        "meaning": "Rodinné štěstí a harmonie",
+        "interpretation": "Desítka pohárů představuje dokonalou emocionální naplnění – šťastnou rodinu, harmonické vztahy, hlubokou lásku. Duha požehnání nad vaším domovem. Toto je to, oč v životě jde. Chraňte a pěstujte tyto poklady lásky."
+    },
+    "Páže pohárů": {
+        "emoji": "🌈",
+        "image": "img/tarot/tarot_paze_poharu.webp",
+        "meaning": "Citlivost a kreativní zprávy",
+        "interpretation": "Páže pohárů přináší jemnou, intuitivní energii a možná romantickou nebo kreativní zprávu. Buďte otevření svým emocím a snům. Mladistvá citlivost je darem, ne slabostí. Nechte se inspirovat krásou kolem vás."
+    },
+    "Rytíř pohárů": {
+        "emoji": "🦄",
+        "image": "img/tarot/tarot_rytir_poharu.webp",
+        "meaning": "Romantika a idealismus",
+        "interpretation": "Rytíř pohárů je romantický snílek přicházející s nabídkou lásky. Následujte své srdce, ale zůstaňte uzemněni. Idealismus je krásný, ale realita vyžaduje také praktičnost. Vaše citlivost přitahuje hluboká spojení."
+    },
+    "Královna pohárů": {
+        "emoji": "🧜‍♀️",
+        "image": "img/tarot/tarot_kralovna_poharu.webp",
+        "meaning": "Empatie a intuice",
+        "interpretation": "Královna pohárů je mistryní emocí a intuice. Hluboce cítí a rozumí lidským srdcím. Důvěřujte svým pocitům a pečujte o ostatní, ale nezapomínejte na sebe. Vaše empatie je léčivá. Voda emocí proudí čistě skrze vás."
+    },
+    "Král pohárů": {
+        "emoji": "🌊",
+        "image": "img/tarot/tarot_kral_poharu.webp",
+        "meaning": "Emocionální moudrost a rovnováha",
+        "interpretation": "Král pohárů ovládá oceán emocí s klidnou moudrostí. Umí cítit hluboce a zároveň zůstat vyrovnaný. Tato karta vás vybízí k emocionální zralosti a soucitu. Vedení srdcem je stejně důležité jako vedení rozumem."
+    },
+    "Eso mečů": {
+        "emoji": "💡",
+        "image": "img/tarot/tarot_eso_mecu.webp",
+        "meaning": "Jasnost a pravda",
+        "interpretation": "Eso mečů přináší pronikavou jasnost myšlení a sílu pravdy. Mentální průlom, nový pohled, vítězství intelektu. Pravda může být ostrá, ale osvobozující. Použijte tuto mentální sílu spravedlivě. Mysl je nejostřejší zbraň."
+    },
+    "Dvojka mečů": {
+        "emoji": "⚖️",
+        "image": "img/tarot/tarot_dvojka_mecu.webp",
+        "meaning": "Patová situace a rozhodování",
+        "interpretation": "Dvojka mečů ukazuje vnitřní konflikt a neschopnost rozhodnout se. Zavázané oči symbolizují vědomé vyhýbání se pravdě. Přijde čas, kdy budete muset zvolit. Naslouchejte intuici, přijměte nejistotu, a pak jednejte."
+    },
+    "Trojka mečů": {
+        "emoji": "💔",
+        "image": "img/tarot/tarot_trojka_mecu.webp",
+        "meaning": "Bolest srdce a smutek",
+        "interpretation": "Trojka mečů přináší bolestivou pravdu – zradu, rozchod, žal. Je těžké, ale nutné projít touto bolestí. Slzy očišťují duši. Léčení začíná přijetím reality. Z této rány povstanete silnější. Nejste sami ve svém smutku."
+    },
+    "Čtyřka mečů": {
+        "emoji": "🧘",
+        "image": "img/tarot/tarot_ctyrka_mecu.webp",
+        "meaning": "Odpočinek a regenerace",
+        "interpretation": "Čtyřka mečů vyžaduje zastavení a odpočinek. Vaše mysl potřebuje ticho po bouři. Meditace, spánek, ústup ze světa – to vše je nyní nezbytné. Naberte síly pro další boje. Klid mysli přináší jasnost."
+    },
+    "Pětka mečů": {
+        "emoji": "😈",
+        "image": "img/tarot/tarot_petka_mecu.webp",
+        "meaning": "Konflikt a porážka",
+        "interpretation": "Pětka mečů ukazuje konflikt, kde nikdo skutečně nevyhrává. Možná jste zvítězili, ale za jakou cenu? Nebo jste prohráli a cítíte hořkost. Přehodnoťte, zda boj stojí za to. Někdy je moudřejší ustoupit než bojovat dál."
+    },
+    "Šestka mečů": {
+        "emoji": "⛵",
+        "image": "img/tarot/tarot_sestka_mecu.webp",
+        "meaning": "Přechod a léčení",
+        "interpretation": "Šestka mečů přináší přechod do klidnějších vod. Opouštíte bouřlivé období a směřujete k léčení. Cesta může být smutná – opouštíte známé břehy. Ale budoucnost slibuje mír. Důvěřujte procesupřechodu."
+    },
+    "Sedmička mečů": {
+        "emoji": "🦊",
+        "image": "img/tarot/tarot_sedmicka_mecu.webp",
+        "meaning": "Klam a strategie",
+        "interpretation": "Sedmička mečů varuje před klamem – vlastním nebo cizím. Někdo možná není upřímný. Nebo hledáte zkratku, která není čestná. Zamyslete se nad svými motivy. Někdy je diplomacie nutná, ale udržujte si integritu."
+    },
+    "Osmička mečů": {
+        "emoji": "🪤",
+        "image": "img/tarot/tarot_osmicka_mecu.webp",
+        "meaning": "Omezení a vlastní vězení",
+        "interpretation": "Osmička mečů ukazuje mentální past, kterou jste si sami vytvořili. Cítíte se uvězněni myšlenkami nebo situací, ale cesta ven existuje. Bandáž přes oči lze sejmout. Zbavte se omezujících přesvědčení. Svoboda je ve vaší mysli."
+    },
+    "Devítka mečů": {
+        "emoji": "😰",
+        "image": "img/tarot/tarot_devitka_mecu.webp",
+        "meaning": "Úzkost a noční můry",
+        "interpretation": "Devítka mečů odráží trýznivé myšlenky a obavy, které vás probouzejí v noci. Úzkost a stres dosahují vrcholu. Většina těchto strachů je přehnaná – realita je méně strašidelná. Hledejte podporu, mluvte o svých obavách. Svítání přijde."
+    },
+    "Desítka mečů": {
+        "emoji": "⚰️",
+        "image": "img/tarot/tarot_desitka_mecu.webp",
+        "meaning": "Konec a nový začátek",
+        "interpretation": "Desítka mečů značí bolestivý, ale definitivní konec. Co muselo skončit, skončilo. Nejhlubší bod byl dosažen – dále je jen cesta nahoru. Přijměte tuto 'smrt' jako nutnost pro znovuzrození. Nový úsvit čeká za horizontem."
+    },
+    "Páže mečů": {
+        "emoji": "🔍",
+        "image": "img/tarot/tarot_paze_mecu.webp",
+        "meaning": "Zvídavost a bdělost",
+        "interpretation": "Páže mečů přináší ostrou zvídavost a mentální čilost. Buďte připraveni na nové informace nebo výzvy k učení. Nebojte se klást otázky. Váš bystrý pohled odhalí pravdu. Jen pozor na příliš ostrý jazyk."
+    },
+    "Rytíř mečů": {
+        "emoji": "⚡",
+        "image": "img/tarot/tarot_rytir_mecu.webp",
+        "meaning": "Rychlé myšlení a akce",
+        "interpretation": "Rytíř mečů se řítí vpřed s rychlostí blesku! Mentální agrese, rychlá rozhodnutí, přímočaré jednání. Odvaha mysli je obdivuhodná, ale pozor na neuváženost. Zamyslete se, než promluvíte. Vaše slova mají moc."
+    },
+    "Královna mečů": {
+        "emoji": "❄️",
+        "image": "img/tarot/tarot_kralovna_mecu.webp",
+        "meaning": "Nezávislost a jasné myšlení",
+        "interpretation": "Královna mečů je nezávislá, inteligentní žena s pronikavým úsudkem. Její srdce zůstává chráněné za hradbou rozumu. Buďte objektivní a spravedliví. Pravda je důležitější než příjemnost. Respektujte své hranice a vyžadujte respekt."
+    },
+    "Král mečů": {
+        "emoji": "⚔️",
+        "image": "img/tarot/tarot_kral_mecu.webp",
+        "meaning": "Autorita intelektu a spravedlnost",
+        "interpretation": "Král mečů je vrcholný stratég a nositel spravedlnosti. Jeho slova jsou zákon, jeho myšlení je jasné jako křišťál. Používejte svou mentální autoritu moudře a eticky. Rozhodujte bez emocí, ale s empatií. Pravda vítězí."
+    },
+    "Eso pentáklů": {
+        "emoji": "💰",
+        "image": "img/tarot/tarot_eso_pentaklu.webp",
+        "meaning": "Nová příležitost a prosperita",
+        "interpretation": "Eso pentáklů přináší hmatatelnou příležitost – finanční, kariérní nebo zdravotní zlepšení. Semínko prosperity je zasazeno. Pečujte o něj trpělivě a vyroste v něco krásného. Materiální svět je požehnán. Buďte vděční a praktičtí."
+    },
+    "Dvojka pentáklů": {
+        "emoji": "⚖️",
+        "image": "img/tarot/tarot_dvojka_pentaklu.webp",
+        "meaning": "Rovnováha a přizpůsobivost",
+        "interpretation": "Dvojka pentáklů vyžaduje žonglování různých aspektů života. Finance, práce, vztahy – vše vyžaduje pozornost. Flexibilita je klíčem k úspěchu. Najděte svůj rytmus v neustálém pohybu. Rovnováha není statická, je to tanec."
+    },
+    "Trojka pentáklů": {
+        "emoji": "🔨",
+        "image": "img/tarot/tarot_trojka_pentaklu.webp",
+        "meaning": "Mistrovství a spolupráce",
+        "interpretation": "Trojka pentáklů ukazuje hodnotu týmové práce a řemeslné dokonalosti. Spolupracujte s ostatními pro lepší výsledky. Vaše dovednosti jsou uznávány. Učení nikdy nekončí – staňte se mistrem svého řemesla. Kvalita přináší odměnu."
+    },
+    "Čtyřka pentáklů": {
+        "emoji": "🏦",
+        "image": "img/tarot/tarot_ctyrka_pentaklu.webp",
+        "meaning": "Stabilita a kontrola",
+        "interpretation": "Čtyřka pentáklů symbolizuje finanční stabilitu, ale také možné lpění na majetku. Jistota je důležitá, ale nepřeháníte to s kontrolou? Někdy je třeba pustit, aby se mohlo přijímat. Najděte rovnováhu mezi šetřením a štědrostí."
+    },
+    "Pětka pentáklů": {
+        "emoji": "🥶",
+        "image": "img/tarot/tarot_petka_pentaklu.webp",
+        "meaning": "Nedostatek a izolace",
+        "interpretation": "Pětka pentáklů přináší pocit materiálního nebo duchovního nedostatku. Je těžké období, ale pomoc je dostupná – stačí o ni požádat. Nestyďte se. Společenství je silnější než samota. Temnota pomine, teplo se vrátí."
+    },
+    "Šestka pentáklů": {
+        "emoji": "🤲",
+        "image": "img/tarot/tarot_sestka_pentaklu.webp",
+        "meaning": "Štědrost a spravedlnost",
+        "interpretation": "Šestka pentáklů přináší požehnání dávání i přijímání. Pokud máte, sdílejte. Pokud potřebujete, přijměte s vděčností. Rovnováha ve výměně energie. Karma se vrací – dobro plodí dobro. Buďte spravedliví ve svém rozdělování."
+    },
+    "Sedmička pentáklů": {
+        "emoji": "🌱",
+        "image": "img/tarot/tarot_sedmicka_pentaklu.webp",
+        "meaning": "Trpělivost a hodnocení",
+        "interpretation": "Sedmička pentáklů vás vybízí k trpělivému čekání na plody vaší práce. Zaseli jste, nyní musíte čekat. Využijte čas k hodnocení – je vaše směřování správné? Někdy je třeba upravit strategii. Nejlepší věci potřebují čas k dozrání."
+    },
+    "Osmička pentáklů": {
+        "emoji": "⚒️",
+        "image": "img/tarot/tarot_osmicka_pentaklu.webp",
+        "meaning": "Píle a zdokonalování",
+        "interpretation": "Osmička pentáklů je kartou tvrdé práce a soustředění na detail. Zdokonalujte své dovednosti trpělivou praxí. Odměna přijde, ale vyžaduje úsilí. Mistr se nerodí přes noc. Užívejte si proces stejně jako výsledek."
+    },
+    "Devítka pentáklů": {
+        "emoji": "🏡",
+        "image": "img/tarot/tarot_devitka_pentaklu.webp",
+        "meaning": "Nezávislost a úspěch",
+        "interpretation": "Devítka pentáklů symbolizuje dosažení materiální nezávislosti vlastními silami. Spokojená žena v zahradě svého úspěchu. Luxus, pohodlí, sebestačnost. Užijte si plody své práce. Zasloužíte si chvíli odpočinku v kráse."
+    },
+    "Desítka pentáklů": {
+        "emoji": "👨‍👩‍👧‍👦",
+        "image": "img/tarot/tarot_desitka_pentaklu.webp",
+        "meaning": "Rodinné dědictví a hojnost",
+        "interpretation": "Desítka pentáklů představuje generační bohatství a rodinnou stabilitu. Tradice, domov, řád – vše je na svém místě. Tato hojnost je určena k předání dalším generacím. Buďte vděční strážci rodinného dědictví."
+    },
+    "Páže pentáklů": {
+        "emoji": "📚",
+        "image": "img/tarot/tarot_paze_pentaklu.webp",
+        "meaning": "Učení a nové příležitosti",
+        "interpretation": "Páže pentáklů přináší možnost naučit se něco praktického a hodnotného. Buďte pilní studenti života. Nová kariérní příležitost nebo finanční novinka může přijít. Zůstaňte uzemnění a otevření růstu."
+    },
+    "Rytíř pentáklů": {
+        "emoji": "🐂",
+        "image": "img/tarot/tarot_rytir_pentaklu.webp",
+        "meaning": "Spolehlivost a vytrvalost",
+        "interpretation": "Rytíř pentáklů je spolehlivý, trpělivý a odhodlaný. Pomalý, ale neúnavný postup k cíli. Není to vzrušující, ale je to efektivní. Důslednost porazí brilanci. Buďte tou skálou, na kterou se ostatní mohou spolehnout."
+    },
+    "Královna pentáklů": {
+        "emoji": "🌿",
+        "image": "img/tarot/tarot_kralovna_pentaklu.webp",
+        "meaning": "Péče a praktičnost",
+        "interpretation": "Královna pentáklů je zosobněním pečující praktičnosti a spojení se zemí. Domov, zdraví, příroda – vše je v jejích schopných rukou. Pečujte o sebe a své milované. Hojnost roste tam, kde je láska. Uzemnění přináší mír."
+    },
+    "Král pentáklů": {
+        "emoji": "🏰",
+        "image": "img/tarot/tarot_kral_pentaklu.webp",
+        "meaning": "Materiální úspěch a moudrost",
+        "interpretation": "Král pentáklů je moudrý vládce materiálního světa. Finanční úspěch dosažený tvrdou prací a chytrými rozhodnutími. Buďte štědří, ale rozumní. Vaše stabilita je darem pro ostatní. Vládněte svému království s laskavostí."
+    }
+}

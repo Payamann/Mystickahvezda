@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hvězdný Průvodce | Mystická Hvězda</title>
+    <meta name="description" content="Váš osobní duchovní mentor. Ptejte se na osud, vztahy a životní směr.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.v2.css?v=mentor_fix_final">
+    <style>
+        /* Specific Styles for Mentor Chat */
+        .chat-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+            background: rgba(10, 10, 26, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(155, 89, 182, 0.1);
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            background: rgba(212, 175, 55, 0.05);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mentor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-mystic-gold), #9b59b6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            position: relative;
+        }
+
+        .mentor-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+            width: 12px;
+            height: 12px;
+            background: #4CAF50;
+            border: 2px solid #0a0a1a;
+            border-radius: 50%;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            line-height: 1.6;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message--mentor {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom-left-radius: 2px;
+            color: var(--color-starlight);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .message--user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(155, 89, 182, 0.2));
+            border-bottom-right-radius: 2px;
+            color: #fff;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .chat-input-area {
+            padding: 1.5rem;
+            background: rgba(10, 10, 26, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            color: #fff;
+            font-family: inherit;
+            resize: none;
+            min-height: 50px;
+            max-height: 120px;
+            transition: all 0.3s ease;
+            cursor: text !important;
+            caret-color: white !important;
+            /* Force white caret for visibility */
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--color-mystic-gold);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--color-mystic-gold);
+            border: none;
+            color: #0a0a1a;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #444;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            align-self: flex-start;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--color-mystic-gold);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        /* Paywall Overlay */
+        .limit-reached-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 26, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 10;
+            display: none;
+            /* Hidden by default */
+        }
+    </style>
+</head>
+
+<body class="page-mentor">
+    <div class="stars" aria-hidden="true"></div>
+
+    <!-- Headers Placeholder -->
+    <div id="header-placeholder"></div>
+
+    <main class="section section--hero" style="min-height: 100vh; padding-top: 180px;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 2rem; position: relative; z-index: 2;" data-animate>
+                <h1 class="hero__title">Hvězdný <span class="text-gradient">Průvodce</span></h1>
+                <p class="hero__subtitle">Váš osobní duchovní mentor, který zná váš osud.</p>
+            </div>
+
+            <div class="chat-container box-shadow-glow" data-animate>
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="mentor-avatar">🧙‍♂️</div>
+                    <div>
+                        <h3 style="margin: 0; color: var(--color-mystic-gold);">Mentor</h3>
+                        <span style="font-size: 0.8rem; color: var(--color-silver-mist);">Online • Připojen k poli
+                            vědomí</span>
+                    </div>
+                </div>
+
+                <!-- Messages Area -->
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Welcome Message -->
+                    <div class="message message--mentor">
+                        Vítej, poutníku. Cítím tvou energii. Jsem zde, abych ti pomohl nahlédnout za oponu reality
+                        pomocí moudrosti hvězd. Na co se chceš dnes zeptat? 🦉
+                    </div>
+
+                    <!-- Typing Indicator -->
+                    <div class="typing-indicator" id="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="chat-input-area">
+                    <textarea id="chat-input" class="chat-input"
+                        placeholder="Napiš svou otázku... (např. Co mě čeká v lásce?)" rows="1"></textarea>
+                    <button id="send-btn" class="send-btn" disabled>
+                        ➤
+                    </button>
+
+                    <!-- Limit Overlay (Inside Input Area for FREE users) -->
+                    <!-- Logic handled in JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+
+
+
+    <!-- Added for header scroll effect -->
+    <script type="module" src="js/mentor.js"></script>
+
+    <script src="js/api-config.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+    <script src="js/auth-client.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script type="module" src="js/main.js?v=5"></script>
+
+</body>
+
+</html>

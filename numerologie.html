@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Objevte skrytý význam čísel ve vašem životě. Výpočet čísla životní cesty, osudu a duše.">
+    <meta name="keywords" content="numerologie, číslo životní cesty, číslo osudu, výklad čísel">
+    <meta name="theme-color" content="#0a0a1a">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Numerologie Online | Mystická Hvězda">
+    <meta property="og:description"
+        content="Objevte skrytý význam čísel ve vašem životě. Výpočet čísla životní cesty, osudu a duše.">
+    <meta property="og:image" content="img/icon-numerology.webp">
+    <meta property="og:locale" content="cs_CZ">
+    <meta name="twitter:card" content="summary_large_image">
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Numerologie Online",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web"
+    }
+    </script>
+    <title>Numerologie Online | Mystická Hvězda</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔢</text></svg>">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.v2.css?v=3">
+    <link rel="stylesheet" href="css/premium.css">
+
+
+
+
+    <script src="js/premium-gates.js" defer></script>
+
+
+    <script type="module" src="js/numerology.js?v=9999999"></script>
+    <style>
+        /* Numerology Specific Styles */
+        .number-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin: var(--space-xl) 0;
+        }
+
+        @media (max-width: 768px) {
+            .number-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .number-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--card-color, var(--color-mystic-gold));
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .number-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--card-color) 0%, transparent 50%);
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .number-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px var(--card-color);
+        }
+
+        .number-card.master {
+            border-width: 3px;
+            animation: master-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes master-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px var(--card-color);
+            }
+
+            50% {
+                box-shadow: 0 0 25px var(--card-color), 0 0 40px var(--card-color);
+            }
+        }
+
+        .number-value {
+            font-family: var(--font-heading);
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--card-color);
+            line-height: 1;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 20px var(--card-color);
+        }
+
+        .number-label {
+            font-size: var(--text-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--color-silver-mist);
+            margin-top: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .number-title {
+            font-family: var(--font-heading);
+            font-size: var(--text-lg);
+            color: var(--color-starlight);
+            margin-top: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .number-meaning {
+            font-size: var(--text-sm);
+            color: var(--color-silver-mist);
+            margin-top: var(--space-xs);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Form Styles */
+        .num-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--color-silver-mist);
+            font-size: var(--text-sm);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--color-starlight);
+            font-size: var(--text-base);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-mystic-gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        /* Loading */
+        #num-loading {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-xl);
+            gap: var(--space-md);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(212, 175, 55, 0.2);
+            border-top-color: var(--color-mystic-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Interpretation */
+        .interpretation-content {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-top: var(--space-xl);
+        }
+
+        .interpretation-content h3 {
+            color: var(--color-mystic-gold);
+            margin-bottom: var(--space-lg);
+            font-family: var(--font-heading);
+        }
+
+        .interpretation-content h4 {
+            color: var(--color-mystic-gold);
+            margin-top: var(--space-lg);
+            margin-bottom: var(--space-sm);
+        }
+
+        .interpretation-content p {
+            color: var(--color-silver-mist);
+            line-height: 1.8;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            padding: var(--space-lg);
+        }
+
+        /* Info Cards */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin-top: var(--space-xl);
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+        }
+
+        .info-card h4 {
+            color: var(--color-mystic-gold);
+            margin-bottom: var(--space-xs);
+            font-size: var(--text-sm);
+        }
+
+        .info-card p {
+            color: var(--color-silver-mist);
+            font-size: var(--text-sm);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+    <div class="stars" aria-hidden="true"></div>
+
+    <!-- HEADER (loaded dynamically) -->
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <!-- HERO -->
+        <section class="section section--hero" style="min-height: auto; padding-bottom: 0;">
+            <div class="container text-center">
+                <h1 class="hero__title">
+                    <span class="text-gradient">Numerologie</span>
+                </h1>
+                <p class="hero__subtitle">
+                    Každé číslo nese svůj jedinečný význam. Odhalte, co říkají čísla o vašem životě,
+                    osudu a skrytých touhách.
+                </p>
+            </div>
+        </section>
+
+        <!-- CALCULATOR -->
+        <section class="section">
+            <div class="container">
+                <div class="card" style="max-width: 600px; margin: 0 auto;" data-animate>
+                    <div class="flex-between mb-lg">
+                        <h3 class="card__title" style="margin: 0;">✨ Vypočítejte svá čísla</h3>
+                        <label class="checkbox-wrapper"
+                            style="font-size: 0.9rem; cursor: pointer; display: none; align-items: center; gap: 0.5rem;"
+                            title="Použít údaje z mého profilu">
+                            <input type="checkbox" id="use-profile-num" style="accent-color: var(--color-mystic-gold);">
+                            <span style="opacity: 0.8;">Můj profil</span>
+                        </label>
+                    </div>
+
+                    <form id="numerology-form" class="num-form">
+                        <div class="form-group">
+                            <label for="num-name" class="form-label">Celé jméno (rodné) *</label>
+                            <input type="text" id="num-name" class="form-input" placeholder="Jan Novák" required>
+                            <small style="color: var(--color-silver-mist); font-size: 0.75rem;">
+                                Použijte jméno z rodného listu
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="num-date" class="form-label">Datum narození *</label>
+                            <input type="date" id="num-date" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="num-time" class="form-label">Čas narození (volitelné)</label>
+                            <input type="time" id="num-time" class="form-input">
+                            <small style="color: var(--color-silver-mist); font-size: 0.75rem;">
+                                Přesnější analýza s časem narození
+                            </small>
+                        </div>
+
+                        <button type="submit" class="btn btn--primary" style="width: 100%;">
+                            🔢 Odhalit má čísla
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Loading -->
+                <div id="num-loading">
+                    <div class="loading-spinner"></div>
+                    <span style="color: var(--color-mystic-gold);">Počítám vaše čísla...</span>
+                </div>
+
+                <!-- DAILY VIBRATIONS (New Feature) -->
+                <section id="daily-cycles"
+                    style="display: none; margin-bottom: var(--space-2xl); animation: fadeIn 0.5s ease-out;">
+                    <div class="text-center mb-xl">
+                        <h2 style="font-size: 2rem; color: var(--color-mystic-gold); margin-bottom: 0.5rem;">Dnešní
+                            vibrace</h2>
+                        <p style="color: var(--color-silver-mist); opacity: 0.8;">Váš osobní numerologický kalendář pro
+                            <span id="current-date-display">dnešní den</span>.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-3"
+                        style="gap: var(--space-lg); max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr);">
+                        <!-- Personal Day -->
+                        <div class="card text-center"
+                            style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(10, 10, 26, 0.6)); border: 1px solid var(--color-mystic-gold); position: relative; overflow: hidden; padding: 2rem;">
+                            <div
+                                style="position: absolute; top:0; left:0; right:0; height: 4px; background: var(--color-mystic-gold);">
+                            </div>
+                            <h4
+                                style="color: var(--color-starlight); margin-bottom: 0.5rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 1rem;">
+                                Osobní Den</h4>
+                            <div id="val-pd"
+                                style="font-size: 4rem; font-weight: 700; color: var(--color-mystic-gold); margin: 0.5rem 0; line-height: 1; text-shadow: 0 0 20px rgba(212,175,55,0.3);">
+                                -</div>
+                            <p id="desc-pd"
+                                style="font-size: 0.9rem; color: var(--color-silver-mist); line-height: 1.4; padding: 0 1rem;">
+                                Energie pro dnešní den.</p>
+                        </div>
+
+                        <!-- Personal Month -->
+                        <div class="card text-center"
+                            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem;">
+                            <h4
+                                style="color: var(--color-starlight); margin-bottom: 0.5rem; font-size: 0.9rem; text-transform: uppercase;">
+                                Osobní Měsíc</h4>
+                            <div id="val-pm"
+                                style="font-size: 2.5rem; font-weight: 600; color: var(--color-electric-blue); margin: 0.5rem 0;">
+                                -</div>
+                            <p id="desc-pm" style="font-size: 0.85rem; color: var(--color-silver-mist);">Téma tohoto
+                                období.</p>
+                        </div>
+
+                        <!-- Personal Year -->
+                        <div class="card text-center"
+                            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem;">
+                            <h4
+                                style="color: var(--color-starlight); margin-bottom: 0.5rem; font-size: 0.9rem; text-transform: uppercase;">
+                                Osobní Rok</h4>
+                            <div id="val-py"
+                                style="font-size: 2.5rem; font-weight: 600; color: var(--color-cosmic-green); margin: 0.5rem 0;">
+                                -</div>
+                            <p id="desc-py" style="font-size: 0.85rem; color: var(--color-silver-mist);">Dlouhodobý
+                                vliv.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Results -->
+                <div id="numerology-results" style="display: none;">
+                    <div class="number-cards" data-animate>
+                        <div id="card-lifepath"></div>
+                        <div id="card-destiny"></div>
+                        <div id="card-soul"></div>
+                        <div id="card-personality"></div>
+                    </div>
+
+                    <div id="num-interpretation"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INFO SECTION -->
+        <section class="section section--alt">
+            <div class="container">
+                <h2 class="text-center mb-xl" style="font-family: var(--font-heading); color: var(--color-starlight);">
+                    Co znamenají vaše čísla?
+                </h2>
+
+                <div class="info-grid" data-animate>
+                    <div class="info-card">
+                        <h4>🚀 Číslo životní cesty</h4>
+                        <p>Vypočítáno z data narození. Odhaluje, kdo jste a jaké lekce se máte v tomto životě naučit.
+                        </p>
+                    </div>
+                    <div class="info-card">
+                        <h4>🎯 Číslo osudu</h4>
+                        <p>Vypočítáno z celého jména. Ukazuje vaše přirozené talenty a potenciál, který můžete rozvíjet.
+                        </p>
+                    </div>
+                    <div class="info-card">
+                        <h4>💎 Číslo duše</h4>
+                        <p>Vypočítáno ze samohlásek jména. Odhaluje vaše vnitřní touhy a to, co vás skutečně naplňuje.
+                        </p>
+                    </div>
+                    <div class="info-card">
+                        <h4>🎭 Číslo osobnosti</h4>
+                        <p>Vypočítáno ze souhlásek jména. Říká, jak vás vnímají ostatní a jakou masku nasazujete.</p>
+                    </div>
+                </div>
+
+                <div class="card mt-xl" data-animate>
+                    <h3 class="card__title">⭐ Master Numbers (11, 22, 33)</h3>
+                    <p class="card__text">
+                        Některá čísla nesou zvláštní sílu a neredukují se na jednociferné.
+                        Pokud máte Master Number, nesete větší potenciál i větší zodpovědnost.
+                        Tato čísla značí duše s mimořádným posláním.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER (loaded dynamically) -->
+    <div id="footer-placeholder"></div>
+
+
+
+
+
+
+    <script src="js/favorites-helper.js"></script>
+
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('? Service Worker registered'))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+
+    <script src="js/api-config.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+    <script src="js/auth-client.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script type="module" src="js/main.js?v=5"></script>
+
+</body>
+
+</html>

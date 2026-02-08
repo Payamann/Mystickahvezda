@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Feature Testing | Mystická Hvězda</title>
+    <link rel="stylesheet" href="css/style.v2.css">
+    <link rel="stylesheet" href="css/premium.css">
+</head>
+
+<body>
+    <div class="container" style="max-width: 800px; margin: 3rem auto; padding: 2rem;">
+        <h1>Premium Features - Testing Guide</h1>
+
+        <div class="card glass-card" style="margin: 2rem 0;">
+            <h2>🧪 Manual Activation (Development Only)</h2>
+            <p>Použij tento endpoint pro testování premium funkcí bez Stripe:</p>
+
+            <div style="background: #1a1a2e; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                <code style="color: #4CAF50;">
+POST http://localhost:3001/payment/subscription/activate-manual<br>
+Authorization: Bearer YOUR_TOKEN<br>
+<br>
+Body:<br>
+{<br>
+&nbsp;&nbsp;"userId": "YOUR_USER_ID",<br>
+&nbsp;&nbsp;"planType": "premium_monthly",<br>
+&nbsp;&nbsp;"durationDays": 30<br>
+}
+                </code>
+            </div>
+
+            <button id="activate-premium-btn" class="btn btn--primary">
+                ✨ Aktivovat Premium (30 dní)
+            </button>
+            <p id="activation-result" style="margin-top: 1rem;"></p>
+        </div>
+
+        <div class="card glass-card" style="margin: 2rem 0;">
+            <h2>🚧 Paywall Demo</h2>
+            <p>Klikni na tlačítko pro zobrazení paywallu:</p>
+            <button class="btn btn--secondary"
+                onclick="window.Premium.showPaywall('test', 'Toto je testovací paywall')">
+                Zobrazit Paywall
+            </button>
+        </div>
+
+        <div class="card glass-card" style="margin: 2rem 0;">
+            <h2>🔒 Locked Content Demo</h2>
+            <div id="demo-content" style="padding: 2rem; background: rgba(155, 89, 182, 0.1); border-radius: 12px;">
+                <h3>Premium Obsah</h3>
+                <p>Toto je ukázka obsahu, který bude blokován pro FREE uživatele.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            </div>
+            <button class="btn btn--ghost"
+                onclick="window.Premium.lockContent(document.getElementById('demo-content'), 'demo')">
+                Zamknout Obsah
+            </button>
+        </div>
+
+        <div class="card glass-card" style="margin: 2rem 0;">
+            <h2>✅ Funkční Testy</h2>
+            <ol style="line-height: 2;">
+                <li>
+                    <strong>Numerologie (FREE user):</strong>
+                    <a href="/numerologie.html">Test</a>
+                    <br>Očekávané: Číselná kalkulace OK, AI interpretace zamčená
+                </li>
+                <li>
+                    <strong>Numerologie (PREMIUM user):</strong>
+                    <a href="/numerologie.html">Test</a>
+                    <br>Očekávané: Plná AI interpretace
+                </li>
+                <li>
+                    <strong>Subscription Status:</strong>
+                    <button class="btn btn--sm" onclick="checkStatus()">Zkontrolovat Status</button>
+                    <span id="status-result"></span>
+                </li>
+            </ol>
+        </div>
+
+        <div class="card glass-card" style="margin: 2rem 0; border: 2px solid #f39c12;">
+            <h2>⚠️ Poznámky</h2>
+            <ul>
+                <li>Manual activation je pouze pro development</li>
+                <li>V produkci: Remove "/subscription/activate-manual" endpoint</li>
+                <li>Stripe webhook musí být nastaven před live provozem</li>
+                <li>Premium status se checkuje z JWT tokenu</li>
+            </ul>
+        </div>
+    </div>
+
+
+
+    <script src="js/premium-gates.js"></script>
+
+    <script>
+        // Manual Premium Activation
+        document.getElementById('activate-premium-btn').addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Musíte být přihlášeni');
+                window.location.href = '/profil.html';
+                return;
+            }
+
+            // Decode JWT to get user ID
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const userId = payload.id;
+
+                const response = await fetch('http://localhost:3001/payment/subscription/activate-manual', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        planType: 'premium_monthly',
+                        durationDays: 30
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('activation-result').innerHTML = `
+                        <div style="color: #4CAF50;">
+                            ✅ ${data.message}<br>
+                            Vyprší: ${new Date(data.expiresAt).toLocaleDateString('cs-CZ')}
+                        </div>
+                    `;
+                    // Reload page to update premium status
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    document.getElementById('activation-result').innerHTML = `
+                        <div style="color: #e74c3c;">❌ Chyba: ${data.error}</div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('activation-result').innerHTML = `
+                    <div style="color: #e74c3c;">❌ Chyba: ${error.message}</div>
+                `;
+            }
+        });
+
+        // Check Status
+        async function checkStatus() {
+            const isPremium = await window.Premium.checkStatus();
+            document.getElementById('status-result').innerHTML = isPremium ?
+                '<span style="color: #4CAF50;">✅ PREMIUM</span>' :
+                '<span style="color: #95a5a6;">FREE</span>';
+        }
+
+        // Auto-check on load
+        setTimeout(checkStatus, 500);
+    </script>
+
+    <script src="js/api-config.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+    <script src="js/auth-client.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script type="module" src="js/main.js?v=5"></script>
+
+</body>
+
+</html>

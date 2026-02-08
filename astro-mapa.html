@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Objevte svá silová místa na Zemi. Astrokartografická mapa pro cestování a relokaci.">
+    <meta name="keywords" content="astrokartografie, relokace, cestování, planetární linie">
+    <meta name="theme-color" content="#0a0a1a">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Astrokartografie | Mystická Hvězda">
+    <meta property="og:description"
+        content="Objevte svá silová místa na Zemi. Astrokartografická mapa pro cestování a relokaci.">
+    <meta property="og:image" content="img/mystical-earth.webp">
+    <meta property="og:locale" content="cs_CZ">
+    <meta name="twitter:card" content="summary_large_image">
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Astrokartografie",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web"
+    }
+    </script>
+    <title>Astrokartografie | Mystická Hvězda</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.v2.css">
+    <style>
+        /* Map Container */
+        /* Map Container */
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            /* Fill the grid cell height */
+            /* aspect-ratio: 2/1; removed to allow matching height */
+            background: rgba(10, 10, 26, 0.5);
+            border-radius: var(--radius-lg);
+            /* overflow: hidden; Removed to allow tooltips to show */
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .map-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            /* Ensure full map is visible, even if slightly stretched */
+            border-radius: var(--radius-lg);
+            opacity: 0.8;
+            transition: opacity 0.5s ease;
+        }
+
+        .map-container:hover .map-bg {
+            opacity: 1;
+        }
+
+        .map-container.calculating .map-bg {
+            filter: blur(5px);
+            opacity: 0.4;
+        }
+
+        /* City Markers */
+        .city-marker {
+            position: absolute;
+            transform: translate(-50%, -50%) scale(0);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+        }
+
+        .city-marker.visible {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .marker-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--color-mystic-gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--color-mystic-gold);
+            position: relative;
+        }
+
+        .city-marker.positive .marker-dot {
+            background: #2ecc71;
+            box-shadow: 0 0 10px #2ecc71;
+        }
+
+        .city-marker.negative .marker-dot {
+            background: #e74c3c;
+            box-shadow: 0 0 10px #e74c3c;
+        }
+
+        .marker-dot::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            border: 1px solid currentColor;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: pulse-dot 2s infinite;
+        }
+
+        .marker-label {
+            margin-top: 5px;
+            font-size: 0.75rem;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.6);
+            padding: 2px 6px;
+            border-radius: 4px;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.2s ease;
+        }
+
+        .city-marker:hover .marker-label {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes pulse-dot {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* Tooltip */
+        .map-tooltip {
+            position: absolute;
+            background: rgba(10, 10, 26, 0.9);
+            border: 1px solid var(--color-mystic-gold);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 20;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Form Styles */
+        .astro-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+        }
+
+        .astro-form .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--color-silver-mist);
+            font-size: var(--text-sm);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--color-starlight);
+            font-size: var(--text-base);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-mystic-gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Fix for select options readability */
+        select.form-input option {
+            background-color: #0a0a1a;
+            /* Dark background matching theme */
+            color: #e2e8f0;
+            /* Light text */
+        }
+
+        /* Loading */
+        #astro-loading {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-xl);
+            gap: var(--space-md);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(212, 175, 55, 0.2);
+            border-top-color: var(--color-mystic-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Results */
+        .astro-result-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-top: var(--space-xl);
+        }
+
+        .result-title {
+            color: var(--color-mystic-gold);
+            margin-bottom: var(--space-lg);
+            font-family: var(--font-heading);
+        }
+
+        .result-content h4 {
+            color: var(--color-mystic-gold);
+            margin-top: var(--space-lg);
+            margin-bottom: var(--space-sm);
+        }
+
+        .result-content ul {
+            margin-left: var(--space-lg);
+            color: var(--color-silver-mist);
+        }
+
+        .result-content li {
+            margin-bottom: var(--space-xs);
+        }
+
+        .astro-error {
+            text-align: center;
+            padding: var(--space-xl);
+            color: #e74c3c;
+        }
+
+        .error-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: var(--space-md);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .astro-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+    <div class="stars" aria-hidden="true"></div>
+
+    <!-- HEADER (loaded dynamically) -->
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <section class="section section--hero" style="min-height: auto; padding-bottom: 0;">
+            <div class="container text-center">
+                <h1 class="hero__title">
+                    <span class="text-gradient">Astrokartografie</span>
+                </h1>
+                <p class="hero__subtitle">
+                    Kde na světě na vás čeká štěstí? Zadejte své narození a objevte planetární linie,
+                    které ovlivňují váš osud v různých koutech světa.
+                </p>
+            </div>
+        </section>
+
+        <!-- FORM SECTION -->
+        <section class="section">
+            <div class="container">
+                <div class="grid grid-2" style="gap: var(--space-2xl);">
+
+                    <!-- Form Card -->
+                    <div class="card" data-animate>
+                        <div class="flex-between mb-lg">
+                            <h3 class="card__title" style="margin: 0;">Zadejte své údaje</h3>
+                            <label class="checkbox-wrapper" id="profile-option-wrapper"
+                                style="font-size: 0.9rem; cursor: pointer; display: none; align-items: center; gap: 0.5rem;"
+                                title="Použít údaje z mého profilu">
+                                <input type="checkbox" id="use-profile-astro"
+                                    style="accent-color: var(--color-mystic-gold);">
+                                <span style="opacity: 0.8;">Můj profil</span>
+                            </label>
+                        </div>
+
+                        <form id="astro-form" class="astro-form">
+                            <div class="form-group full-width">
+                                <label for="astro-name" class="form-label">Jméno</label>
+                                <input type="text" id="astro-name" class="form-input" placeholder="Vaše jméno">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="astro-date" class="form-label">Datum narození</label>
+                                <input type="date" id="astro-date" class="form-input" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="astro-time" class="form-label">Čas narození</label>
+                                <input type="time" id="astro-time" class="form-input" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="astro-place" class="form-label">Místo narození</label>
+                                <input type="text" id="astro-place" class="form-input" placeholder="Např. Praha"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="astro-intention" class="form-label">Záměr cesty (Volitelné)</label>
+                                <select id="astro-intention" class="form-input" style="cursor: pointer;">
+                                    <option value="obecny">🌍 Obecný přehled</option>
+                                    <option value="kariera">💼 Kariéra a Úspěch</option>
+                                    <option value="laska">❤️ Láska a Vztahy</option>
+                                    <option value="zdravi">🌿 Zdraví a Relaxace</option>
+                                    <option value="duchovno">✨ Duchovní růst</option>
+                                    <option value="rodina">🏠 Domov a Rodina</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width" style="margin-top: var(--space-md);">
+                                <button type="submit" class="btn btn--primary" style="width: 100%;">
+                                    🗺️ Odhalit mou mapu štěstí
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Map Visualization -->
+                    <div class="map-container" id="astro-map-container" data-animate>
+                        <img src="img/world-map-flat.png" class="map-bg" alt="Astrokartografická mapa světa">
+                        <!-- Markers added by JS -->
+                        <div id="map-tooltip" class="map-tooltip">
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div id="astro-loading">
+                <div class="loading-spinner"></div>
+                <span style="color: var(--color-mystic-gold);">Analyzuji vaše planetární linie...</span>
+            </div>
+
+            <!-- Results -->
+            <div id="astro-results" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- INFO CARDS -->
+        <section class="section section--alt">
+            <div class="container">
+                <div class="grid grid-3" data-animate>
+                    <div class="card card--service">
+                        <img src="img/icon-astrocartography.webp" alt="" class="card__icon-img"
+                            style="width: 80px; height: 80px; border-radius: 50%;">
+                        <h3 class="card__title">Co je Astrokartografie?</h3>
+                        <p class="card__text">
+                            Metoda, která promítá váš natální horoskop na mapu světa. Ukazuje, ve kterých zemích
+                            budou aktivovány konkrétní planety ve vašem horoskopu.
+                        </p>
+                    </div>
+                    <div class="card card--service">
+                        <img src="img/icon-relocation.webp" alt="" class="card__icon-img"
+                            style="width: 80px; height: 80px; border-radius: 50%;">
+                        <h3 class="card__title">Relokace</h3>
+                        <p class="card__text">
+                            Přemýšlíte o stěhování? Zjistěte předem, jaká energie vás v nové destinaci čeká.
+                            Některá místa podporují kariéru, jiná rodinný život.
+                        </p>
+                    </div>
+                    <div class="card card--service">
+                        <img src="img/icon-travel.webp" alt="" class="card__icon-img"
+                            style="width: 80px; height: 80px; border-radius: 50%;">
+                        <h3 class="card__title">Cestování</h3>
+                        <p class="card__text">
+                            Naplánujte si dovolenou podle hvězd. Vyberte si destinaci pod vlivem Venuše pro romantiku
+                            nebo Slunce pro načerpání energie.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER (loaded dynamically) -->
+    <div id="footer-placeholder"></div>
+
+
+
+
+
+
+    <script src="js/astro-map.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('? Service Worker registered'))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+
+    <script src="js/api-config.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+    <script src="js/auth-client.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script type="module" src="js/main.js?v=5"></script>
+
+</body>
+
+</html>

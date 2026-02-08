@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Zjistěte kompatibilitu mezi dvěma znameními. Synastrie a analýza partnerského vztahu.">
+    <meta name="keywords" content="partnerská shoda, synastrie, kompatibilita, vztahy, astrologie">
+    <meta name="theme-color" content="#0a0a1a">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Partnerská Shoda | Mystická Hvězda">
+    <meta property="og:description"
+        content="Zjistěte kompatibilitu mezi dvěma znameními. Synastrie a analýza partnerského vztahu.">
+    <meta property="og:image" content="img/icon-synastry.webp">
+    <meta property="og:locale" content="cs_CZ">
+    <meta name="twitter:card" content="summary_large_image">
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Partnerská Shoda",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web"
+    }
+    </script>
+    <title>Partnerská Shoda | Mystická Hvězda</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💗</text></svg>">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.v2.css">
+    <style>
+        /* Synastry Specific Styles */
+        .heart-meter {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .heart-bg {
+            fill: rgba(255, 255, 255, 0.1);
+        }
+
+        .heart-fill {
+            fill: var(--color-nebula-pink);
+            transform-origin: bottom center;
+            transform: scaleY(0);
+            transition: transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .heart-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(233, 30, 140, 0.8);
+            font-family: var(--font-heading);
+        }
+
+        .compatibility-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .compatibility-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-mystic-gold), var(--color-nebula-pink));
+            width: 0%;
+            transition: width 1s ease-out;
+        }
+
+        .person-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Skip to main content -->
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+    <div class="stars" aria-hidden="true"></div>
+
+    <!-- HEADER (loaded dynamically) -->
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <!-- HERO -->
+        <section class="section section--hero" style="min-height: auto; padding-bottom: 0;">
+            <div class="container text-center">
+                <h1 class="hero__title">
+                    Partnerská <span class="text-gradient">Shoda</span>
+                </h1>
+                <p class="hero__subtitle">
+                    Hodíte se k sobě? Naše astrologická kalkulačka analyzuje postavení planet obou partnerů
+                    a odhalí silné i slabé stránky vašeho vztahu.
+                </p>
+            </div>
+        </section>
+
+        <!-- CALCULATOR -->
+        <section class="section">
+            <div class="container">
+
+                <!-- FORM -->
+                <div class="card mb-2xl" id="synastry-form-card" data-animate>
+                    <form id="synastry-form">
+                        <div class="grid grid-2" style="gap: var(--space-xl);">
+                            <!-- Person 1 -->
+                            <div class="person-card">
+                                <div class="flex-between mb-md">
+                                    <h3 style="color: var(--color-mystic-gold); margin: 0;">Osoba 1</h3>
+                                    <label class="checkbox-wrapper" id="profile-option-wrapper"
+                                        style="font-size: 0.8rem; cursor: pointer; display: none; align-items: center; gap: 0.5rem;"
+                                        title="Použít údaje z mého profilu">
+                                        <input type="checkbox" id="use-profile-p1"
+                                            style="accent-color: var(--color-mystic-gold);">
+                                        <span style="opacity: 0.8;">Můj profil</span>
+                                    </label>
+                                </div>
+                                <div class="form-group mb-md">
+                                    <label class="block text-sm mb-xs"
+                                        style="color: var(--color-silver-mist);">Jméno</label>
+                                    <input type="text" id="p1-name" class="email-form__input w-full" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="block text-sm mb-xs" style="color: var(--color-silver-mist);">Datum
+                                        narození</label>
+                                    <input type="date" id="p1-date" class="email-form__input w-full" required>
+                                </div>
+                            </div>
+
+                            <!-- Person 2 -->
+                            <div class="person-card">
+                                <h3 class="mb-md" style="color: var(--color-nebula-pink);">Osoba 2</h3>
+                                <div class="form-group mb-md">
+                                    <label class="block text-sm mb-xs"
+                                        style="color: var(--color-silver-mist);">Jméno</label>
+                                    <input type="text" id="p2-name" class="email-form__input w-full" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="block text-sm mb-xs" style="color: var(--color-silver-mist);">Datum
+                                        narození</label>
+                                    <input type="date" id="p2-date" class="email-form__input w-full" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-xl">
+                            <button type="submit" class="btn btn--primary btn--lg">Vypočítat shodu</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- RESULTS -->
+                <div id="synastry-results" style="display: none;" data-animate>
+                    <div class="grid grid-2" style="align-items: center; gap: var(--space-2xl);">
+                        <!-- Visual Meter -->
+                        <div class="text-center">
+                            <div class="heart-meter">
+                                <svg viewBox="0 0 100 100" class="w-full h-full">
+                                    <path class="heart-bg"
+                                        d="M50 88.9L16.7 55.6C7.2 46.1 7.2 30.9 16.7 21.4s24.7-9.5 33.3 0L50 21.4l0 0 0 0L50 21.4l0 0L50 21.4l0 0c8.6-9.5 23.8-9.5 33.3 0s9.5 24.7 0 34.2L50 88.9z" />
+                                    <path id="heart-anim" class="heart-fill"
+                                        d="M50 88.9L16.7 55.6C7.2 46.1 7.2 30.9 16.7 21.4s24.7-9.5 33.3 0L50 21.4l0 0 0 0L50 21.4l0 0L50 21.4l0 0c8.6-9.5 23.8-9.5 33.3 0s9.5 24.7 0 34.2L50 88.9z" />
+                                </svg>
+                                <div id="total-score" class="heart-text">0%</div>
+                            </div>
+                            <h2 class="mt-lg">Celková shoda</h2>
+                            <p id="verdict-text" class="text-lg" style="color: var(--color-mystic-gold);">--</p>
+                        </div>
+
+                        <!-- Detailed Breakdown -->
+                        <div class="card">
+                            <h3 class="card__title">Detailní analýza</h3>
+
+                            <div class="mb-lg">
+                                <div class="flex-between mb-xs">
+                                    <span>Emoční propojení (Měsíc/Venuše)</span>
+                                    <span id="score-emotion">0%</span>
+                                </div>
+                                <div class="compatibility-bar">
+                                    <div class="compatibility-bar-fill" id="bar-emotion"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-lg">
+                                <div class="flex-between mb-xs">
+                                    <span>Komunikace (Merkur)</span>
+                                    <span id="score-comm">0%</span>
+                                </div>
+                                <div class="compatibility-bar">
+                                    <div class="compatibility-bar-fill" id="bar-comm"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-lg">
+                                <div class="flex-between mb-xs">
+                                    <span>Vášeň a energie (Mars)</span>
+                                    <span id="score-passion">0%</span>
+                                </div>
+                                <div class="compatibility-bar">
+                                    <div class="compatibility-bar-fill" id="bar-passion"></div>
+                                </div>
+                            </div>
+
+                            <div class="p-md mt-xl"
+                                style="background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
+                                <p class="text-sm">
+                                    <strong>Astrologova poznámka:</strong> <span id="astro-note">Váš vztah má silný
+                                        potenciál, ale pozor na kvadraturu Saturnu, která může přinášet zkoušky.</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER (loaded dynamically) -->
+    <div id="footer-placeholder"></div>
+
+
+
+
+
+
+    <script type="module" src="js/synastry.js?v=2"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('? Service Worker registered'))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+
+    <script src="js/api-config.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+    <script src="js/auth-client.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script type="module" src="js/main.js?v=5"></script>
+
+</body>
+
+</html>

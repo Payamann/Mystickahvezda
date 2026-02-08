@@ -1,0 +1,3937 @@
+/* ============================================
+   MYSTICKÁ HVĚZDA - HOROSKOPY & TAROT
+   Design System & Stylesheet
+   
+   DIVI KOMPATIBILITA:
+   - CSS Custom Properties → Divi Theme Customizer
+   - Sekce → Divi Sections
+   - .row → Divi Rows
+   - Komponenty → Divi Modules
+   ============================================ */
+
+/* ============================================
+   1. CSS CUSTOM PROPERTIES (DIVI: Theme Options → General)
+   ============================================ */
+:root {
+  /* Barevná paleta - Enhanced */
+  --color-deep-space: #050510;
+  --color-cosmic-purple: #1a0a2e;
+  --color-mystic-gold: #ffd700;
+  --color-mystic-gold-light: #ffe55c;
+  --color-ethereal-violet: #9d4edd;
+  --color-starlight: #ffffff;
+  --color-nebula-pink: #f72585;
+  --color-midnight-blue: #0a1128;
+  --color-silver-mist: #e0e1dd;
+  --color-aurora-green: #4cc9f0;
+
+  /* Gradienty - Organic */
+  --gradient-cosmic: radial-gradient(circle at 50% 0%, var(--color-cosmic-purple) 0%, var(--color-deep-space) 100%);
+  --gradient-gold: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+  --gradient-aurora: linear-gradient(45deg, var(--color-ethereal-violet), var(--color-nebula-pink), var(--color-aurora-green));
+  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+
+  /* Typography - Editorial & Fluid */
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Fluid Typography - More conservative scaling */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: clamp(1.5rem, 2vw, 1.75rem);
+  --text-3xl: clamp(1.85rem, 2.5vw, 2.25rem);
+  --text-4xl: clamp(2.25rem, 3vw, 3rem);
+  --text-5xl: clamp(3rem, 4vw, 3.75rem);
+  --text-6xl: clamp(3.5rem, 5vw, 4.5rem);
+  --text-7xl: clamp(4rem, 6vw, 5.5rem);
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 3rem;
+  --space-2xl: 5rem;
+  --space-3xl: 8rem;
+  --space-4xl: 10rem;
+  --space-5xl: 12rem;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows & Glows */
+  --shadow-glow: 0 0 30px rgba(157, 78, 221, 0.15);
+  --shadow-glow-strong: 0 0 60px rgba(157, 78, 221, 0.3);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+
+  /* Transitions */
+  --transition-fast: 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-base: 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-slow: 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Z-index */
+  --z-negative: -1;
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-cursor: 9999;
+}
+
+/* ============================================
+   2. RESET & BASE
+   ============================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  cursor: none;
+  /* Hide default cursor for custom one */
+}
+
+/* Restore cursor for interactive elements due to usability */
+a,
+button,
+input[type="submit"],
+input[type="button"],
+select,
+label,
+.btn,
+.spread-trigger,
+.tarot-card {
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+input[type="search"],
+textarea {
+  cursor: text;
+  caret-color: var(--color-mystic-gold);
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  background-color: var(--color-deep-space);
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  /* Reverted to safer value */
+  color: var(--color-starlight);
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Keep x hidden */
+  background-color: var(--color-deep-space);
+  /* Ensure background color is set */
+  background-image: url('../img/bg-cosmic.webp');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  position: relative;
+  letter-spacing: normal;
+  /* Reset letter spacing */
+}
+
+/* Aurora Improvements - Fixed positioning context */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 120vw;
+  /* Broader coverage */
+  height: 120vh;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at center, rgba(157, 78, 221, 0.1), transparent 70%);
+  z-index: -2;
+  pointer-events: none;
+  animation: aurora-pulse 15s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+body::after {
+  background: radial-gradient(circle at center, rgba(76, 201, 240, 0.08), transparent 60%);
+  animation-delay: -5s;
+}
+
+@keyframes aurora-pulse {
+  0% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+
+  100% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+/* ============================================
+   11. COMET CURSOR
+   ============================================ */
+.comet-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(212, 175, 55, 0.5) 50%, transparent 100%);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.comet-tail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  background: rgba(212, 175, 55, 0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 9998;
+  mix-blend-mode: screen;
+  transition: opacity 0.5s linear, transform 0.5s linear;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-mystic-gold);
+  color: var(--color-deep-space);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  z-index: 10000;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: auto;
+  /* Ensure visible cursor for accessibility */
+}
+
+.skip-link:focus {
+  top: var(--space-md);
+  outline: 3px solid var(--color-starlight);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   3. TYPOGRAPHY (DIVI: Text Module Styles)
+   ============================================ */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--color-starlight);
+}
+
+h1 {
+  font-size: var(--text-5xl);
+}
+
+h2 {
+  font-size: var(--text-4xl);
+}
+
+h3 {
+  font-size: var(--text-3xl);
+}
+
+h4 {
+  font-size: var(--text-2xl);
+}
+
+h5 {
+  font-size: var(--text-xl);
+}
+
+h6 {
+  font-size: var(--text-lg);
+}
+
+p {
+  color: var(--color-silver-mist);
+  margin-bottom: var(--space-md);
+}
+
+a {
+  color: var(--color-mystic-gold);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-mystic-gold-light);
+}
+
+/* Focus states for accessibility */
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--color-mystic-gold);
+  outline-offset: 2px;
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-mystic-gold);
+  outline-offset: 2px;
+}
+
+.text-gradient {
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+}
+
+/* ============================================
+   4. LAYOUT (DIVI: Section & Row Settings)
+   ============================================ */
+.section {
+  padding: var(--space-xl) 0;
+  position: relative;
+}
+
+.section--hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 160px;
+  /* More breathing room for header */
+  padding-bottom: var(--space-3xl);
+  /* Significantly increased from var(--space-4xl) */
+  position: relative;
+}
+
+.section--alt {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Mini hero for subpages - proper spacing under fixed header */
+.hero--mini {
+  min-height: auto;
+  padding-top: 180px;
+  /* Space for fixed header */
+  padding-bottom: var(--space-xl);
+}
+
+.hero--mini .hero__title {
+  font-size: var(--text-4xl);
+  margin-bottom: var(--space-sm);
+}
+
+.hero--mini .hero__subtitle {
+  font-size: var(--text-lg);
+  opacity: 0.9;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 calc(-1 * var(--space-md));
+}
+
+.col {
+  padding: 0 var(--space-md);
+}
+
+.col-12 {
+  width: 100%;
+}
+
+.col-6 {
+  width: 50%;
+}
+
+.col-4 {
+  width: 33.333%;
+}
+
+.col-3 {
+  width: 25%;
+}
+
+/* Grid layout */
+.grid {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Flexbox utilities */
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.gap-sm {
+  gap: var(--space-sm);
+}
+
+.gap-md {
+  gap: var(--space-md);
+}
+
+.gap-lg {
+  gap: var(--space-lg);
+}
+
+.gap-xl {
+  gap: var(--space-xl);
+}
+
+/* Text alignment */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* ============================================
+   5. HEADER & NAVIGATION (DIVI: Menu Module)
+   ============================================ */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-sticky);
+  padding: var(--space-lg) 0;
+  transition: all var(--transition-base);
+  background: transparent;
+}
+
+.header.scrolled {
+  background: rgba(10, 10, 26, 0.95);
+  backdrop-filter: blur(20px);
+  padding: var(--space-md) 0;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Force scrolled state for Mentor page (App-like view) */
+body.page-mentor .header {
+  background: rgba(10, 10, 26, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  padding: var(--space-md) 0 !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xl);
+  position: relative;
+}
+
+.logo {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-starlight);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-right: var(--space-lg);
+  /* Reduced separation from nav to save space */
+  text-decoration: none;
+  /* Ensure no underline on link */
+}
+
+.logo__icon {
+  font-size: var(--text-3xl);
+}
+
+.logo__image {
+  mix-blend-mode: screen;
+  /* Remove black background */
+  filter: drop-shadow(0 0 10px rgba(157, 78, 221, 0.5));
+  /* Re-add glow */
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  /* Significantly reduced gap from 2xl to md */
+  flex: 0 1 auto;
+  /* Allow nav to be intrinsic width */
+  justify-content: center;
+  /* Align to center */
+}
+
+/* Specific Header Button Style - More elegant */
+.header .btn {
+  background: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  /* Clearer border */
+  color: var(--color-mystic-gold);
+  padding: 0.4rem 0.8rem;
+  /* Compact padding */
+  font-size: 0.7rem;
+  /* Smaller font */
+  box-shadow: none;
+  white-space: nowrap !important;
+  /* Force single line */
+  min-width: fit-content;
+  /* Ensure container fits text */
+  display: inline-block;
+  /* Prevent flex alignment issues */
+  line-height: 1.2;
+  margin-left: 0;
+  /* Remove margin, rely on container gap */
+}
+
+.header .btn:hover {
+  background: rgba(212, 175, 55, 0.1);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+  transform: translateY(-1px);
+  color: var(--color-starlight);
+  border-color: var(--color-starlight);
+}
+
+.nav__list {
+  display: flex;
+  list-style: none;
+  gap: var(--space-md);
+  /* Reduced gap from lg */
+  margin-right: var(--space-md);
+}
+
+.nav__link {
+  color: var(--color-silver-mist);
+  font-size: 0.95rem;
+  /* Increased size for better readability */
+  font-weight: 600;
+  /* Increased weight slightly */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  /* Reduced spacing */
+  position: relative;
+  padding: var(--space-sm) 0;
+  white-space: nowrap;
+}
+
+.nav__link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gradient-gold);
+  transition: width var(--transition-base);
+}
+
+.nav__link:hover,
+.nav__link.active {
+  color: var(--color-starlight);
+}
+
+.nav__link:hover::after,
+.nav__link.active::after {
+  width: 100%;
+}
+
+/* Mobile menu toggle */
+.nav__toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: var(--space-sm);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav__toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--color-starlight);
+  transition: all var(--transition-fast);
+}
+
+/* ============================================
+   6. BUTTONS (DIVI: Button Module)
+   ============================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+  /* Richer gold gradient */
+  color: #0F0F1A;
+  /* Darker text for contrast */
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  /* Stronger, softer glow */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  font-weight: 700;
+}
+
+.btn--primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: 0.5s;
+}
+
+.btn--primary:hover::before {
+  left: 100%;
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+  color: #000;
+}
+
+.btn--secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-starlight);
+  backdrop-filter: blur(5px);
+}
+
+.btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-mystic-gold);
+  color: var(--color-mystic-gold);
+  transform: translateY(-2px);
+}
+
+
+
+.btn--ghost {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-starlight);
+  backdrop-filter: blur(10px);
+}
+
+.btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn--lg {
+  padding: var(--space-lg) var(--space-2xl);
+  font-size: var(--text-base);
+}
+
+.btn--icon {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: var(--radius-full);
+}
+
+/* ============================================
+   7. CARDS (DIVI: Blurb Module)
+   ============================================ */
+/* ============================================
+   7. CARDS (Glassmorphism 2.0)
+   ============================================ */
+.card {
+  background: rgba(10, 17, 40, 0.4);
+  /* Darker tint for readability */
+  background-image: var(--gradient-glass);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  /* Enhance depth */
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 0 40px rgba(157, 78, 221, 0.2), inset 0 0 20px rgba(212, 175, 55, 0.1);
+  background: rgba(26, 10, 46, 0.6);
+  /* Purple tint on hover */
+}
+
+/* 3D Icon Bundle */
+.card__icon-wrapper {
+  height: 100px;
+  /* Allocated height for icon */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+  transition: transform var(--transition-base);
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+}
+
+.card__icon-3d {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  transition: transform var(--transition-base), filter var(--transition-base);
+  will-change: transform;
+}
+
+.card:hover .card__icon-3d {
+  transform: scale(1.15) rotate(3deg);
+  filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.4));
+}
+
+
+
+.card__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  /* Reduced from xl */
+  margin-bottom: var(--space-xs);
+  /* Compact spacing */
+  color: var(--color-starlight);
+}
+
+.card__text {
+  color: var(--color-silver-mist);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+/* Service Card specifics */
+.card--service {
+  text-align: center;
+  align-items: center;
+}
+
+/* Teaser / Blur Effect */
+.blur-content {
+  filter: blur(8px);
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.teaser-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  padding: var(--space-md);
+  background: rgba(10, 10, 26, 0.4);
+}
+
+.teaser-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  margin-top: var(--space-lg);
+}
+
+/* Pricing Card specifics - COMPACT UPDATE */
+.card--pricing {
+  text-align: center;
+  align-items: center;
+  border-color: rgba(212, 175, 55, 0.2);
+  padding: var(--space-xl) var(--space-lg);
+  /* More vertical padding */
+}
+
+.card--pricing.featured {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(10, 10, 26, 0.8) 100%);
+  border: 1px solid var(--color-mystic-gold);
+  transform: scale(1.05);
+  z-index: 1;
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
+}
+
+.card--pricing.featured::before {
+  content: 'NEJOBLÍBENĚJŠÍ';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gradient-gold);
+  color: var(--color-deep-space);
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.card__price {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  color: var(--color-mystic-gold);
+  margin: var(--space-lg) 0;
+  /* Restored larger margin */
+  line-height: 1;
+}
+
+.card__price span {
+  font-size: var(--text-xs);
+  color: var(--color-silver-mist);
+  font-family: var(--font-body);
+  margin-left: 5px;
+}
+
+.card__features {
+  list-style: none;
+  margin: var(--space-lg) 0;
+  /* Restored larger margin */
+  text-align: left;
+  width: 100%;
+}
+
+.card__features li {
+  padding: 4px 0;
+  /* Reduced padding */
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--color-silver-mist);
+  font-size: var(--text-xs);
+  /* Smaller list text */
+}
+
+.card__features li::before {
+  content: '✦';
+  color: var(--color-mystic-gold);
+  font-size: 0.8rem;
+}
+
+/* ============================================
+   8. HERO SECTION
+   ============================================ */
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero__content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  /* Default text center */
+  position: relative;
+  z-index: var(--z-base);
+}
+
+/* Explicit Grid for Hero Desktop - Reverted to Center */
+@media (min-width: 769px) {
+  .hero__grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero__content {
+    text-align: center;
+    margin: 0 auto;
+    max-width: 800px;
+  }
+
+  .hero__cta {
+    justify-content: center;
+  }
+}
+
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-xl);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero__badge-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-mystic-gold);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.hero__title {
+  font-size: var(--text-7xl);
+  margin-bottom: var(--space-lg);
+  line-height: 1.1;
+}
+
+.hero__subtitle {
+  font-size: var(--text-xl);
+  color: var(--color-silver-mist);
+  margin-bottom: var(--space-2xl);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero__cta {
+  display: flex;
+  gap: var(--space-lg);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero__scroll {
+  position: absolute;
+  bottom: var(--space-2xl);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--color-silver-mist);
+  font-size: var(--text-sm);
+  animation: bounce 2s ease-in-out infinite;
+}
+
+/* ============================================
+   9. SECTION HEADERS
+   ============================================ */
+.section__header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto var(--space-4xl);
+}
+
+.section__badge {
+  display: inline-block;
+  color: var(--color-mystic-gold);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: var(--space-md);
+  margin-right: -0.2em;
+  /* Optical centering fix */
+}
+
+.section__title {
+  margin-bottom: var(--space-xl);
+  /* Increased from lg */
+}
+
+.section__text {
+  font-size: var(--text-lg);
+}
+
+/* ============================================
+   10. TESTIMONIALS (DIVI: Testimonial Module)
+   ============================================ */
+.testimonial {
+  background: var(--gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  /* Reduced from 2xl to make it less high */
+  position: relative;
+}
+
+.testimonial__quote {
+  font-size: var(--text-4xl);
+  color: var(--color-mystic-gold);
+  opacity: 0.3;
+  position: absolute;
+  top: var(--space-lg);
+  left: var(--space-xl);
+}
+
+.testimonial__text {
+  font-size: var(--text-lg);
+  font-style: italic;
+  margin-bottom: var(--space-xl);
+  position: relative;
+  z-index: 1;
+}
+
+.testimonial__author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.testimonial__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-mystic-gold);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(10, 10, 26, 0.8));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  color: var(--color-mystic-gold);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+  backdrop-filter: blur(5px);
+  flex-shrink: 0;
+}
+
+.testimonial__name {
+  font-weight: 600;
+  color: var(--color-starlight);
+}
+
+.testimonial__role {
+  font-size: var(--text-sm);
+  color: var(--color-silver-mist);
+}
+
+/* ============================================
+   11. STEPS/PROCESS (DIVI: Number Counter)
+   ============================================ */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xl);
+  position: relative;
+}
+
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-mystic-gold), transparent);
+  opacity: 0.3;
+}
+
+.step {
+  text-align: center;
+  position: relative;
+}
+
+.step__number {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-xl);
+  background: var(--gradient-card);
+  border: 2px solid var(--color-mystic-gold);
+  border-radius: 50%;
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  color: var(--color-mystic-gold);
+  position: relative;
+  z-index: 1;
+}
+
+.step__title {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-md);
+}
+
+.step__text {
+  font-size: var(--text-sm);
+  color: var(--color-silver-mist);
+}
+
+/* ============================================
+   12. PHASE 3: MAGICAL TOUCHES
+   ============================================ */
+
+/* Moon Widget Glow */
+.moon-widget-container {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  display: inline-flex;
+  transition: all var(--transition-base);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 2rem;
+}
+
+.moon-widget-container:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.3);
+  transform: translateY(-2px);
+}
+
+.moon-emoji {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  animation: moon-pulse 3s infinite alternate;
+}
+
+@keyframes moon-pulse {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+    transform: scale(1);
+  }
+
+  100% {
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+    transform: scale(1.1);
+  }
+}
+
+/* Newsletter Magnet */
+.section--newsletter {
+  background: linear-gradient(135deg, rgba(26, 10, 46, 0.8), rgba(10, 10, 26, 0.9));
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  padding: var(--space-2xl) 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--space-3xl);
+  /* Explicit spacing before footer */
+}
+
+.cta-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
+  animation: rotate 20s linear infinite;
+}
+
+.cta-banner__content {
+  position: relative;
+  z-index: 1;
+}
+
+.cta-banner__title {
+  margin-bottom: var(--space-md);
+}
+
+.cta-banner__text {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-xl);
+}
+
+/* =========================================
+   3D VISUALS UPDATE
+   ========================================= */
+
+/* Hero Grid Layout */
+.hero__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2xl);
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.hero__visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  perspective: 1000px;
+}
+
+.hero__image {
+  width: 100%;
+  max-width: 650px;
+  height: auto;
+  filter: drop-shadow(0 0 50px rgba(155, 89, 182, 0.2));
+  /* Blend mode for dark space background integration */
+  mix-blend-mode: screen;
+  border-radius: 50%;
+  /* Optional, helps if edges are hard */
+}
+
+/* Floating Animation */
+.floating-anim {
+  animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-30px) rotate(2deg);
+  }
+
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+/* 3D Service Icons */
+.card__icon-wrapper {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+  position: relative;
+}
+
+.card__icon-3d {
+  max-height: 100%;
+  width: auto;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  mix-blend-mode: screen;
+}
+
+.card:hover .card__icon-3d {
+  transform: scale(1.15) translateY(-10px) rotate(5deg);
+}
+
+/* Mobile Responsiveness for Hero */
+@media (max-width: 991px) {
+  .hero__grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: var(--space-xl);
+  }
+
+  .hero__visual {
+    order: -1;
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero__image {
+    max-width: 80%;
+  }
+
+  .hero__content {
+    padding-top: var(--space-md);
+  }
+}
+
+/* Email form */
+.email-form {
+  display: flex;
+  gap: var(--space-md);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.email-form__input {
+  flex: 1;
+  padding: var(--space-md) var(--space-lg);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+  color: var(--color-starlight);
+  font-size: var(--text-base);
+}
+
+.email-form__input::placeholder {
+  color: var(--color-silver-mist);
+}
+
+.email-form__input:focus {
+  outline: none;
+  border-color: var(--color-mystic-gold);
+}
+
+/* ============================================
+   13. FOOTER (DIVI: Footer Sections)
+   ============================================ */
+.footer {
+  background: rgba(0, 0, 0, 0.5);
+  padding: var(--space-3xl) 0 var(--space-xl);
+  margin-top: 0;
+  /* Removed - spacing handled by section above */
+  position: relative;
+  z-index: 1;
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: var(--space-3xl);
+  margin-bottom: var(--space-3xl);
+}
+
+.footer__brand {
+  max-width: 300px;
+}
+
+.footer__logo {
+  margin-bottom: var(--space-lg);
+}
+
+.footer__desc {
+  font-size: var(--text-sm);
+  color: var(--color-silver-mist);
+  margin-bottom: var(--space-lg);
+}
+
+.footer__social {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.footer__social a {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transition: all var(--transition-fast);
+}
+
+.footer__social a:hover {
+  background: var(--color-mystic-gold);
+  color: var(--color-deep-space);
+}
+
+.footer__title {
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-lg);
+  color: var(--color-starlight);
+}
+
+.footer__links {
+  list-style: none;
+}
+
+.footer__links li {
+  margin-bottom: var(--space-sm);
+}
+
+.footer__links a {
+  color: var(--color-silver-mist);
+  font-size: var(--text-sm);
+  transition: color var(--transition-fast);
+}
+
+.footer__links a:hover {
+  color: var(--color-mystic-gold);
+}
+
+.footer__bottom {
+  padding-top: var(--space-xl);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-sm);
+  color: var(--color-silver-mist);
+}
+
+.footer__legal {
+  display: flex;
+  gap: var(--space-xl);
+}
+
+/* ============================================
+   14. ZODIAC GRID (Custom for Horoskopy page)
+   ============================================ */
+.zodiac-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+}
+
+.zodiac-card {
+  background: var(--gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.zodiac-card:hover {
+  border-color: var(--color-mystic-gold);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow);
+}
+
+.zodiac-card__symbol {
+  font-size: var(--text-4xl);
+  margin-bottom: var(--space-md);
+}
+
+.zodiac-card__name {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-xs);
+}
+
+.zodiac-card__dates {
+  font-size: var(--text-xs);
+  color: var(--color-silver-mist);
+}
+
+/* ============================================
+   15. TAROT CARDS (Custom for Tarot page)
+   ============================================ */
+.tarot-deck {
+  display: flex;
+  justify-content: center;
+  gap: calc(-1 * var(--space-xl));
+  perspective: 1000px;
+  margin: var(--space-3xl) 0;
+}
+
+.tarot-card {
+  width: 150px;
+  height: 250px;
+  background: linear-gradient(180deg, #2a1a4a 0%, #1a0a2e 100%);
+  border: 2px solid var(--color-mystic-gold);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-4xl);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-card);
+}
+
+.tarot-card:nth-child(1) {
+  transform: rotate(-15deg);
+}
+
+.tarot-card:nth-child(2) {
+  transform: rotate(-5deg) translateY(-10px);
+}
+
+.tarot-card:nth-child(3) {
+  transform: rotate(5deg) translateY(-10px);
+}
+
+.tarot-card:nth-child(4) {
+  transform: rotate(15deg);
+}
+
+.tarot-card:hover {
+  transform: translateY(-20px) rotate(0deg) scale(1.1);
+  z-index: 10;
+  box-shadow: var(--shadow-glow-strong);
+}
+
+/* ============================================
+   16. TABS (For Horoskopy page)
+   ============================================ */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-3xl);
+}
+
+.tab {
+  padding: var(--space-md) var(--space-xl);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+  color: var(--color-silver-mist);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tab:hover {
+  border-color: var(--color-mystic-gold);
+  color: var(--color-starlight);
+}
+
+.tab.active {
+  background: var(--gradient-gold);
+  border-color: transparent;
+  color: var(--color-deep-space);
+}
+
+/* ============================================
+   17. FAQ ACCORDION
+   ============================================ */
+.faq-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.faq-question {
+  width: 100%;
+  padding: var(--space-xl) 0;
+  background: none;
+  border: none;
+  color: var(--color-starlight);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faq-question::after {
+  content: '+';
+  font-size: var(--text-2xl);
+  color: var(--color-mystic-gold);
+  transition: transform var(--transition-fast);
+}
+
+.faq-item.open .faq-question::after {
+  transform: rotate(45deg);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-base);
+}
+
+.faq-item.open .faq-answer {
+  max-height: 500px;
+}
+
+.faq-answer p {
+  padding-bottom: var(--space-xl);
+}
+
+/* ============================================
+   18. ANIMATIONS
+   ============================================ */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(10px);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes twinkle {
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Animation classes */
+.animate-fade-in {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Stagger delays */
+.delay-1 {
+  animation-delay: 0.1s;
+}
+
+.delay-2 {
+  animation-delay: 0.2s;
+}
+
+.delay-3 {
+  animation-delay: 0.3s;
+}
+
+.delay-4 {
+  animation-delay: 0.4s;
+}
+
+.delay-5 {
+  animation-delay: 0.5s;
+}
+
+/* ============================================
+   19. STARS BACKGROUND (Optimized)
+   ============================================ */
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  /* Ensure it stays behind content */
+  overflow: hidden;
+}
+
+.star-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: transparent;
+  width: 1px;
+  height: 1px;
+  border-radius: 50%;
+  animation: starPan linear infinite;
+}
+
+@keyframes starPan {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-2000px);
+    /* Pan upwards */
+  }
+}
+
+/* ============================================
+   20. RESPONSIVE (DIVI: Responsive Editing)
+   ============================================ */
+@media (max-width: 1024px) {
+  :root {
+    --text-7xl: 3.5rem;
+    --text-6xl: 3rem;
+    --text-5xl: 2.5rem;
+  }
+
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .zodiac-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .footer__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --text-7xl: 2.5rem;
+    --text-6xl: 2rem;
+    --text-5xl: 1.75rem;
+    --text-4xl: 1.5rem;
+  }
+
+  .nav__list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(10, 10, 26, 0.98);
+    flex-direction: column;
+    padding: var(--space-xl);
+    gap: var(--space-md);
+  }
+
+  .nav__list.open {
+    display: flex;
+  }
+
+  .nav__toggle {
+    display: flex;
+  }
+
+  .grid-3,
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .zodiac-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .steps::before {
+    display: none;
+  }
+
+  .col-6,
+  .col-4,
+  .col-3 {
+    width: 100%;
+  }
+
+  .hero__cta {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .email-form {
+    flex-direction: column;
+  }
+
+  .footer__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer__bottom {
+    flex-direction: column;
+    gap: var(--space-md);
+    text-align: center;
+  }
+
+  .tarot-deck {
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+
+  .tarot-card {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .zodiac-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs {
+    flex-wrap: wrap;
+  }
+}
+
+/* ============================================
+   21. UTILITIES
+   ============================================ */
+.mb-xs {
+  margin-bottom: var(--space-xs);
+}
+
+.mb-sm {
+  margin-bottom: var(--space-sm);
+}
+
+.mb-md {
+  margin-bottom: var(--space-md);
+}
+
+.mb-lg {
+  margin-bottom: var(--space-lg);
+}
+
+.mb-xl {
+  margin-bottom: var(--space-xl);
+}
+
+.mb-2xl {
+  margin-bottom: var(--space-2xl);
+}
+
+.mb-3xl {
+  margin-bottom: var(--space-3xl);
+}
+
+.mt-xs {
+  margin-top: var(--space-xs);
+}
+
+.mt-sm {
+  margin-top: var(--space-sm);
+}
+
+.mt-md {
+  margin-top: var(--space-md);
+}
+
+.mt-lg {
+  margin-top: var(--space-lg);
+}
+
+.mt-xl {
+  margin-top: var(--space-xl);
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ============================================
+   TAROT CARD FLIP ANIMATION
+   ============================================ */
+
+/* Tarot Spread Container */
+.tarot-spread {
+  perspective: 1000px;
+}
+
+/* Flip Card Container */
+.tarot-flip-card {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 9/15;
+  height: auto;
+  perspective: 1500px;
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.tarot-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+  transform-style: preserve-3d;
+  transform-origin: center center;
+}
+
+.tarot-flip-card.flipped .tarot-flip-inner {
+  transform: rotateY(180deg);
+}
+
+/* Front and Back of Card */
+.tarot-flip-front,
+.tarot-flip-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.tarot-flip-front {
+  z-index: 2;
+  background: linear-gradient(135deg, #1a0a2e 0%, #0a0a1a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tarot-flip-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.tarot-flip-card:hover .tarot-flip-front img {
+  transform: scale(1.05);
+}
+
+.tarot-flip-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, rgba(26, 10, 46, 0.95) 0%, rgba(10, 10, 26, 0.98) 100%);
+  border: 2px solid var(--color-mystic-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(212, 175, 55, 0.3),
+    inset 0 0 60px rgba(157, 78, 221, 0.1);
+}
+
+/* When card has image */
+.tarot-flip-back.has-image {
+  background: transparent;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+}
+
+.tarot-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+/* Interpretation card image */
+.interpretation-image {
+  width: 100px;
+  height: auto;
+  border-radius: var(--radius-md);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--color-mystic-gold);
+}
+
+/* Card Content (Back side) */
+.tarot-card-content {
+  text-align: center;
+  padding: var(--space-lg);
+}
+
+.tarot-card-emoji {
+  font-size: 3.5rem;
+  display: block;
+  margin-bottom: var(--space-md);
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.tarot-card-name {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  color: var(--color-mystic-gold);
+  margin-bottom: var(--space-sm);
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+}
+
+.tarot-card-meaning {
+  font-size: var(--text-sm);
+  color: var(--color-silver-mist);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Flip Animation Enhancement */
+.tarot-flip-card.flipped .tarot-flip-inner {
+  animation: cardReveal 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+@keyframes cardReveal {
+  0% {
+    transform: rotateY(0) scale(1);
+  }
+
+  50% {
+    transform: rotateY(90deg) scale(1.1);
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.4);
+  }
+
+  100% {
+    transform: rotateY(180deg) scale(1);
+  }
+}
+
+/* Sparkle effect on flip */
+.tarot-flip-card.flipped::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 60%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  animation: sparkle 1s ease-out forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes sparkle {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2);
+  }
+}
+
+/* ============================================
+   INTERPRETATION CARDS
+   ============================================ */
+.interpretation-card {
+  background: rgba(10, 10, 26, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-lg);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.interpretation-card:hover {
+  border-color: var(--color-mystic-gold);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+.interpretation-position {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(157, 78, 221, 0.3), rgba(247, 37, 133, 0.2));
+  color: var(--color-starlight);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-md);
+  letter-spacing: 0.05em;
+}
+
+.interpretation-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.interpretation-emoji {
+  font-size: 3rem;
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+}
+
+.interpretation-name {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  color: var(--color-mystic-gold);
+  margin-bottom: var(--space-xs);
+}
+
+.interpretation-meaning {
+  font-size: var(--text-sm);
+  color: var(--color-aurora-green);
+  margin: 0;
+  font-style: italic;
+}
+
+.interpretation-text {
+  font-size: var(--text-base);
+  color: var(--color-silver-mist);
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* Summary Card */
+.interpretation-summary {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(10, 10, 26, 0.9) 100%);
+  border: 2px solid var(--color-mystic-gold);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-top: var(--space-xl);
+  text-align: center;
+}
+
+.interpretation-summary h4 {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  color: var(--color-mystic-gold);
+  margin-bottom: var(--space-md);
+}
+
+.interpretation-summary p {
+  color: var(--color-silver-mist);
+  line-height: 1.8;
+  margin: 0;
+}
+
+.interpretation-summary strong {
+  color: var(--color-starlight);
+}
+
+/* Fade In Up Animation */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Shaking Animation (Shuffle) */
+.tarot-deck.shaking {
+  animation: shake 0.6s cubic-bezier(.36, .07, .19, .97) infinite;
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0) rotate(0);
+  }
+
+  10% {
+    transform: translateX(-8px) rotate(-2deg);
+  }
+
+  20% {
+    transform: translateX(8px) rotate(2deg);
+  }
+
+  30% {
+    transform: translateX(-6px) rotate(-1deg);
+  }
+
+  40% {
+    transform: translateX(6px) rotate(1deg);
+  }
+
+  50% {
+    transform: translateX(-4px) rotate(-0.5deg);
+  }
+
+  60% {
+    transform: translateX(4px) rotate(0.5deg);
+  }
+
+  70% {
+    transform: translateX(-2px) rotate(-0.25deg);
+  }
+
+  80% {
+    transform: translateX(2px) rotate(0.25deg);
+  }
+
+  90% {
+    transform: translateX(-1px) rotate(-0.1deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tarot-flip-card {
+    width: 140px;
+    height: 220px;
+  }
+
+  .tarot-card-emoji {
+    font-size: 2.5rem;
+  }
+
+  .tarot-card-name {
+    font-size: var(--text-base);
+  }
+
+  .interpretation-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .interpretation-card {
+    padding: var(--space-lg);
+  }
+
+  .grid-3.tarot-spread {
+    grid-template-columns: repeat(1, 1fr);
+    gap: var(--space-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .tarot-flip-card {
+    width: 120px;
+    height: 190px;
+  }
+
+  .tarot-card-emoji {
+    font-size: 2rem;
+  }
+
+  .tarot-card-content {
+    padding: var(--space-md);
+  }
+}
+
+/* ============================================
+   TAROT REDESIGN - SPREAD SELECTION
+   ============================================ */
+.t-spread-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.t-spread-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Hover Effects */
+.t-spread-card:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(212, 175, 55, 0.1);
+}
+
+.t-spread-card.featured {
+  background: rgba(255, 255, 255, 0.08);
+  /* Slightly lighter */
+  border-color: var(--color-mystic-gold);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
+  /* Glow */
+  transform: translateY(-5px);
+  /* Lifted */
+}
+
+/* Featured Badge/Glow */
+.t-spread-card.featured::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--color-mystic-gold), transparent);
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
+}
+
+.t-spread-icon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+}
+
+.t-spread-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  color: var(--color-starlight);
+}
+
+.t-spread-desc {
+  font-size: 0.9rem;
+  color: var(--color-silver-mist);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  flex-grow: 1;
+  /* Pushes button down */
+  min-height: 3em;
+}
+
+.t-spread-price {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.t-spread-price.text-gold {
+  color: var(--color-mystic-gold);
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+/* Glass Button inside Card */
+.btn--glass {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-starlight);
+  transition: all 0.3s ease;
+}
+
+.btn--glass:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.btn--full {
+  width: 100%;
+}
+
+/* Responsive Grid */
+@media (max-width: 900px) {
+  .t-spread-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ============================================
+   TAROT REDESIGN - RESULT UI
+   ============================================ */
+
+.tarot-result-card {
+  background: linear-gradient(135deg, rgba(20, 20, 35, 0.95), rgba(10, 10, 20, 0.98));
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 16px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle Golden Top Border */
+.tarot-result-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-mystic-gold), transparent);
+  opacity: 0.5;
+}
+
+.tarot-result-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tarot-result-title {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  color: var(--color-mystic-gold);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.tarot-result-meta {
+  font-size: 0.85rem;
+  color: var(--color-silver-mist);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+.tarot-result-body {
+  color: var(--color-silver-mist);
+}
+
+.astrologer-note {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.tarot-main-text {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #e0e0e0;
+  margin-bottom: 2rem;
+}
+
+.tarot-practical-advice {
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  font-size: 0.95rem;
+}
+
+
+
+/* Grid Override for 10 cards */
+.grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .grid-5 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .grid-5 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================
+   22. CAROUSEL (Testimonials)
+   ============================================ */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  padding: 0 var(--space-2xl);
+  /* Space for arrows */
+}
+
+.carousel-track-container {
+  overflow: hidden;
+  width: 100%;
+}
+
+.carousel-track {
+  display: flex;
+  padding: var(--space-md) 0;
+  /* Space for shadow/hover */
+  margin: 0;
+  list-style: none;
+  gap: var(--space-lg);
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-slide {
+  flex: 0 0 calc((100% / 3) - (2 * var(--space-lg) / 3));
+  /* Keep 3 items but maybe adjust gap if needed */
+  max-width: calc((100% / 3) - (2 * var(--space-lg) / 3));
+  /* To make them feel wider, we rely on reducing vertical padding above. 
+     If we want them physically wider, we would need to show fewer items or make container huge.
+     Let's try sticking to 3 but compacting the content. */
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(10, 10, 26, 0.8);
+  border: 1px solid var(--color-mystic-gold);
+  color: var(--color-mystic-gold);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+  background: var(--color-mystic-gold);
+  color: var(--color-deep-space);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+.carousel-btn.prev {
+  left: 0;
+}
+
+.carousel-btn.next {
+  right: 0;
+}
+
+/* Responsive Carousel */
+@media (max-width: 900px) {
+  .carousel-slide {
+    flex: 0 0 calc((100% / 2) - (var(--space-lg) / 2));
+    /* 2 items */
+    max-width: calc((100% / 2) - (var(--space-lg) / 2));
+  }
+}
+
+@media (max-width: 600px) {
+  .carousel-slide {
+    flex: 0 0 100%;
+    /* 1 item */
+    max-width: 100%;
+  }
+
+  .carousel-container {
+    padding: 0;
+  }
+
+  .carousel-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+    background: rgba(10, 10, 26, 0.9);
+  }
+
+  .carousel-btn.prev {
+    left: 10px;
+  }
+
+  .carousel-btn.next {
+    right: 10px;
+  }
+}
+
+
+/* ============================================
+   23. COOKIE BANNER
+   ============================================ */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(10, 10, 26, 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(212, 175, 55, 0.3);
+  padding: var(--space-lg);
+  z-index: 1000;
+  transform: translateY(100%);
+  transition: transform 0.5s ease-out;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.cookie-banner.visible {
+  transform: translateY(0);
+}
+
+.cookie-banner__content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xl);
+}
+
+.cookie-banner__text {
+  color: var(--color-silver-mist);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.cookie-banner__actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .cookie-banner__content {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-md);
+  }
+
+  .cookie-banner__actions {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   24. TOAST NOTIFICATIONS
+   ============================================ */
+.toast-container {
+  position: fixed;
+  top: var(--space-xl);
+  right: var(--space-xl);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  pointer-events: none;
+}
+
+.toast {
+  background: rgba(10, 10, 26, 0.95);
+  border: 1px solid var(--color-mystic-gold);
+  color: var(--color-white);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-width: 300px;
+  backdrop-filter: blur(10px);
+  animation: slideInRight 0.3s ease-out forwards;
+  pointer-events: auto;
+}
+
+.toast--success {
+  border-left: 4px solid #00c853;
+}
+
+.toast--error {
+  border-left: 4px solid #ff1744;
+}
+
+.toast__icon {
+  font-size: 1.5rem;
+}
+
+.toast__title {
+  font-weight: 600;
+  color: var(--color-mystic-gold);
+  margin-bottom: 2px;
+}
+
+.toast__message {
+  font-size: 0.9rem;
+  color: var(--color-silver-mist);
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* ============================================
+   25. OPTIMIZED CURSOR
+   ============================================ */
+body {
+  cursor: none;
+  /* Hide default cursor */
+}
+
+.cursor-canvas {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9998;
+}
+
+.comet-cursor-head {
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(212, 175, 55, 0.6);
+  /* Improve performance with hardware acceleration */
+  will-change: transform;
+  /* Center the dot exactly on cursor coordinates */
+  margin-left: -4px;
+  margin-top: -4px;
+  transition: width 0.3s, height 0.3s, background-color 0.3s;
+}
+
+.comet-cursor-head.hover {
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
+  background: rgba(255, 215, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+}
+
+/* Hide on touch devices */
+@media (pointer: coarse) {
+  body {
+    cursor: auto;
+  }
+
+  .comet-cursor-head,
+  .cursor-canvas {
+    display: none;
+  }
+}
+
+/* ============================================
+   26. LOADING STATES
+   ============================================ */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--color-mystic-gold);
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: text-bottom;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn--loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.btn--loading::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-top: -10px;
+  margin-left: -10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--color-mystic-gold);
+  animation: spin 0.8s linear infinite;
+  visibility: visible;
+}
+
+/* ============================================
+   27. PROFILE PAGE STYLES
+   ============================================ */
+
+/* Profile Avatar */
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-cosmic-purple), var(--color-ethereal-violet));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  border: 2px solid var(--color-mystic-gold);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  flex-shrink: 0;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-gold);
+  transform: scaleX(0);
+  transition: transform var(--transition-base);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(157, 78, 221, 0.2);
+}
+
+.stat-card:hover::before {
+  transform: scaleX(1);
+}
+
+.stat-value {
+  font-family: var(--font-heading);
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Profile Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem;
+  border-radius: var(--radius-lg);
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: var(--color-silver-mist);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-starlight);
+}
+
+.tab.active {
+  background: var(--gradient-gold);
+  color: var(--color-deep-space);
+  font-weight: 600;
+}
+
+/* Reading Items */
+.reading-item {
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.reading-item:hover {
+  transform: translateX(5px);
+  border-color: rgba(212, 175, 55, 0.3);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+/* Reading Modal */
+#reading-modal .modal__content {
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Badge Styles */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.badge--gold {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(184, 134, 11, 0.2));
+  border: 1px solid var(--color-mystic-gold);
+  color: var(--color-mystic-gold);
+}
+
+/* Glass Card variant for profile */
+.glass-card {
+  background: rgba(10, 17, 40, 0.6);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+}
+
+/* Responsive profile adjustments */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .profile-avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+
+  .tabs {
+    flex-direction: column;
+  }
+
+  .tab {
+    text-align: center;
+  }
+}
+
+/* ============================================
+   TAROT SUMMARY ENHANCEMENTS
+   ============================================ */
+
+.tarot-summary-enhanced {
+  background: rgba(10, 10, 26, 0.6);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-top: var(--space-2xl);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.tarot-summary-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--color-mystic-gold), transparent);
+  opacity: 0.7;
+}
+
+.summary-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.summary-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-sm);
+  filter: drop-shadow(0 0 15px rgba(157, 78, 221, 0.5));
+}
+
+.summary-subtitle {
+  color: var(--color-silver-mist);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+}
+
+.summary-content {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  color: var(--color-silver-mist);
+  line-height: 1.8;
+  font-size: 1.05rem;
+  border-left: 2px solid var(--color-mystic-gold);
+}
+
+/* 3-Card Specific Styles (Timeline) */
+.tarot-summary-3card .summary-timeline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.timeline-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  min-width: 120px;
+}
+
+.timeline-emoji {
+  font-size: 1.5rem;
+}
+
+.timeline-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--color-mystic-gold);
+  letter-spacing: 0.05em;
+}
+
+.timeline-card {
+  font-weight: bold;
+  color: var(--color-starlight);
+  text-align: center;
+}
+
+.timeline-connector {
+  color: var(--color-mystic-gold);
+  font-size: 1.5rem;
+  opacity: 0.5;
+}
+
+/* Celtic Cross Specific Styles (Dashboard) */
+.tarot-summary-celtic {
+  background: linear-gradient(135deg, rgba(15, 10, 30, 0.95), rgba(5, 5, 15, 0.98));
+  border: 1px solid rgba(157, 78, 221, 0.3);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+.celtic-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 1rem;
+}
+
+.celtic-cross-icon {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 1.5rem;
+  color: var(--color-mystic-gold);
+  margin-bottom: 0.5rem;
+}
+
+.celtic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.celtic-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.celtic-section h5 {
+  color: var(--color-mystic-gold);
+  font-family: var(--font-heading);
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.celtic-cards-mini {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-silver-mist);
+  align-items: center;
+}
+
+.card-separator {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.8rem;
+}
+
+.outcome-card {
+  color: var(--color-starlight);
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.celtic-footer {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.2em;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  text-transform: uppercase;
+}
+
+/* Loading Animations */
+.summary-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.loading-orb {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-mystic-gold), transparent);
+  filter: blur(5px);
+  animation: pulseOrb 2s infinite;
+}
+
+@keyframes pulseOrb {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+}
+
+.loading-crystal {
+  font-size: 2rem;
+  animation: float 2s infinite ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .celtic-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-connector {
+    transform: rotate(90deg);
+    margin: 0.5rem 0;
+  }
+
+  .tarot-summary-3card .summary-timeline {
+    flex-direction: column;
+  }
+}
+
+/* ============================================ 
+   TAROT CARD UNIFICATION FIXES 
+   ============================================ */
+.tarot-flip-card {
+  width: 220px;
+  height: 370px;
+  perspective: 1000px;
+  margin: 0 auto;
+}
+
+.tarot-flip-front,
+.tarot-flip-back {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.tarot-flip-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tarot-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .tarot-flip-card {
+    width: 180px;
+    height: 300px;
+  }
+}
+
+@media (max-width: 600px) {
+  .tarot-flip-card {
+    width: 140px;
+    height: 235px;
+  }
+}
+
+/* ============================================
+   PROFILE PAGE REDESIGN STYLES
+   ============================================ */
+
+/* User Card Styling */
+.profile-user-card {
+  margin-bottom: 2rem;
+}
+
+.profile-user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.profile-user-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 250px;
+}
+
+.profile-user-details {
+  flex: 1;
+}
+
+.profile-user-email {
+  margin: 0;
+  font-size: 1.4rem;
+  font-family: var(--font-heading);
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.profile-user-plan {
+  margin: 0.5rem 0 0;
+  opacity: 0.8;
+  font-size: 0.95rem;
+}
+
+.profile-user-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-credits {
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Profile Grid (Biorhythms + Journal) */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card-title {
+  color: var(--color-mystic-gold);
+  font-family: var(--font-heading);
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+}
+
+/* Biorhythm Card */
+#biorhythm-container {
+  padding: 1.5rem;
+}
+
+.biorhythm-chart {
+  position: relative;
+  height: 180px;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.biorhythm-chart canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Journal Card */
+.journal-submit-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.journal-recent {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.journal-recent-title {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.journal-entries-list {
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.journal-empty {
+  opacity: 0.5;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Profile Tabs - Modern Horizontal */
+.profile-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem;
+  border-radius: var(--radius-lg);
+  flex-wrap: wrap;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.profile-tab {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.875rem 1.25rem;
+  background: transparent;
+  border: none;
+  color: var(--color-silver-mist);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-tab::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-gold);
+  transform: scaleX(0);
+  transition: transform var(--transition-fast);
+}
+
+.profile-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-starlight);
+}
+
+.profile-tab:hover::before {
+  transform: scaleX(1);
+}
+
+.profile-tab.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(184, 134, 11, 0.2));
+  border: 1px solid var(--color-mystic-gold);
+  color: var(--color-mystic-gold);
+  font-weight: 600;
+}
+
+.profile-tab.active::before {
+  transform: scaleX(1);
+}
+
+.profile-tab-icon {
+  font-size: 1.2rem;
+}
+
+.profile-tab-label {
+  white-space: nowrap;
+}
+
+/* Responsive Updates */
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-user-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-user-left {
+    width: 100%;
+  }
+
+  .profile-user-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .profile-tabs {
+    flex-direction: column;
+  }
+
+  .profile-tab {
+    min-width: auto;
+  }
+}
+
+/* ============================================
+   PROFILE PAGE - ELEGANT REDESIGN
+   ============================================ */
+
+/* User Card - Refined Typography */
+.profile-user-card {
+  margin-bottom: 1.5rem !important;
+  padding: 1.5rem !important;
+  transition: all var(--transition-base);
+}
+
+.profile-user-card:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.profile-avatar {
+  width: 60px !important;
+  height: 60px !important;
+  font-size: 1.8rem !important;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+}
+
+/* Email - Less Dominant */
+.profile-user-email {
+  font-size: 1.1rem !important;
+  font-weight: 500 !important;
+  opacity: 0.95;
+}
+
+/* Plan Badge - More Prominent */
+.profile-user-plan {
+  font-size: 0.95rem !important;
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(184, 134, 11, 0.15));
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: var(--radius-full);
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.profile-user-info {
+  gap: 1.5rem !important;
+}
+
+/* Breathing Space - Stats Grid */
+.stats-grid {
+  gap: 1rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.stat-card {
+  padding: 1.25rem !important;
+  transition: all var(--transition-base);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat-card:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: 0 5px 20px rgba(212, 175, 55, 0.1);
+}
+
+.stat-icon {
+  font-size: 1.8rem !important;
+  margin-bottom: 0.5rem !important;
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+}
+
+.stat-value {
+  font-size: 1.6rem !important;
+}
+
+.stat-label {
+  font-size: 0.9rem !important;
+  opacity: 0.75;
+}
+
+/* Elegant Profile Grid - Breathing Space */
+.profile-grid {
+  gap: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Manifestační Deník - Elegant Dark Glass with Gold Border */
+.glass-card {
+  padding: 1.5rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.glass-card:hover {
+  border-color: rgba(212, 175, 55, 0.3) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Subtle Gold Left Border for Journal */
+.profile-grid .glass-card:last-child {
+  border-left: 3px solid rgba(212, 175, 55, 0.4) !important;
+}
+
+.profile-grid .glass-card:last-child:hover {
+  border-left-color: var(--color-mystic-gold) !important;
+}
+
+.card-title {
+  font-size: 1.1rem !important;
+  margin: 0 0 1rem !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Biorhythm - Elegant Size */
+.biorhythm-chart {
+  height: 150px !important;
+  margin-bottom: 0.75rem !important;
+}
+
+/* Journal - Keep Gold Button */
+.journal-submit-btn {
+  margin-top: 0.75rem !important;
+  padding: 0.75rem 1.25rem !important;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  transition: all var(--transition-base);
+}
+
+.journal-submit-btn:hover {
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+  transform: translateY(-2px);
+}
+
+.journal-recent {
+  margin-top: 1rem !important;
+  padding-top: 1rem !important;
+  border-top: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.journal-recent-title {
+  color: rgba(212, 175, 55, 0.8);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.journal-entries-list {
+  max-height: 140px !important;
+}
+
+/* Elegant Horizontal Tabs */
+.profile-tabs {
+  margin-bottom: 1.5rem !important;
+  padding: 0.5rem !important;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-tab {
+  padding: 0.75rem 1.25rem !important;
+  font-size: 0.95rem !important;
+  transition: all var(--transition-base);
+  border: 1px solid transparent;
+}
+
+.profile-tab:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.profile-tab.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(184, 134, 11, 0.15)) !important;
+  border: 1px solid rgba(212, 175, 55, 0.5) !important;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.profile-tab-icon {
+  font-size: 1.1rem !important;
+  filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
+}
+
+/* Readings List - Subtle Gold Accent */
+.reading-item {
+  border-left: 2px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.reading-item:hover {
+  border-left-color: var(--color-mystic-gold);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+/* Form Inputs - Elegant */
+.form-input {
+  margin-bottom: 1rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all var(--transition-fast);
+}
+
+.form-input:focus {
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+/* Tab Content Cards - Subtle Gold Border */
+.tab-content .glass-card {
+  border-left: 3px solid rgba(212, 175, 55, 0.3) !important;
+}
+
+.tab-content .glass-card h3 {
+  color: var(--color-mystic-gold);
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* Responsive - Maintain Elegance */
+@media (max-width: 768px) {
+  .profile-grid {
+    gap: 1rem !important;
+  }
+
+  .glass-card {
+    padding: 1rem !important;
+  }
+
+  .stat-card {
+    padding: 1rem !important;
+  }
+}
+
+/* ============================================
+   SOFT GATE & PAYWALL STYLES
+   ============================================ */
+
+.message--blurred {
+  position: relative;
+  overflow: hidden;
+}
+
+.blur-text {
+  filter: blur(5px);
+  user-select: none;
+  opacity: 0.7;
+  margin-top: 0.5rem;
+}
+
+.premium-lock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 26, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  z-index: 10;
+  border-radius: inherit;
+}
+
+.premium-lock-overlay .lock-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  animation: pulse 2s infinite;
+}
+
+.premium-lock-overlay h3 {
+  color: var(--color-mystic-gold);
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.premium-lock-overlay p {
+  color: var(--color-silver-mist);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 10, 26, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-mystic-gold);
+  box-shadow: 0 0 10px var(--color-mystic-gold);
+}
+
+/* Journal List Specific */
+.journal-entries-list {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+
+
+/* LOADING SPINNER FIX */
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  margin-right: 8px;
+  vertical-align: text-bottom;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.btn--processing {
+  cursor: wait;
+  opacity: 0.9;
+  pointer-events: none;
+  /* Ensure text is visible and no duplicate spinner */
+  color: inherit !important;
+}
+
+.btn--processing::after {
+  display: none;
+}

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Mystická Hvězda</title>
+    <link rel="stylesheet" href="css/style.v2.css?v=5">
+    <style>
+        .admin-section {
+            padding: 100px 0;
+            min-height: 100vh;
+        }
+
+        .admin-table-container {
+            background: rgba(10, 10, 26, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow-x: auto;
+            padding: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--color-silver-mist);
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            color: var(--color-mystic-gold);
+            font-family: var(--font-heading);
+        }
+
+        .status-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-free {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .status-premium {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--color-mystic-gold);
+        }
+
+        .status-vip {
+            background: rgba(155, 89, 182, 0.2);
+            color: #9b59b6;
+        }
+
+        .action-btn {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            margin-right: 0.3rem;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-promote {
+            border-color: var(--color-mystic-gold);
+            color: var(--color-mystic-gold);
+        }
+
+        .btn-demote {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <section class="section admin-section">
+            <div class="container">
+                <h1 class="hero__title mb-xl">Admin Dashboard 🛠️</h1>
+
+                <div class="card mb-xl">
+                    <p>Přihlášen jako: <span id="admin-email">...</span></p>
+                    <button class="btn btn--secondary" onclick="loadUsers()">🔄 Obnovit data</button>
+                    <p id="error-msg" style="color:red; margin-top:1rem;"></p>
+                </div>
+
+                <div class="admin-table-container">
+                    <table id="users-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>ID</th>
+                                <th>Plán</th>
+                                <th>Kredity</th>
+                                <th>Registrace</th>
+                                <th>Akce</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="6">Načítám data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/api-config.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+    <script src="js/auth-client.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script type="module" src="js/main.js?v=5"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAdminAccess();
+        });
+
+        async function checkAdminAccess() {
+            const profile = await window.Auth.getProfile();
+            if (!profile) {
+                window.location.href = 'prihlaseni.html?redirect=admin.html';
+                return;
+            }
+            document.getElementById('admin-email').textContent = profile.email;
+
+            // Initial Load
+            loadUsers();
+        }
+
+        async function loadUsers() {
+            const token = window.Auth.token || localStorage.getItem('auth_token');
+            const tbody = document.querySelector('#users-table tbody');
+            const errorMsg = document.getElementById('error-msg');
+
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/admin/users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.status === 403) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="color:red">Přístup odepřen (Nejste admin).</td></tr>';
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (!data.success) throw new Error(data.error);
+
+                renderUsers(data.users);
+                errorMsg.textContent = '';
+            } catch (error) {
+                console.error(error);
+                errorMsg.textContent = 'Chyba při načítání uživatelů: ' + error.message;
+            }
+        }
+
+        function renderUsers(users) {
+            const tbody = document.querySelector('#users-table tbody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const sub = (user.subscriptions && user.subscriptions.length > 0) ? user.subscriptions[0] : (typeof user.subscriptions === 'object' ? user.subscriptions : {});
+                const plan = sub.plan_type || 'free';
+                const credits = sub.credits || 0;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.email}</td>
+                    <td style="font-family:monospace; font-size:0.8rem;">${user.id.substring(0, 8)}...</td>
+                    <td><span class="status-badge status-${plan.split('_')[0]}">${plan}</span></td>
+                    <td>${credits}</td>
+                    <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <button class="action-btn btn-promote" onclick="updateSub('${user.id}', 'premium_monthly')">Premium</button>
+                        <button class="action-btn" onclick="updateSub('${user.id}', 'vip')">VIP</button>
+                        <button class="action-btn btn-demote" onclick="updateSub('${user.id}', 'free')">Free</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.updateSub = async function (userId, plan) {
+            if (!confirm(`Opravdu změnit plán na ${plan} pro uživatele ${userId}?`)) return;
+
+            const token = window.Auth.token || localStorage.getItem('auth_token');
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/admin/user/${userId}/subscription`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ plan_type: plan })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Aktualizováno!');
+                    loadUsers();
+                } else {
+                    alert('Chyba: ' + data.error);
+                }
+            } catch (e) {
+                alert('Chyba spojení.');
+            }
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Vytvořte si svou osobní natální kartu a objevte pozice planet v okamžiku vašeho narození.">
+    <meta name="keywords" content="natální karta, horoskop narození, planety, astrologie">
+    <meta name="theme-color" content="#0a0a1a">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Natální Karta | Mystická Hvězda">
+    <meta property="og:description"
+        content="Vytvořte si svou osobní natální kartu a objevte pozice planet v okamžiku vašeho narození.">
+    <meta property="og:image" content="img/icon-natal.webp">
+    <meta property="og:locale" content="cs_CZ">
+    <meta name="twitter:card" content="summary_large_image">
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Natální Karta",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web"
+    }
+    </script>
+    <title>Natální Karta | Mystická Hvězda</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.v2.css?v=2">
+    <style>
+        /* Natal Chart Specific Styles */
+        .natal-chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            aspect-ratio: 1/1;
+        }
+
+        .natal-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 20px rgba(155, 89, 182, 0.3));
+        }
+
+        .planet-tooltip {
+            position: absolute;
+            background: rgba(10, 10, 26, 0.95);
+            border: 1px solid var(--color-mystic-gold);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            color: var(--color-starlight);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+            max-width: 200px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Skip to main content -->
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+    <div class="stars" aria-hidden="true"></div>
+
+    <!-- HEADER (loaded dynamically) -->
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <!-- HERO -->
+        <section class="section section--hero" style="min-height: auto; padding-bottom: 0;">
+            <div class="container text-center">
+                <h1 class="hero__title">
+                    <span class="text-gradient">Klíč k Sebe-poznání</span>
+                </h1>
+                <p class="hero__subtitle">
+                    Vaše natální karta není jen obrázek. Je to plán vaší duše, vašich talentů a výzev, které jste si
+                    přišli prožít.
+                </p>
+            </div>
+        </section>
+
+        <!-- CHART INTERFACE -->
+        <section class="section">
+            <div class="container">
+                <div class="grid grid-2" style="align-items: start; gap: var(--space-2xl);">
+
+                    <!-- FORM -->
+                    <div class="card" data-animate>
+                        <div class="flex-between mb-lg">
+                            <h3 class="card__title" style="margin: 0;">Zadejte své údaje</h3>
+                            <label class="checkbox-wrapper"
+                                style="font-size: 0.9rem; cursor: pointer; display: none; align-items: center; gap: 0.5rem;"
+                                title="Použít údaje z mého profilu">
+                                <input type="checkbox" id="use-profile-natal"
+                                    style="accent-color: var(--color-mystic-gold);">
+                                <span style="opacity: 0.8;">Můj profil</span>
+                            </label>
+                        </div>
+                        <form id="natal-form" class="email-form" style="display: block;">
+                            <div class="form-group">
+                                <label for="name"
+                                    style="display: block; margin-bottom: 0.5rem; color: var(--color-silver-mist);">Jméno</label>
+                                <input type="text" id="name" class="email-form__input" placeholder="Vaše jméno" required
+                                    style="width: 100%;">
+                            </div>
+
+                            <div class="grid grid-2" style="gap: var(--space-md);">
+                                <div class="form-group">
+                                    <label for="birth-date"
+                                        style="display: block; margin-bottom: 0.5rem; color: var(--color-silver-mist);">Datum
+                                        narození</label>
+                                    <input type="date" id="birth-date" class="email-form__input" required
+                                        style="width: 100%;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="birth-time"
+                                        style="display: block; margin-bottom: 0.5rem; color: var(--color-silver-mist);">Čas
+                                        narození</label>
+                                    <input type="time" id="birth-time" class="email-form__input" required
+                                        style="width: 100%;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="birth-place"
+                                    style="display: block; margin-bottom: 0.5rem; color: var(--color-silver-mist);">Místo
+                                    narození</label>
+                                <input type="text" id="birth-place" class="email-form__input" placeholder="Např. Praha"
+                                    required style="width: 100%;">
+                            </div>
+
+                            <button type="submit" class="btn btn--primary"
+                                style="width: 100%; margin-top: var(--space-md);">Odhalit hvězdnou mapu</button>
+                        </form>
+
+                        <div id="chart-results" style="margin-top: var(--space-xl); display: none;">
+                            <h4 class="mb-md" style="color: var(--color-mystic-gold);">Klíčové prvky:</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li class="flex-between mb-sm"
+                                    style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                                    <span>☀️ Slunce</span>
+                                    <strong id="res-sun" style="color: var(--color-starlight);">--</strong>
+                                </li>
+                                <li class="flex-between mb-sm"
+                                    style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                                    <span>🌙 Měsíc</span>
+                                    <strong id="res-moon" style="color: var(--color-starlight);">--</strong>
+                                </li>
+                                <li class="flex-between mb-sm"
+                                    style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                                    <span>⬆️ Ascendent</span>
+                                    <strong id="res-asc" style="color: var(--color-starlight);">--</strong>
+                                </li>
+                            </ul>
+                            <div class="mt-lg p-md"
+                                style="background: rgba(155, 89, 182, 0.1); border-radius: var(--radius-md);">
+                                <p class="text-sm">
+                                    💡 <strong>Tip astrologa:</strong> Vaše Slunce v <span id="tip-sign">...</span>
+                                    naznačuje silnou životní energii,
+                                    zatímco Měsíc ukazuje vaše emoční potřeby.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VISUALIZATION -->
+                    <div class="natal-chart-container" data-animate>
+                        <svg id="natal-chart" class="natal-svg" viewBox="0 0 500 500">
+                            <!-- Definitions for Gradients and Filters -->
+                            <defs>
+                                <filter id="glow-soft" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+
+                                <!-- Sun Gradient -->
+                                <radialGradient id="grad-sun" cx="30%" cy="30%" r="70%">
+                                    <stop offset="0%" style="stop-color:#FFF7E0;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#FFD700;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
+                                </radialGradient>
+
+                                <!-- Moon Gradient -->
+                                <radialGradient id="grad-moon" cx="30%" cy="30%" r="70%">
+                                    <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+                                    <stop offset="60%" style="stop-color:#E0E0E0;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#B0B0B0;stop-opacity:1" />
+                                </radialGradient>
+
+                                <!-- Mercury Gradient -->
+                                <radialGradient id="grad-mercury" cx="30%" cy="30%" r="70%">
+                                    <stop offset="0%" style="stop-color:#E6E6FA;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#B0C4DE;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#708090;stop-opacity:1" />
+                                </radialGradient>
+
+                                <!-- Venus Gradient -->
+                                <radialGradient id="grad-venus" cx="30%" cy="30%" r="70%">
+                                    <stop offset="0%" style="stop-color:#FFF0F5;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#FFB6C1;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#DB7093;stop-opacity:1" />
+                                </radialGradient>
+
+                                <!-- Mars Gradient -->
+                                <radialGradient id="grad-mars" cx="30%" cy="30%" r="70%">
+                                    <stop offset="0%" style="stop-color:#FF7F50;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#FF4500;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#8B0000;stop-opacity:1" />
+                                </radialGradient>
+
+                                <!-- Jupiter Gradient -->
+                                <radialGradient id="grad-jupiter" cx="30%" cy="30%" r="70%">
+                                    <stop offset="0%" style="stop-color:#FFE4B5;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#DEB887;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#A0522D;stop-opacity:1" />
+                                </radialGradient>
+
+                                <!-- Saturn Gradient -->
+                                <radialGradient id="grad-saturn" cx="30%" cy="30%" r="70%">
+                                    <stop offset="0%" style="stop-color:#F0E68C;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#BDB76B;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#556B2F;stop-opacity:1" />
+                                </radialGradient>
+
+                                <!-- Soul Center Gradient -->
+                                <radialGradient id="grad-soul" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                                    <stop offset="0%" style="stop-color:#9B59B6;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#4A235A;stop-opacity:1" />
+                                </radialGradient>
+                            </defs>
+
+                            <!-- Background Ring -->
+                            <circle cx="250" cy="250" r="248" fill="none" stroke="var(--color-mystic-gold)"
+                                stroke-width="2" opacity="0.6" />
+                            <circle cx="250" cy="250" r="195" fill="none" stroke="var(--color-mystic-gold)"
+                                stroke-width="1" opacity="0.4" />
+
+                            <!-- Signs (Static Demo) -->
+                            <g id="zodiac-ring" transform="translate(250, 250)">
+                                <!-- Generated by JS -->
+                            </g>
+
+                            <!-- Planets (Animated) -->
+                            <g id="planets-layer" transform="translate(250, 250)">
+                                <!-- Generated by JS -->
+                            </g>
+                        </svg>
+
+                        <div id="tooltip" class="planet-tooltip">
+                            <h4 style="margin-bottom: 0.2rem;">Planeta</h4>
+                            <p class="text-sm">Vysvětlení vlivu...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            </div>
+        </section>
+
+        <!-- CURRENT TRANSITS (New Feature) -->
+        <section id="transits-now" class="section"
+            style="display: none; padding-top: 0; animation: fadeIn 0.5s ease-out;">
+            <div class="container">
+                <div class="card"
+                    style="background: linear-gradient(135deg, rgba(10, 10, 26, 0.8), rgba(60, 20, 80, 0.4)); border: 1px solid var(--color-mystic-gold);">
+                    <div class="flex-between mb-lg" style="align-items: center;">
+                        <div>
+                            <h3 style="margin: 0; color: var(--color-mystic-gold);">Aktuální vesmírné vlivy</h3>
+                            <p class="text-sm" style="color: var(--color-silver-mist); margin-top: 0.5rem;">Co pro vás
+                                znamená dnešní postavení hvězd?</p>
+                        </div>
+                        <div class="badge badge--gold" id="transit-date">Dnes</div>
+                    </div>
+
+                    <div class="grid grid-2-sidebar" style="gap: var(--space-xl); align-items: center;">
+                        <!-- Transit Icon/Visual -->
+                        <div class="text-center">
+                            <div
+                                style="font-size: 4rem; margin-bottom: 1rem; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3));">
+                                ☀️</div>
+                            <h4 id="transit-title" style="color: var(--color-starlight); margin-bottom: 0.5rem;">Slunce
+                                v ...</h4>
+                            <p id="transit-subtitle" style="font-size: 0.9rem; color: var(--color-silver-mist);">...</p>
+                        </div>
+
+                        <!-- Transit Text -->
+                        <div>
+                            <div class="p-md"
+                                style="background: rgba(255,255,255,0.05); border-radius: var(--radius-md); margin-bottom: 1rem;">
+                                <p id="transit-message"
+                                    style="line-height: 1.6; color: var(--color-starlight); margin: 0;">
+                                    Načítám aktuální tranzity...
+                                </p>
+                            </div>
+                            <small class="text-muted">Tento výklad vychází z vašeho slunečního znamení a aktuální polohy
+                                Slunce.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTENT -->
+        <section class="section section--alt">
+            <div class="container">
+                <div class="grid grid-3" data-animate>
+                    <div class="card card--service">
+                        <span class="card__icon">📐</span>
+                        <h3 class="card__title">Aspekty</h3>
+                        <p class="card__text">
+                            Geometrické vztahy mezi planetami. Odhalují napětí (kvadratury) i harmonii (trigony) ve
+                            vašem životě.
+                        </p>
+                    </div>
+                    <div class="card card--service">
+                        <span class="card__icon">🏠</span>
+                        <h3 class="card__title">Astrologické domy</h3>
+                        <p class="card__text">
+                            12 oblastí života. Zjistěte, kde se odehrává vaše kariéra, vztahy nebo duchovní růst.
+                        </p>
+                    </div>
+                    <div class="card card--service">
+                        <span class="card__icon">☄️</span>
+                        <h3 class="card__title">Tranzity</h3>
+                        <p class="card__text">
+                            Jak aktuální postavení planet ovlivňuje váš natální horoskop právě teď.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER (loaded dynamically) -->
+    <div id="footer-placeholder"></div>
+
+
+
+
+
+
+    <script src="js/favorites-helper.js"></script>
+    <script src="js/natal-chart.js?v=4"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('✨ Service Worker registered'))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+
+    <script src="js/api-config.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+    <script src="js/auth-client.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script type="module" src="js/main.js?v=5"></script>
+
+</body>
+
+</html>

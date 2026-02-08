@@ -1,0 +1,20 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-jupiter" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#DEB887" />
+      <stop offset="20%" style="stop-color:#8B4513" />
+      <stop offset="40%" style="stop-color:#DEB887" />
+      <stop offset="60%" style="stop-color:#8B4513" />
+      <stop offset="80%" style="stop-color:#DEB887" />
+      <stop offset="100%" style="stop-color:#8B4513" />
+    </linearGradient>
+    <radialGradient id="shade-jupiter" cx="50%" cy="50%" r="50%">
+      <stop offset="80%" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.3"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#grad-jupiter)" />
+  <circle cx="50" cy="50" r="48" fill="url(#shade-jupiter)" />
+  <!-- Great Red Spot -->
+  <ellipse cx="70" cy="65" rx="12" ry="8" fill="#8B4513" opacity="0.6"/>
+</svg>

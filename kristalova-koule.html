@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zeptejte se křišťálové koule na cokoliv. AI věštba pro váš osobní dotaz.">
+    <meta name="keywords" content="křišťálová koule, věštění, orákulum, předpověď">
+    <meta name="theme-color" content="#0a0a1a">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Křišťálová Koule | Mystická Hvězda">
+    <meta property="og:description" content="Zeptejte se křišťálové koule na cokoliv. AI věštba pro váš osobní dotaz.">
+    <meta property="og:image" content="img/crystal-ball-3d.webp">
+    <meta property="og:locale" content="cs_CZ">
+    <meta name="twitter:card" content="summary_large_image">
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Křišťálová Koule",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web"
+    }
+    </script>
+    <title>Křišťálová Koule | Mystická Hvězda</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.v2.css">
+    <style>
+        /* Crystal Ball Specific Styles */
+        .ball-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ball-image {
+            width: 100%;
+            height: auto;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 0 30px rgba(157, 78, 221, 0.4));
+            transition: filter 0.3s ease;
+        }
+
+        .ball-container:hover .ball-image {
+            transform: scale(1.02);
+            filter: drop-shadow(0 0 50px rgba(157, 78, 221, 0.6));
+        }
+
+        .ball-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(157, 78, 221, 0.6) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 1;
+            opacity: 0.5;
+            animation: pulse-glow 4s infinite ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+        }
+
+        .ball-container.shaking .ball-image {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both infinite;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        /* Answer Box (Glassmorphism) */
+        .answer-box {
+            margin: var(--space-xl) auto;
+            /* Space between ball and answer */
+            max-width: 600px;
+            min-height: 100px;
+            /* Prevent layout jump */
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            background: rgba(10, 17, 40, 0.6);
+            border: 1px solid rgba(157, 78, 221, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        .answer-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+            box-shadow: 0 0 30px rgba(157, 78, 221, 0.2);
+        }
+
+        #answer-text {
+            color: var(--color-starlight);
+            font-family: var(--font-heading);
+            font-size: var(--text-xl);
+            line-height: 1.6;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .instruction-text {
+            color: var(--color-silver-mist);
+            font-style: italic;
+        }
+
+        .shake-input {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+            border-color: #ff4d4d !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Skip to main content -->
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+    <div class="stars" aria-hidden="true"></div>
+
+    <!-- HEADER (loaded dynamically) -->
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <!-- HERO -->
+        <section class="section section--hero" style="min-height: 80vh; display: flex; align-items: center;">
+            <div class="container text-center">
+
+                <h1 class="hero__title mb-xl">
+                    <span class="text-gradient">Hlas Intuice</span>
+                </h1>
+
+                <div id="crystal-ball" class="ball-container">
+                    <img src="img/crystal-ball-3d.webp" alt="Magická Křišťálová Koule" class="ball-image">
+
+                    <!-- Glow effect behind -->
+                    <div class="ball-glow"></div>
+                </div>
+
+                <!-- Answer Section (Now Below) -->
+                <div id="answer-container" class="answer-box">
+                    <p id="answer-text">Odpověď se ukáže zde...</p>
+                </div>
+
+                <!-- Question Input for AI -->
+                <div class="question-form" style="max-width: 500px; margin: var(--space-xl) auto;">
+                    <input type="text" id="question-input" class="email-form__input" placeholder="Napiš svou otázku..."
+                        style="width: 100%; text-align: center;">
+                </div>
+
+                <p class="instruction-text mb-lg">
+                    Zhluboka se nadechněte, uklidněte mysl a položte otázku. Nechte promluvit symboly.
+                </p>
+
+                <div>
+                    <button class="btn btn--primary" id="ask-btn">Zeptat se koule</button>
+                    <button class="btn btn--ghost" id="reset-btn"
+                        style="opacity: 0; pointer-events: none; margin-left: var(--space-md);">Nová otázka</button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER (loaded dynamically) -->
+    <div id="footer-placeholder"></div>
+
+
+
+
+
+
+    <script src="js/favorites-helper.js"></script>
+    <script src="js/crystal-ball.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('✨ Service Worker registered'))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+
+    <script src="js/api-config.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+    <script src="js/auth-client.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script type="module" src="js/main.js?v=5"></script>
+
+</body>
+
+</html>

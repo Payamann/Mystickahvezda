@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kontaktujte nás s vašimi dotazy nebo návrhy.">
+    <meta name="keywords" content="kontakt, email, podpora">
+    <meta name="theme-color" content="#0a0a1a">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Kontakt | Mystická Hvězda">
+    <meta property="og:description" content="Kontaktujte nás s vašimi dotazy nebo návrhy.">
+    <meta property="og:image" content="img/hero-3d.webp">
+    <meta property="og:locale" content="cs_CZ">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        "name": "Kontakt"
+    }
+    </script>
+
+    <title>Kontakt | Mystická Hvězda</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📩</text></svg>">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.v2.css">
+</head>
+
+<body>
+    <!-- Skip to main content -->
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+    <div class="stars" aria-hidden="true"></div>
+
+    <!-- HEADER (loaded dynamically) -->
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <!-- HERO -->
+        <section class="section section--hero" style="min-height: 50vh; padding-top: 140px;">
+            <div class="container">
+                <div class="hero__content text-center">
+                    <h1 class="hero__title">
+                        <span class="text-gradient">Kontaktujte nás</span>
+                    </h1>
+                    <p class="hero__subtitle mb-xl">
+                        Máte otázky? Jsme tu pro vás. Napište nám nebo zavolejte.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT INFO -->
+        <section class="section">
+            <div class="container">
+                <div class="grid grid-2">
+                    <div class="card" data-animate>
+                        <h3 class="card__title mb-md">Kontaktní údaje</h3>
+                        <p class="mb-lg">Jsme připraveni zodpovědět vaše dotazy ohledně horoskopů,
+                            tarotových výkladů a našich služeb.</p>
+
+                        <div class="contact-item mb-md">
+                            <strong class="text-gold">✉️ Email:</strong><br>
+                            <a href="mailto:info@mystickahvezda.cz" class="text-silver">info@mystickahvezda.cz</a>
+                        </div>
+
+                        <div class="contact-item mb-md">
+                            <strong class="text-gold">📞 Telefon:</strong><br>
+                            <a href="tel:+420123456789" class="text-silver">+420 123 456 789</a>
+                        </div>
+
+                        <div class="contact-item">
+                            <strong class="text-gold">📍 Adresa (korespondence):</strong><br>
+                            <span class="text-silver">Hvězdná 123<br>110 00 Praha 1</span>
+                        </div>
+                    </div>
+
+                    <div class="card" data-animate>
+                        <h3 class="card__title mb-md">Napište nám</h3>
+                        <form action="#" method="POST" class="contact-form">
+                            <div class="form-group mb-md">
+                                <label for="name" class="sr-only">Jméno</label>
+                                <input type="text" id="name" class="email-form__input" placeholder="Vaše jméno"
+                                    style="width: 100%; margin-bottom: 1rem;">
+                            </div>
+                            <div class="form-group mb-md">
+                                <label for="email" class="sr-only">Email</label>
+                                <input type="email" id="email" class="email-form__input" placeholder="Váš email"
+                                    style="width: 100%; margin-bottom: 1rem;">
+                            </div>
+                            <div class="form-group mb-lg">
+                                <label for="message" class="sr-only">Zpráva</label>
+                                <textarea id="message" class="email-form__input" placeholder="Vaše zpráva..."
+                                    style="width: 100%; min-height: 150px; border-radius: 12px;"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn--primary btn--full">Odeslat zprávu</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="section">
+            <div class="container">
+                <div class="cta-banner" data-animate>
+                    <div class="cta-banner__content">
+                        <h2 class="cta-banner__title">Potřebujete rychlou odpověď?</h2>
+                        <p class="cta-banner__text">
+                            Navštivte naši stránku s často kladenými dotazy, kde najdete odpovědi na nejběžnější otázky.
+                        </p>
+                        <a href="faq.html" class="btn btn--secondary btn--lg">Přejít na FAQ</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER (loaded dynamically) -->
+    <div id="footer-placeholder"></div>
+
+
+
+
+
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('✨ Service Worker registered'))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+
+    <script src="js/api-config.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+    <script src="js/auth-client.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script type="module" src="js/main.js?v=5"></script>
+
+</body>
+
+</html>

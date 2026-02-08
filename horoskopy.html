@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Přesné denní horoskopy pro všech 12 znamení zvěrokruhu. Zjistěte, co vám hvězdy přináší dnes.">
+    <meta name="keywords" content="horoskop, denní horoskop, znamení, zvěrokruh, astrologie">
+    <meta name="theme-color" content="#0a0a1a">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Denní Horoskopy | Mystická Hvězda">
+    <meta property="og:description"
+        content="Přesné denní horoskopy pro všech 12 znamení zvěrokruhu. Zjistěte, co vám hvězdy přináší dnes.">
+    <meta property="og:image" content="img/icon-zodiac.webp">
+    <meta property="og:locale" content="cs_CZ">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Denní Horoskopy",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web"
+    }
+    </script>
+
+    <title>Denní Horoskopy | Mystická Hvězda</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♈</text></svg>">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.v2.css">
+</head>
+
+<body>
+    <!-- Skip to main content -->
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+    <div class="stars" aria-hidden="true"></div>
+
+    <!-- HEADER (loaded dynamically) -->
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <!-- HERO -->
+        <section class="section section--hero" style="min-height: 60vh;">
+            <div class="container">
+                <div class="hero__content">
+                    <h1 class="hero__title">
+                        <span class="text-gradient">Denní Inspirace</span>
+                    </h1>
+                    <p class="hero__subtitle">
+                        Energie planet se mění každý den. Zjistěte, jak je dnes využít pro svůj prospěch a vnitřní klid.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TABS -->
+        <section class="section" style="padding-top: 0;">
+            <div class="container">
+                <div class="tabs" role="tablist" aria-label="Výběr období horoskopu" data-animate>
+                    <button class="tab active" data-tab="daily" role="tab" aria-selected="true">Denní</button>
+                    <button class="tab" data-tab="weekly" role="tab" aria-selected="false">Týdenní</button>
+                    <button class="tab" data-tab="monthly" role="tab" aria-selected="false">Měsíční</button>
+                </div>
+
+                <!-- ZODIAC GRID -->
+                <div class="zodiac-grid" data-animate>
+                    <a href="#beran" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♈</span>
+                        <h3 class="zodiac-card__name">Beran</h3>
+                        <span class="zodiac-card__dates">21.3. - 19.4.</span>
+                    </a>
+                    <a href="#byk" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♉</span>
+                        <h3 class="zodiac-card__name">Býk</h3>
+                        <span class="zodiac-card__dates">20.4. - 20.5.</span>
+                    </a>
+                    <a href="#blizenci" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♊</span>
+                        <h3 class="zodiac-card__name">Blíženci</h3>
+                        <span class="zodiac-card__dates">21.5. - 20.6.</span>
+                    </a>
+                    <a href="#rak" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♋</span>
+                        <h3 class="zodiac-card__name">Rak</h3>
+                        <span class="zodiac-card__dates">21.6. - 22.7.</span>
+                    </a>
+                    <a href="#lev" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♌</span>
+                        <h3 class="zodiac-card__name">Lev</h3>
+                        <span class="zodiac-card__dates">23.7. - 22.8.</span>
+                    </a>
+                    <a href="#panna" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♍</span>
+                        <h3 class="zodiac-card__name">Panna</h3>
+                        <span class="zodiac-card__dates">23.8. - 22.9.</span>
+                    </a>
+                    <a href="#vahy" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♎</span>
+                        <h3 class="zodiac-card__name">Váhy</h3>
+                        <span class="zodiac-card__dates">23.9. - 22.10.</span>
+                    </a>
+                    <a href="#stir" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♏</span>
+                        <h3 class="zodiac-card__name">Štír</h3>
+                        <span class="zodiac-card__dates">23.10. - 21.11.</span>
+                    </a>
+                    <a href="#strelec" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♐</span>
+                        <h3 class="zodiac-card__name">Střelec</h3>
+                        <span class="zodiac-card__dates">22.11. - 21.12.</span>
+                    </a>
+                    <a href="#kozoroh" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♑</span>
+                        <h3 class="zodiac-card__name">Kozoroh</h3>
+                        <span class="zodiac-card__dates">22.12. - 19.1.</span>
+                    </a>
+                    <a href="#vodnar" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♒</span>
+                        <h3 class="zodiac-card__name">Vodnář</h3>
+                        <span class="zodiac-card__dates">20.1. - 18.2.</span>
+                    </a>
+                    <a href="#ryby" class="zodiac-card">
+                        <span class="zodiac-card__symbol">♓</span>
+                        <h3 class="zodiac-card__name">Ryby</h3>
+                        <span class="zodiac-card__dates">19.2. - 20.3.</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- DYNAMIC HOROSCOPE DETAIL -->
+        <section class="section section--alt" id="horoscope-detail-section">
+            <div class="container">
+                <div class="grid grid-2" style="align-items: center;" data-animate>
+                    <div class="horoscope-wrapper">
+                        <span class="section__badge">Denní horoskop</span>
+                        <h2 class="section__title" style="margin-bottom: var(--space-md);">
+                            <span id="detail-symbol" style="font-size: 3rem;">♈</span> <span
+                                id="detail-name">Beran</span>
+                        </h2>
+
+                        <div class="horoscope-content">
+                            <!-- Loading state -->
+                            <div id="horoscope-loading" class="text-center" style="display: none;">
+                                <div class="loading-spinner"></div>
+                                <p style="margin-top: 1rem; color: var(--color-mystic-gold);">Hvězdy promlouvají...</p>
+                            </div>
+
+                            <p class="mb-lg" style="font-size: var(--text-sm); color: var(--color-mystic-gold);"
+                                id="detail-date">
+                                Vyberte znamení výše pro zobrazení předpovědi
+                            </p>
+                            <p class="mb-lg" style="font-size: var(--text-lg);" id="detail-text">
+                                Klikněte na kartičku svého znamení v seznamu výše a nechte hvězdy promluvit k vašemu
+                                dnešnímu dni.
+                            </p>
+                            <p class="mb-lg" id="detail-work">
+                                <!-- Dynamic Content -->
+                            </p>
+                            <p class="mb-lg" id="detail-relationships">
+                                <!-- Dynamic Content -->
+                            </p>
+                            <p class="mb-xl">
+                                <strong style="color: var(--color-starlight);">✨ Čísla štěstí:</strong>
+                                <span id="detail-numbers">—</span>
+                            </p>
+                            <a href="natalni-karta.html" class="btn btn--primary">Získat kompletní natální kartu</a>
+                        </div>
+                    </div>
+                    <div class="text-center mobile-hidden">
+                        <div style="font-size: 12rem; opacity: 0.1;" id="bg-symbol">♈</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="section">
+            <div class="container">
+                <div class="cta-banner" data-animate>
+                    <div class="cta-banner__content">
+                        <h2 class="cta-banner__title">Chcete přesnější horoskop?</h2>
+                        <p class="cta-banner__text">
+                            Zadejte datum, čas a místo narození pro plně personalizovaný výklad
+                            s přesností až 95%.
+                        </p>
+                        <a href="cenik.html" class="btn btn--primary btn--lg">Vyzkoušet Premium zdarma</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER (loaded dynamically) -->
+    <div id="footer-placeholder"></div>
+
+
+
+
+
+
+    <script src="js/moon-phase.js"></script>
+    <script src="js/favorites-helper.js"></script>
+    <script src="js/horoscope.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('✨ Service Worker registered'))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+
+    <script src="js/api-config.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+    <script src="js/auth-client.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script type="module" src="js/main.js?v=5"></script>
+
+</body>
+
+</html>

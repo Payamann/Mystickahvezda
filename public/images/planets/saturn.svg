@@ -1,0 +1,19 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="grad-saturn" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#F4C430" />
+      <stop offset="100%" style="stop-color:#CD853F" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Back Rings -->
+  <path d="M5 50 Q 50 20 95 50" fill="none" stroke="#D2691E" stroke-width="6" opacity="0.7"/>
+  <path d="M10 50 Q 50 25 90 50" fill="none" stroke="#D2691E" stroke-width="4" opacity="0.9"/>
+
+  <!-- Planet -->
+  <circle cx="50" cy="50" r="35" fill="url(#grad-saturn)" />
+  
+  <!-- Front Rings -->
+  <path d="M5 50 Q 50 80 95 50" fill="none" stroke="#D2691E" stroke-width="6" opacity="0.7"/>
+  <path d="M10 50 Q 50 75 90 50" fill="none" stroke="#D2691E" stroke-width="4" opacity="0.9"/>
+</svg>

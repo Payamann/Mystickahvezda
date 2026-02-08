@@ -1,0 +1,74 @@
+[
+    {
+        "id": "aries",
+        "name": "Beran",
+        "dates": "21. 3. – 20. 4.",
+        "element": "Oheň"
+    },
+    {
+        "id": "taurus",
+        "name": "Býk",
+        "dates": "21. 4. – 21. 5.",
+        "element": "Země"
+    },
+    {
+        "id": "gemini",
+        "name": "Blíženci",
+        "dates": "22. 5. – 21. 6.",
+        "element": "Vzduch"
+    },
+    {
+        "id": "cancer",
+        "name": "Rak",
+        "dates": "22. 6. – 22. 7.",
+        "element": "Voda"
+    },
+    {
+        "id": "leo",
+        "name": "Lev",
+        "dates": "23. 7. – 22. 8.",
+        "element": "Oheň"
+    },
+    {
+        "id": "virgo",
+        "name": "Panna",
+        "dates": "23. 8. – 22. 9.",
+        "element": "Země"
+    },
+    {
+        "id": "libra",
+        "name": "Váhy",
+        "dates": "23. 9. – 23. 10.",
+        "element": "Vzduch"
+    },
+    {
+        "id": "scorpio",
+        "name": "Štír",
+        "dates": "24. 10. – 22. 11.",
+        "element": "Voda"
+    },
+    {
+        "id": "sagittarius",
+        "name": "Střelec",
+        "dates": "23. 11. – 21. 12.",
+        "element": "Oheň"
+    },
+    {
+        "id": "capricorn",
+        "name": "Kozoroh",
+        "dates": "22. 12. – 20. 1.",
+        "element": "Země"
+    },
+    {
+        "id": "aquarius",
+        "name": "Vodnář",
+        "dates": "21. 1. – 20. 2.",
+        "element": "Vzduch"
+    },
+    {
+        "id": "pisces",
+        "name": "Ryby",
+        "dates": "21. 2. – 20. 3.",
+        "element": "Voda"
+    }
+]

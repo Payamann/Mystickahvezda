@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Přihlášení | Mystická Hvězda</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Favicon -->
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em'
+            font-size='90'>🔮</text></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.v2.css">
+
+    <style>
+        /* Specific styles for login page centering */
+        .login-section {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 1rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .login-card {
+            background: rgba(13, 13, 25, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 215, 0, 0.1);
+            text-align: center;
+        }
+
+        .login-header {
+            margin-bottom: 2rem;
+        }
+
+        .login-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Reuse Modal Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--color-silver-mist);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--color-light);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--color-mystic-gold);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+        }
+    </style>
+
+    <!-- Scripts -->
+
+
+
+
+
+</head>
+
+<body>
+    <!-- STARS BACKGROUND -->
+    <div class="stars" aria-hidden="true"></div>
+
+    <!-- HEADER -->
+    <div id="header-placeholder"></div>
+
+    <main>
+        <section class="login-section">
+            <div class="login-card" data-animate>
+                <div class="login-header">
+                    <span class="login-icon">🦉</span>
+                    <h1 class="hero__title" style="font-size: 2rem; margin-bottom: 0.5rem;">Vítejte zpět</h1>
+                    <p class="hero__subtitle" style="font-size: 1rem;">Přihlaste se ke svému účtu</p>
+                </div>
+
+                <!-- Using the same ID as the modal form to reuse Auth logic -->
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="vas@email.cz"
+                            required autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Heslo</label>
+                        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••"
+                            required autocomplete="current-password">
+                    </div>
+
+                    <button type="submit" id="auth-submit" class="btn btn--primary btn--glow"
+                        style="width: 100%; margin-top: 1rem;">
+                        Přihlásit se
+                    </button>
+                </form>
+
+                <div style="margin-top: 2rem; font-size: 0.9rem; color: var(--color-silver-mist);">
+                    <button id="auth-mode-toggle" class="btn btn--text" style="color: var(--color-mystic-gold);">
+                        Nemáte účet? Zaregistrujte se
+                    </button>
+                </div>
+
+                <!-- Hidden Register Fields (Managed by auth-client.js toggleMode) -->
+                <div id="register-fields" style="display: none; text-align: left; margin-top: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Jméno</label>
+                        <input type="text" name="first_name" class="form-input" placeholder="Vaše jméno">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Datum narození</label>
+                        <input type="date" name="birth_date" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Místo narození</label>
+                        <input type="text" name="birth_place" class="form-input" placeholder="Např. Praha">
+                    </div>
+                </div>
+
+                <!-- Header for Register Mode (Hidden by default, updated by JS) -->
+                <h1 id="auth-title" class="sr-only">Přihlášení</h1>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Handling Redirect Logic from URL -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auth-client.js automatically binds to #login-form and handles submission.
+            // It also handles #auth-mode-toggle.
+            // We just need to check if we are already logged in, and if so, redirect back.
+
+            setTimeout(() => {
+                if (window.Auth && window.Auth.isLoggedIn()) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirect = urlParams.get('redirect');
+                    if (redirect) {
+                        window.location.href = redirect;
+                    } else {
+                        window.location.href = '/profil.html';
+                    }
+                }
+            }, 500); // Small delay to let Auth init
+        });
+
+        // Handle "auth:changed" event from auth-client.js
+        document.addEventListener('auth:changed', () => {
+            if (window.Auth && window.Auth.isLoggedIn()) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirect = urlParams.get('redirect') || '/profil.html';
+                // prevent infinite loop if redirect points to self
+                if (!redirect.includes('login.html')) {
+                    window.location.href = redirect;
+                }
+            }
+        });
+    </script>
+
+    <script src="js/api-config.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+    <script src="js/auth-client.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script type="module" src="js/main.js?v=5"></script>
+
+</body>
+
+</html>
