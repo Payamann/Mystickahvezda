@@ -27,6 +27,4 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('components:loaded', () => {
     initHeader();
     initMobileNav();
-    // Re-initialize any smooth scroll links that might be in header/footer
-    initSmoothScroll();
 });

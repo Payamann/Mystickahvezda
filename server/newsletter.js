@@ -13,9 +13,9 @@ const newsletterLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-// Helper for email validation
+// Helper for email validation (requires at least 2-char TLD)
 const isValidEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$/.test(email);
 };
 
 // POST /subscribe

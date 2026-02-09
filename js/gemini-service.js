@@ -9,6 +9,9 @@ const API_BASE_URL = window.API_CONFIG?.BASE_URL || 'http://localhost:3001/api';
  * Generic API call helper
  */
 async function callAPI(endpoint, data) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
     try {
         const headers = { 'Content-Type': 'application/json' };
         // Include auth token for endpoints that require authentication
@@ -20,7 +23,8 @@ async function callAPI(endpoint, data) {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             method: 'POST',
             headers,
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            signal: controller.signal
         });
 
         if (!response.ok) {
@@ -38,8 +42,13 @@ async function callAPI(endpoint, data) {
 
         return result.response;
     } catch (error) {
+        if (error.name === 'AbortError') {
+            throw new Error('Požadavek vypršel. Zkuste to prosím znovu.');
+        }
         console.error(`API Error (${endpoint}):`, error);
         throw error;
+    } finally {
+        clearTimeout(timeoutId);
     }
 }
 

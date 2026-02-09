@@ -569,18 +569,19 @@ function getZodiacSign(date) {
     const day = date.getDate();
     const month = date.getMonth() + 1; // 0-indexed
 
-    if ((month == 1 && day <= 19) || (month == 12 && day >= 22)) return ZODIAC_SIGNS.find(s => s.name === 'Kozoroh');
-    if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return ZODIAC_SIGNS.find(s => s.name === 'Vodnář');
-    if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) return ZODIAC_SIGNS.find(s => s.name === 'Ryby');
-    if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return ZODIAC_SIGNS.find(s => s.name === 'Beran');
-    if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return ZODIAC_SIGNS.find(s => s.name === 'Býk');
-    if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return ZODIAC_SIGNS.find(s => s.name === 'Blíženci');
-    if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return ZODIAC_SIGNS.find(s => s.name === 'Rak');
+    // Boundaries aligned with data/zodiac-matrix.json
+    if ((month == 1 && day <= 20) || (month == 12 && day >= 22)) return ZODIAC_SIGNS.find(s => s.name === 'Kozoroh');
+    if ((month == 1 && day >= 21) || (month == 2 && day <= 20)) return ZODIAC_SIGNS.find(s => s.name === 'Vodnář');
+    if ((month == 2 && day >= 21) || (month == 3 && day <= 20)) return ZODIAC_SIGNS.find(s => s.name === 'Ryby');
+    if ((month == 3 && day >= 21) || (month == 4 && day <= 20)) return ZODIAC_SIGNS.find(s => s.name === 'Beran');
+    if ((month == 4 && day >= 21) || (month == 5 && day <= 21)) return ZODIAC_SIGNS.find(s => s.name === 'Býk');
+    if ((month == 5 && day >= 22) || (month == 6 && day <= 21)) return ZODIAC_SIGNS.find(s => s.name === 'Blíženci');
+    if ((month == 6 && day >= 22) || (month == 7 && day <= 22)) return ZODIAC_SIGNS.find(s => s.name === 'Rak');
     if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return ZODIAC_SIGNS.find(s => s.name === 'Lev');
     if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return ZODIAC_SIGNS.find(s => s.name === 'Panna');
-    if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return ZODIAC_SIGNS.find(s => s.name === 'Váhy');
-    if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return ZODIAC_SIGNS.find(s => s.name === 'Štír');
-    if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return ZODIAC_SIGNS.find(s => s.name === 'Střelec');
+    if ((month == 9 && day >= 23) || (month == 10 && day <= 23)) return ZODIAC_SIGNS.find(s => s.name === 'Váhy');
+    if ((month == 10 && day >= 24) || (month == 11 && day <= 22)) return ZODIAC_SIGNS.find(s => s.name === 'Štír');
+    if ((month == 11 && day >= 23) || (month == 12 && day <= 21)) return ZODIAC_SIGNS.find(s => s.name === 'Střelec');
 
     return ZODIAC_SIGNS[0]; // Fallback
 }
