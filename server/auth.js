@@ -222,7 +222,36 @@ router.post('/login', authLimiter, async (req, res) => {
     }
 });
 
-// Duplicate activate-premium removed (use Stripe payment flow)
+// Forgot Password - sends reset email via Supabase
+router.post('/forgot-password', authLimiter, async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email je povinný.' });
+    }
+
+    try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${APP_URL}/prihlaseni.html?reset=true`
+        });
+
+        if (error) {
+            console.error('Password reset error:', error);
+        }
+
+        // Always return success to prevent email enumeration
+        res.json({
+            success: true,
+            message: 'Pokud účet existuje, odeslali jsme email s odkazem pro obnovení hesla.'
+        });
+    } catch (e) {
+        console.error('Forgot Password Error:', e);
+        res.json({
+            success: true,
+            message: 'Pokud účet existuje, odeslali jsme email s odkazem pro obnovení hesla.'
+        });
+    }
+});
 
 // Get User Profile
 router.get('/profile', async (req, res) => {

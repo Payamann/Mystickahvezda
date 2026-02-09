@@ -568,19 +568,40 @@ import { supabase } from './db-supabase.js';
 // USER READINGS API
 // ============================================
 
-// Get user's reading history
+// Get user's reading history (with pagination)
 app.get('/api/user/readings', authenticateToken, async (req, res) => {
     try {
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 20));
+        const offset = (page - 1) * limit;
+
+        // Get total count for pagination metadata
+        const { count, error: countError } = await supabase
+            .from('readings')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', req.user.id);
+
+        if (countError) throw countError;
+
         const { data, error } = await supabase
             .from('readings')
             .select('*')
             .eq('user_id', req.user.id)
             .order('created_at', { ascending: false })
-            .limit(50);
+            .range(offset, offset + limit - 1);
 
         if (error) throw error;
 
-        res.json({ success: true, readings: data || [] });
+        res.json({
+            success: true,
+            readings: data || [],
+            pagination: {
+                page,
+                limit,
+                total: count || 0,
+                totalPages: Math.ceil((count || 0) / limit)
+            }
+        });
     } catch (error) {
         console.error('Get Readings Error:', error);
         res.status(500).json({ success: false, error: 'Nepodařilo se načíst historii.' });

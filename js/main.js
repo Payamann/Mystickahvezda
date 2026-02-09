@@ -10,21 +10,25 @@ import { initFAQ, initTabs, initCarousel, initCookieBanner } from './ui/componen
 import { initSmoothScroll } from './utils/helpers.js';
 import { initEmailForms, initDateValidation } from './ui/forms.js';
 
+function safeInit(name, fn) {
+    try { fn(); } catch (e) { console.error(`[Init] ${name} failed:`, e); }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    initStars();
-    initScrollAnimations();
-    initFAQ();
-    initTabs();
-    initSmoothScroll();
-    initEmailForms();
-    initCustomCursor();
-    initDateValidation();
-    initCarousel();
-    initCookieBanner();
+    safeInit('Stars', initStars);
+    safeInit('ScrollAnimations', initScrollAnimations);
+    safeInit('FAQ', initFAQ);
+    safeInit('Tabs', initTabs);
+    safeInit('SmoothScroll', initSmoothScroll);
+    safeInit('EmailForms', initEmailForms);
+    safeInit('CustomCursor', initCustomCursor);
+    safeInit('DateValidation', initDateValidation);
+    safeInit('Carousel', initCarousel);
+    safeInit('CookieBanner', initCookieBanner);
 });
 
 // Listen for dynamically loaded components (Header/Footer)
 document.addEventListener('components:loaded', () => {
-    initHeader();
-    initMobileNav();
+    safeInit('Header', initHeader);
+    safeInit('MobileNav', initMobileNav);
 });
