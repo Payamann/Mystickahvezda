@@ -95,14 +95,17 @@
   padding: 0;
 }
 
-/* Custom cursor: hide default on body, let it inherit naturally */
-body {
+/* Custom cursor: only hide default when JS custom cursor is active */
+/* JS will add .cursor-active class to body when custom cursor initializes */
+body.cursor-active {
   cursor: none;
 }
 
 /* Restore cursor on touch devices (custom cursor JS disabled there) */
 @media (pointer: coarse) {
-  body {
+
+  body,
+  body.cursor-active {
     cursor: auto;
   }
 }
@@ -4012,6 +4015,7 @@ body {
    ACCESSIBILITY: Reduced Motion Support
    ============================================ */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

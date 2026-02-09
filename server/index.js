@@ -124,10 +124,23 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Serve static files from the parent directory (MystickaHvezda root)
+const rootDir = path.resolve(__dirname, '../');
+console.log(`📂 Serving static files from: ${rootDir}`);
+
 const staticOptions = process.env.NODE_ENV === 'production'
     ? { maxAge: '1y', immutable: true }
     : {};
-app.use(express.static(path.join(__dirname, '../'), staticOptions));
+
+app.use(express.static(rootDir, staticOptions));
+
+// Explicitly serve JS files with correct MIME type to avoid strict MIME checking issues
+app.use('/js', express.static(path.join(rootDir, 'js'), {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+    }
+}));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/newsletter', newsletterRoutes);
@@ -283,7 +296,7 @@ app.post('/api/synastry', authenticateToken, async (req, res) => {
 });
 
 // Valid zodiac signs whitelist
-const VALID_ZODIAC_SIGNS = ['Beran','Býk','Blíženci','Rak','Lev','Panna','Váhy','Štír','Střelec','Kozoroh','Vodnář','Ryby'];
+const VALID_ZODIAC_SIGNS = ['Beran', 'Býk', 'Blíženci', 'Rak', 'Lev', 'Panna', 'Váhy', 'Štír', 'Střelec', 'Kozoroh', 'Vodnář', 'Ryby'];
 
 // Horoscope (Daily, Weekly, Monthly) - WITH DATABASE CACHING
 app.post('/api/horoscope', async (req, res) => {

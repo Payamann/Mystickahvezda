@@ -54,6 +54,9 @@ export function initCustomCursor() {
     canvas.style.zIndex = '9999';
     document.body.appendChild(canvas);
 
+    // Signal CSS that custom cursor is active (so default cursor can be hidden)
+    document.body.classList.add('cursor-active');
+
     // Resize handling
     let width = window.innerWidth;
     let height = window.innerHeight;

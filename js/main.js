@@ -32,3 +32,15 @@ document.addEventListener('components:loaded', () => {
     safeInit('Header', initHeader);
     safeInit('MobileNav', initMobileNav);
 });
+
+// Fallback: If components:loaded already fired before this module ran,
+// check if header exists and initialize anyway
+setTimeout(() => {
+    const header = document.querySelector('.header');
+    if (header && !header.dataset.initialized) {
+        console.log('[main.js] Fallback init for header');
+        safeInit('Header', initHeader);
+        safeInit('MobileNav', initMobileNav);
+        header.dataset.initialized = 'true';
+    }
+}, 500);
