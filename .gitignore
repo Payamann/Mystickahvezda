@@ -1,7 +1,36 @@
+# Environment & Secrets
 .env
+.env.*
+*.local
+server/.env
+server/.env.*
+
+# Dependencies
 node_modules/
-.DS_Store
+server/node_modules/
+
+# Build & Cache
 dist/
+build/
 coverage/
-temp_*/
+.cache/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
 *.log
+debug.log
+npm-debug.log*
+
+# Temporary
+temp_*/
+tmp/
+
+# IDE
+.vscode/
+.idea/
+
+# Test outputs
+*.lcov
