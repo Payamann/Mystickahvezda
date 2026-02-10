@@ -95,20 +95,7 @@
   padding: 0;
 }
 
-/* Custom cursor: only hide default when JS custom cursor is active */
-/* JS will add .cursor-active class to body when custom cursor initializes */
-body.cursor-active {
-  cursor: none;
-}
-
-/* Restore cursor on touch devices (custom cursor JS disabled there) */
-@media (pointer: coarse) {
-
-  body,
-  body.cursor-active {
-    cursor: auto;
-  }
-}
+/* Default cursor is always visible - no custom cursor override */
 
 /* Restore cursor for interactive elements due to usability */
 a,

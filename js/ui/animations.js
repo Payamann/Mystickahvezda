@@ -37,25 +37,8 @@ export function initScrollAnimations() {
    - Idle detection to pause when mouse is still
    ============================================ */
 export function initCustomCursor() {
-    // Disable on touch devices
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.className = 'cursor-canvas';
-
-    // Canvas styling
-    canvas.style.position = 'fixed';
-    canvas.style.top = '0';
-    canvas.style.left = '0';
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
-    canvas.style.pointerEvents = 'none';
-    canvas.style.zIndex = '9999';
-    document.body.appendChild(canvas);
-
-    // Signal CSS that custom cursor is active (so default cursor can be hidden)
-    document.body.classList.add('cursor-active');
+    // Custom cursor disabled - use native cursor for reliability
+    return;
 
     // Resize handling
     let width = window.innerWidth;
