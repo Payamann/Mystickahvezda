@@ -2010,7 +2010,8 @@ body.page-mentor .header {
 
   /* ===== GENERAL MOBILE LAYOUT ===== */
   .grid-3,
-  .grid-2 {
+  .grid-2,
+  .grid-4 {
     grid-template-columns: 1fr;
     gap: var(--space-md);
   }
