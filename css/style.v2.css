@@ -142,13 +142,23 @@ body {
   /* Keep x hidden */
   background-color: var(--color-deep-space);
   /* Ensure background color is set */
-  background-image: url('../img/bg-cosmic.webp');
+  /* Use new high-quality background */
+  background-image: url('../img/bg-cosmic-hd.webp');
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
   position: relative;
   letter-spacing: normal;
   /* Reset letter spacing */
+}
+
+/* Mobile background optimization */
+@media (max-width: 768px) {
+  body {
+    background-image: url('../img/bg-cosmic-mobile.webp');
+    background-attachment: scroll;
+    /* Performance fix for mobile */
+  }
 }
 
 /* Disable fixed background on mobile - causes severe scroll jank on iOS/Android */
