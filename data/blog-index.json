@@ -5,7 +5,7 @@
     "short_description": "Vaše datum narození není matematická náhoda. Objevte, jak starořecká numerologie dešifruje mapu vaší duše a jaký osudový úkol vám byl svěřen.",
     "category": "Numerologie",
     "published_at": "2026-02-27T20:06:34.985Z",
-    "featured_image": "../img/tarot-bg.jpg",
+    "featured_image": "img/tarot-bg.jpg",
     "readTime": 4
   },
   {
@@ -14,7 +14,7 @@
     "short_description": "Myslíte si, že znát své znamení stačí? Pokud neznáte své Astrologické domy, čtete z mapy svého života jen obal s názvem knihy. Pojďme do hloubky.",
     "category": "Astrologie",
     "published_at": "2026-02-24T20:06:34.988Z",
-    "featured_image": "../img/natal-bg.webp",
+    "featured_image": "img/natal-bg.webp",
     "readTime": 3
   },
   {
@@ -23,7 +23,7 @@
     "short_description": "Zatímco Tarot odpovídá v jemných psychologických nuancích, Runy do vás vrhnou syrovou, ostrulou severskou pravdu. Jak bezpečně pracovat s tímto starodávným systémem?",
     "category": "Věštění",
     "published_at": "2026-02-21T20:06:34.988Z",
-    "featured_image": "../img/crystal-ball-bg.jpg",
+    "featured_image": "img/crystal-ball-bg.jpg",
     "readTime": 3
   },
   {
@@ -32,7 +32,7 @@
     "short_description": "Podíváte se na telefon – je přesně 11:11. Účet za kávu je 222 Kč. Před vámi jede auto s poznávací značkou 333. Ztrácíte rozum, nebo s vámi promlouvá Vesmír?",
     "category": "Spiritualita",
     "published_at": "2026-02-17T20:06:34.988Z",
-    "featured_image": "../img/hero-bg-2.png",
+    "featured_image": "img/hero-bg-2.webp",
     "readTime": 3
   },
   {
@@ -41,7 +41,7 @@
     "short_description": "Motýlci v břiše, pocit, že se znáte staletí, a pak náhlý a zničující pád. Proč astrolgická praxe nabádá k maximální opatrnosti před karmickými svazky?",
     "category": "Vztahy",
     "published_at": "2026-02-14T20:06:34.987Z",
-    "featured_image": "../img/synastry-bg.webp",
+    "featured_image": "img/synastry-bg.webp",
     "readTime": 3
   },
   {
@@ -50,7 +50,7 @@
     "short_description": "Myslíte si, že ten mrazivý sen, v němž nemůžete utéct, je jen hloupost? Sny jsou královskou cestou do hlubin toho nejtemnějšího uvnitř nás. Pojďme je rozluštit.",
     "category": "Snář",
     "published_at": "2026-02-11T20:06:34.988Z",
-    "featured_image": "../img/hero-3d.png",
+    "featured_image": "img/hero-3d.webp",
     "readTime": 3
   },
   {
@@ -59,7 +59,7 @@
     "short_description": "Myslíte si, že tělo končí vaší kožní bariérou? Existuje prastará mapa sedmi silových generátorů, u níž by zablokování i jediné pumpy ohrozilo všechny psychofyzikální vrstvy.",
     "category": "Spiritualita",
     "published_at": "2026-02-04T20:06:34.988Z",
-    "featured_image": "../img/tarot-bg.jpg",
+    "featured_image": "img/tarot-bg.jpg",
     "readTime": 4
   },
   {
@@ -68,7 +68,7 @@
     "short_description": "Pokud považujete křišťálovou kouli jen za rekvizitu pro hollywoodské filmy o čarodějnicích, připravujete se o jednu z nejsilnějších technik starověkého zření (scrying).",
     "category": "Věštění",
     "published_at": "2026-01-30T20:06:34.987Z",
-    "featured_image": "../img/crystal-ball-bg.jpg",
+    "featured_image": "img/crystal-ball-bg.jpg",
     "readTime": 3
   },
   {
@@ -77,7 +77,7 @@
     "short_description": "Některé dny sršíte vtipem a všechno se daří. O týden později máte pocit, že se proti vám spikl svět. Co když ale tyto výkyvy nejsou náhodné, ale přísně matematické?",
     "category": "Spiritualita",
     "published_at": "2026-01-15T20:06:34.988Z",
-    "featured_image": "../img/tarot-bg.jpg",
+    "featured_image": "img/tarot-bg.jpg",
     "readTime": 4
   },
   {
@@ -86,7 +86,7 @@
     "short_description": "Pokud existuje karta, u níž zkušeným kartářkám hrkne v hrudi, nebývá to s populární legendou opředená Smrt, nýbrž hrůzostrašná a ničivá karta Věž.",
     "category": "Tarot",
     "published_at": "2025-12-31T20:06:34.988Z",
-    "featured_image": "../img/tarot-bg.jpg",
+    "featured_image": "img/tarot-bg.jpg",
     "readTime": 4
   }
 ]
