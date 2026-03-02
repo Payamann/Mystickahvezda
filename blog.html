@@ -12,7 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.css">
+    <link rel="stylesheet" href="css/style.v2.min.css?v=4">
 
     <style>
         /* Featured Post Layout */
@@ -285,33 +285,7 @@
 
 <body>
     <div class="stars" aria-hidden="true"></div>
-    <header class="header">
-        <div class="container">
-            <div class="header__inner">
-                <a href="index.html" class="logo">
-                    <span style="margin-left: 10px;">Mystická<span class="text-gradient">Hvězda</span></span>
-                </a>
-                <nav class="nav">
-                    <button class="nav__toggle" aria-label="Menu">
-                        <span></span><span></span><span></span>
-                    </button>
-                    <ul class="nav__list">
-                        <li><a href="index.html" class="nav__link">Domů</a></li>
-                        <li><a href="slovnik.html" class="nav__link">Slovník</a></li>
-                        <li><a href="blog.html" class="nav__link active">Blog</a></li>
-                        <li><a href="horoskopy.html" class="nav__link">Horoskopy</a></li>
-                        <li><a href="tarot.html" class="nav__link">Tarot</a></li>
-                        <li><a href="natalni-karta.html" class="nav__link">Natální Karta</a></li>
-                    </ul>
-                    <div class="auth-buttons" style="display: flex; gap: 0.5rem; align-items: center;">
-                        <a href="#" id="auth-register-btn" class="btn btn--secondary"
-                            style="margin-left: 1rem; font-size: 0.9em; padding: 0.5rem 1rem;">Registrace</a>
-                        <a href="#" id="auth-btn" class="btn btn--primary">Přihlásit</a>
-                    </div>
-                </nav>
-            </div>
-        </div>
-    </header>
+    <div id="header-placeholder"></div>
 
     <main>
         <section class="hero" style="padding-top: 8rem; padding-bottom: 2rem; min-height: unset;">
@@ -350,13 +324,7 @@
         </section>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer__bottom">
-                <p>© 2026 Mystická Hvězda. Všechna práva vyhrazena.</p>
-            </div>
-        </div>
-    </footer>
+    <div id="footer-placeholder"></div>
 
     <script src="js/api-config.js" defer></script>
     <script src="js/auth-client.js" defer></script>

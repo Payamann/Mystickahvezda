@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="cs">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Ezoterický Slovník | Mystická Hvězda</title>
+    <title>EzoterickĂ˝ SlovnĂ­k | MystickĂˇ HvÄ›zda</title>
     <meta name="description"
-        content="Vaše encyklopedie astrologických, mystických a esoterických pojmů. Objevte hlubší smysl věcí.">
+        content="VaĹˇe encyklopedie astrologickĂ˝ch, mystickĂ˝ch a esoterickĂ˝ch pojmĹŻ. Objevte hlubĹˇĂ­ smysl vÄ›cĂ­.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.css">
+    <link rel="stylesheet" href="css/style.v2.min.css?v=4">
 
     <style>
         .search-container {
@@ -99,41 +99,15 @@
 
 <body>
     <div class="stars" aria-hidden="true"></div>
-    <header class="header">
-        <div class="container">
-            <div class="header__inner">
-                <a href="index.html" class="logo">
-                    <span style="margin-left: 10px;">Mystická<span class="text-gradient">Hvězda</span></span>
-                </a>
-                <nav class="nav">
-                    <button class="nav__toggle" aria-label="Menu">
-                        <span></span><span></span><span></span>
-                    </button>
-                    <ul class="nav__list">
-                        <li><a href="index.html" class="nav__link">Domů</a></li>
-                        <li><a href="slovnik.html" class="nav__link active">Slovník</a></li>
-                        <li><a href="blog.html" class="nav__link">Blog</a></li>
-                        <li><a href="horoskopy.html" class="nav__link">Horoskopy</a></li>
-                        <li><a href="tarot.html" class="nav__link">Tarot</a></li>
-                        <li><a href="natalni-karta.html" class="nav__link">Natální Karta</a></li>
-                    </ul>
-                    <div class="auth-buttons" style="display: flex; gap: 0.5rem; align-items: center;">
-                        <a href="#" id="auth-register-btn" class="btn btn--secondary"
-                            style="margin-left: 1rem; font-size: 0.9em; padding: 0.5rem 1rem;">Registrace</a>
-                        <a href="#" id="auth-btn" class="btn btn--primary">Přihlásit</a>
-                    </div>
-                </nav>
-            </div>
-        </div>
-    </header>
+    <div id="header-placeholder"></div>
 
     <main>
         <section class="hero" style="padding-top: 8rem; padding-bottom: 2rem;">
             <div class="container" style="text-align: center;">
                 <span class="section__badge">Encyklopedie</span>
-                <h1 class="hero__title">Ezoterický <span class="text-gradient">Slovník</span></h1>
-                <p class="hero__subtitle" style="max-width: 600px; margin: 0 auto;">Objevte významy tajemných pojmů z
-                    astrologie, tarotu a magie. Váš průvodce světem neviditelných energií.</p>
+                <h1 class="hero__title">EzoterickĂ˝ <span class="text-gradient">SlovnĂ­k</span></h1>
+                <p class="hero__subtitle" style="max-width: 600px; margin: 0 auto;">Objevte vĂ˝znamy tajemnĂ˝ch pojmĹŻ z
+                    astrologie, tarotu a magie. VĂˇĹˇ prĹŻvodce svÄ›tem neviditelnĂ˝ch energiĂ­.</p>
             </div>
         </section>
 
@@ -141,25 +115,19 @@
             <div class="container">
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input"
-                        placeholder="Hledat pojem (např. Ascendent, Karma)..." autocomplete="off">
+                        placeholder="Hledat pojem (napĹ™. Ascendent, Karma)..." autocomplete="off">
                 </div>
 
                 <div class="terms-grid" id="termsContainer">
                     <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-                        <p style="margin-top: 1rem; color: var(--color-text-mutated);">Načítám pojmy...</p>
+                        <p style="margin-top: 1rem; color: var(--color-text-mutated);">NaÄŤĂ­tĂˇm pojmy...</p>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer__bottom">
-                <p>© 2026 Mystická Hvězda. Všechna práva vyhrazena.</p>
-            </div>
-        </div>
-    </footer>
+    <div id="footer-placeholder"></div>
 
     <script src="js/api-config.js" defer></script>
     <script src="js/auth-client.js" defer></script>
@@ -179,7 +147,7 @@
                 renderTerms(allTerms);
             } catch (err) {
                 console.error(err);
-                container.innerHTML = '<div class="no-results">Zatím nebyly přidány žádné pojmy. Hvězdy mlčí.</div>';
+                container.innerHTML = '<div class="no-results">ZatĂ­m nebyly pĹ™idĂˇny ĹľĂˇdnĂ© pojmy. HvÄ›zdy mlÄŤĂ­.</div>';
             }
 
             searchInput.addEventListener('input', (e) => {
@@ -195,7 +163,7 @@
             function renderTerms(terms) {
                 container.innerHTML = '';
                 if (terms.length === 0) {
-                    container.innerHTML = '<div class="no-results">Nebyl nalezen žádný pojem odpovídající vašemu zadání.</div>';
+                    container.innerHTML = '<div class="no-results">Nebyl nalezen ĹľĂˇdnĂ˝ pojem odpovĂ­dajĂ­cĂ­ vaĹˇemu zadĂˇnĂ­.</div>';
                     return;
                 }
 
@@ -204,7 +172,7 @@
                     el.href = `slovnik/${term.slug}.html`;
                     el.className = 'term-card';
                     el.innerHTML = `
-                        <div class="term-category">${term.category || 'Obecné'}</div>
+                        <div class="term-category">${term.category || 'ObecnĂ©'}</div>
                         <div class="term-title">${term.title}</div>
                         <div class="term-desc">${term.short_description || ''}</div>
                     `;
