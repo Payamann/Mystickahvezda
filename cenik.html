@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="cs">
 
 <head>
@@ -12,7 +12,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Ceník Služeb | Mystická Hvězda">
     <meta property="og:description" content="Přehled cen a předplatných pro Premium funkce Mystické Hvězdy.">
-    <meta property="og:image" content="img/hero-3d.webp">
+    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
     <meta property="og:locale" content="cs_CZ">
     <meta name="twitter:card" content="summary_large_image">
 
@@ -44,9 +44,11 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.css?v=4">
+    <link rel="stylesheet" href="css/style.v2.min.css?v=4">
     <script src="https://js.stripe.com/v3/" async></script>
-</head>
+    <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/cenik.html">
+    <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/cenik.html">
+    <link rel="alternate" hreflang="x-default" href="https://mystickahvezda.cz/cenik.html"></head>
 
 <body>
     <!-- Skip to main content -->
@@ -71,7 +73,16 @@
             </div>
         </section>
 
-        <!-- PRICING TABLES -->
+                <!-- SOCIAL PROOF -->
+        <section style="padding:0.5rem 0 3rem; text-align:center;">
+            <div class="container">
+                <p style="color:rgba(255,255,255,0.45);font-size:0.9rem;letter-spacing:1px;">
+                    ⭐⭐⭐⭐⭐ &nbsp;Přes <strong style="color:rgba(255,255,255,0.7);">12 000 uživatelů</strong> hledá odpovědi v hvězdách každý den
+                </p>
+            </div>
+        </section>
+
+<!-- PRICING TABLES -->
         <section class="section" style="padding-top: 0;">
             <div class="container">
                 <div class="grid grid-4" data-animate style="gap: var(--space-lg);">
@@ -110,6 +121,7 @@
                         </ul>
                         <a href="#" class="btn btn--primary" data-plan="pruvodce" style="width: 100%;">Zakoupit
                             předplatné</a>
+                        <p style="text-align:center;font-size:0.78rem;color:rgba(255,255,255,0.4);margin-top:0.5rem;">Bez závazků • Zrušení kdykoliv</p>
                     </div>
 
                     <!-- EXCLUSIVE -->
@@ -297,9 +309,7 @@
                             <span class="faq-icon">+</span>
                         </button>
                         <div class="faq-answer">
-                            <p>Pro základní denní inspiraci je verze Start ideální. Pokud však hledáte hlubší pochopení
-                                souvislostí a chcete využívat neomezené výklady tarotu pro řešení konkrétních situací,
-                                doporučujeme verzi Premium.</p>
+                            <p>Pro základní denní inspiraci je plán Poutník ideální. Pokud hledáte hlubší pochopení a neomezené výklady tarotu pro konkrétní životní situace, Hvězdný Průvodce za 199 Kč/měsíc je naší nejpopulárnější volbou.</p>
                         </div>
                     </div>
 
@@ -337,11 +347,11 @@
             <div class="container">
                 <div class="cta-banner" data-animate>
                     <div class="cta-banner__content">
-                        <h2 class="cta-banner__title">Stále váháte?</h2>
+                        <h2 class="cta-banner__title">Začněte ještě dnes</h2>
                         <p class="cta-banner__text">
-                            Začněte s bezplatným plánem. Nemáte co ztratit, jen získat vhled do své budoucnosti.
+                            Tisíce lidí každý den hledají odpovědi v hvězdách. Registrace trvá 30 sekund a první výklady jsou zdarma – bez platební karty.
                         </p>
-                        <a href="#" class="btn btn--primary">Registrovat zdarma</a>
+                        <a href="#" class="btn btn--primary">Vyzkoušet zdarma bez karty →</a>
                     </div>
                 </div>
             </div>

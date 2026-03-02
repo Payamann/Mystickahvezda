@@ -4,8 +4,7 @@
  */
 
 // Access global variables and functions exposed by api-config.js and auth-client.js
-const { apiUrl, authHeaders, isLoggedIn } = window;
-const { renderPremiumGate } = window;
+const { apiUrl, authHeaders } = window;
 
 let angelCardsData = [];
 let drawnCard = null;
@@ -281,7 +280,7 @@ function drawCard() {
 async function requestDeepReading() {
     if (!drawnCard) return;
 
-    if (!isLoggedIn()) {
+    if (!window.Auth || !window.Auth.isLoggedIn()) {
         window.Auth?.openModal();
         return;
     }
@@ -317,10 +316,9 @@ async function requestDeepReading() {
 
         // Handle Non-Premium Teaser View
         if (data.isTeaser) {
-            aiResultContainer.innerHTML = renderPremiumGate(
-                'Pro získání hlubokého duchovního vhledu z Vaší Andělské karty potřebujete členství Hvězdný Průvodce.',
-                'angel-features' // We can add these features to premium-gates.js if needed
-            );
+            window.Auth?.showToast('Premium vyžadováno', 'Pro získání hlubokého duchovního vhledu z Vaší Andělské karty potřebujete členství Hvězdný Průvodce.', 'info');
+            window.Auth?.openModal('login');
+            aiResultContainer.style.display = 'none';
             return;
         }
 

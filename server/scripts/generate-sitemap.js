@@ -1,61 +1,93 @@
-import fs from 'fs';
+﻿import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const ROOT = path.resolve(__dirname, '../../');
 
-const ROOT_DIR = path.join(__dirname, '../../');
-const BASE_URL = 'https://mystickahvezda.cz';
+const DOMAIN = 'https://mystickahvezda.cz';
+const TODAY = new Date().toISOString().split('T')[0];
 
-async function generateSitemap() {
-    console.log('Generating sitemap.xml...');
+// Static pages with their priorities and change frequencies
+const STATIC_PAGES = [
+    { path: '/', freq: 'daily', priority: '1.0' },
+    { path: '/blog.html', freq: 'daily', priority: '0.9' },
+    { path: '/horoskopy.html', freq: 'daily', priority: '0.9' },
+    { path: '/lunace.html', freq: 'daily', priority: '0.9' },
+    { path: '/tarot.html', freq: 'daily', priority: '0.9' },
+    { path: '/slovnik.html', freq: 'weekly', priority: '0.9' },
+    { path: '/natalni-karta.html', freq: 'weekly', priority: '0.8' },
+    { path: '/numerologie.html', freq: 'weekly', priority: '0.8' },
+    { path: '/partnerska-shoda.html', freq: 'weekly', priority: '0.8' },
+    { path: '/snar.html', freq: 'weekly', priority: '0.8' },
+    { path: '/runy.html', freq: 'weekly', priority: '0.7' },
+    { path: '/kristalova-koule.html', freq: 'weekly', priority: '0.7' },
+    { path: '/biorytmy.html', freq: 'weekly', priority: '0.7' },
+    { path: '/andelske-karty.html', freq: 'weekly', priority: '0.7' },
+    { path: '/astro-mapa.html', freq: 'monthly', priority: '0.6' },
+    { path: '/mentor.html', freq: 'monthly', priority: '0.6' },
+    { path: '/faq.html', freq: 'monthly', priority: '0.5' },
+    { path: '/kalkulacka-cisla-osudu.html', freq: 'weekly', priority: '0.8' },
+    { path: '/o-nas.html', freq: 'monthly', priority: '0.5' },
+    { path: '/cenik.html', freq: 'monthly', priority: '0.5' },
+    { path: '/kontakt.html', freq: 'monthly', priority: '0.4' },
+    { path: '/ochrana-soukromi.html', freq: 'monthly', priority: '0.3' },
+    { path: '/podminky.html', freq: 'monthly', priority: '0.3' },
+];
 
-    try {
-        const files = fs.readdirSync(ROOT_DIR);
-        const htmlFiles = files.filter(f =>
-            f.endsWith('.html') &&
-            !['admin.html', '404.html', 'template.html', 'prihlaseni.html', 'profil.html', 'premium-test.html'].includes(f)
-        );
+function scanDirectory(dir, urlPrefix, freq, priority) {
+    const entries = [];
+    const fullDir = path.join(ROOT, dir);
+    if (!fs.existsSync(fullDir)) return entries;
 
-        let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-        xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-
-        for (const file of htmlFiles) {
-            const stats = fs.statSync(path.join(ROOT_DIR, file));
-            const lastMod = stats.mtime.toISOString().split('T')[0];
-            const url = `${BASE_URL}/${file === 'index.html' ? '' : file}`;
-
-            // Priority & Frequency (custom logic)
-            let priority = '0.5';
-            let freq = 'monthly';
-
-            if (file === 'index.html') {
-                priority = '1.0';
-                freq = 'daily';
-            } else if (['horoskop.html', 'tarot.html'].includes(file)) {
-                priority = '0.9';
-                freq = 'daily';
-            } else if (['numerologie.html', 'natalni-karta.html', 'synastrie.html'].includes(file)) {
-                priority = '0.8';
-                freq = 'weekly';
-            }
-
-            xml += `  <url>\n`;
-            xml += `    <loc>${url}</loc>\n`;
-            xml += `    <lastmod>${lastMod}</lastmod>\n`;
-            xml += `    <changefreq>${freq}</changefreq>\n`;
-            xml += `    <priority>${priority}</priority>\n`;
-            xml += `  </url>\n`;
+    fs.readdirSync(fullDir).forEach(file => {
+        if (file.endsWith('.html')) {
+            entries.push({ path: `/${dir}/${file}`, freq, priority });
         }
-
-        xml += `</urlset>`;
-
-        fs.writeFileSync(path.join(ROOT_DIR, 'sitemap.xml'), xml);
-        console.log(`✅ sitemap.xml generated with ${htmlFiles.length} pages.`);
-    } catch (err) {
-        console.error('❌ Error generating sitemap:', err);
-    }
+    });
+    return entries;
 }
 
-generateSitemap();
+function buildSitemap(urls) {
+    const items = urls.map(u => `  <url>
+    <loc>${DOMAIN}${u.path}</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>${u.freq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join('\n');
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+${items}
+
+</urlset>`;
+}
+
+// Collect all URLs
+const blogPages = scanDirectory('blog', '', 'monthly', '0.8');
+const zodiacPages = scanDirectory('horoskop', '', 'weekly', '0.8');
+const dictionaryPages = scanDirectory('slovnik', '', 'monthly', '0.6');
+const compatPages = scanDirectory('kompatibilita', '', 'monthly', '0.6');
+
+const allUrls = [
+    ...STATIC_PAGES,
+    ...blogPages,
+    ...zodiacPages,
+    ...dictionaryPages,
+    ...compatPages,
+];
+
+const xml = buildSitemap(allUrls);
+const outPath = path.join(ROOT, 'sitemap.xml');
+fs.writeFileSync(outPath, xml, 'utf8');
+
+console.log(`✅ Sitemap vygenerována: ${outPath}`);
+console.log(`📊 Celkem URL: ${allUrls.length}`);
+console.log(`  - Statické stránky: ${STATIC_PAGES.length}`);
+console.log(`  - Blog příspěvky: ${blogPages.length}`);
+console.log(`  - Stránky znamení: ${zodiacPages.length}`);
+console.log(`  - Slovníkové pojmy: ${dictionaryPages.length}`);
+console.log(`  - Kompatibilita: ${compatPages.length}`);
+

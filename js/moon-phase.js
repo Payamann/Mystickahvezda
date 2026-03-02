@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function getMoonPhase() {
     const now = new Date();
 
-    // Known new moon date (January 18, 2026 19:51 UTC) - updated for accuracy
-    const knownNewMoon = new Date('2026-01-18T19:51:00Z');
+    // Known new moon: 2026-01-29T08:36:00Z (synchronized with lunace.html)
+    const knownNewMoon = new Date('2026-01-29T08:36:00Z');
     const synodicMonth = 29.530588853; // Average synodic month in days
 
     // Calculate days since known new moon

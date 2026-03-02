@@ -2,5 +2,8 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /api/
+Disallow: /profil.html
+Disallow: /prihlaseni.html
+Disallow: /profil/
 
 Sitemap: https://mystickahvezda.cz/sitemap.xml

@@ -1,0 +1,177 @@
+[
+    {
+        "id": "fehu",
+        "name": "Fehu",
+        "symbol": "ᚠ",
+        "meaning": "Bohatství, hojnost, nové hmotné začátky.",
+        "description": "Fehu představuje dobytek, tedy movité bohatství starých seveřanů. Je to runa naplnění, odměny za tvrdou práci a získání materiální i duchovní hojnosti. Symbolizuje primární kreativní energii."
+    },
+    {
+        "id": "uruz",
+        "name": "Uruz",
+        "symbol": "ᚢ",
+        "meaning": "Síla, zdraví, primární vitální energie.",
+        "description": "Uruz zosobňuje divokého tura. Přináší obrovskou, nezkrocenou životní sílu, odvahu a houževnatost. Je to runa rychlých změn a průraznosti, upozorňuje na skrytý potenciál."
+    },
+    {
+        "id": "thurisaz",
+        "name": "Thurisaz",
+        "symbol": "ᚦ",
+        "meaning": "Obr, obrana, konflikt a průlom.",
+        "description": "Runa spojená s Torem a jeho kladivem. Nese varování před konfliktem, ale také schopnost zničit překážky. Značí obranu, zkoušku nebo nutnost čelit následkům vlastních rozhodnutí."
+    },
+    {
+        "id": "ansuz",
+        "name": "Ansuz",
+        "symbol": "ᚨ",
+        "meaning": "Moudrost, božské vnuknutí, komunikace.",
+        "description": "Ódinova runa reprezentující moudrost, prozíravost a mluvené slovo. Znamená přijímání rad, inteligenci, inspiraci z vyšších sfér a hluboké porozumění věcem."
+    },
+    {
+        "id": "raidho",
+        "name": "Raidho",
+        "symbol": "ᚱ",
+        "meaning": "Cesta, pohyb, rytmus, řád.",
+        "description": "Runa jízdy a cesty - ať už fyzické, nebo duchovní. Ukazuje správný směr, pohyb vpřed a synchronizaci s vesmírnými zákony a rytmy přírody."
+    },
+    {
+        "id": "kenaz",
+        "name": "Kenaz",
+        "symbol": "ᚲ",
+        "meaning": "Pochodeň, poznání, osvícení, tvořivost.",
+        "description": "Kenaz je světlo zahánějící tmu nevědomosti. Přináší vhled, jasno do nepřehledných situací, tvůrčí inspiraci, vášeň a probuzení nových schopností."
+    },
+    {
+        "id": "gebo",
+        "name": "Gebo",
+        "symbol": "ᚷ",
+        "meaning": "Dar, partnerství, rovnováha ve vztazích.",
+        "description": "Gebo značí darování a přijímání energie. Symbolizuje harmonické spojení, stvrzení dohod a hluboká pouta (milostná i obchodní), kde musí panovat rovnocennost."
+    },
+    {
+        "id": "wunjo",
+        "name": "Wunjo",
+        "symbol": "ᚹ",
+        "meaning": "Radost, harmonie, štěstí, naplnění.",
+        "description": "Nejpozitivnější runa slibující štěstí, klid a prosperitu. Ukazuje, že těžké období skončilo a vy si můžete bez obav užívat plody své práce."
+    },
+    {
+        "id": "hagalaz",
+        "name": "Hagalaz",
+        "symbol": "ᚺ",
+        "meaning": "Krupobití, radikální změna, destrukce přírodními živly.",
+        "description": "První runa takzvané Temné trojice. Přináší náhlý, nezvladatelný zásah osudu. Něco starého se musí zbořit, aby vzniklo místo pro nové. Křest ohněm."
+    },
+    {
+        "id": "naudhiz",
+        "name": "Naudhiz",
+        "symbol": "ᚾ",
+        "meaning": "Nutnost, potřeba, omezení, trénink vůle.",
+        "description": "Naudhiz značí nouzi nebo překážku. Často je ale tím třením, které rozdělá oheň. Učí nás trpělivosti, odolnosti a upozorňuje na slepá místa, kterým se musíme postavit."
+    },
+    {
+        "id": "isa",
+        "name": "Isa",
+        "symbol": "ᛁ",
+        "meaning": "Led, nehybnost, odklad, zklidnění.",
+        "description": "Runa stagnace a zastavení. Led vše zmrazí – plány se pozastavují, emoce mrznou. Je to čas pro stažení se do sebe, čekání a nabírání sil bez zbytečné aktivity."
+    },
+    {
+        "id": "jera",
+        "name": "Jera",
+        "symbol": "ᛃ",
+        "meaning": "Žeň, cyklus jednoho roku, odměna za snahu.",
+        "description": "Jera znamená spravedlivý cyklus. Pozitivní výsledek, na kterém se dlouhodobě pracovalo, nyní dozrává ke sklizni. Připomíná, že vše má svůj přirozený čas a nedá se urychlit."
+    },
+    {
+        "id": "eihwaz",
+        "name": "Eihwaz",
+        "symbol": "ᛇ",
+        "meaning": "Tis (strom), vytrvalost, překonávání a ochrana.",
+        "description": "Tisové dřevo ztělesňuje životní sílu i spojení se světem mrtvých. Runa dodává obrovskou obrannou sílu a výdrž ke zvládnutí těch nejtěžších duchovních překážek."
+    },
+    {
+        "id": "perthro",
+        "name": "Perthro",
+        "symbol": "ᛈ",
+        "meaning": "Tajemství, náhoda, osud, magický pohár.",
+        "description": "Runa spojená s vrhem kostek a hrou osudu, kterou tkají sudičky. Zastupuje podvědomí, synchronicitu, hazard a události, které nemáme zcela ve svých rukou."
+    },
+    {
+        "id": "algiz",
+        "name": "Algiz",
+        "symbol": "ᛉ",
+        "meaning": "Ochrana, božské štít, probuzení, sobí rohy.",
+        "description": "Mocná ochranná runa, která odráží zlo zpět ke zdroji. Propojuje lidské jádro s vyšším božským vedením. Přináší instinktivní ochranu a probuzení vědomí."
+    },
+    {
+        "id": "sowilo",
+        "name": "Sowilo",
+        "symbol": "ᛊ",
+        "meaning": "Slunce, vítězství, životní vitalita, úspěch.",
+        "description": "Sluneční kotouč prosvětlující temnotu. Zosobňuje ohromující vítězství, energii, sebejistotu a teplo do života. Radí nebrzdit svůj úspěch."
+    },
+    {
+        "id": "tiwaz",
+        "name": "Tiwaz",
+        "symbol": "ᛏ",
+        "meaning": "Bůh Týr, bojovník, spravedlnost, oběť.",
+        "description": "Runa válečníka ztělesňující zákon a pořádek. Prohlásit pravdu a stát si za ní, ať to stojí cokoli (Týr obětoval svou ruku vlkovi Fenrirovi). Osobní odvaha a čest."
+    },
+    {
+        "id": "berkano",
+        "name": "Berkano",
+        "symbol": "ᛒ",
+        "meaning": "Bříza, plodnost, zrození, obnova, léčení.",
+        "description": "Zastupuje mateřskou energii, růst a tichý bezpečný úkryt. Může signalizovat narození myšlenky i doslovné otěhotnění. Symbol očisty a hojení zranění."
+    },
+    {
+        "id": "ehwaz",
+        "name": "Ehwaz",
+        "symbol": "ᛖ",
+        "meaning": "Kůň, postup vpřed, harmonické spojenectví.",
+        "description": "Vztah jezdce a jeho oře je založen na vzájemné důvěře. Ehwaz ukazuje na pokrok, posuny (i stacionární – stěhování) a objev ideálního společníka nebo loajality."
+    },
+    {
+        "id": "mannaz",
+        "name": "Mannaz",
+        "symbol": "ᛗ",
+        "meaning": "Lidstvo, společenství, intelekt, Já.",
+        "description": "Runa definuje člověka v kolektivní struktuře i v individualitě. Pomoc od ostatních, společenská angažovanost, racionální myšlení, objektivita a smysl kmenové sounáležitosti."
+    },
+    {
+        "id": "laguz",
+        "name": "Laguz",
+        "symbol": "ᛚ",
+        "meaning": "Voda, intuice, sny, emoce, neznámo.",
+        "description": "Jako pramen nebo hluboký oceán – neúnavně plyne a hledá cestu. Spojena s hlubokým emočním vyladěním, sněním, zkoumáním tajuplné intuice ženské energie."
+    },
+    {
+        "id": "ingwaz",
+        "name": "Ingwaz",
+        "symbol": "ᛜ",
+        "meaning": "Bůh plodnosti Ing, vnitřní růst, dokončení cyklu.",
+        "description": "Úrodná síla zakousnutá hluboko v zemi. Naznačuje bezpečný prostor pro růst potenciálu, z kterého vyraší úroda. Úlevný závěr životní fáze nebo ulevení od starostí."
+    },
+    {
+        "id": "dagaz",
+        "name": "Dagaz",
+        "symbol": "ᛞ",
+        "meaning": "Den, svítání, probuzení, obrovský průlom.",
+        "description": "Paradox mezi světlem a tmou. Den po dlouhé a tmavé noci. Ruku v ruce přichází nečekané rozuzlení bezútěšné situace a velká obnova naděje a vitality."
+    },
+    {
+        "id": "othala",
+        "name": "Othala",
+        "symbol": "ᛟ",
+        "meaning": "Dědictví, domov, předci, spirituální půda.",
+        "description": "Materiální a duchovní odkaz našich předků. Zastoupení rodiny, tradice, dědičných vlastností a bezpečí posvátného domova, ke kterému patříme."
+    },
+    {
+        "id": "wyrd",
+        "name": "Pustá runa (Wyrd)",
+        "symbol": "",
+        "meaning": "Nevyzpytatelný osud, absolutní důvěra v prázdnotu, zásah sudiček.",
+        "description": "Odinova runa prázdnoty značí nevyhnutelnou karmu – čistý potenciál bez jakékoliv zemské garance. Dovoluje nám pochopit, že některé věci jsou absolutně v moci vyšších sil a nezbývá, než se nechat vést."
+    }
+]

@@ -55,14 +55,14 @@ window.Premium = {
      */
     showPaywall(featureName, message = null) {
         const defaultMessages = {
-            'numerology': 'Hluboká interpretace numerologie je dostupná v Premium',
-            'weekly_horoscope': 'Detailní týdenní předpověď pro Premium členy',
-            'monthly_horoscope': 'Kompletní měsíční průvodce jen pro Premium',
-            'natal_chart': 'Plná natální karta vyžaduje Premium předplatné',
-            'synastry': 'Partnerská kompatibilita je Premium funkce',
-            'astrocartography': 'Astrokartografie dostupná pouze v Premium',
-            'journal_insights': 'Hluboká analýza vašeho deníku je Premium funkce',
-            'mentor': 'Neomezený přístup k Hvězdnému Mentorovi jen v Premium'
+            'numerology': '🔢 Vaše čísla skrývají víc, než čekáte – hluboký výklad čísel odemknete v plánu Hvězdný Průvodce',
+            'weekly_horoscope': '🌟 Detailní týdenní průvodce planetami čeká na vás – odemkněte ho s Hvězdným Průvodcem',
+            'monthly_horoscope': '📅 Celý měsíc pod hvězdami – kompletní měsíční předpověď patří Hvězdným Průvodcům',
+            'natal_chart': '⭐ Váš vesmírný plán čeká – plná interpretace natální karty je součástí Hvězdného Průvodce',
+            'synastry': '💫 Hloubková synastrie prozradí, zda jste pro sebe stvořeni – dostupná v Hvězdném Průvodci',
+            'astrocartography': '🌍 Kde na světě vás hvězdy volají? Astrokartografie je jen pro Hvězdné Průvodce',
+            'journal_insights': '📖 Hluboká analýza vzorců ve vašem deníku – funkce Hvězdného Průvodce',
+            'mentor': '🌙 Váš duchovní průvodce bez omezení zpráv – staňte se Hvězdným Průvodcem'
         };
 
         const displayMessage = message || defaultMessages[featureName] || 'Tato funkce vyžaduje Premium předplatné';
@@ -79,20 +79,21 @@ window.Premium = {
         overlay.innerHTML = `
             <div class="paywall-content">
                 <div class="paywall-icon">✨</div>
-                <h3 class="paywall-title">Odemkněte plný potenciál</h3>
+                <h3 class="paywall-title">Hvězdný Průvodce</h3>
                 <p class="paywall-message">${safeMessage}</p>
                 <div class="paywall-benefits">
-                    <div class="benefit-item">✓ Neomezené výklady</div>
-                    <div class="benefit-item">✓ Detailní předpovědi</div>
-                    <div class="benefit-item">✓ Osobní průvodce</div>
+                    <div class="benefit-item">✓ Neomezený tarot – kdykoliv, na cokoliv</div>
+                    <div class="benefit-item">✓ Týdenní + měsíční horoskopy přesně pro vás</div>
+                    <div class="benefit-item">✓ AI průvodce bez limitu zpráv</div>
+                    <div class="benefit-item">✓ Plná natální karta s interpretací</div>
                 </div>
                 <div class="paywall-actions">
                     <button class="btn btn--primary paywall-upgrade">
-                        Získat Premium
+                        🌟 Stát se Průvodcem – 199 Kč/měsíc
                     </button>
-                    <button class="btn btn--ghost paywall-close">Zavřít</button>
+                    <button class="btn btn--ghost paywall-close">Teď ne</button>
                 </div>
-                <p class="paywall-footer">Kdykoliv zrušitelné • Žádné závazky</p>
+                <p class="paywall-footer">Bez závazků • Zrušení jedním kliknutím • 7 dní zdarma</p>
             </div>
         `;
 

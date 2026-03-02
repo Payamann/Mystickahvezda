@@ -1,16 +1,14 @@
-/**
+﻿/**
  * Mystická Hvězda - Service Worker
  * Provides offline caching with stale-while-revalidate strategy
  */
 
-const CACHE_NAME = 'mysticka-hvezda-v12';
+const CACHE_NAME = 'mysticka-hvezda-v13';
 const MAX_RUNTIME_CACHE_SIZE = 80;
 const STATIC_ASSETS = [
     '/',
     '/index.html',
-    '/css/style.v2.css',
-    '/css/premium.css',
-    '/css/new-features.css',
+    '/css/style.v2.min.css',
     '/js/main.js',
     '/js/components.js',
     '/js/api-config.js',
@@ -20,9 +18,12 @@ const STATIC_ASSETS = [
     '/img/logo-3d.webp',
     '/img/hero-3d.webp',
     '/img/bg-cosmic-hd.webp',
-    '/img/icon-192.png',
+    '/img/icon-192.webp',
     '/data/tarot-cards.json',
-    '/manifest.json'
+    '/data/runes.json',
+    '/js/runes.js',
+    '/manifest.json',
+    '/offline.html'
 ];
 
 // Install - cache static assets
@@ -101,7 +102,7 @@ self.addEventListener('fetch', (event) => {
                         if (!cachedResponse) {
                             const accept = event.request.headers.get('accept');
                             if (accept && accept.includes('text/html')) {
-                                return caches.match('/index.html');
+                                return caches.match('/offline.html');
                             }
                         }
                         return cachedResponse;
@@ -111,5 +112,41 @@ self.addEventListener('fetch', (event) => {
                 // Otherwise wait for network
                 return cachedResponse || networkFetch;
             })
+    );
+});
+
+// Push notification handler
+self.addEventListener('push', (event) => {
+    let data = { title: 'Mystická Hvězda 🌙', body: 'Vaše hvězdná energie na dnešek čeká.', url: '/', icon: '/img/icon-192.webp' };
+    
+    if (event.data) {
+        try { data = { ...data, ...event.data.json() }; } catch {}
+    }
+
+    event.waitUntil(
+        self.registration.showNotification(data.title, {
+            body: data.body,
+            icon: data.icon,
+            badge: data.icon,
+            tag: 'daily-horoscope',
+            renotify: true,
+            data: { url: data.url }
+        })
+    );
+});
+
+// Notification click → open the app
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            for (const client of clientList) {
+                if (client.url.includes(self.location.origin) && 'focus' in client) {
+                    client.navigate(event.notification.data?.url || '/');
+                    return client.focus();
+                }
+            }
+            return clients.openWindow(event.notification.data?.url || '/');
+        })
     );
 });

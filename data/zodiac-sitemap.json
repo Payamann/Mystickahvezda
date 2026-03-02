@@ -1,0 +1,62 @@
+[
+  {
+    "url": "/horoskop/beran.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  },
+  {
+    "url": "/horoskop/byk.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  },
+  {
+    "url": "/horoskop/blizenci.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  },
+  {
+    "url": "/horoskop/rak.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  },
+  {
+    "url": "/horoskop/lev.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  },
+  {
+    "url": "/horoskop/panna.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  },
+  {
+    "url": "/horoskop/vahy.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  },
+  {
+    "url": "/horoskop/stir.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  },
+  {
+    "url": "/horoskop/strelec.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  },
+  {
+    "url": "/horoskop/kozoroh.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  },
+  {
+    "url": "/horoskop/vodnár.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  },
+  {
+    "url": "/horoskop/ryby.html",
+    "changefreq": "weekly",
+    "priority": "0.8"
+  }
+]

@@ -30,6 +30,7 @@ import oracleRoutes from './routes/oracle.js';
 import horoscopeRoutes from './routes/horoscope.js';
 import numerologyRoutes from './routes/numerology.js';
 import userRoutes from './routes/user.js';
+import pushRoutes from './routes/push.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -106,7 +107,6 @@ app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Security Headers with Content Security Policy
-// app.use(helmet({ ... })); // TEMPORARILY DISABLED FOR TROUBLESHOOTING
 
 // Rate Limiting (Relaxed to 300 req/15min)
 const limiter = rateLimit({
@@ -121,7 +121,7 @@ app.use('/api/', limiter);
 const aiLimiter = rateLimit({
     windowMs: 24 * 60 * 60 * 1000, // 24 hours
     max: 50, // 50 AI requests per IP per day (approx 2/hour avg)
-    message: { error: 'PĹ™ekroÄŤen dennĂ­ limit pro AI generovĂˇnĂ­. Zkuste to zĂ­tra.' },
+    message: { error: 'Překročen denní limit pro AI generování. Zkuste to zítra.' },
     standardHeaders: true,
     legacyHeaders: false,
 });
@@ -130,7 +130,7 @@ const aiLimiter = rateLimit({
 const sensitiveOpLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 10, // 10 attempts per hour
-    message: { error: 'PĹ™Ă­liĹˇ mnoho pokusĹŻ. Zkuste to prosĂ­m pozdÄ›ji.' },
+    message: { error: 'Příliš mnoho pokusů. Zkuste to prosím později.' },
     standardHeaders: true,
     legacyHeaders: false,
 });

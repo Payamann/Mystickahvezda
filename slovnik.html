@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Ezoterický Slovník | Mystická Hvězda</title>
+    <meta name="description"
+        content="Vaše encyklopedie astrologických, mystických a esoterických pojmů. Objevte hlubší smysl věcí.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.v2.css">
+
+    <style>
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.2rem 2rem;
+            border-radius: 50px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            background: rgba(10, 10, 26, 0.8);
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--color-mystic-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .terms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .term-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .term-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-primary);
+            background: rgba(155, 89, 182, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .term-category {
+            font-size: 0.8rem;
+            color: var(--color-mystic-gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .term-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-family: 'Cinzel', serif;
+        }
+
+        .term-desc {
+            color: var(--color-text-mutated);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .no-results {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 3rem;
+            color: var(--color-text-mutated);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stars" aria-hidden="true"></div>
+    <header class="header">
+        <div class="container">
+            <div class="header__inner">
+                <a href="index.html" class="logo">
+                    <span style="margin-left: 10px;">Mystická<span class="text-gradient">Hvězda</span></span>
+                </a>
+                <nav class="nav">
+                    <button class="nav__toggle" aria-label="Menu">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <ul class="nav__list">
+                        <li><a href="index.html" class="nav__link">Domů</a></li>
+                        <li><a href="slovnik.html" class="nav__link active">Slovník</a></li>
+                        <li><a href="blog.html" class="nav__link">Blog</a></li>
+                        <li><a href="horoskopy.html" class="nav__link">Horoskopy</a></li>
+                        <li><a href="tarot.html" class="nav__link">Tarot</a></li>
+                        <li><a href="natalni-karta.html" class="nav__link">Natální Karta</a></li>
+                    </ul>
+                    <div class="auth-buttons" style="display: flex; gap: 0.5rem; align-items: center;">
+                        <a href="#" id="auth-register-btn" class="btn btn--secondary"
+                            style="margin-left: 1rem; font-size: 0.9em; padding: 0.5rem 1rem;">Registrace</a>
+                        <a href="#" id="auth-btn" class="btn btn--primary">Přihlásit</a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" style="padding-top: 8rem; padding-bottom: 2rem;">
+            <div class="container" style="text-align: center;">
+                <span class="section__badge">Encyklopedie</span>
+                <h1 class="hero__title">Ezoterický <span class="text-gradient">Slovník</span></h1>
+                <p class="hero__subtitle" style="max-width: 600px; margin: 0 auto;">Objevte významy tajemných pojmů z
+                    astrologie, tarotu a magie. Váš průvodce světem neviditelných energií.</p>
+            </div>
+        </section>
+
+        <section class="section" style="padding-top: 0; min-height: 50vh;">
+            <div class="container">
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input"
+                        placeholder="Hledat pojem (např. Ascendent, Karma)..." autocomplete="off">
+                </div>
+
+                <div class="terms-grid" id="termsContainer">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                        <p style="margin-top: 1rem; color: var(--color-text-mutated);">Načítám pojmy...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__bottom">
+                <p>© 2026 Mystická Hvězda. Všechna práva vyhrazena.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api-config.js" defer></script>
+    <script src="js/auth-client.js" defer></script>
+    <script src="js/components.js" defer></script>
+    <script type="module" src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('termsContainer');
+            const searchInput = document.getElementById('searchInput');
+            let allTerms = [];
+
+            try {
+                // Fetch the JSON generated by our generate-dictionary.js script
+                const response = await fetch('/data/dictionary-index.json');
+                if (!response.ok) throw new Error('Data index nebyl nalezen');
+                allTerms = await response.json();
+                renderTerms(allTerms);
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<div class="no-results">Zatím nebyly přidány žádné pojmy. Hvězdy mlčí.</div>';
+            }
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filtered = allTerms.filter(t =>
+                    t.title.toLowerCase().includes(query) ||
+                    (t.short_description && t.short_description.toLowerCase().includes(query)) ||
+                    (t.category && t.category.toLowerCase().includes(query))
+                );
+                renderTerms(filtered);
+            });
+
+            function renderTerms(terms) {
+                container.innerHTML = '';
+                if (terms.length === 0) {
+                    container.innerHTML = '<div class="no-results">Nebyl nalezen žádný pojem odpovídající vašemu zadání.</div>';
+                    return;
+                }
+
+                terms.forEach(term => {
+                    const el = document.createElement('a');
+                    el.href = `slovnik/${term.slug}.html`;
+                    el.className = 'term-card';
+                    el.innerHTML = `
+                        <div class="term-category">${term.category || 'Obecné'}</div>
+                        <div class="term-title">${term.title}</div>
+                        <div class="term-desc">${term.short_description || ''}</div>
+                    `;
+                    container.appendChild(el);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

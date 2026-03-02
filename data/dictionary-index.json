@@ -1,0 +1,140 @@
+[
+  {
+    "slug": "ascendent",
+    "title": "Ascendent",
+    "category": "Astrologie",
+    "short_description": "Znamení vycházející na východním obzoru v okamžiku vašeho narození. Určuje vaši masku pro vnější svět – jak vás vidí ostatní na první pohled."
+  },
+  {
+    "slug": "retrogradi-planeta",
+    "title": "Retrográdní planeta",
+    "category": "Astrologie",
+    "short_description": "Zdánlivý pohyb planety pozpátku (od Země) po obloze. Každý retrográd spouští zpomalení a přehodnocení dané sféry života."
+  },
+  {
+    "slug": "aspekty",
+    "title": "Aspekty",
+    "category": "Astrologie",
+    "short_description": "Úhly, které svírají planety mezi sebou v Natální mapě. Harmonické aspekty (triny, sekstily) přinášejí dar; napjaté (opozice, kvadratury) přinášejí výzvy."
+  },
+  {
+    "slug": "nativni-karta",
+    "title": "Natální karta (Horoskop)",
+    "category": "Astrologie",
+    "short_description": "Mapa oblohy zachycená v okamžiku vašeho narození. Kompletní energetický otisk vaší duše, ukazující potenciály, výzvy i dary, se kterými jste přišli na svět."
+  },
+  {
+    "slug": "saturnosky-navrat",
+    "title": "Saturnský návrat",
+    "category": "Astrologie",
+    "short_description": "Okamžik, kdy Saturn ve svém 29letém cyklu dosáhne stejné pozice jako při vašem narození. Bývá nemilosrdnou zkouškou dospělosti."
+  },
+  {
+    "slug": "velka-arkana",
+    "title": "Velká Arkána",
+    "category": "Tarot",
+    "short_description": "22 hlavních karet tarotového balíčku zobrazující velké životní archetypy – od naivního Blázna přes Smrt až po osvícení Světa."
+  },
+  {
+    "slug": "mala-arkana",
+    "title": "Malá Arkána",
+    "category": "Tarot",
+    "short_description": "56 karet rozdělených do 4 suit (Hůlky, Meče, Číše, Pentakly). Odráží každodenní situace a konkrétní životní oblasti."
+  },
+  {
+    "slug": "tarot-blazen",
+    "title": "Blázen (Tarot)",
+    "category": "Tarot",
+    "short_description": "Nultá karta Velké Arkány. Symbol neohroženého začátku, čisté naivity a odevzdání se vesmírné cestě bez záruky výsledku."
+  },
+  {
+    "slug": "zivotni-cislo",
+    "title": "Životní číslo",
+    "category": "Numerologie",
+    "short_description": "Nejzákladnější numerologický ukazatel. Získáte ho redukcí data narození na jednu číslici (1–9, výjimky 11, 22, 33). Odráží vaši životní cestu."
+  },
+  {
+    "slug": "mistrovska-cisla",
+    "title": "Mistrovská čísla (11, 22, 33)",
+    "category": "Numerologie",
+    "short_description": "Čísla s dvojitou silou, která se při numerologické redukci neredukují dál. Nositelé nesou výjimečný potenciál, ale i těžší životní lekce."
+  },
+  {
+    "slug": "karma",
+    "title": "Karma",
+    "category": "Spiritualita",
+    "short_description": "Zákon příčiny a následku přesahující hranice jednoho života. Vše, co vysíláme (myšlenky, slova, činy), se k nám vrátí – v tomto nebo budoucím životě."
+  },
+  {
+    "slug": "reinkarnace",
+    "title": "Reinkarnace",
+    "category": "Spiritualita",
+    "short_description": "Víra v opakované zrození duše v novém těle. Každý život přináší specifické lekce a příležitosti k duchovnímu růstu."
+  },
+  {
+    "slug": "draci-uzly",
+    "title": "Dračí uzly (Severní a Jižní)",
+    "category": "Astrologie",
+    "short_description": "Dva matematické body (ne planety) v Natální mapě. Jižní uzel = karmická minulost a vrozené způsoby reakcí. Severní uzel = duchovní výzva tohoto vtělení."
+  },
+  {
+    "slug": "synchronicita",
+    "title": "Synchronicita",
+    "category": "Spiritualita",
+    "short_description": "Pojem zavedený C. G. Jungem pro „smysluplné náhody\" – kdy vnější události a vnitřní stavy spolu zdánlivě nesouvisí, ale přesto tvoří soudržný celek."
+  },
+  {
+    "slug": "akasicke-zaznamy",
+    "title": "Akášické záznamy",
+    "category": "Spiritualita",
+    "short_description": "Ezoterický pojem pro „kosmickou paměť\" – nefyzickou databázi všech myšlenek, slov, činů a událostí, jaké se kdy odehrály ve vesmíru."
+  },
+  {
+    "slug": "fehu",
+    "title": "Fehu (Runa)",
+    "category": "Runosloví",
+    "short_description": "První runa staršího Futharku. Symbolizuje dobytek, majetek a pohybující se bohatství. Energie plodnosti, hojnosti a sílu manifestace."
+  },
+  {
+    "slug": "hagalaz",
+    "title": "Hagalaz (Runa)",
+    "category": "Runosloví",
+    "short_description": "Devátá runa – runa krupobití, chaosu a náhlé destrukce. Přichází nevyzvaná a bez ohledu na vaše plány. Je zároveň zárodkem budoucí transformace."
+  },
+  {
+    "slug": "tiwaz",
+    "title": "Tiwaz (Runa)",
+    "category": "Runosloví",
+    "short_description": "Runa boha Týra, spravedlnosti a mužské oběti. Šipka ukazující vskyř – symbol nezlomné vůle a ochoty obětovat osobní zisk pro vyšší dobro."
+  },
+  {
+    "slug": "muladhara",
+    "title": "Muladhara – Kořenová čakra",
+    "category": "Energie",
+    "short_description": "První čakra sídlící u kostrče. Vládne bezpečí, přežití a fyzickému uzemění. Asociována s červenou barvou a elementem Země."
+  },
+  {
+    "slug": "svadhisthana",
+    "title": "Svadhisthana – Sakrální čakra",
+    "category": "Energie",
+    "short_description": "Druhá čakra, sídlící pod pupíkem. Centrum smyslnosti, kreativity, radosti a emocí. Asociována s oranžovou barvou a elementem Vody."
+  },
+  {
+    "slug": "anahata",
+    "title": "Anahata – Srdeční čakra",
+    "category": "Energie",
+    "short_description": "Čtvrtá čakra, most mezi nižšími a vyššími energiemi. Centrum lásky, soucitu, léčení a schopnosti otevřít se druhým lidem. Barva: zelená / růžová."
+  },
+  {
+    "slug": "lucidni-sen",
+    "title": "Lucidní sen",
+    "category": "Snář",
+    "short_description": "Stav, kdy si ve snu uvědomujete, že sníte, a dokážete záměrně ovlivňovat obsah snu. Starověká praxe i moderní vědecky ověřitelný fenomén."
+  },
+  {
+    "slug": "andelska-cisla",
+    "title": "Andělská čísla",
+    "category": "Numerologie",
+    "short_description": "Opakující se číselné posloupnosti (111, 222, 333...) interpretované jako poselství z vyšších vědomí nebo duchovních průvodců."
+  }
+]

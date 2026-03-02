@@ -1,0 +1,183 @@
+/**
+ * Generates 66 unique zodiac compatibility pages
+ * Usage: node server/scripts/generate-compatibility.js
+ */
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { SIGNS, generateCompatibilityData } from '../data/compatibility-data.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '../../');
+const OUT_DIR = path.join(ROOT, 'kompatibilita');
+const DOMAIN = 'https://mystickahvezda.cz';
+const TODAY = new Date().toISOString().split('T')[0];
+
+if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR);
+
+let generated = 0;
+
+for (let i = 0; i < SIGNS.length; i++) {
+    for (let j = i + 1; j < SIGNS.length; j++) {
+        const s1 = SIGNS[i];
+        const s2 = SIGNS[j];
+        const data = generateCompatibilityData(s1.key, s2.key);
+        const slug = `${s1.key}-${s2.key}`;
+        const url = `${DOMAIN}/kompatibilita/${slug}.html`;
+
+        // Build related links (other signs for s1)
+        const relatedLinks = SIGNS
+            .filter(s => s.key !== s1.key && s.key !== s2.key)
+            .slice(0, 6)
+            .map(s => {
+                const pair = [s1.key, s.key].sort();
+                const linkSlug = pair.join('-');
+                return `<a href="${linkSlug}.html" class="related-chip">${s.emoji} ${s1.name} &amp; ${s.name}</a>`;
+            }).join('\n                    ');
+
+        const schema = JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: `Partnerská shoda: ${s1.name} a ${s2.name}`,
+            description: `Kompatibilita znamení ${s1.name} a ${s2.name} – láska, komunikace, výzvy a silné stránky.`,
+            url,
+            dateModified: TODAY,
+            author: { '@type': 'Organization', name: 'Mystická Hvězda' },
+        }, null, 2);
+
+        const html = `<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Partnerská shoda: ${s1.name} a ${s2.name} | Mystická Hvězda</title>
+    <meta name="description" content="Hodí se k sobě ${s1.name} a ${s2.name}? Detailní rozbor partnerské shody, lásky a komunikace. ${data.scoreLabel}: ${data.score}%.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="${url}">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="${s1.emoji} ${s1.name} a ${s2.emoji} ${s2.name} – Partnerská Shoda | Mystická Hvězda">
+    <meta property="og:description" content="${data.scoreLabel}: ${data.score} %. ${data.love.substring(0, 100)}...">
+    <meta property="og:image" content="${DOMAIN}/img/hero-3d.webp">
+    <meta property="og:url" content="${url}">
+    <meta property="og:locale" content="cs_CZ">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script type="application/ld+json">${schema}</script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=4">
+    <style>
+        .compat-hero { text-align:center; padding: 5rem 0 2rem; }
+        .compat-signs { display:flex; align-items:center; justify-content:center; gap:1.5rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+        .compat-sign-box { text-align:center; }
+        .compat-sign-emoji { font-size:5rem; display:block; }
+        .compat-sign-name { font-family:'Cinzel',serif; color:#ebc066; font-size:1.3rem; }
+        .compat-sign-dates { font-size:0.8rem; color:rgba(255,255,255,0.4); }
+        .compat-vs { font-size:2rem; color:rgba(255,255,255,0.3); }
+        .compat-score { font-family:'Cinzel',serif; font-size:4.5rem; background:linear-gradient(135deg,#d4af37,#f5d776); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:700; }
+        .compat-label { color:rgba(255,255,255,0.6); font-size:1rem; margin-top:-0.5rem; margin-bottom:2rem; }
+        .compat-bar { width:300px; height:10px; background:rgba(255,255,255,0.1); border-radius:50px; overflow:hidden; margin:0 auto 2rem; }
+        .compat-fill { height:100%; background:linear-gradient(90deg,#d4af37,#f5d776); border-radius:50px; box-shadow:0 0 12px rgba(212,175,55,0.5); }
+        .compat-content { max-width:800px; margin:0 auto; }
+        .compat-section { background:rgba(10,10,26,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:2rem; margin-bottom:1.5rem; }
+        .compat-section h3 { color:#ebc066; font-family:'Cinzel',serif; margin-top:0; border-bottom:1px solid rgba(235,192,102,0.2); padding-bottom:0.75rem; margin-bottom:1rem; }
+        .compat-section p { color:rgba(255,255,255,0.8); line-height:1.8; margin:0; }
+        .compat-cta { background:linear-gradient(135deg,rgba(155,89,182,0.15),rgba(10,10,26,0.9)); border:1px solid rgba(155,89,182,0.3); border-radius:20px; padding:2.5rem; text-align:center; margin-bottom:3rem; }
+        .related-links { display:flex; flex-wrap:wrap; gap:0.75rem; justify-content:center; margin-top:2rem; }
+        .related-chip { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:0.4rem 1rem; border-radius:50px; color:rgba(255,255,255,0.7); text-decoration:none; transition:all 0.2s; font-size:0.875rem; }
+        .related-chip:hover { background:rgba(235,192,102,0.1); border-color:rgba(235,192,102,0.4); color:#ebc066; }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+    <div class="stars" aria-hidden="true"></div>
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <section class="compat-hero">
+            <div class="container">
+                <span class="section__badge">Partnerská Shoda</span>
+                <div class="compat-signs">
+                    <div class="compat-sign-box">
+                        <span class="compat-sign-emoji">${s1.emoji}</span>
+                        <div class="compat-sign-name">${s1.name}</div>
+                        <div class="compat-sign-dates">${s1.dates}</div>
+                    </div>
+                    <div class="compat-vs">♥</div>
+                    <div class="compat-sign-box">
+                        <span class="compat-sign-emoji">${s2.emoji}</span>
+                        <div class="compat-sign-name">${s2.name}</div>
+                        <div class="compat-sign-dates">${s2.dates}</div>
+                    </div>
+                </div>
+                <div class="compat-score">${data.score} %</div>
+                <div class="compat-label">${data.scoreEmoji} ${data.scoreLabel}</div>
+                <div class="compat-bar">
+                    <div class="compat-fill" style="width:${data.score}%"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" style="padding-top:0;">
+            <div class="container">
+                <div class="compat-content">
+                    <div class="compat-section">
+                        <h3>❤️ Láska a přitažlivost</h3>
+                        <p>${data.love}</p>
+                    </div>
+                    <div class="compat-section">
+                        <h3>💬 Komunikace</h3>
+                        <p>${data.communication}</p>
+                    </div>
+                    <div class="compat-section">
+                        <h3>⚡ Výzvy vztahu</h3>
+                        <p>${data.challenges}</p>
+                    </div>
+                    <div class="compat-section">
+                        <h3>🌟 Silné stránky</h3>
+                        <p>${data.strengths}</p>
+                    </div>
+                    <div class="compat-section" style="background:rgba(212,175,55,0.06); border-color:rgba(235,192,102,0.2);">
+                        <h3>💡 Tip na rande</h3>
+                        <p>${data.dateTip}</p>
+                    </div>
+
+                    <div class="compat-cta">
+                        <h2 style="margin-top:0;font-family:'Cinzel',serif;">Chcete přesnější výpočet?</h2>
+                        <p style="color:rgba(255,255,255,0.7);margin-bottom:1.5rem;">
+                            Toto je obecná shoda slunečních znamení. Pro skutečnou analýzu potřebujeme přesná data narození obou partnerů.
+                        </p>
+                        <a href="../partnerska-shoda.html" class="btn btn--primary">Vypočítat Synastrii Zdarma →</a>
+                    </div>
+
+                    <div style="text-align:center; margin-bottom:3rem;">
+                        <h3 style="color:#ebc066;font-family:'Cinzel',serif;font-size:1.2rem;">Další kombinace pro ${s1.name}</h3>
+                        <div class="related-links">
+                            ${relatedLinks}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/api-config.js?v=5" defer></script>
+    <script src="../js/templates.js?v=5" defer></script>
+    <script src="../js/auth-client.js?v=5" defer></script>
+    <script src="../js/components.js?v=5" defer></script>
+    <script type="module" src="../js/main.js?v=5"></script>
+</body>
+</html>`;
+
+        fs.writeFileSync(path.join(OUT_DIR, `${slug}.html`), html, 'utf8');
+        generated++;
+    }
+}
+
+console.log(`✅ Vygenerováno ${generated} stránek kompatibility v /kompatibilita/`);

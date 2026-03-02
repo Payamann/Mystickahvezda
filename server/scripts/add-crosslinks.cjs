@@ -61,6 +61,11 @@ const gridHtmlTemplate = `    <!-- CROSS-LINKING SEKCE -->
                     <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
                     <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
                 </a>
+                <a href="runy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🪨</div>
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská moudrost</div>
+                </a>
             </div>
         </div>
     </section>`;
@@ -68,6 +73,8 @@ const gridHtmlTemplate = `    <!-- CROSS-LINKING SEKCE -->
 const dir = 'c:/Users/pavel/OneDrive/Desktop/MystickaHvezda';
 
 const filesToProcess = [
+    'andelske-karty.html',
+    'runy.html',
     'kristalova-koule.html',
     'tarot.html',
     'horoskopy.html',

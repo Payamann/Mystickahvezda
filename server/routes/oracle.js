@@ -263,4 +263,28 @@ router.post('/angel-card', optionalPremiumCheck, async (req, res) => {
     }
 });
 
+// ─── Runes (Elder Futhark) ────────────────────────────────────────────────────
+router.post('/runes', optionalPremiumCheck, async (req, res) => {
+    try {
+        const { rune, intention = 'obecný duchovní vhled', history = [] } = req.body;
+
+        if (!rune || !rune.name) {
+            return res.status(400).json({ success: false, error: 'Kámen (runa) je povinný.' });
+        }
+
+        const safeRuneName = String(rune.name).substring(0, 50);
+        const safeRuneMeaning = String(rune.meaning || '').substring(0, 200);
+        const safeIntention = String(intention).substring(0, 500);
+
+        let contextMessage = `Vytažená runa: ${safeRuneName}\nTradiční význam: ${safeRuneMeaning}\nZáměr / Otázka uživatele: ${safeIntention}\n\nVytvoř šamanský výklad a propojení energie této runy s životem tazatele.`;
+
+        const response = await callGemini(SYSTEM_PROMPTS.runes, contextMessage);
+        res.json({ success: true, response, isTeaser: false });
+
+    } catch (error) {
+        console.error('Runes Error:', error.message);
+        res.status(500).json({ success: false, error: 'Kameny mlčí. Zkuste to znovu později...' });
+    }
+});
+
 export default router;

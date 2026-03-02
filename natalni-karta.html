@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="cs">
 
 <head>
@@ -13,7 +13,7 @@
     <meta property="og:title" content="Natální Karta | Mystická Hvězda">
     <meta property="og:description"
         content="Vytvořte si svou osobní natální kartu a objevte pozice planet v okamžiku vašeho narození.">
-    <meta property="og:image" content="img/icon-natal.webp">
+    <meta property="og:image" content="https://mystickahvezda.cz/img/icon-natal.webp">
     <meta property="og:locale" content="cs_CZ">
     <meta name="twitter:card" content="summary_large_image">
     <!-- JSON-LD Structured Data -->
@@ -26,7 +26,19 @@
         "operatingSystem": "Web"
     }
     </script>
-    <title>Natální Karta | Mystická Hvězda</title>
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": "Co je natální karta?", "acceptedAnswer": {"@type": "Answer", "text": "Natální karta je diagram rozmístění planet v okamžiku vašeho narození. Tvoří jedinečný kosmický otisk – plán talentů, výzev a životního směřování."}},
+            {"@type": "Question", "name": "Co potřebuji pro natální kartu?", "acceptedAnswer": {"@type": "Answer", "text": "Datum, čas a místo narození. Přesný čas je klíčový pro výpočet Ascendentu a 12 astrologických domů."}},
+            {"@type": "Question", "name": "Co je Ascendent?", "acceptedAnswer": {"@type": "Answer", "text": "Ascendent je znamení vycházející na východním obzoru při vašem narození – odhaluje vaši masku vůči ostatním."}},
+            {"@type": "Question", "name": "Jak se natální karta liší od horoskopu?", "acceptedAnswer": {"@type": "Answer", "text": "Denní horoskop pracuje jen se Slunečním znamením. Natální karta zahrnuje 10 planet, 12 domů a stovky aspektů. Je řádově přesnější."}}
+        ]
+    }
+    </script><title>Natální Karta | Mystická Hvězda</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml"
@@ -43,7 +55,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.css?v=2">
+    <link rel="stylesheet" href="css/style.v2.min.css?v=4">
     <style>
         /* Natal Chart Specific Styles */
         .natal-chart-container {
@@ -79,7 +91,10 @@
             margin-bottom: var(--space-md);
         }
     </style>
-</head>
+    <link rel="canonical" href="https://mystickahvezda.cz/natalni-karta.html">
+    <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/natalni-karta.html">
+    <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/natalni-karta.html">
+    <link rel="alternate" hreflang="x-default" href="https://mystickahvezda.cz/natalni-karta.html"></head>
 
 <body>
     <!-- Skip to main content -->
@@ -358,6 +373,8 @@
             </div>
         </section>
     
+    
+    
     <!-- CROSS-LINKING SEKCE -->
     <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
         <div class="container" style="max-width: 860px;">
@@ -414,6 +431,11 @@
                     <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
                     <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
                 </a>
+                <a href="runy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🪨</div>
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská moudrost</div>
+                </a>
             </div>
         </div>
     </section>
@@ -447,6 +469,7 @@
     <script src="js/components.js?v=5" defer></script>
     <script type="module" src="js/main.js?v=5"></script>
 
+    <script src="js/newsletter-popup.js" defer></script>
 </body>
 
 </html>
