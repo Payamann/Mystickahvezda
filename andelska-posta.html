@@ -168,7 +168,7 @@
                             style="display:block;color:rgba(255,255,255,0.5);font-size:0.82rem;margin-bottom:0.4rem;">Váš
                             vzkaz andělům</label>
                         <textarea id="msg-text" class="form-input" placeholder="Drazí andělé, prosím vás o..."
-                            maxlength="500" aria-label="Vzkaz andělům" oninput="updateCounter()"></textarea>
+                            maxlength="500" aria-label="Vzkaz andělům"></textarea>
                         <div class="char-counter"><span id="char-count">0</span>/500</div>
                     </div>
                     <div style="margin-bottom:1rem;">
@@ -183,7 +183,7 @@
                             <option value="jine">✨ Jiné</option>
                         </select>
                     </div>
-                    <button onclick="submitMessage()" class="btn btn--primary submit-btn">👼 Odeslat andělům</button>
+                    <button id="btn-submit-msg" class="btn btn--primary submit-btn">👼 Odeslat andělům</button>
                     <p id="submit-msg"
                         style="display:none;color:#2ed573;font-size:0.88rem;margin-top:0.75rem;text-align:center;"></p>
                 </div>
@@ -236,7 +236,7 @@
                 </div>
                 <p class="message-text">"${msg.text}"</p>
                 <div style="text-align:right;margin-top:0.5rem;">
-                    <button class="heart-btn ${isLiked ? 'liked' : ''}" onclick="likeMessage(${i})" aria-label="Podpořit srdíčkem">
+                    <button class="heart-btn ${isLiked ? 'liked' : ''}" data-index="${i}" aria-label="Podpořit srdíčkem">
                         ${isLiked ? '❤️' : '🤍'} ${msg.likes}
                     </button>
                 </div>
@@ -252,7 +252,7 @@
             return `před ${Math.floor(seconds / 86400)} dny`;
         }
 
-        window.likeMessage = function (i) {
+        function likeMessage(i) {
             if (liked.has(i)) return;
             liked.add(i);
             localMessages[i].likes++;
@@ -265,12 +265,15 @@
             }
         };
 
-        window.updateCounter = function () {
-            const len = document.getElementById('msg-text').value.length;
-            document.getElementById('char-count').textContent = len;
-        };
+        function updateCounter() {
+            const el = document.getElementById('msg-text');
+            if (el) {
+                const len = el.value.length;
+                document.getElementById('char-count').textContent = len;
+            }
+        }
 
-        window.submitMessage = async function () {
+        async function submitMessage() {
             const text = document.getElementById('msg-text').value.trim();
             const nickname = document.getElementById('msg-nickname').value.trim() || 'Anonym';
             const category = document.getElementById('msg-category').value;
@@ -324,6 +327,32 @@
 
         renderMessages();
         loadMessages();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnSubmit = document.getElementById('btn-submit-msg');
+            const msgInput = document.getElementById('msg-text');
+            const messagesContainer = document.getElementById('messages-container');
+
+            if (btnSubmit) {
+                btnSubmit.addEventListener('click', submitMessage);
+            }
+
+            if (msgInput) {
+                msgInput.addEventListener('input', updateCounter);
+            }
+
+            if (messagesContainer) {
+                messagesContainer.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.heart-btn');
+                    if (btn) {
+                        const index = parseInt(btn.getAttribute('data-index'));
+                        if (!isNaN(index)) {
+                            likeMessage(index);
+                        }
+                    }
+                });
+            }
+        });
     </script>
 </body>
 
