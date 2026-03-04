@@ -451,22 +451,22 @@
           <p class="section__text">Dnešní andělské poselství připravené hvězdami právě pro vás.</p>
         </div>
         <div id="karta-dne-widget" style="max-width:480px;margin:0 auto;text-align:center;" data-animate>
-          <div id="kdd-card" style="perspective:1000px;cursor:pointer;margin-bottom:1.5rem;" onclick="revealKartaDne()"
+          <div id="kdd-card" style="perspective:1000px;cursor:pointer;margin-bottom:1.5rem;"
             title="Klikněte pro odhalení">
             <div id="kdd-inner"
-              style="position:relative;width:200px;height:320px;margin:0 auto;transform-style:preserve-3d;transition:transform 0.8s cubic-bezier(0.4,0,0.2,1);border-radius:16px;">
+              style="position:relative;width:200px;height:320px;margin:0 auto;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform 0.8s cubic-bezier(0.4,0,0.2,1), -webkit-transform 0.8s cubic-bezier(0.4,0,0.2,1);border-radius:16px;">
               <div
-                style="position:absolute;inset:0;background:linear-gradient(135deg,#2d1b69,#1a0a2e);border:2px solid rgba(212,175,55,0.4);border-radius:16px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;box-shadow:0 20px 60px rgba(155,89,182,0.3);">
+                style="position:absolute;inset:0;background:linear-gradient(135deg,#2d1b69,#1a0a2e);border:2px solid rgba(212,175,55,0.4);border-radius:16px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 20px 60px rgba(155,89,182,0.3);">
                 <div style="font-size:4rem;animation:float 3s ease-in-out infinite;">✨</div>
               </div>
               <div id="kdd-front"
-                style="position:absolute;inset:0;background:linear-gradient(135deg,#1e1040,#2d1060);border:2px solid var(--color-mystic-gold);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;transform:rotateY(180deg);padding:1.5rem;box-shadow:0 20px 60px rgba(212,175,55,0.2);">
+                style="position:absolute;inset:0;background:linear-gradient(135deg,#1e1040,#2d1060);border:2px solid var(--color-mystic-gold);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);-webkit-transform:rotateY(180deg);padding:1.5rem;box-shadow:0 20px 60px rgba(212,175,55,0.2);">
                 <div id="kdd-emoji" style="font-size:3.5rem;margin-bottom:0.5rem;"></div>
                 <div id="kdd-name"
-                  style="font-family:'Cinzel',serif;color:var(--color-mystic-gold);font-size:1.1rem;font-weight:600;margin-bottom:0.5rem;">
+                  style="font-family:'Cinzel',serif;color:var(--color-mystic-gold);font-size:1.1rem;font-weight:600;margin-bottom:0.5rem;text-align:center;">
                 </div>
                 <div id="kdd-keyword"
-                  style="color:rgba(255,255,255,0.6);font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;">
+                  style="color:rgba(255,255,255,0.6);font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;text-align:center;">
                 </div>
               </div>
             </div>
@@ -1240,26 +1240,37 @@
       const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
       const card = CARDS[dayOfYear % CARDS.length];
 
-      // Naplnit front karty
-      const el = id => document.getElementById(id);
-      if (el('kdd-emoji')) {
-        el('kdd-emoji').textContent = card.emoji;
-        el('kdd-name').textContent = card.name;
-        el('kdd-keyword').textContent = card.keyword;
-        el('kdd-text').textContent = card.text;
-      }
-
-      window.revealKartaDne = function () {
+      // Inicializace pomoci Event Listeneru (místo globalni fce)
+      document.addEventListener('DOMContentLoaded', () => {
+        const el = id => document.getElementById(id);
+        const cardContainer = el('kdd-card');
         const inner = el('kdd-inner');
-        if (inner.style.transform === 'rotateY(180deg)') return;
-        inner.style.transform = 'rotateY(180deg)';
-        setTimeout(() => {
-          const hint = el('kdd-hint');
-          const msg = el('kdd-message');
-          if (hint) hint.style.display = 'none';
-          if (msg) { msg.style.display = 'block'; msg.style.animation = 'fadeIn 0.5s ease'; }
-        }, 400);
-      };
+
+        if (el('kdd-emoji')) {
+          el('kdd-emoji').textContent = card.emoji;
+          el('kdd-name').textContent = card.name;
+          el('kdd-keyword').textContent = card.keyword;
+          el('kdd-text').textContent = card.text;
+        }
+
+        if (cardContainer && inner) {
+          cardContainer.addEventListener('click', () => {
+            // Kontrola jestli uz neni otocena
+            if (inner.style.transform.includes('rotateY(180deg)')) return;
+
+            inner.style.transform = 'rotateY(180deg)';
+            setTimeout(() => {
+              const hint = el('kdd-hint');
+              const msg = el('kdd-message');
+              if (hint) hint.style.display = 'none';
+              if (msg) {
+                msg.style.display = 'block';
+                msg.style.animation = 'fadeIn 0.5s ease';
+              }
+            }, 400);
+          });
+        }
+      });
     })();
   </script>
 
