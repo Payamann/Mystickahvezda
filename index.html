@@ -153,17 +153,12 @@
         pointer-events: none;
       }
 
-      /* Aurora efekty viditelné i na mobilu */
-      body::before {
-        opacity: 0.5;
-        width: 80vw;
-        height: 80vw;
-      }
-
+      /* Aurora efekty na mobilu občas tvoří ošklivé čtverce, skryjeme je */
+      body::before,
       body::after {
-        opacity: 0.3;
-        width: 60vw;
-        height: 60vw;
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
       }
 
       /* Fix zarovnání astrolábu na mobilu */
