@@ -231,12 +231,21 @@ window.showAnimal = function (slugOverride, exactYear = null) {
     }, 100);
 };
 
-// Enter hit in input
+// Inicializace listeneru
 document.addEventListener('DOMContentLoaded', () => {
+    // Horoskop (Enter přes input)
     const input = document.getElementById('birth-year');
     if (input) {
         input.addEventListener('keydown', e => {
             if (e.key === 'Enter') window.calculateAnimal();
+        });
+    }
+
+    // Synastrie button (prevence CSP onclick z HTML)
+    const btnSynastry = document.getElementById('btn-synastry');
+    if (btnSynastry) {
+        btnSynastry.addEventListener('click', () => {
+            window.calculateChineseSynastry();
         });
     }
 });
