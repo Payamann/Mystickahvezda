@@ -123,12 +123,13 @@ textarea {
 }
 
 html {
-  scroll-behavior: smooth;
   font-size: 16px;
   background-color: var(--color-deep-space);
   overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+  overscroll-behavior-y: none;
+  /* Prevents scroll elasticity / rubberbanding bounding on Chromium/Edge */
 }
 
 /* Global Fixed Background (solves scroll jank from background-attachment: fixed on body) */
@@ -157,9 +158,11 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background-color: transparent;
-  /* Changed from deep-space so html::before shows through */
   position: relative;
   letter-spacing: normal;
+  /* Hardware Acceleration for heavy backdrop-filters: */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* Disable fixed background on mobile - causes severe scroll jank on iOS/Android */
