@@ -119,38 +119,12 @@
     }
 
     /* =============================================
-       KOSMICKÉ POZADÍ — oprava na mobilech
+       MOBILNÍ FIXY (Astroláb, Aurora bug, Zrušení pozadí)
        ============================================= */
-    #mobile-bg-fix {
-      display: none;
-    }
-
-    @media (pointer: coarse),
-    (max-width: 768px) {
-      body {
-        background-image: none !important;
-        background-color: transparent !important;
-      }
-
+    @media (max-width: 768px) {
       html {
         background-color: #0a0a1a !important;
         /* deep space color */
-      }
-
-      #mobile-bg-fix {
-        display: block;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: -100;
-        background-color: #0a0a1a;
-        background-image: url('img/bg-cosmic-hd.webp');
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-        pointer-events: none;
       }
 
       /* Aurora efekty na mobilu občas tvoří ošklivé čtverce, skryjeme je */
@@ -243,9 +217,6 @@
 <body>
   <!-- Skip to main content for accessibility -->
   <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
-
-  <!-- Mobile Fixed Background Hack -->
-  <div id="mobile-bg-fix" aria-hidden="true"></div>
 
   <!-- STARS BACKGROUND -->
   <div class="stars" aria-hidden="true"></div>

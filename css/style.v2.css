@@ -131,25 +131,35 @@ html {
   -ms-text-size-adjust: 100%;
 }
 
+/* Global Fixed Background (solves scroll jank from background-attachment: fixed on body) */
+html::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -100;
+  background-color: var(--color-deep-space);
+  background-image: url('../img/bg-cosmic-hd.webp');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+
 body {
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: 1.6;
-  /* Reverted to safer value */
   color: var(--color-starlight);
   min-height: 100vh;
   overflow-x: hidden;
-  /* Keep x hidden */
-  background-color: var(--color-deep-space);
-  /* Ensure background color is set */
-  /* Use new high-quality background */
-  background-image: url('../img/bg-cosmic-hd.webp');
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
+  background-color: transparent;
+  /* Changed from deep-space so html::before shows through */
   position: relative;
   letter-spacing: normal;
-  /* Reset letter spacing */
 }
 
 /* Disable fixed background on mobile - causes severe scroll jank on iOS/Android */
