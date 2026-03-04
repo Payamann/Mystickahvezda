@@ -160,9 +160,6 @@ body {
   background-color: transparent;
   position: relative;
   letter-spacing: normal;
-  /* Hardware Acceleration for heavy backdrop-filters: */
-  will-change: transform;
-  transform: translateZ(0);
 }
 
 /* Disable fixed background on mobile - causes severe scroll jank on iOS/Android */
