@@ -136,16 +136,15 @@ html::before {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  right: 0;
+  bottom: 0;
   z-index: -100;
   background-color: var(--color-deep-space);
   background-image: url('../img/bg-cosmic-hd.webp');
   background-size: cover;
-  background-position: center top;
+  background-position: center center;
   background-repeat: no-repeat;
   pointer-events: none;
-  transform: translateZ(0);
 }
 
 body {
