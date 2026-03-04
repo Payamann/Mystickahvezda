@@ -124,8 +124,6 @@ textarea {
 
 html {
   font-size: 16px;
-  background-color: var(--color-deep-space);
-  overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   overscroll-behavior-y: none;
@@ -156,10 +154,11 @@ body {
   line-height: 1.6;
   color: var(--color-starlight);
   min-height: 100vh;
-  overflow-x: hidden;
   background-color: transparent;
   position: relative;
   letter-spacing: normal;
+  overflow-x: clip;
+  /* Modern performant alternative to hidden that doesn't break scroll anchoring */
 }
 
 /* Disable fixed background on mobile - causes severe scroll jank on iOS/Android */
@@ -766,7 +765,7 @@ body.page-mentor .header {
     overflow: hidden;
     opacity: 0;
     visibility: hidden;
-    transition: all var(--transition-base);
+    transition: transform var(--transition-base), box-shadow var(--transition-base), opacity var(--transition-base);
     /* Remove list styles for mobile accordion */
     list-style: none;
     padding-left: 0;
