@@ -160,7 +160,7 @@
                 <!-- Rok zadání -->
                 <div style="margin:2rem 0 1rem;display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;"
                     data-animate>
-                    <input type="number" id="birth-year" class="year-input" placeholder="Rok nar." min="1900" max="2024"
+                    <input type="number" id="birth-year" class="year-input" placeholder="Rok nar." min="1900" max="2100"
                         aria-label="Rok narození">
                     <button onclick="calculateAnimal()" class="btn btn--primary">🐉 Zjistit mé znamení</button>
                 </div>
@@ -170,7 +170,7 @@
                     <button class="animal-btn" onclick="showAnimal('krysa')"
                         id="btn-krysa"><span>🐭</span>Krysa</button>
                     <button class="animal-btn" onclick="showAnimal('buvol')"
-                        id="btn-buvol"><span>🐂</span>Bůvol</button>
+                        id="btn-buvol"><span>🐂</span>Buvol</button>
                     <button class="animal-btn" onclick="showAnimal('tygr')" id="btn-tygr"><span>🐯</span>Tygr</button>
                     <button class="animal-btn" onclick="showAnimal('zajic')"
                         id="btn-zajic"><span>🐰</span>Zajíc</button>
@@ -255,11 +255,11 @@
                 good: ['🐲 Drak', '🐒 Opice', '🐂 Bůvol'], bad: ['🐴 Kůň', '🐓 Kohout']
             },
             buvol: {
-                name: 'Bůvol', emoji: '🐂', element: 'Země', years: '1901,1913,1925,1937,1949,1961,1973,1985,1997,2009,2021',
-                desc: 'Bůvolové jsou spolehliví, pracovití a trpěliví. Dosahují cílů vytrvalostí a pečlivostí. Jsou pilíři svých komunit a rodin.',
+                name: 'Buvol', emoji: '🐂', element: 'Země', years: '1901,1913,1925,1937,1949,1961,1973,1985,1997,2009,2021',
+                desc: 'Buvoli jsou spolehliví, pracovití a trpěliví. Dosahují cílů vytrvalostí a pečlivostí. Jsou pilíři svých komunit a rodin.',
                 love: 'V lásce jsou věrní, ale potřebují čas otevřít se. Ideálně Had nebo Kohout, kteří ocení jejich stabilitu.',
                 career: 'Zemědělství, stavebnictví, medicina, právo — vse co vyžaduje pečlivost a systematičnost.',
-                y2026: 'Rok Koně přináší Bůvolům potřebu flexibility — což není jejich silná stránka. Ale ti, kteří se otevřou novým přístupům, zažijí průlom.',
+                y2026: 'Rok Koně přináší Buvolům potřebu flexibility — což není jejich silná stránka. Ale ti, kteří se otevřou novým přístupům, zažijí průlom.',
                 good: ['🐍 Had', '🐓 Kohout', '🐭 Krysa'], bad: ['🐐 Koza', '🐕 Pes']
             },
             tygr: {
@@ -352,9 +352,11 @@
         }
 
         function calculateAnimal() {
-            const year = parseInt(document.getElementById('birth-year').value);
-            if (!year || year < 1900 || year > 2024) {
-                document.getElementById('birth-year').style.borderColor = 'rgba(212,175,55,0.8)';
+            const input = document.getElementById('birth-year');
+            input.style.borderColor = ''; // reset stylovani
+            const year = parseInt(input.value);
+            if (!year || year < 1900 || year > 2100) {
+                input.style.borderColor = 'rgba(231,76,60,0.8)'; // upozornení pokud je datum mimo
                 return;
             }
             const slug = getAnimalByYear(year);
