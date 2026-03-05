@@ -226,14 +226,28 @@
         ];
 
         let localMessages = [...demoMessages];
-        const liked = new Set(JSON.parse(localStorage.getItem('mh_angel_liked') || '[]'));
+        let liked = new Set();
+        try {
+            const savedLikes = JSON.parse(localStorage.getItem('mh_angel_liked_ids') || '[]');
+            liked = new Set(savedLikes);
+        } catch (e) {
+            liked = new Set();
+        }
 
+        // --- RENDER ---
         function renderMessages() {
-            const container = document.getElementById('messages-container');
-            container.innerHTML = localMessages.map((msg, i) => {
+            const wall = document.getElementById('messages-container'); // Changed to messages-container
+            if (localMessages.length === 0) {
+                wall.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.4);padding:2rem;">Zatím žádné vzkazy. Buďte první!</div>';
+                return;
+            }
+
+            const html = localMessages.map((msg, i) => {
+                // Generujeme chytřejší klíč pro paměť likes (ID ze serveru nebo jako fallback text zprávy)
+                const msgKey = msg.id ? String(msg.id) : msg.text.substring(0, 20);
                 const ago = timeAgo(msg.created_at);
                 const cat = catLabels[msg.category] || '✨ Jiné';
-                const isLiked = liked.has(i);
+                const isLiked = liked.has(msgKey);
                 return `<div class="message-card">
                 <div class="message-meta">
                     <span>👤 ${msg.nickname || 'Anonym'} <span class="category-tag">${cat}</span></span>
@@ -247,6 +261,8 @@
                 </div>
             </div>`;
             }).join('');
+
+            wall.innerHTML = html;
         }
 
         function timeAgo(date) {
@@ -258,14 +274,20 @@
         }
 
         function likeMessage(i) {
-            if (liked.has(i)) return;
-            liked.add(i);
-            localMessages[i].likes++;
-            localStorage.setItem('mh_angel_liked', JSON.stringify([...liked]));
+            const msg = localMessages[i];
+            const msgKey = msg.id ? String(msg.id) : msg.text.substring(0, 20);
+
+            if (liked.has(msgKey)) return;
+
+            liked.add(msgKey);
+            msg.likes++;
+            localStorage.setItem('mh_angel_liked_ids', JSON.stringify([...liked]));
+
+            // Rekreslení vizuálu
             renderMessages();
 
-            // Try API
-            if (localMessages[i].id) {
+            // Try API pro permanentní vzestup do databáze
+            if (msg.id) {
                 fetch(`/api/angel-post/${localMessages[i].id}/like`, { method: 'POST' }).catch(() => { });
             }
         };
