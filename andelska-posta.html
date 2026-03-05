@@ -282,11 +282,18 @@
             const text = document.getElementById('msg-text').value.trim();
             const nickname = document.getElementById('msg-nickname').value.trim() || 'Anonym';
             const category = document.getElementById('msg-category').value;
+            const msgEl = document.getElementById('submit-msg');
 
             if (text.length < 10) {
-                document.getElementById('msg-text').style.borderColor = 'rgba(212,175,55,0.8)';
+                document.getElementById('msg-text').style.borderColor = 'rgba(231,76,60,0.8)';
+                msgEl.textContent = '❌ Váš vzkaz andělům musí mít alespoň 10 znaků.';
+                msgEl.style.color = '#e74c3c';
+                msgEl.style.display = 'block';
+                setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
                 return;
             }
+
+            document.getElementById('msg-text').style.borderColor = 'rgba(255,255,255,0.1)';
 
             const newMsg = { nickname, text, category, likes: 0, created_at: new Date() };
 
@@ -310,8 +317,8 @@
             document.getElementById('msg-nickname').value = '';
             document.getElementById('char-count').textContent = '0';
 
-            const msgEl = document.getElementById('submit-msg');
             msgEl.textContent = '✨ Váš vzkaz byl odeslán andělům!';
+            msgEl.style.color = '#2ed573';
             msgEl.style.display = 'block';
             setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
 
