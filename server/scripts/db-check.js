@@ -64,6 +64,19 @@ async function diagnose() {
         logs.forEach(l => console.log(` [${l.created_at}] ${l.event}: ${l.message} ${l.details || ''}`));
     }
 
+    console.log('\n--- Checking public.angel_messages ---');
+    const { data: messages, error: messagesError } = await supabase
+        .from('angel_messages')
+        .select('*')
+        .limit(3);
+
+    if (messagesError) {
+        console.error('❌ Failed to read angel_messages:', messagesError.message);
+    } else {
+        console.log(`✅ Found ${messages.length} log entries.`);
+        messages.forEach(m => console.log(` [${m.created_at}] ${m.id}: ${m.message.substring(0, 20)}`));
+    }
+
     console.log('\n--- Diagnosis Complete ---');
 }
 

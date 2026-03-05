@@ -304,11 +304,24 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nickname, message: text, category })
                 });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.id) newMsg.id = data.id;
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    // Blokace spamu nebo limitu per den ze serveru (status 400 nebo 429)
+                    msgEl.textContent = '❌ ' + (data.error || 'Nastala chyba při odesílání.');
+                    msgEl.style.color = '#e74c3c';
+                    msgEl.style.display = 'block';
+                    setTimeout(() => { msgEl.style.display = 'none'; }, 5000);
+                    return; // Zastavit vykresleni lokální simulace
                 }
-            } catch (e) { /* offline — show locally */ }
+
+                if (data.id) newMsg.id = data.id;
+
+            } catch (e) {
+                // Skutecny vypadek serveru / offline u uzivatele (tichy prechod k lokalnimu zobrazeni)
+                console.warn("AngelPost API offline, pouzivam lokalni rezim.", e);
+            }
 
             localMessages.unshift(newMsg);
             renderMessages();

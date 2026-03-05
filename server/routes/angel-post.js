@@ -10,11 +10,11 @@ import rateLimit from 'express-rate-limit';
 
 const router = express.Router();
 
-// Limit: max 5 vzkaz za hodinu na IP
+// Limit: max 1 vzkaz za den(24h) na IP
 const postLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000,
-    max: 5,
-    message: { error: 'Příliš mnoho zpráv. Zkuste to za hodinu.' },
+    windowMs: 24 * 60 * 60 * 1000, // 24 hodin v ms
+    max: 1, // Pouze 1 request povoleno
+    message: { error: 'Dnes jste již andělům psali. Zkuste to prosím zase zítra.' },
     standardHeaders: true,
     legacyHeaders: false,
 });
