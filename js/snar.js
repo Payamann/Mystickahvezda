@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Sort alphabetically by keyword
             dreamsData.sort((a, b) => a.keyword.localeCompare(b.keyword, 'cs'));
 
+            // Expose globally so Symbol dne (inline script) can access the data
+            window.globalDreamsData = dreamsData;
+
             initAlphabet();
             renderDictionary(dreamsData);
         } catch (error) {
@@ -95,23 +98,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderDictionary(filtered);
     }
 
+    let searchDebounceTimer = null;
     searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+            const query = e.target.value.toLowerCase().trim();
 
-        // Remove active state from letters when searching manually
-        document.querySelectorAll('.alphabet-btn').forEach(b => b.classList.remove('active'));
+            // Remove active state from letters when searching manually
+            document.querySelectorAll('.alphabet-btn').forEach(b => b.classList.remove('active'));
 
-        if (!query) {
-            renderDictionary(dreamsData);
-            alphabetNav.firstChild.classList.add('active');
-            return;
-        }
+            if (!query) {
+                renderDictionary(dreamsData);
+                alphabetNav.firstChild.classList.add('active');
+                return;
+            }
 
-        const filtered = dreamsData.filter(d =>
-            d.keyword.toLowerCase().includes(query) ||
-            d.description.toLowerCase().includes(query)
-        );
-        renderDictionary(filtered);
+            const filtered = dreamsData.filter(d =>
+                d.keyword.toLowerCase().includes(query) ||
+                d.description.toLowerCase().includes(query)
+            );
+            renderDictionary(filtered);
+        }, 200);
     });
 
     // --- PREMIUM DREAM ANALYSIS ---
