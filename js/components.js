@@ -5,10 +5,18 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Determine the base path based on where this script is loaded from
+    // This allows the component loader to work correctly from subdirectories (like /blog/ or /sk/)
+    const scriptTag = document.querySelector('script[src*="js/components.js"]');
+    const scriptSrc = scriptTag ? scriptTag.getAttribute('src') : '';
+    const basePath = scriptSrc.includes('js/components.js') ? scriptSrc.split('js/components.js')[0] : '';
+
+    console.log(`[components.js] Base path detected: "${basePath}"`);
+
     // Load header and footer in parallel for faster initial paint
     await Promise.all([
-        loadComponent('header-placeholder', 'components/header.html?v=2'),
-        loadComponent('footer-placeholder', 'components/footer.html?v=2')
+        loadComponent('header-placeholder', `${basePath}components/header.html?v=2`),
+        loadComponent('footer-placeholder', `${basePath}components/footer.html?v=2`)
     ]);
 
     // Dispatch event to signal that UI shells are ready
