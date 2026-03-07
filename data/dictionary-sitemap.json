@@ -113,5 +113,35 @@
     "url": "/slovnik/andelska-cisla.html",
     "changefreq": "monthly",
     "priority": "0.6"
+  },
+  {
+    "url": "/slovnik/lilith-cerna-luna.html",
+    "changefreq": "monthly",
+    "priority": "0.6"
+  },
+  {
+    "url": "/slovnik/descendent.html",
+    "changefreq": "monthly",
+    "priority": "0.6"
+  },
+  {
+    "url": "/slovnik/chiron.html",
+    "changefreq": "monthly",
+    "priority": "0.6"
+  },
+  {
+    "url": "/slovnik/spankova-paralyza.html",
+    "changefreq": "monthly",
+    "priority": "0.6"
+  },
+  {
+    "url": "/slovnik/andelske-cislo-1111.html",
+    "changefreq": "monthly",
+    "priority": "0.6"
+  },
+  {
+    "url": "/slovnik/uplnek.html",
+    "changefreq": "monthly",
+    "priority": "0.6"
   }
 ]

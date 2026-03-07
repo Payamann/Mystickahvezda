@@ -375,6 +375,172 @@ const DICTIONARY_TERMS = [
         `,
         related_slugs: ['synchronicita', 'zivotni-cislo'],
         linked_blog_slug: 'andelska-cisla-1111'
+    },
+    {
+        slug: 'lilith-cerna-luna',
+        title: 'Lilith (Černá Luna)',
+        category: 'Astrologie',
+        short_description: 'Lilith nebo Černá Luna představuje naši temnou stránku duše, potlačené touhy a skrytou sílu. Bod na oběžné dráze Měsíce, kde je nejdále od Země.',
+        content_html: `
+            <p><strong>Lilith (Černá Luna)</strong> není skutečná fyzická planeta, ale matematický bod na oběžné dráze Měsíce – místo, kde je Měsíc vizuálně nejdále od Země (tzv. lunární apogeum). V astrologii představuje Lilith naši nejhlubší, často potlačovanou a zkoušenou přirozenost.</p>
+            
+            <h2>Témata spojená s Lilith</h2>
+            <p>Ve vašem natálním horoskopu ukazuje umístění Lilith na oblast, ve které čelíte extrémům. Je to místo, kde jste rebely, kde se odmítáte podřídit očekávání společnosti a kde leží sice velká bolest, ale také obrovská síla.</p>
+            <ul>
+                <li><strong>Skryté touhy:</strong> Sexualita, fascinace tabu a tajemstvím.</li>
+                <li><strong>Stín a odmítnutí:</strong> Místa, kde se cítíte nepochopeni nebo vyloučeni.</li>
+                <li><strong>Autonomie a vzdor:</strong> Extrémní potřeba svobody a odmítnutí kompromisů.</li>
+                <li><strong>Vnitřní síla:</strong> Když pochopíte svou Lilith, získáte moc čelit svým největším strachům.</li>
+            </ul>
+
+            <p>Zatímco společnost nás učí své stíny skrývat, integrace energie Černé Luny vede k obrovské osobní svobodě. Zkoumání Lilith je procesem přijetí sebe sama i s těmi vlastnostmi, které ostatní považují za kontroverzní.</p>
+
+        <div style="margin-top:2rem; padding: 1.5rem; background: rgba(155,89,182,0.08); border-left: 3px solid var(--color-primary); border-radius:0 12px 12px 0;">
+        <p style="margin:0; font-size:1.1rem; color:var(--color-mystic-gold); font-family: 'Cinzel', serif;">✨ <strong>Kde máte svou Lilith vy?</strong></p>
+        <p style="margin:0.5rem 0 0 0; font-size:0.9rem; color:var(--color-text-mutated);">Zjistěte umístění své Černé Luny a její vliv na vaši osobnost v naší detailní analýze.</p>
+        <div style="margin-top: 1rem;">
+            <a href="../natalni-karta.html" class="btn btn--primary" style="font-size:0.9rem; padding: 0.5rem 1rem;">Zjistit mou Lilith v Natální Kartě →</a>
+        </div>
+    </div>`,
+        related_slugs: ['nativni-karta', 'ascendent'],
+        linked_blog_slug: null
+    },
+    {
+        slug: 'descendent',
+        title: 'Descendent (DC)',
+        category: 'Astrologie',
+        short_description: 'Descendent leží přesně naproti Ascendentu a reprezentuje naše partnerské vztahy, sňatky a typ lidí, ke kterým jsme přitahováni. Zjistěte více o 7. domě v astrologii.',
+        content_html: `
+            <p><strong>Descendent (DC)</strong> je bod v natálním horoskopu, který leží přesně naproti Ascendentu. Označuje začátek 7. domu a stojí na samotném západním obzoru v době vašeho narození. Zatímco Ascendent ukazuje "Já" (sebeobraz, vnější projev), Descendent ukazuje "My" a reprezentuje sféru vážných partnerských a obchodních vztahů.</p>
+            
+            <h2>Vliv Descendentu na Vztahy</h2>
+            <p>Znamení, ve kterém se nachází váš Descendent, odhaluje obrovské množství informací o vašem milostném životě:</p>
+            <ul>
+                <li><strong>Osobnostní Stín:</strong> Znamení na Descendentu často zosobňuje kvality, které popíráme sami u sebe nebo které neumíme projevit, a tak je hledáme u partnera, aby nás "doplnil".</li>
+                <li><strong>Osudová Přitažlivost:</strong> Ukazuje na vlastnosti, ke kterým jsme přirozeně a mnohdy až magicky přitahováni u druhých. Lidé s výraznými planetami ve stejném znamení, jako je náš Descendent, nám často připadají fascinující.</li>
+                <li><strong>Manželství a Partnerství:</strong> Odkrývá, jak vnímáme manželství, co od dlouhodobého svazku očekáváme a s jakými typy výzev se můžeme v partnerství potýkat.</li>
+                <li><strong>Otevření nepřátelé:</strong> Zatímco 12. dům vládne skrytým nepřátelům, 7. dům s Descendentem pokrývá ty lidi, u kterých je nám jejich rivalita otevřeně známa.</li>
+            </ul>
+
+            <p>Pochopení Descendentu je nezbytných prvkem ve vztahové astrologii (Synastrii), kde se zkoumá, nakolik vaše "Já" zapadá do partnerova "My" a naopak.</p>
+
+        <div style="margin-top:2rem; padding: 1.5rem; background: rgba(155,89,182,0.08); border-left: 3px solid var(--color-primary); border-radius:0 12px 12px 0;">
+        <p style="margin:0; font-size:1.1rem; color:var(--color-mystic-gold); font-family: 'Cinzel', serif;">💞 <strong>Hodíte se k sobě?</strong></p>
+        <p style="margin:0.5rem 0 0 0; font-size:0.9rem; color:var(--color-text-mutated);">Otestujte si kompatibilitu a prozkoumejte své i partnerovy hvězdné body v naší aplikaci Partnerská Shoda.</p>
+        <div style="margin-top: 1rem;">
+            <a href="../partnerska-shoda.html" class="btn btn--primary" style="font-size:0.9rem; padding: 0.5rem 1rem;">Vypočítat Partnerskou Shodu →</a>
+        </div>
+    </div>`,
+        related_slugs: ['ascendent', 'nativni-karta'],
+        linked_blog_slug: null
+    },
+    {
+        slug: 'chiron',
+        title: 'Chiron ("Zraněný léčitel")',
+        category: 'Astrologie',
+        short_description: 'Chiron symbolizuje naše nejhlubší karmické rány a schopnost je proměnit v největší dar léčení. Zjistěte význam Chirona ve vašem natálním horoskopu.',
+        content_html: `
+            <p><strong>Chiron</strong> je planetka (nebo kometa), obíhající mezi Saturnem a Uranem. V astrologii reprezentuje "Zraněného léčitele" (The Wounded Healer). Jedná se o oblast našeho života, kde jsme byli kdysi hluboce, často bezdůvodně, zraněni a s tímto zraněním se musíme během života vyrovnat.</p>
+            
+            <h2>Mytologie a Význam</h2>
+            <p>Podle řecké mytologie byl kentaur Chiron vynikajícím léčitelem a učitelem. Byl nesmrtelný, ale po zásahu otráveným šípem utrpěl zranění, které si nedokázal sám vyléčit a musel tak žít v neustálých bolestech. Právě proto, že poznal utrpení, měl neuvěřitelnou empatii a dokázal mistrně léčit druhé.</p>
+            
+            <ul>
+                <li><strong>Karmické Zranění:</strong> Znamení a dům, ve kterém máte Chirona, ukazuje vaši největší slabinu nebo místo nedůvěry (např. strach z odmítnutí, potlačená asertivita).</li>
+                <li><strong>Empatie jako Dar:</strong> Naše největší trauma se paradoxně může proměnit v naši nejsilnější zbraň. To, čím jsme trpěli, nás učí, jak být skvělými průvodci pro lidi s podobným problémem.</li>
+                <li><strong>Cesta K Uzdravení:</strong> Chironské rány obvykle nikdy nezmizí beze stopy (jizva zůstává), ale jakmile to přijmeme, přestane nás zranění bolet a začne z nás čišet zvláštní životní moudrost.</li>
+            </ul>
+
+        <div style="margin-top:2rem; padding: 1.5rem; background: rgba(155,89,182,0.08); border-left: 3px solid var(--color-primary); border-radius:0 12px 12px 0;">
+        <p style="margin:0; font-size:1.1rem; color:var(--color-mystic-gold); font-family: 'Cinzel', serif;">✨ <strong>Kde se nachází váš Chiron?</strong></p>
+        <p style="margin:0.5rem 0 0 0; font-size:0.9rem; color:var(--color-text-mutated);">Podívejte se do svého osobního horoskopu. Znamení a dům vašeho Chirona vám přesně určí vaši životní ránu i váš největší léčitelský dar.</p>
+        <div style="margin-top: 1rem;">
+            <a href="../natalni-karta.html" class="btn btn--primary" style="font-size:0.9rem; padding: 0.5rem 1rem;">Vypočítat Natální Kartu →</a>
+        </div>
+    </div>`,
+        related_slugs: ['karma', 'karmicky-uzel'],
+        linked_blog_slug: null
+    },
+    {
+        slug: 'spankova-paralyza',
+        title: 'Spánková Paralýza',
+        category: 'Snář',
+        short_description: 'Spánková paralýza: Fenomén na pomezí spánku a bdění. Co znamená, proč vzniká a jaký má duchovní a snový přesah.',
+        content_html: `
+            <p><strong>Spánková paralýza</strong> je fascinující, ale často děsivý stav, ke kterému dochází na hranici mezi spánkem (nejčastěji fází REM) a bděním. Vaše vědomí ("mysl") se probudí, uvědomujete si své okolí, ale vaše tělo zůstává hluboce spící a paralyzované. Tento stav může trvat několik sekund až minut.</p>
+            
+            <h2>Vědecký vs. Spirituální pohled</h2>
+            <p>Z vědeckého hlediska je to ochranný mechanismus evoluce. Během REM spánku, kdy se nám zdají sny, mozek vyplavuje látky uvolňující svaly, abychom ve spánku nereagovali na dění ve snech a nezranili se. Když se mozek probudí dříve než vyprchá tento svalový "zámek", vnímáme paralýzu. Způsobuje ji stres, nedostatek spánku či spaní v poloze na zádech.</p>
+            
+            <p><strong>Ve spirituálním a esoterickém světě</strong> má spánková paralýza mnohem hlubší výklad:</p>
+            <ul>
+                <li><strong>Brána do astrálu:</strong> Pro mnoho lidí cvičících vědomé (lucidní) snění a astrální cestování je stav paralýzy vědomým cílem a startovní čárou k vystoupení z fyzického těla (OOBE).</li>
+                <li><strong>"Návštěvníci" a Bytosti:</strong> Mozek se ze stavu strachu a neschopnosti hýbat se často začne bránit halucinacemi (např. tmavé stíny, pocit tíhy na hrudi – "dusivý démon / incubus"). Různé kultury si tento pocit v historii vysvětlovaly útoky zlých duchů.</li>
+                <li><strong>Zkouška strachu:</strong> Pokud se při spánkové paralýze naučíte nepodléhat panice, dýchat a přijmout stav uvolnění, obvykle se snové démonické výjevy promění ve velmi klidný a barevný lucidní sen.</li>
+            </ul>
+
+        <div style="margin-top:2rem; padding: 1.5rem; background: rgba(155,89,182,0.08); border-left: 3px solid var(--color-primary); border-radius:0 12px 12px 0;">
+        <p style="margin:0; font-size:1.1rem; color:var(--color-mystic-gold); font-family: 'Cinzel', serif;">🌙 <strong>Zdálo se vám něco zvláštního?</strong></p>
+        <p style="margin:0.5rem 0 0 0; font-size:0.9rem; color:var(--color-text-mutated);">Pokud jste zažili živý nebo děsivý sen po probuzení z paralýzy, vložte ho do našeho AI Snáře. Magická inteligence odhalí podvědomou symboliku vašich vizí.</p>
+        <div style="margin-top: 1rem;">
+            <a href="../snar.html" class="btn btn--primary" style="font-size:0.9rem; padding: 0.5rem 1rem;">Vyložit si sen přes AI Snář →</a>
+        </div>
+    </div>`,
+        related_slugs: ['lucidni-sen', 'akasicke-zaznamy'],
+        linked_blog_slug: null
+    },
+    {
+        slug: 'andelske-cislo-1111',
+        title: 'Andělské Číslo 11:11',
+        category: 'Numerologie',
+        short_description: 'Andělské číslo 11:11 je mocný symbol synchronicity, probuzení a potvrzení z vesmíru, že vaše myšlenky se rychle manifestují do reality.',
+        content_html: `
+            <p>Máte pocit, že pokaždé, když se podíváte na telefon nebo na hodinky, ukazuje čas zrovna <strong>11:11</strong>? Tento časový vzorec je zdaleka nejznámějším z tzv. <strong>Andělských čísel</strong>. Nejde o náhodu, ale o fenomén zvaný <em>synchronicita</em>.</p>
+            
+            <h2>Poselství a Význam 11:11</h2>
+            <p>V numerologii vládne číslu 1 začátek, stvoření, touha a myšlenka. Mistrovské číslo 11 tuto energii znásobuje do roviny intuice a osvícení. Při pohledu na čtyři jedničky vedle sebe (11:11) se před vámi otevírá energetický portál.</p>
+            
+            <ul>
+                <li><strong>Okamžitá manifestace:</strong> Vesmír jako by "fotil" to, na co zrovna myslíte. Vaše myšlenky se v tu chvíli velmi rychle stávají realitou. Zaměřte se na to, co chcete, nikoli na to, čeho se bojíte.</li>
+                <li><strong>Duchovní probuzení:</strong> Pokud tuto řadu čísel začnete vídat často, znamená to, že se vaše vědomí probouzí a začínáte vnímat víc, než jen materiální realitu 3D světa.</li>
+                <li><strong>Andělské potvrzení:</strong> Vaši duchovní strážci vám tímto říkají: "Jsi na správné cestě. Stojíme při tobě." Často to přichází po těžkém životním rozhodnutí.</li>
+            </ul>
+
+        <div style="margin-top:2rem; padding: 1.5rem; background: rgba(155,89,182,0.08); border-left: 3px solid var(--color-primary); border-radius:0 12px 12px 0;">
+        <p style="margin:0; font-size:1.1rem; color:var(--color-mystic-gold); font-family: 'Cinzel', serif;">👼 <strong>Zajímají vás vzkazy od Strážných andělů?</strong></p>
+        <p style="margin:0.5rem 0 0 0; font-size:0.9rem; color:var(--color-text-mutated);">Otevřete si Andělskou Poštu a odhalte, jaká další čísla a poselství k vám z vesmíru aktuálně proudí.</p>
+        <div style="margin-top: 1rem;">
+            <a href="../andelske-karty.html" class="btn btn--primary" style="font-size:0.9rem; padding: 0.5rem 1rem;">Otevřít Andělskou Poštu →</a>
+        </div>
+    </div>`,
+        related_slugs: ['andelska-cisla', 'synchronicita', 'mistrovska-cisla'],
+        linked_blog_slug: null
+    },
+    {
+        slug: 'uplnek',
+        title: 'Úplněk',
+        category: 'Spiritualita',
+        short_description: 'Fáze Měsíce s maximální světelnou a energetickou silou, ovlivňující emoce, spánek i duchovní projevy.',
+        content_html: `
+            <p><strong>Úplněk</strong>, známý z latinského plenilunium, je astronomicky momentem, kdy se Země ocitne přesně mezi Sluncem a Měsícem. Měsíční disk je plně osvětlen a svítí na obloze svou největší intenzitou. Astrologicky jde ale o velmi náročný aspekt – aspekt takzvané Opozice (napětí 180°) mezi Sluncem a Lunou.</p>
+            
+            <h2>Vliv Úplňku na Tělo a Psychiku</h2>
+            <p>I vědecké studie prokazují, že gravitace fáze úplňku ovlivňuje lidské tělo. V mytologii a astrologii jde o čas napětí i zázraků:</p>
+            <ul>
+                <li><strong>Emoční exploze:</strong> Věci, které jsme po celý cyklus dusili dovnitř, mohou ve světle úplňku přerůst v dramatickou hádku nebo pláč. Odtud pochází historické mýty o vlkodlacích ("lunatics").</li>
+                <li><strong>Problémy se spánkem:</strong> Je naprosto běžné pociťovat v den úplňku roztěkanost a mělký spánek plný živých a vizuálně jasných snů.</li>
+                <li><strong>Dokončování a Propouštění:</strong> Úplněk je časem sklizně a uvolňování. Zatímco za novoluní si tvoříme nové cíle, o úplňku bychom měli odpouštět a opouštět návyky, ty které nám už neslouží.</li>
+            </ul>
+
+        <div style="margin-top:2rem; padding: 1.5rem; background: rgba(155,89,182,0.08); border-left: 3px solid var(--color-primary); border-radius:0 12px 12px 0;">
+        <p style="margin:0; font-size:1.1rem; color:var(--color-mystic-gold); font-family: 'Cinzel', serif;">📉 <strong>Cítíte se rozhození?</strong></p>
+        <p style="margin:0.5rem 0 0 0; font-size:0.9rem; color:var(--color-text-mutated);">Ověřte si, v jaké fázi se právě nachází Měsíc, a zkontrolujte si svou emocionální, fyzickou a intelektuální křivku v naší sekci Biorytmy.</p>
+        <div style="margin-top: 1rem;">
+            <a href="../biorytmy.html" class="btn btn--primary" style="font-size:0.9rem; padding: 0.5rem 1rem;">Zjistit moji aktuální křivku a fázi měsíce →</a>
+        </div>
+    </div>`,
+        related_slugs: ['aspekty', 'retrogradi-planeta'],
+        linked_blog_slug: null
     }
 ];
 

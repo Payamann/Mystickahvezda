@@ -136,5 +136,41 @@
     "title": "Andělská čísla",
     "category": "Numerologie",
     "short_description": "Opakující se číselné posloupnosti (111, 222, 333...) interpretované jako poselství z vyšších vědomí nebo duchovních průvodců."
+  },
+  {
+    "slug": "lilith-cerna-luna",
+    "title": "Lilith (Černá Luna)",
+    "category": "Astrologie",
+    "short_description": "Lilith nebo Černá Luna představuje naši temnou stránku duše, potlačené touhy a skrytou sílu. Bod na oběžné dráze Měsíce, kde je nejdále od Země."
+  },
+  {
+    "slug": "descendent",
+    "title": "Descendent (DC)",
+    "category": "Astrologie",
+    "short_description": "Descendent leží přesně naproti Ascendentu a reprezentuje naše partnerské vztahy, sňatky a typ lidí, ke kterým jsme přitahováni. Zjistěte více o 7. domě v astrologii."
+  },
+  {
+    "slug": "chiron",
+    "title": "Chiron (\"Zraněný léčitel\")",
+    "category": "Astrologie",
+    "short_description": "Chiron symbolizuje naše nejhlubší karmické rány a schopnost je proměnit v největší dar léčení. Zjistěte význam Chirona ve vašem natálním horoskopu."
+  },
+  {
+    "slug": "spankova-paralyza",
+    "title": "Spánková Paralýza",
+    "category": "Snář",
+    "short_description": "Spánková paralýza: Fenomén na pomezí spánku a bdění. Co znamená, proč vzniká a jaký má duchovní a snový přesah."
+  },
+  {
+    "slug": "andelske-cislo-1111",
+    "title": "Andělské Číslo 11:11",
+    "category": "Numerologie",
+    "short_description": "Andělské číslo 11:11 je mocný symbol synchronicity, probuzení a potvrzení z vesmíru, že vaše myšlenky se rychle manifestují do reality."
+  },
+  {
+    "slug": "uplnek",
+    "title": "Úplněk",
+    "category": "Spiritualita",
+    "short_description": "Fáze Měsíce s maximální světelnou a energetickou silou, ovlivňující emoce, spánek i duchovní projevy."
   }
 ]
