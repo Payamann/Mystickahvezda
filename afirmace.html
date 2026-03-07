@@ -124,29 +124,29 @@
 
                 <!-- Výběr znamení -->
                 <div class="zodiac-grid" data-animate>
-                    <button class="zodiac-btn" onclick="showAffirmation('beran')"
+                    <button class="zodiac-btn" data-sign="beran"
                         aria-label="Beran"><span>♈</span>Beran</button>
-                    <button class="zodiac-btn" onclick="showAffirmation('byk')"
+                    <button class="zodiac-btn" data-sign="byk"
                         aria-label="Byk"><span>♉</span>Byk</button>
-                    <button class="zodiac-btn" onclick="showAffirmation('blizenci')"
+                    <button class="zodiac-btn" data-sign="blizenci"
                         aria-label="Blíženci"><span>♊</span>Blíženci</button>
-                    <button class="zodiac-btn" onclick="showAffirmation('rak')"
+                    <button class="zodiac-btn" data-sign="rak"
                         aria-label="Rak"><span>♋</span>Rak</button>
-                    <button class="zodiac-btn" onclick="showAffirmation('lev')"
+                    <button class="zodiac-btn" data-sign="lev"
                         aria-label="Lev"><span>♌</span>Lev</button>
-                    <button class="zodiac-btn" onclick="showAffirmation('panna')"
+                    <button class="zodiac-btn" data-sign="panna"
                         aria-label="Panna"><span>♍</span>Panna</button>
-                    <button class="zodiac-btn" onclick="showAffirmation('vahy')"
+                    <button class="zodiac-btn" data-sign="vahy"
                         aria-label="Váhy"><span>♎</span>Váhy</button>
-                    <button class="zodiac-btn" onclick="showAffirmation('stir')"
+                    <button class="zodiac-btn" data-sign="stir"
                         aria-label="Štír"><span>♏</span>Štír</button>
-                    <button class="zodiac-btn" onclick="showAffirmation('strelec')"
+                    <button class="zodiac-btn" data-sign="strelec"
                         aria-label="Střelec"><span>♐</span>Střelec</button>
-                    <button class="zodiac-btn" onclick="showAffirmation('kozoroh')"
+                    <button class="zodiac-btn" data-sign="kozoroh"
                         aria-label="Kozoroh"><span>♑</span>Kozoroh</button>
-                    <button class="zodiac-btn" onclick="showAffirmation('vodnar')"
+                    <button class="zodiac-btn" data-sign="vodnar"
                         aria-label="Vodnář"><span>♒</span>Vodnář</button>
-                    <button class="zodiac-btn" onclick="showAffirmation('ryby')"
+                    <button class="zodiac-btn" data-sign="ryby"
                         aria-label="Ryby"><span>♓</span>Ryby</button>
                 </div>
 
@@ -160,11 +160,11 @@
                     <p class="affirmation-text" id="affirmation-text"></p>
                     <p class="affirmation-sub" id="affirmation-sub"></p>
                     <div style="margin-top:1.5rem;display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
-                        <button onclick="copyAffirmation()" class="btn btn--ghost"
+                        <button id="btn-copy-affirmation" class="btn btn--ghost"
                             style="font-size:0.88rem;padding:0.6rem 1.25rem;">📋 Kopírovat</button>
-                        <button onclick="shareAffirmation()" class="btn btn--ghost"
+                        <button id="btn-share-affirmation" class="btn btn--ghost"
                             style="font-size:0.88rem;padding:0.6rem 1.25rem;">📤 Sdílet</button>
-                        <a href="horoskopy.html" class="btn btn--primary"
+                        <a id="btn-horoskop-link" href="horoskopy.html" class="btn btn--primary"
                             style="font-size:0.88rem;padding:0.6rem 1.25rem;">🌌 Horoskop dnes</a>
                     </div>
                     <p id="copy-confirm" style="color:#2ed573;font-size:0.85rem;margin-top:0.75rem;display:none;">✓

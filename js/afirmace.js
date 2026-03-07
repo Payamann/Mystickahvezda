@@ -206,8 +206,11 @@ window.showAffirmation = function (sign) {
     const signData = signs[sign];
 
     document.querySelectorAll('.zodiac-btn').forEach(b => b.classList.remove('active'));
-    const btn = document.querySelector(`[onclick="showAffirmation('${sign}')"]`);
+    const btn = document.querySelector(`.zodiac-btn[data-sign="${sign}"]`);
     if (btn) btn.classList.add('active');
+
+    const horoskopLink = document.getElementById('btn-horoskop-link');
+    if (horoskopLink) horoskopLink.href = `horoskopy.html#${sign}`;
 
     document.getElementById('moon-badge').innerHTML = `${moon.emoji} ${moon.name}`;
     document.getElementById('sign-emoji').textContent = signData.emoji;
@@ -224,26 +227,32 @@ window.showAffirmation = function (sign) {
     try { localStorage.setItem('mh_last_affirmation_sign', sign); } catch (e) { }
 };
 
-window.copyAffirmation = function () {
+function copyAffirmation() {
     const text = document.getElementById('affirmation-text').textContent;
     navigator.clipboard.writeText(text + ' — Mystická Hvězda').then(() => {
         const el = document.getElementById('copy-confirm');
         el.style.display = 'block';
         setTimeout(() => el.style.display = 'none', 2000);
     });
-};
+}
 
-window.shareAffirmation = function () {
+function shareAffirmation() {
     const text = document.getElementById('affirmation-text').textContent;
     if (navigator.share) {
         navigator.share({ title: 'Moje dnešní afirmace', text: text, url: 'https://mystickahvezda.cz/afirmace.html' });
     } else {
         copyAffirmation();
     }
-};
+}
 
 // Auto-load last sign on page load
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.zodiac-btn[data-sign]').forEach(btn => {
+        btn.addEventListener('click', () => showAffirmation(btn.dataset.sign));
+    });
+    document.getElementById('btn-copy-affirmation').addEventListener('click', copyAffirmation);
+    document.getElementById('btn-share-affirmation').addEventListener('click', shareAffirmation);
+
     try {
         const last = localStorage.getItem('mh_last_affirmation_sign');
         if (last && affirmations[last]) showAffirmation(last);
