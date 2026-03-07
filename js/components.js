@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load header and footer in parallel for faster initial paint
     await Promise.all([
-        loadComponent('header-placeholder', `${basePath}components/header.html?v=2`),
-        loadComponent('footer-placeholder', `${basePath}components/footer.html?v=2`)
+        loadComponent('header-placeholder', `${basePath}components/header.html?v=2`, basePath),
+        loadComponent('footer-placeholder', `${basePath}components/footer.html?v=2`, basePath)
     ]);
 
     // Dispatch event to signal that UI shells are ready
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initStandaloneHeader();
 });
 
-async function loadComponent(elementId, path) {
+async function loadComponent(elementId, path, basePath = '') {
     const element = document.getElementById(elementId);
     if (!element) return;
 
@@ -36,7 +36,33 @@ async function loadComponent(elementId, path) {
         const response = await fetch(path);
         if (!response.ok) throw new Error(`Failed to load ${path}`);
 
-        const html = await response.text();
+        let html = await response.text();
+
+        // Create a temporary container to manipulate the DOM
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+
+        // Fix relative paths for images and links if we are in a subdirectory
+        if (basePath && basePath !== './' && basePath !== '/') {
+            // Fix images
+            temp.querySelectorAll('img').forEach(img => {
+                const src = img.getAttribute('src');
+                if (src && !src.startsWith('http') && !src.startsWith('/') && !src.startsWith('data:')) {
+                    img.setAttribute('src', basePath + src);
+                }
+            });
+
+            // Fix links
+            temp.querySelectorAll('a').forEach(a => {
+                const href = a.getAttribute('href');
+                if (href && href !== '#' && !href.startsWith('http') && !href.startsWith('/') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                    a.setAttribute('href', basePath + href);
+                }
+            });
+
+            html = temp.innerHTML;
+        }
+
         element.innerHTML = html;
 
         // Replace the placeholder with the actual content
