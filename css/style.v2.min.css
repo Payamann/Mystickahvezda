@@ -2032,7 +2032,12 @@ body.page-mentor .header {
     pointer-events: none;
   }
 
-  /* Disable aurora overlay on mobile */
+  /* Disable aurora overlays on mobile - background image must not be animated */
+  body::before {
+    animation: none;
+    will-change: auto;
+  }
+
   body::after {
     display: none;
   }
