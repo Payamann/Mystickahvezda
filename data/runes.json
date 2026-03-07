@@ -173,5 +173,68 @@
         "symbol": "",
         "meaning": "Nevyzpytatelný osud, absolutní důvěra v prázdnotu, zásah sudiček.",
         "description": "Odinova runa prázdnoty značí nevyhnutelnou karmu – čistý potenciál bez jakékoliv zemské garance. Dovoluje nám pochopit, že některé věci jsou absolutně v moci vyšších sil a nezbývá, než se nechat vést."
+    },
+    {
+        "id": "ac",
+        "name": "Ac",
+        "symbol": "ᚪ",
+        "meaning": "Dub, síla, vytrvalost, zakořenění.",
+        "description": "Ac je runa mocného dubu — stromu, jenž vzdoruje bouřím po staletí. Přináší hluboké zakořenění, fyzickou i duševní odolnost a schopnost snést velké životní tlaky bez zlomení. Vyzývá ke stavbě pevných základů."
+    },
+    {
+        "id": "aesc",
+        "name": "Aesc",
+        "symbol": "ᚫ",
+        "meaning": "Jasan, kosmická osa, propojení světů.",
+        "description": "Aesc zosobňuje světový strom Yggdrasil — jasanový kmen prorůstající devíti světy. Runa vesmírného řádu, propojení duchovní a fyzické roviny a schopnosti nahlížet realitu z výšin. Vyzývá k rozšíření vědomí."
+    },
+    {
+        "id": "yr",
+        "name": "Yr",
+        "symbol": "ᚣ",
+        "meaning": "Tis, luk, přechod, skrytá síla.",
+        "description": "Yr je runa tisového luku — nástroje přesnosti i nástroje lovu. Stojí na pomezí života a smrti, protože tis je jedovatý, přesto nesmrtelný v přirozené obnově. Učí nacházet sílu v tichých přechodech a neviditelných transformacích."
+    },
+    {
+        "id": "ior",
+        "name": "Ior",
+        "symbol": "ᛡ",
+        "meaning": "Úhoř, dualita, přizpůsobení, obojživelnost.",
+        "description": "Ior je runa bytosti žijící ve dvou světech — rybích i suchozemských vodách. Zosobňuje schopnost pohybovat se přirozeně mezi různými prostředími, vztahy i stavy mysli. Vyzývá k přijetí vlastní mnohostranné podstaty."
+    },
+    {
+        "id": "ear",
+        "name": "Ear",
+        "symbol": "ᛠ",
+        "meaning": "Hrob, smrtelnost, závěr, uvolnění.",
+        "description": "Ear připomíná, že vše časné jednou skončí — a právě v tom tkví jeho moudrost. Není runou strachu, ale runou přijetí. Vyzývá k uvolnění toho, co přežilo svůj čas, aby mohlo povstat něco nového a čistého."
+    },
+    {
+        "id": "cweorth",
+        "name": "Cweorth",
+        "symbol": "ᛢ",
+        "meaning": "Oheň, očista, transformace, rituál.",
+        "description": "Cweorth je runa posvátného ohně — ne ohně zkázy, ale ohně, jenž spaluje nepotřebné a očišťuje duši k přijímání nového. Spojena s pohřebními ohni starých Anglosasů, vyzývá ke slavnostnému uzavření a duchovní obnově."
+    },
+    {
+        "id": "calc",
+        "name": "Calc",
+        "symbol": "ᛣ",
+        "meaning": "Kalich, oběť, rituální přijetí, posvátná nádoba.",
+        "description": "Calc je runa kalicha — symbol darování a přijímání v rituálním smyslu. Připomíná, že pravá síla přichází skrze pokorné otevření se vyšší vůli. Vyzývá ke slavnostní oběti ega a k přijímání duchovní výživy."
+    },
+    {
+        "id": "stan",
+        "name": "Stan",
+        "symbol": "ᛤ",
+        "meaning": "Kámen, stabilita, pevnost, základ.",
+        "description": "Stan je runa prostého kamene — věčné, mlčenlivé a nezlomné. Přináší poselství stability, trpělivosti a pevného postoje uprostřed chaosu. Vyzývá ke spoléhání na vlastní vnitřní základy, nikoli na měnící se okolnosti."
+    },
+    {
+        "id": "gar",
+        "name": "Gar",
+        "symbol": "ᚸ",
+        "meaning": "Ódinovo kopí, střed světa, brána, záměr.",
+        "description": "Gar je runa Ódinova posvátného kopí Gungnir, jímž bůh pronikl do tajemství run. Stojí mimo obvyklý runic cyklus jako brána — bod absolutního zaměření, kde záměr a vesmírná vůle splývají. Vyzývá k jasnosti cíle a odhodlanému činu."
     }
 ]
