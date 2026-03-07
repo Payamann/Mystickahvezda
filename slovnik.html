@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>EzoterickĂ˝ SlovnĂ­k | MystickĂˇ HvÄ›zda</title>
+    <title>Ezoterický Slovník | Mystická Hvězda</title>
     <meta name="description"
-        content="VaĹˇe encyklopedie astrologickĂ˝ch, mystickĂ˝ch a esoterickĂ˝ch pojmĹŻ. Objevte hlubĹˇĂ­ smysl vÄ›cĂ­.">
+        content="Vaše encyklopedie astrologických, mystických a esoterických pojmů. Objevte hlubší smysl věcí.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -109,9 +109,9 @@
         <section class="hero" style="padding-top: 8rem; padding-bottom: 2rem;">
             <div class="container" style="text-align: center;">
                 <span class="section__badge">Encyklopedie</span>
-                <h1 class="hero__title">EzoterickĂ˝ <span class="text-gradient">SlovnĂ­k</span></h1>
-                <p class="hero__subtitle" style="max-width: 600px; margin: 0 auto;">Objevte vĂ˝znamy tajemnĂ˝ch pojmĹŻ z
-                    astrologie, tarotu a magie. VĂˇĹˇ prĹŻvodce svÄ›tem neviditelnĂ˝ch energiĂ­.</p>
+                <h1 class="hero__title">Ezoterický <span class="text-gradient">Slovník</span></h1>
+                <p class="hero__subtitle" style="max-width: 600px; margin: 0 auto;">Objevte významy tajemných pojmů z
+                    astrologie, tarotu a magie. Váš průvodce světem neviditelných energií.</p>
             </div>
         </section>
 
@@ -119,12 +119,12 @@
             <div class="container">
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input"
-                        placeholder="Hledat pojem (napĹ™. Ascendent, Karma)..." autocomplete="off">
+                        placeholder="Hledat pojem (např. Ascendent, Karma)..." autocomplete="off">
                 </div>
 
                 <div class="terms-grid" id="termsContainer">
                     <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-                        <p style="margin-top: 1rem; color: var(--color-text-mutated);">NaÄŤĂ­tĂˇm pojmy...</p>
+                        <p style="margin-top: 1rem; color: var(--color-text-mutated);">Načítám pojmy...</p>
                     </div>
                 </div>
             </div>
@@ -152,7 +152,7 @@
                 renderTerms(allTerms);
             } catch (err) {
                 console.error(err);
-                container.innerHTML = '<div class="no-results">ZatĂ­m nebyly pĹ™idĂˇny ĹľĂˇdnĂ© pojmy. HvÄ›zdy mlÄŤĂ­.</div>';
+                container.innerHTML = '<div class="no-results">Zatím nebyly přidány žádné pojmy. Hvězdy mlčí.</div>';
             }
 
             searchInput.addEventListener('input', (e) => {
@@ -168,7 +168,7 @@
             function renderTerms(terms) {
                 container.innerHTML = '';
                 if (terms.length === 0) {
-                    container.innerHTML = '<div class="no-results">Nebyl nalezen ĹľĂˇdnĂ˝ pojem odpovĂ­dajĂ­cĂ­ vaĹˇemu zadĂˇnĂ­.</div>';
+                    container.innerHTML = '<div class="no-results">Nebyl nalezen žádný pojem odpovídající vašemu zadání.</div>';
                     return;
                 }
 
@@ -177,7 +177,7 @@
                     el.href = `slovnik/${term.slug}.html`;
                     el.className = 'term-card';
                     el.innerHTML = `
-                        <div class="term-category">${term.category || 'ObecnĂ©'}</div>
+                        <div class="term-category">${term.category || 'Obecné'}</div>
                         <div class="term-title">${term.title}</div>
                         <div class="term-desc">${term.short_description || ''}</div>
                     `;
