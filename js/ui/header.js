@@ -51,9 +51,11 @@ export function initMobileNav() {
     const dropdownToggles = navList.querySelectorAll('.nav__link--dropdown-toggle');
     dropdownToggles.forEach(toggleBtn => {
         toggleBtn.addEventListener('click', (e) => {
+            // Always prevent href="#" from scrolling to top
+            e.preventDefault();
+
             // Only act like an accordion on mobile view (where dropdown is static)
             if (window.innerWidth <= 992) {
-                e.preventDefault();
                 const parentItem = toggleBtn.closest('.nav__item--has-dropdown');
 
                 // Close other open dropdowns for a clean accordion effect

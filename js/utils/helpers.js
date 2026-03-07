@@ -39,7 +39,10 @@ export function initSmoothScroll() {
         anchor.dataset.scrollInit = 'true';
         anchor.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
+            if (targetId === '#') {
+                e.preventDefault();
+                return;
+            }
 
             try {
                 const target = document.querySelector(targetId);
