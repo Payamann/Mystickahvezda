@@ -5115,6 +5115,250 @@ body.page-mentor .header {
 }
 
 /* ============================================
+   RETENTION: Cancellation Modal & Pause Flow
+   ============================================ */
+.retention-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(5, 5, 16, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: retention-modal-fade-in 0.3s ease-out;
+}
+
+@keyframes retention-modal-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes retention-modal-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.retention-modal {
+  background: linear-gradient(135deg, #1a0a2e 0%, #0f0520 100%);
+  border: 1px solid rgba(235, 192, 102, 0.2);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.retention-modal__close {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--text-2xl);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.retention-modal__close:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.retention-modal__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-md);
+  color: var(--color-mystic-gold);
+}
+
+.retention-modal__subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--text-base);
+  margin-bottom: var(--space-lg);
+}
+
+/* Form options */
+.retention-form__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.retention-form__option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid rgba(235, 192, 102, 0.15);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.retention-form__option:hover {
+  background: rgba(235, 192, 102, 0.05);
+  border-color: rgba(235, 192, 102, 0.3);
+}
+
+.retention-form__option input[type="radio"] {
+  margin-top: 4px;
+  cursor: pointer;
+  accent-color: var(--color-mystic-gold);
+}
+
+.retention-form__option input[type="radio"]:checked + .retention-form__label {
+  color: var(--color-mystic-gold);
+  font-weight: 600;
+}
+
+.retention-form__label {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.retention-form__hint {
+  display: block;
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+
+.retention-form__textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(235, 192, 102, 0.15);
+  border-radius: var(--radius-lg);
+  color: rgba(255, 255, 255, 0.9);
+  padding: var(--space-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-lg);
+  resize: none;
+}
+
+.retention-form__textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.retention-form__actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-direction: column;
+}
+
+.retention-form__actions .btn {
+  width: 100%;
+}
+
+/* Offers */
+.retention-offer {
+  background: rgba(235, 192, 102, 0.1);
+  border: 1px solid rgba(235, 192, 102, 0.3);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-top: var(--space-lg);
+  text-align: center;
+}
+
+.retention-offer h3 {
+  color: var(--color-mystic-gold);
+  margin-bottom: var(--space-md);
+}
+
+.retention-offer p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: var(--space-md);
+  font-size: var(--text-sm);
+}
+
+.retention-offer__code {
+  font-family: 'Courier New', monospace;
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  display: inline-block;
+  margin: var(--space-md) 0;
+}
+
+.retention-offer__code code {
+  color: var(--color-mystic-gold-light);
+  font-weight: bold;
+}
+
+.retention-offer .btn {
+  width: 100%;
+  margin-top: var(--space-md);
+}
+
+/* Toast notifications */
+.retention-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(76, 201, 240, 0.9);
+  color: white;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
+  z-index: 2001;
+  animation: retention-toast-fade-in 0.3s ease-out;
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+.retention-toast--success {
+  background: rgba(76, 175, 80, 0.9);
+}
+
+.retention-toast--error {
+  background: rgba(244, 67, 54, 0.9);
+}
+
+.retention-toast--info {
+  background: rgba(33, 150, 243, 0.9);
+}
+
+@keyframes retention-toast-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes retention-toast-fade-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+/* ============================================
    SIGN PICKER WIDGET - Personalization
    ============================================ */
 .sign-picker {
