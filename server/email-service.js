@@ -214,9 +214,7 @@ const EMAIL_TEMPLATES = {
         </body>
       </html>
     `
-  }
-};
-
+  },
   upgrade_reminder_day7: {
     subject: 'Vidím, co ti chybí... 👀',
     getHtml: (data) => `
