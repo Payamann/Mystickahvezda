@@ -175,14 +175,21 @@ router.post('/login', authLimiter, async (req, res) => {
             }
         }
 
-        // 3. Issue our JWT (Bridge)
+        // 3. Issue our JWT (Bridge) with cached premium status
         const sub = (Array.isArray(user.subscriptions) ? user.subscriptions[0] : user.subscriptions) || {};
         const status = sub.plan_type || 'free';
+
+        // Check if premium (and not expired)
+        const isPremium = status && ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip'].includes(status) &&
+                         sub.status === 'active' &&
+                         new Date(sub.current_period_end) > new Date();
 
         const token = jwt.sign({
             id: user.id,
             email: user.email,
-            subscription_status: status
+            subscription_status: status,
+            isPremium: isPremium,
+            premiumExpires: sub.current_period_end || null
         }, JWT_SECRET, { expiresIn: '30d' });
 
         res.json({
