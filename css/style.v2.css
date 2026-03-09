@@ -1737,6 +1737,29 @@ body.page-mentor .header {
   color: var(--color-silver-mist);
 }
 
+/* User's selected zodiac card highlighting */
+.zodiac-card--highlighted {
+  border-color: rgba(235, 192, 102, 0.7);
+  box-shadow: 0 0 20px rgba(235, 192, 102, 0.2);
+  position: relative;
+}
+
+.zodiac-card__badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #d4af37;
+  color: #0f0a1f;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  font-family: var(--font-body);
+}
+
 /* ============================================
    15. TAROT CARDS (Custom for Tarot page)
    ============================================ */
@@ -5027,4 +5050,104 @@ body.page-mentor .header {
 #reset-password-fields,
 #forgot-password-link {
   transition: opacity var(--transition-base);
+}
+
+/* ============================================
+   SIGN PICKER WIDGET - Personalization
+   ============================================ */
+.sign-picker {
+  background: rgba(10, 10, 26, 0.6);
+  border: 1px solid rgba(235, 192, 102, 0.15);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.sign-picker__header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-md);
+  gap: var(--space-md);
+}
+
+.sign-picker__label {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+}
+
+.sign-picker__button {
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-full);
+  border: 1px solid #d4af37;
+  background: rgba(212, 175, 55, 0.15);
+  color: #d4af37;
+  cursor: pointer;
+  font-size: var(--text-base);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-body);
+}
+
+.sign-picker__button:hover {
+  background: rgba(212, 175, 55, 0.25);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.sign-picker__change-btn {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: var(--text-xs);
+  transition: all var(--transition-fast);
+  font-family: var(--font-body);
+}
+
+.sign-picker__change-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.sign-picker__expanded {
+  display: none;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-md);
+  border-top: 1px solid rgba(235, 192, 102, 0.15);
+}
+
+.sign-picker__expanded.active {
+  display: flex;
+}
+
+.sign-picker__sign-btn {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: var(--text-xs);
+  transition: all var(--transition-fast);
+  font-family: var(--font-body);
+}
+
+.sign-picker__sign-btn:hover {
+  border-color: rgba(235, 192, 102, 0.3);
+  color: rgba(235, 192, 102, 0.7);
+}
+
+.sign-picker__sign-btn.active {
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.15);
+  color: #d4af37;
+}
 }

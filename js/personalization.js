@@ -2,20 +2,42 @@
  * Mystická Hvězda – Personalizace
  * Ukládá znamení a jméno uživatele v localStorage
  * Zobrazuje personalizovaný pozdrav a zvýrazní správné znamení
+ *
+ * OPRAVY:
+ * - Event delegation (bez memory leak)
+ * - Sanitace vstupu (XSS protection)
+ * - localStorage verzing
+ * - Accessibility (aria-expanded, aria-controls)
  */
 
+const STORAGE_VERSION = '1.0';
+const STORAGE_KEY = 'mh_user_prefs';
+
 const MH_PERSONALIZATION = {
-    STORAGE_KEY: 'mh_user_prefs',
+    STORAGE_KEY,
+    STORAGE_VERSION,
 
     get() {
         try {
-            return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || {};
-        } catch { return {}; }
+            const data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+            // Ověření verze - migrace pokud je potřeba
+            if (!data.version) {
+                data.version = STORAGE_VERSION;
+            }
+            return data;
+        } catch {
+            return { version: STORAGE_VERSION };
+        }
     },
 
     set(data) {
         const current = this.get();
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify({ ...current, ...data }));
+        const merged = {
+            ...current,
+            ...data,
+            version: STORAGE_VERSION
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
     },
 
     getSign() { return this.get().sign || null; },
@@ -28,7 +50,7 @@ const MH_PERSONALIZATION = {
 // Make globally available
 window.MH_PERSONALIZATION = MH_PERSONALIZATION;
 
-// Signs metadata
+// Signs metadata (pro sanitaci ve šablonách)
 const SIGNS_CZ = {
     beran: { label: 'Beran', emoji: '♈', dates: '21. 3. – 19. 4.' },
     byk: { label: 'Býk', emoji: '♉', dates: '20. 4. – 20. 5.' },
@@ -45,13 +67,17 @@ const SIGNS_CZ = {
 };
 window.SIGNS_CZ = SIGNS_CZ;
 
+/**
+ * Sanitace textu - ochrana proti XSS
+ */
+function sanitizeText(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 /** Inject personalized hero greeting on index.html */
 function initIndexGreeting() {
-    const hero = document.querySelector('.hero__title, .hero__subtitle');
-    if (!hero || window.location.pathname.includes('index') === false) {
-        if (!document.getElementById('personalized-greeting')) return;
-    }
-
     const greetingEl = document.getElementById('personalized-greeting');
     if (!greetingEl) return;
 
@@ -62,7 +88,7 @@ function initIndexGreeting() {
         const s = SIGNS_CZ[sign];
         const hour = new Date().getHours();
         const timeGreet = hour < 12 ? 'Dobré ráno' : hour < 18 ? 'Dobrý den' : 'Dobrý večer';
-        const nameStr = name ? `, ${name}` : '';
+        const nameStr = name ? `, ${sanitizeText(name)}` : '';
         greetingEl.textContent = `${timeGreet}${nameStr}! ${s.emoji} Váš dnešní výhled pro ${s.label} →`;
         greetingEl.href = `horoskopy.html#${sign}`;
         greetingEl.style.display = 'inline-flex';
@@ -74,131 +100,164 @@ function initHoroscopeHighlight() {
     const sign = MH_PERSONALIZATION.getSign();
     if (!sign) return;
 
-    // Highlight the correct card
-    const cards = document.querySelectorAll('[data-sign]');
+    // Opraveno: DOM selector nyní správně cílí na .zodiac-card prvky
+    const cards = document.querySelectorAll('.zodiac-card');
     cards.forEach(card => {
-        if (card.dataset.sign === sign) {
-            card.style.borderColor = 'rgba(235,192,102,0.7)';
-            card.style.boxShadow = '0 0 20px rgba(235,192,102,0.2)';
-            card.querySelector('.badge')?.remove();
+        // Extrahuj znamení ze struktury (např. z href="#beran")
+        const cardHref = card.getAttribute('href');
+        const cardSign = cardHref ? cardHref.substring(1) : null;
+
+        if (cardSign === sign) {
+            card.classList.add('zodiac-card--highlighted');
+
+            // Vytvoř badge
+            const existingBadge = card.querySelector('.zodiac-card__badge');
+            if (existingBadge) existingBadge.remove();
+
             const badge = document.createElement('span');
+            badge.className = 'zodiac-card__badge';
             badge.textContent = 'Vaše znamení';
-            badge.style.cssText = `
-                position:absolute;top:-10px;left:50%;transform:translateX(-50%);
-                background:#d4af37;color:#0f0a1f;font-size:0.7rem;
-                font-weight:700;padding:2px 10px;border-radius:50px;
-                white-space:nowrap;letter-spacing:0.5px;
-            `;
-            card.style.position = 'relative';
             card.appendChild(badge);
 
             // Auto-scroll if hash matches
             if (window.location.hash === `#${sign}`) {
                 setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
             }
+        } else {
+            card.classList.remove('zodiac-card--highlighted');
+            const badge = card.querySelector('.zodiac-card__badge');
+            if (badge) badge.remove();
         }
     });
 }
 
-/** Sign picker widget – inserts a small "Nastavit mé znamení" bar */
+/**
+ * Sign picker widget – Nastavit mé znamení
+ * OPRAVY:
+ * - Event delegation (bez memory leak)
+ * - CSS třídy (bez inline stylů)
+ * - Accessibility (aria-expanded, aria-controls)
+ * - Debounce na re-render
+ */
+
+let signPickerDebounceTimer = null;
+
 function initSignPicker() {
     const picker = document.getElementById('mh-sign-picker');
     if (!picker) return;
 
     const current = MH_PERSONALIZATION.getSign();
 
-    if (current) {
-        // Show only selected sign with ability to change
+    // Render HTML se CSS třídami
+    if (current && SIGNS_CZ[current]) {
         const s = SIGNS_CZ[current];
+        picker.className = 'sign-picker';
         picker.innerHTML = `
-            <div style="display:flex;justify-content:center;align-items:center;padding:0.75rem;gap:0.75rem;">
-                <span style="color:rgba(255,255,255,0.5);font-size:0.85rem;">Vaše znamení:</span>
-                <button id="sign-picker-toggle" style="
-                    padding:0.5rem 1rem;border-radius:50px;border:1px solid #d4af37;
-                    background:rgba(212,175,55,0.15);
-                    color:#d4af37;
-                    cursor:pointer;font-size:0.9rem;font-weight:500;transition:all 0.2s;
-                    display:flex;align-items:center;gap:0.4rem;
-                ">${s.emoji} ${s.label}</button>
-                <button id="sign-picker-change" style="
-                    padding:0.4rem 0.8rem;border-radius:50px;border:1px solid rgba(255,255,255,0.2);
-                    background:transparent;
-                    color:rgba(255,255,255,0.6);
-                    cursor:pointer;font-size:0.8rem;transition:all 0.2s;
-                " title="Změnit znamení">✎ Změnit</button>
+            <div class="sign-picker__header">
+                <span class="sign-picker__label">Vaše znamení:</span>
+                <button id="sign-picker-toggle"
+                    class="sign-picker__button"
+                    aria-expanded="false"
+                    aria-controls="sign-picker-expanded"
+                    data-action="toggle-expanded"
+                    title="Zobrazit/skrýt všechna znamení">
+                    ${s.emoji} ${sanitizeText(s.label)}
+                </button>
+                <button class="sign-picker__change-btn"
+                    data-action="toggle-expanded"
+                    title="Změnit znamení">✎ Změnit</button>
             </div>
-            <div id="sign-picker-expanded" style="display:none;flex-wrap:wrap;gap:0.4rem;justify-content:center;align-items:center;padding:0.75rem;border-top:1px solid rgba(235,192,102,0.15);">
+            <div id="sign-picker-expanded" class="sign-picker__expanded" role="region" aria-label="Výběr znamení">
                 ${Object.entries(SIGNS_CZ).map(([key, s]) => `
-                    <button data-pick="${key}" style="
-                        padding:0.3rem 0.7rem;border-radius:50px;border:1px solid ${current === key ? '#d4af37' : 'rgba(255,255,255,0.15)'};
-                        background:${current === key ? 'rgba(212,175,55,0.15)' : 'transparent'};
-                        color:${current === key ? '#d4af37' : 'rgba(255,255,255,0.6)'};
-                        cursor:pointer;font-size:0.8rem;transition:all 0.2s;
-                    " title="${s.dates}">${s.emoji} ${s.label}</button>
+                    <button class="sign-picker__sign-btn ${current === key ? 'active' : ''}"
+                        data-pick="${key}"
+                        data-action="pick-sign"
+                        title="${s.dates}"
+                        aria-pressed="${current === key ? 'true' : 'false'}">
+                        ${s.emoji} ${sanitizeText(s.label)}
+                    </button>
                 `).join('')}
             </div>
         `;
-
-        const toggleBtn = document.getElementById('sign-picker-toggle');
-        const changeBtn = document.getElementById('sign-picker-change');
-        const expandedDiv = document.getElementById('sign-picker-expanded');
-
-        // Toggle expanded view
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                const isHidden = expandedDiv.style.display === 'none';
-                expandedDiv.style.display = isHidden ? 'flex' : 'none';
-            });
-        }
-
-        // Change button functionality
-        if (changeBtn) {
-            changeBtn.addEventListener('click', () => {
-                expandedDiv.style.display = expandedDiv.style.display === 'none' ? 'flex' : 'none';
-            });
-        }
-
-        // Handle sign selection from expanded view
-        picker.querySelectorAll('[data-pick]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                MH_PERSONALIZATION.setSign(btn.dataset.pick);
-                // Refresh highlights
-                initHoroscopeHighlight();
-                // Re-render picker with new selection
-                initSignPicker();
-            });
-        });
     } else {
-        // Show all signs if none selected
+        // Žádné znamení vybráno - zobraz všechna
+        picker.className = 'sign-picker';
         picker.innerHTML = `
-            <div style="display:flex;flex-wrap:wrap;gap:0.4rem;justify-content:center;align-items:center;padding:0.75rem;">
-                <span style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin-right:0.5rem;">Vaše znamení:</span>
+            <div class="sign-picker__header">
+                <span class="sign-picker__label">Vaše znamení:</span>
+            </div>
+            <div id="sign-picker-expanded" class="sign-picker__expanded active" role="region" aria-label="Výběr znamení">
                 ${Object.entries(SIGNS_CZ).map(([key, s]) => `
-                    <button data-pick="${key}" style="
-                        padding:0.3rem 0.7rem;border-radius:50px;border:1px solid rgba(255,255,255,0.15);
-                        background:transparent;
-                        color:rgba(255,255,255,0.6);
-                        cursor:pointer;font-size:0.8rem;transition:all 0.2s;
-                    " title="${s.dates}">${s.emoji} ${s.label}</button>
+                    <button class="sign-picker__sign-btn"
+                        data-pick="${key}"
+                        data-action="pick-sign"
+                        title="${s.dates}">
+                        ${s.emoji} ${sanitizeText(s.label)}
+                    </button>
                 `).join('')}
             </div>
         `;
-
-        picker.querySelectorAll('[data-pick]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                MH_PERSONALIZATION.setSign(btn.dataset.pick);
-                // Refresh highlights
-                initHoroscopeHighlight();
-                // Re-render picker with new selection
-                initSignPicker();
-            });
-        });
     }
+
+    // Event delegation - vše řešíme na pickeru
+    // Odstraníme staré listenery a přidáme nový delegovaný
+    picker.replaceWith(picker.cloneNode(true));
+    const newPicker = document.getElementById('mh-sign-picker');
+
+    newPicker.addEventListener('click', (e) => {
+        const action = e.target.closest('[data-action]')?.dataset.action;
+        const pickBtn = e.target.closest('[data-pick]');
+
+        if (action === 'toggle-expanded') {
+            e.preventDefault();
+            toggleExpandedView(newPicker);
+        } else if (action === 'pick-sign' || pickBtn) {
+            e.preventDefault();
+            const sign = pickBtn?.dataset.pick;
+            if (sign && SIGNS_CZ[sign]) {
+                handleSignSelection(sign);
+            }
+        }
+    });
+}
+
+/**
+ * Přepnutí zobrazení rozšířeného seznamu
+ */
+function toggleExpandedView(picker) {
+    const expanded = picker.querySelector('#sign-picker-expanded');
+    const toggleBtn = picker.querySelector('#sign-picker-toggle');
+
+    if (expanded) {
+        expanded.classList.toggle('active');
+        if (toggleBtn) {
+            toggleBtn.setAttribute('aria-expanded', expanded.classList.contains('active') ? 'true' : 'false');
+        }
+    }
+}
+
+/**
+ * Obsluha výběru znamení - s debouncem
+ */
+function handleSignSelection(sign) {
+    // Debounce: Pokud se opět voláme v následujících 100ms, zrušíme starý timer
+    if (signPickerDebounceTimer) {
+        clearTimeout(signPickerDebounceTimer);
+    }
+
+    signPickerDebounceTimer = setTimeout(() => {
+        MH_PERSONALIZATION.setSign(sign);
+        // Refresh highlights
+        initHoroscopeHighlight();
+        // Re-render picker s debouncem
+        initSignPicker();
+        signPickerDebounceTimer = null;
+    }, 100);
 }
 
 // Auto-init based on current page
 document.addEventListener('DOMContentLoaded', () => {
     initIndexGreeting();
-    initHoroscopeHighlight();
     initSignPicker();
+    initHoroscopeHighlight();
 });
