@@ -5054,6 +5054,20 @@ body.page-mentor .header {
 /* ============================================
    SIGN PICKER WIDGET - Personalization
    ============================================ */
+/* ============================================
+   PERSONALIZED GREETING - Main page hero
+   ============================================ */
+#personalized-greeting {
+  display: none;
+}
+
+#personalized-greeting.personalized-greeting--visible {
+  display: inline-flex;
+}
+
+/* ============================================
+   SIGN PICKER WIDGET - Personalization
+   ============================================ */
 .sign-picker {
   background: rgba(10, 10, 26, 0.6);
   border: 1px solid rgba(235, 192, 102, 0.15);

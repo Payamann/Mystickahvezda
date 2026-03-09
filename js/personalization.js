@@ -85,7 +85,7 @@ function initIndexGreeting() {
         const nameStr = name ? `, ${sanitizeText(name)}` : '';
         greetingEl.textContent = `${timeGreet}${nameStr}! ${s.emoji} Váš dnešní výhled pro ${s.label} →`;
         greetingEl.href = `horoskopy.html#${sign}`;
-        greetingEl.style.display = 'inline-flex';
+        greetingEl.classList.add('personalized-greeting--visible');
     }
 }
 
