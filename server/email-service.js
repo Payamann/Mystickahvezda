@@ -246,9 +246,13 @@ export async function sendEmail(emailConfig) {
 
 /**
  * Send onboarding email sequence
+ * Uses job scheduler for delayed emails
  */
 export async function sendOnboardingSequence(userId, email, planType) {
   try {
+    // Import scheduleEmailLater here to avoid circular dependency
+    const { scheduleEmailLater } = await import('./jobs/email-queue.js');
+
     // Email 1: Welcome (immediate)
     await sendEmail({
       to: email,
@@ -256,13 +260,23 @@ export async function sendOnboardingSequence(userId, email, planType) {
       data: { plan: planType }
     });
 
-    // Email 2: Features (24 hours later - would need scheduler)
-    // TODO: Implement with job queue (Bull, RabbitMQ, etc.)
-    console.log(`[EMAIL] Scheduled onboarding_features for user ${userId} in 24h`);
+    // Email 2: Features (24 hours = 86400 seconds)
+    await scheduleEmailLater({
+      userId,
+      email,
+      template: 'onboarding_features',
+      data: { plan: planType },
+      delaySeconds: 86400
+    });
 
-    // Email 3: Nudge (72 hours later)
-    // TODO: Implement with job queue
-    console.log(`[EMAIL] Scheduled onboarding_nudge for user ${userId} in 72h`);
+    // Email 3: Nudge (72 hours = 259200 seconds)
+    await scheduleEmailLater({
+      userId,
+      email,
+      template: 'onboarding_nudge',
+      data: { plan: planType },
+      delaySeconds: 259200
+    });
 
     return { success: true };
   } catch (error) {

@@ -24,6 +24,7 @@ import { callGemini } from './services/gemini.js';
 import { isPremiumUser } from './payment.js';
 import { supabase } from './db-supabase.js';
 import crypto from 'crypto';
+import { initializeEmailQueueJob } from './jobs/email-queue.js';
 
 // Route modules
 import oracleRoutes from './routes/oracle.js';
@@ -275,6 +276,9 @@ if (process.argv[1] === __filename) {
     app.listen(PORT, () => {
         console.log(`âś¨ MystickĂˇ HvÄ›zda API running on http://localhost:${PORT}`);
         console.log(`đźŚŤ Environment: ${process.env.NODE_ENV || 'development'}`);
+
+        // Initialize email queue job processor
+        initializeEmailQueueJob();
     });
 }
 
