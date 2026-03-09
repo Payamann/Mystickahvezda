@@ -2,7 +2,7 @@ import express from 'express';
 import { supabase } from './db-supabase.js';
 import { authenticateToken } from './middleware.js';
 import Stripe from 'stripe';
-import { sendEmail, sendPauseEmail, sendDiscountEmail, sendOnboardingSequence } from './email-service.js';
+import { sendEmail, sendPauseEmail, sendDiscountEmail, sendOnboardingSequence, sendUpgradeReminders, sendChurnRecoveryEmail } from './email-service.js';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -436,10 +436,29 @@ async function handleCheckoutCompleted(session) {
     } else {
         console.log(`[STRIPE] User ${userId} upgraded to ${planType}.`);
 
-        // RETENTION: Send onboarding emails
+        // RETENTION: Send onboarding emails + automation sequences
         if (userEmail) {
             try {
                 await sendOnboardingEmails(userId, userEmail, planType);
+
+                // Trigger upgrade reminders (Day 7, 14) for free users upgrading
+                // Only send if it's their first purchase
+                const { data: oldSubs } = await supabase
+                    .from('subscriptions')
+                    .select('id')
+                    .eq('user_id', userId)
+                    .neq('id', userId); // Exclude current subscription
+
+                if (!oldSubs || oldSubs.length === 0) {
+                    // First purchase - send reminders and churn prevention
+                    try {
+                        await sendUpgradeReminders(userId, userEmail);
+                        await sendChurnRecoveryEmail(userId, userEmail);
+                        console.log(`[RETENTION] Email sequences scheduled for new subscriber ${userId}`);
+                    } catch (seqError) {
+                        console.warn(`[RETENTION] Failed to schedule sequences for ${userId}:`, seqError.message);
+                    }
+                }
             } catch (emailError) {
                 console.warn(`[RETENTION] Onboarding email failed for user ${userId}:`, emailError.message);
                 // Don't block subscription if emails fail

@@ -217,6 +217,162 @@ const EMAIL_TEMPLATES = {
   }
 };
 
+  upgrade_reminder_day7: {
+    subject: 'Vidím, co ti chybí... 👀',
+    getHtml: (data) => `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: 'Cinzel', serif; background: #0a0a1a; color: #fff; }
+            .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+            .comparison { background: rgba(155,89,182,0.1); border: 1px solid rgba(155,89,182,0.3);
+                         padding: 20px; border-radius: 8px; margin: 20px 0; }
+            .feature { padding: 10px 0; border-bottom: 1px solid rgba(212,175,55,0.1); }
+            .feature:last-child { border-bottom: none; }
+            .feature strong { color: #d4af37; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1 style="color: #9b59b6;">Vidím, co ti chybí... 👀</h1>
+            <p>Používáš základní plán, ale tvoje otázky si zaslouží více...</p>
+            <div class="comparison">
+              <h3 style="color: #d4af37; margin-top: 0;">Co bys mohl dělat s Hvězdným Průvodcem:</h3>
+              <div class="feature">✨ <strong>Neomezené tarotové výklady</strong> (místo 1 za den)</div>
+              <div class="feature">📅 <strong>Týdenní a měsíční horoskopy</strong> (ne jen denní)</div>
+              <div class="feature">🤖 <strong>AI Mentor chat</strong> bez omezení</div>
+              <div class="feature">🔢 <strong>Numerologie a astrokartografie</strong></div>
+            </div>
+            <p style="text-align: center; margin-top: 30px;">
+              <a href="${process.env.APP_URL}/cenik.html" style="background: #9b59b6; color: white; padding: 12px 30px;
+                 border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">
+                Upgradovat na Premium →
+              </a>
+            </p>
+          </div>
+        </body>
+      </html>
+    `
+  },
+
+  upgrade_reminder_day14: {
+    subject: '⏰ Poslední šance - 50% sleva na Premium!',
+    getHtml: (data) => `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: 'Cinzel', serif; background: #0a0a1a; color: #fff; }
+            .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+            .offer { background: linear-gradient(135deg, rgba(255,107,107,0.2), rgba(212,175,55,0.2));
+                     border: 2px solid #ff6b6b; padding: 30px; border-radius: 8px; text-align: center; }
+            .price { font-size: 42px; color: #ff6b6b; font-weight: bold; margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1 style="color: #ff6b6b; text-align: center;">⏰ Poslední šance!</h1>
+            <div class="offer">
+              <p>Tato nabídka platí jen pro dalších 24 hodin:</p>
+              <div class="price">199 Kč → <span style="text-decoration: line-through;">99.50 Kč</span></div>
+              <p style="font-size: 16px;">🎁 <strong>50% SLEVA</strong> na Hvězdný Průvodce</p>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+              <a href="${process.env.APP_URL}/cenik.html?utm_source=email&utm_campaign=upgrade_day14&utm_content=cta"
+                 style="background: #ff6b6b; color: white; padding: 12px 30px;
+                 border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">
+                KOUPIT ZA 99.50 KČ →
+              </a>
+            </div>
+          </div>
+        </body>
+      </html>
+    `
+  },
+
+  churn_recovery_day25: {
+    subject: '💔 Chceme tě zpátky - 30% sleva čeká',
+    getHtml: (data) => `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: 'Cinzel', serif; background: #0a0a1a; color: #fff; }
+            .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+            .msg { background: rgba(52,152,219,0.1); border: 1px solid rgba(52,152,219,0.3);
+                   padding: 20px; border-radius: 8px; }
+            .discount { background: linear-gradient(135deg, rgba(52,152,219,0.2), rgba(212,175,55,0.1));
+                       border: 2px solid #3498db; padding: 20px; border-radius: 8px;
+                       text-align: center; margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1 style="color: #3498db; text-align: center;">💔 Chceme tě zpátky!</h1>
+            <div class="msg">
+              <p>Všimli jsme si, že jsi chvíli nebyl aktivní. Víme, že se věci v životě mění...</p>
+              <p>Chceme ti dát jednu poslední šanci na objevování:</p>
+            </div>
+            <div class="discount">
+              <p style="margin: 0; color: #3498db; font-weight: bold;">SPECIÁLNÍ NABÍDKA PRO NÁVRAT</p>
+              <div style="font-size: 36px; color: #d4af37; font-weight: bold; margin: 10px 0;">30% SLEVA</div>
+              <p style="margin: 10px 0; color: rgba(255,255,255,0.8);">na prvních 3 měsíce Premium</p>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+              <a href="${process.env.APP_URL}/cenik.html?utm_source=email&utm_campaign=churn_recovery&utm_content=cta"
+                 style="background: #3498db; color: white; padding: 12px 30px;
+                 border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">
+                Vrátit se s 30% slevou →
+              </a>
+            </div>
+          </div>
+        </body>
+      </html>
+    `
+  },
+
+  feature_weekly: {
+    subject: 'Nový týden, nová funkce pro tebe ✨',
+    getHtml: (data) => `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: 'Cinzel', serif; background: #0a0a1a; color: #fff; }
+            .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+            .feature-box { background: rgba(212,175,55,0.1); border-left: 4px solid #d4af37;
+                          padding: 20px; border-radius: 8px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1 style="color: #d4af37;">✨ Objev novou funkci</h1>
+            <div class="feature-box">
+              <h2 style="color: #d4af37; margin-top: 0;">${data.feature_title || 'Astrokartografia'}</h2>
+              <p>${data.feature_description || 'Zjistěte, kde na světě je vaše energie nejsilnější...'}</p>
+              <ul>
+                ${(data.benefits || []).map(b => `<li>${b}</li>`).join('')}
+              </ul>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+              <a href="${data.feature_url || process.env.APP_URL + '/profil.html'}"
+                 style="background: #d4af37; color: #000; padding: 12px 30px;
+                 border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">
+                Zkusit nyní →
+              </a>
+            </div>
+          </div>
+        </body>
+      </html>
+    `
+  }
+};
+
 /**
  * Send email via Resend
  */
@@ -332,10 +488,86 @@ export async function sendDiscountEmail(email, discount = 50, months = 3) {
   }
 }
 
+/**
+ * Send upgrade reminder sequence (Day 7, 14)
+ */
+export async function sendUpgradeReminders(userId, email) {
+  try {
+    const { scheduleEmailLater } = await import('./jobs/email-queue.js');
+
+    // Email 1: Day 7 - "See what you're missing"
+    await scheduleEmailLater({
+      userId,
+      email,
+      template: 'upgrade_reminder_day7',
+      data: {},
+      delaySeconds: 604800 // 7 days
+    });
+
+    // Email 2: Day 14 - "50% discount (limited time)"
+    await scheduleEmailLater({
+      userId,
+      email,
+      template: 'upgrade_reminder_day14',
+      data: {},
+      delaySeconds: 1209600 // 14 days
+    });
+
+    console.log(`[EMAIL] Upgrade reminders scheduled for user ${userId}`);
+    return { success: true };
+  } catch (error) {
+    console.error('[EMAIL] Failed to schedule upgrade reminders:', error);
+    throw error;
+  }
+}
+
+/**
+ * Send churn recovery email (Day 25 after signup)
+ */
+export async function sendChurnRecoveryEmail(userId, email) {
+  try {
+    const { scheduleEmailLater } = await import('./jobs/email-queue.js');
+
+    await scheduleEmailLater({
+      userId,
+      email,
+      template: 'churn_recovery_day25',
+      data: {},
+      delaySeconds: 2160000 // 25 days
+    });
+
+    console.log(`[EMAIL] Churn recovery email scheduled for user ${userId}`);
+    return { success: true };
+  } catch (error) {
+    console.error('[EMAIL] Failed to schedule churn recovery email:', error);
+    throw error;
+  }
+}
+
+/**
+ * Send weekly feature discovery email
+ */
+export async function sendWeeklyFeatureEmail(email, featureData = {}) {
+  try {
+    await sendEmail({
+      to: email,
+      template: 'feature_weekly',
+      data: featureData
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[EMAIL] Failed to send weekly feature email:', error);
+    throw error;
+  }
+}
+
 export default {
   sendEmail,
   sendOnboardingSequence,
   sendPauseEmail,
   sendDiscountEmail,
+  sendUpgradeReminders,
+  sendChurnRecoveryEmail,
+  sendWeeklyFeatureEmail,
   EMAIL_TEMPLATES
 };
