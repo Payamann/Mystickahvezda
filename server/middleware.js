@@ -5,7 +5,7 @@ import { JWT_SECRET } from './config/jwt.js';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 // Centralized premium plan type list - used by both hard and soft gates
-const PREMIUM_PLAN_TYPES = ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip'];
+const PREMIUM_PLAN_TYPES = ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip_majestrat', 'vip'];
 
 /**
  * Standard JWT authentication middleware

@@ -16,7 +16,7 @@ const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
 const router = express.Router();
 
-const PREMIUM_PLAN_TYPES = ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip'];
+const PREMIUM_PLAN_TYPES = ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip_majestrat', 'vip'];
 
 // Plan definitions (consistent with cenik.html)
 const PLANS = {
@@ -24,19 +24,29 @@ const PLANS = {
         name: 'Poutník (Základ)',
         price: 0,
         type: 'free',
-        interval: null
+        interval: null,
+        description: 'Základní přístup - Denní horoskop, Tarot 1x denně, Křišťálová koule 3x denně'
     },
     'pruvodce': {
         name: 'Hvězdný Průvodce (Měsíční)',
         price: 19900, // 199 CZK in halere
         type: 'premium_monthly',
-        interval: 'month'
+        interval: 'month',
+        description: 'Premium přístup - Neomezené tarotové výklady, Týdenní + měsíční horoskopy, Natální karta s interpretací'
     },
     'osviceni': {
         name: 'Osvícení (Měsíční)',
         price: 49900, // 499 Kč in haléře
         type: 'exclusive_monthly',
-        interval: 'month'
+        interval: 'month',
+        description: 'Exkluzivní přístup - Prioritní odpovědi, Exkluzivní obsah, Early access k novinkám'
+    },
+    'vip-majestrat': {
+        name: 'VIP Věštecký Majestát (Měsíční)',
+        price: 99900, // 999 Kč in haléře
+        type: 'vip_majestrat',
+        interval: 'month',
+        description: 'VIP přístup - Priority 24/7 podpora, Personalizovaný daily horoscope, Neomezené konzultace s AI Mentorem'
     }
 };
 
@@ -490,8 +500,17 @@ function getFeaturesByPlan(planType) {
             'Early access to new features',
             'Dedicated email support'
         ],
-        'vip': [
+        'vip_majestrat': [
             'Everything in Exclusive, plus:',
+            'Priority 24/7 support (do 2h)',
+            'Personalizovaný Daily Horoscope',
+            'Neomezené AI Mentor konzultace',
+            'Exkluzivní měsíční Tarot (3x)',
+            'Astrokartografické mapy (4x/rok)',
+            'VIP komunita & diskuse'
+        ],
+        'vip': [
+            'Everything in VIP Majestát, plus:',
             '1-on-1 expert consultations',
             'Custom astrological reports',
             'White-label options'
