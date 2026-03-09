@@ -2,6 +2,7 @@ import express from 'express';
 import { supabase } from './db-supabase.js';
 import { authenticateToken } from './middleware.js';
 import Stripe from 'stripe';
+import { sendEmail, sendPauseEmail, sendDiscountEmail, sendOnboardingSequence } from './email-service.js';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -442,34 +443,12 @@ async function handleCheckoutCompleted(session) {
  * Improves conversion retention and feature discovery
  */
 async function sendOnboardingEmails(userId, email, planType) {
-    // Email 1: Welcome (immediate)
-    scheduleEmail(userId, email, {
-        type: 'onboarding_welcome',
-        delaySeconds: 5, // Small delay to ensure subscription is recorded
-        subject: 'Vítej v Mystické Hvězdě! 🌟',
-        template: 'onboarding_welcome',
-        data: { plan: planType }
-    });
-
-    // Email 2: Feature tutorial (24 hours)
-    scheduleEmail(userId, email, {
-        type: 'onboarding_feature_tutorial',
-        delaySeconds: 86400,
-        subject: 'Tvůj nový svět se otevírá ✨',
-        template: 'onboarding_features',
-        data: { plan: planType, features: getFeaturesByPlan(planType) }
-    });
-
-    // Email 3: Engagement nudge (72 hours)
-    scheduleEmail(userId, email, {
-        type: 'onboarding_nudge',
-        delaySeconds: 259200,
-        subject: 'Byly jsi tu? Tvůj AI mentor čeká... 🤖',
-        template: 'onboarding_nudge',
-        data: { plan: planType }
-    });
-
-    console.log(`[RETENTION] Onboarding email sequence scheduled for user ${userId}`);
+    try {
+        await sendOnboardingSequence(userId, email, planType);
+    } catch (error) {
+        console.error(`[RETENTION] Failed to send onboarding sequence for user ${userId}:`, error.message);
+        // Don't throw - subscription is already created
+    }
 }
 
 /**
@@ -751,6 +730,21 @@ router.post('/subscription/pause', authenticateToken, async (req, res) => {
             }
         }
 
+        // Send pause confirmation email
+        try {
+            const { data: userData } = await supabase
+                .from('users')
+                .select('email')
+                .eq('id', userId)
+                .single();
+
+            if (userData?.email) {
+                await sendPauseEmail(userData.email, pauseDays);
+            }
+        } catch (emailErr) {
+            console.warn('[RETENTION] Warning: Could not send pause email:', emailErr.message);
+        }
+
         console.log(`[RETENTION] Subscription paused for user ${userId} until ${pauseUntil}`);
         res.json({
             success: true,
@@ -820,6 +814,23 @@ router.post('/subscription/apply-discount', authenticateToken, async (req, res) 
             })
             .catch(err => console.warn('Could not log discount application:', err));
 
+        // Send discount confirmation email
+        try {
+            const { data: userData } = await supabase
+                .from('users')
+                .select('email')
+                .eq('id', userId)
+                .single();
+
+            if (userData?.email) {
+                const discountPercent = coupon.percent_off || coupon.amount_off;
+                const months = coupon.duration === 'repeating' ? coupon.duration_in_months : 1;
+                await sendDiscountEmail(userData.email, discountPercent, months);
+            }
+        } catch (emailErr) {
+            console.warn('[RETENTION] Warning: Could not send discount email:', emailErr.message);
+        }
+
         console.log(`[RETENTION] Discount coupon '${couponCode}' applied to user ${userId}`);
         res.json({
             success: true,
@@ -833,9 +844,8 @@ router.post('/subscription/apply-discount', authenticateToken, async (req, res) 
 });
 
 /**
- * POST /email/send (stub - requires email service integration)
- * Placeholder for email sending endpoint
- * TODO: Integrate with SendGrid, Resend, or AWS SES
+ * POST /email/send
+ * Send email via Resend
  */
 router.post('/email/send', authenticateToken, async (req, res) => {
     try {
@@ -846,28 +856,38 @@ router.post('/email/send', authenticateToken, async (req, res) => {
             return res.status(400).json({ error: 'template required' });
         }
 
-        // TODO: Implement email sending via SendGrid/Resend
-        // For now, just log the request
-        console.log(`[EMAIL] Queued email: template=${template}, user=${userId}`, data);
+        // Get user's email
+        const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('email')
+            .eq('id', userId)
+            .single();
 
-        // In production, queue this in email_queue table
-        // await supabase.from('email_queue').insert({
-        //     user_id: userId,
-        //     template,
-        //     data: JSON.stringify(data),
-        //     status: 'pending',
-        //     created_at: new Date().toISOString()
-        // });
+        if (!userData?.email || userError) {
+            return res.status(404).json({ error: 'User email not found' });
+        }
 
-        res.json({
-            success: true,
-            message: 'Email queued for sending',
-            template,
-            status: 'pending'
-        });
+        // Send email via Resend
+        try {
+            const result = await sendEmail({
+                to: userData.email,
+                template,
+                data: data || {}
+            });
+
+            res.json({
+                success: true,
+                message: 'Email sent successfully',
+                emailId: result.emailId,
+                template,
+                to: userData.email
+            });
+        } catch (sendErr) {
+            return res.status(500).json({ error: `Failed to send email: ${sendErr.message}` });
+        }
     } catch (err) {
         console.error('[EMAIL] Error in send endpoint:', err);
-        res.status(500).json({ error: 'Failed to queue email' });
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
