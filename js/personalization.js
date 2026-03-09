@@ -8,7 +8,10 @@
  * - Sanitace vstupu (XSS protection)
  * - localStorage verzing
  * - Accessibility (aria-expanded, aria-controls)
+ * - Importované utility z helpers.js
  */
+
+import { sanitizeText, debounce } from './utils/helpers.js';
 
 const STORAGE_VERSION = '1.0';
 const STORAGE_KEY = 'mh_user_prefs';
@@ -67,15 +70,6 @@ const SIGNS_CZ = {
 };
 window.SIGNS_CZ = SIGNS_CZ;
 
-/**
- * Sanitace textu - ochrana proti XSS
- */
-function sanitizeText(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
 /** Inject personalized hero greeting on index.html */
 function initIndexGreeting() {
     const greetingEl = document.getElementById('personalized-greeting');
@@ -102,22 +96,25 @@ function initHoroscopeHighlight() {
 
     // Opraveno: DOM selector nyní správně cílí na .zodiac-card prvky
     const cards = document.querySelectorAll('.zodiac-card');
+
     cards.forEach(card => {
         // Extrahuj znamení ze struktury (např. z href="#beran")
         const cardHref = card.getAttribute('href');
         const cardSign = cardHref ? cardHref.substring(1) : null;
 
-        if (cardSign === sign) {
+        // Odstraň badge z všech karet
+        const badge = card.querySelector('.zodiac-card__badge');
+        if (badge) badge.remove();
+
+        // Zvýrazni pouze správnou kartu (pokud je validní)
+        if (cardSign === sign && SIGNS_CZ[cardSign]) {
             card.classList.add('zodiac-card--highlighted');
 
-            // Vytvoř badge
-            const existingBadge = card.querySelector('.zodiac-card__badge');
-            if (existingBadge) existingBadge.remove();
-
-            const badge = document.createElement('span');
-            badge.className = 'zodiac-card__badge';
-            badge.textContent = 'Vaše znamení';
-            card.appendChild(badge);
+            // Vytvoř nový badge pouze pro zvýrazněnou kartu
+            const newBadge = document.createElement('span');
+            newBadge.className = 'zodiac-card__badge';
+            newBadge.textContent = 'Vaše znamení';
+            card.appendChild(newBadge);
 
             // Auto-scroll if hash matches
             if (window.location.hash === `#${sign}`) {
@@ -125,8 +122,6 @@ function initHoroscopeHighlight() {
             }
         } else {
             card.classList.remove('zodiac-card--highlighted');
-            const badge = card.querySelector('.zodiac-card__badge');
-            if (badge) badge.remove();
         }
     });
 }
@@ -140,18 +135,23 @@ function initHoroscopeHighlight() {
  * - Debounce na re-render
  */
 
-let signPickerDebounceTimer = null;
+const handleSignSelection = debounce((sign) => {
+    MH_PERSONALIZATION.setSign(sign);
+    // Refresh highlights
+    initHoroscopeHighlight();
+    // Re-render picker s debouncem
+    initSignPicker();
+}, 100);
 
-function initSignPicker() {
-    const picker = document.getElementById('mh-sign-picker');
-    if (!picker) return;
-
+/**
+ * Inicializuj HTML obsah sign pickeru
+ */
+function renderSignPickerHTML(picker) {
     const current = MH_PERSONALIZATION.getSign();
+    picker.className = 'sign-picker';
 
-    // Render HTML se CSS třídami
     if (current && SIGNS_CZ[current]) {
         const s = SIGNS_CZ[current];
-        picker.className = 'sign-picker';
         picker.innerHTML = `
             <div class="sign-picker__header">
                 <span class="sign-picker__label">Vaše znamení:</span>
@@ -181,7 +181,6 @@ function initSignPicker() {
         `;
     } else {
         // Žádné znamení vybráno - zobraz všechna
-        picker.className = 'sign-picker';
         picker.innerHTML = `
             <div class="sign-picker__header">
                 <span class="sign-picker__label">Vaše znamení:</span>
@@ -198,27 +197,41 @@ function initSignPicker() {
             </div>
         `;
     }
+}
 
-    // Event delegation - vše řešíme na pickeru
-    // Odstraníme staré listenery a přidáme nový delegovaný
-    picker.replaceWith(picker.cloneNode(true));
-    const newPicker = document.getElementById('mh-sign-picker');
+/**
+ * Event handler - delegován na picker element
+ */
+function handlePickerClick(e) {
+    const picker = document.getElementById('mh-sign-picker');
+    if (!picker) return;
 
-    newPicker.addEventListener('click', (e) => {
-        const action = e.target.closest('[data-action]')?.dataset.action;
-        const pickBtn = e.target.closest('[data-pick]');
+    const action = e.target.closest('[data-action]')?.dataset.action;
+    const pickBtn = e.target.closest('[data-pick]');
 
-        if (action === 'toggle-expanded') {
-            e.preventDefault();
-            toggleExpandedView(newPicker);
-        } else if (action === 'pick-sign' || pickBtn) {
-            e.preventDefault();
-            const sign = pickBtn?.dataset.pick;
-            if (sign && SIGNS_CZ[sign]) {
-                handleSignSelection(sign);
-            }
+    if (action === 'toggle-expanded') {
+        e.preventDefault();
+        toggleExpandedView(picker);
+    } else if (pickBtn) {
+        e.preventDefault();
+        const sign = pickBtn.dataset.pick;
+        if (sign && SIGNS_CZ[sign]) {
+            handleSignSelection(sign);
         }
-    });
+    }
+}
+
+function initSignPicker() {
+    const picker = document.getElementById('mh-sign-picker');
+    if (!picker) return;
+
+    // Render pouze HTML - bez event listeners
+    renderSignPickerHTML(picker);
+
+    // Přidej listener pouze jednou (delegovaný na parent)
+    // Odstraň starý listener, pokud existuje
+    picker.removeEventListener('click', handlePickerClick);
+    picker.addEventListener('click', handlePickerClick);
 }
 
 /**
@@ -234,25 +247,6 @@ function toggleExpandedView(picker) {
             toggleBtn.setAttribute('aria-expanded', expanded.classList.contains('active') ? 'true' : 'false');
         }
     }
-}
-
-/**
- * Obsluha výběru znamení - s debouncem
- */
-function handleSignSelection(sign) {
-    // Debounce: Pokud se opět voláme v následujících 100ms, zrušíme starý timer
-    if (signPickerDebounceTimer) {
-        clearTimeout(signPickerDebounceTimer);
-    }
-
-    signPickerDebounceTimer = setTimeout(() => {
-        MH_PERSONALIZATION.setSign(sign);
-        // Refresh highlights
-        initHoroscopeHighlight();
-        // Re-render picker s debouncem
-        initSignPicker();
-        signPickerDebounceTimer = null;
-    }, 100);
 }
 
 // Auto-init based on current page

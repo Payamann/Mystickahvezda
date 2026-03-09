@@ -1749,15 +1749,14 @@ body.page-mentor .header {
   top: -10px;
   left: 50%;
   transform: translateX(-50%);
-  background: #d4af37;
-  color: #0f0a1f;
+  background: var(--color-mystic-gold);
+  color: var(--color-deep-space);
   font-size: var(--text-xs);
   font-weight: 700;
   padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-full);
   white-space: nowrap;
   letter-spacing: 0.5px;
-  font-family: var(--font-body);
 }
 
 /* ============================================
@@ -5073,15 +5072,14 @@ body.page-mentor .header {
 .sign-picker__label {
   color: rgba(255, 255, 255, 0.5);
   font-size: var(--text-sm);
-  font-family: var(--font-body);
 }
 
 .sign-picker__button {
   padding: var(--space-md) var(--space-lg);
   border-radius: var(--radius-full);
-  border: 1px solid #d4af37;
+  border: 1px solid var(--color-mystic-gold);
   background: rgba(212, 175, 55, 0.15);
-  color: #d4af37;
+  color: var(--color-mystic-gold);
   cursor: pointer;
   font-size: var(--text-base);
   font-weight: 500;
@@ -5089,7 +5087,6 @@ body.page-mentor .header {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  font-family: var(--font-body);
 }
 
 .sign-picker__button:hover {
@@ -5106,7 +5103,6 @@ body.page-mentor .header {
   cursor: pointer;
   font-size: var(--text-xs);
   transition: all var(--transition-fast);
-  font-family: var(--font-body);
 }
 
 .sign-picker__change-btn:hover {
@@ -5137,7 +5133,6 @@ body.page-mentor .header {
   cursor: pointer;
   font-size: var(--text-xs);
   transition: all var(--transition-fast);
-  font-family: var(--font-body);
 }
 
 .sign-picker__sign-btn:hover {
@@ -5146,8 +5141,7 @@ body.page-mentor .header {
 }
 
 .sign-picker__sign-btn.active {
-  border-color: #d4af37;
+  border-color: var(--color-mystic-gold);
   background: rgba(212, 175, 55, 0.15);
-  color: #d4af37;
-}
+  color: var(--color-mystic-gold);
 }
