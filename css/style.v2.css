@@ -191,16 +191,18 @@ body::after {
   z-index: -2;
   pointer-events: none;
   animation: aurora-pulse 15s ease-in-out infinite alternate;
+  /* Ensure it's never a square, even on mobile Safari */
+  border-radius: 50%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   body::before,
   body::after {
-    width: 150vw;
-    height: 150vh;
-    opacity: 0.6;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0.5;
     /* Soften for mobile display */
-    background: radial-gradient(circle at center, rgba(157, 78, 221, 0.08), transparent 60%);
+    background: radial-gradient(circle at center, rgba(157, 78, 221, 0.06), transparent 65%);
   }
 }
 
@@ -538,7 +540,7 @@ input:focus-visible {
   top: 0;
   left: 0;
   right: 0;
-  z-index: var(--z-sticky);
+  z-index: 999; /* Ensure it is above Aurora (-2) and Stars (-1) */
   padding: 0.75rem 0;
   transition: background var(--transition-base), backdrop-filter var(--transition-base), box-shadow var(--transition-base);
   background: rgba(10, 10, 26, 0.4);
@@ -819,7 +821,16 @@ body.page-mentor .header {
   background: none;
   border: none;
   cursor: pointer;
-  z-index: 10;
+  z-index: 1000; /* Higher than header background */
+}
+
+@media (max-width: 992px) {
+  .nav__toggle {
+    display: flex !important;
+  }
+  .nav {
+    display: none; /* Hide desktop nav container */
+  }
 }
 
 .nav__toggle span {
