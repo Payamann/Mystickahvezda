@@ -8,6 +8,7 @@ import express from 'express';
 import { authenticateToken } from '../middleware.js';
 import { supabase } from '../db-supabase.js';
 import rateLimit from 'express-rate-limit';
+import { validatePassword } from '../utils/validation.js';
 
 export const router = express.Router();
 
@@ -152,11 +153,17 @@ router.put('/password', sensitiveOpLimiter, authenticateToken, async (req, res) 
     try {
         const { currentPassword, password } = req.body;
 
-        if (!currentPassword) {
+        // Validate currentPassword is provided
+        if (!currentPassword || typeof currentPassword !== 'string') {
             return res.status(400).json({ success: false, error: 'Zadejte prosím aktuální heslo.' });
         }
-        if (!password || password.length < 8) {
-            return res.status(400).json({ success: false, error: 'Nové heslo musí mít alespoň 8 znaků.' });
+
+        // Validate new password
+        let validatedPassword;
+        try {
+            validatedPassword = validatePassword(password);
+        } catch (validationError) {
+            return res.status(400).json({ success: false, error: validationError.message });
         }
 
         const { error: authError } = await supabase.auth.signInWithPassword({
@@ -168,7 +175,7 @@ router.put('/password', sensitiveOpLimiter, authenticateToken, async (req, res) 
             return res.status(403).json({ success: false, error: 'Aktuální heslo je nesprávné.' });
         }
 
-        const { error } = await supabase.auth.admin.updateUserById(req.user.id, { password });
+        const { error } = await supabase.auth.admin.updateUserById(req.user.id, { password: validatedPassword });
         if (error) throw error;
 
         res.json({ success: true, message: 'Heslo bylo úspěšně změněno.' });
