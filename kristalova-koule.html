@@ -1,371 +1,742 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Zeptejte se křišťálové koule na cokoliv. AI věštba pro váš osobní dotaz.">
-    <meta name="keywords" content="křišťálová koule, věštění, orákulum, předpověď">
-    <meta name="theme-color" content="#0a0a1a">
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Křišťálová Koule | Mystická Hvězda">
-    <meta property="og:description" content="Zeptejte se křišťálové koule na cokoliv. AI věštba pro váš osobní dotaz.">
-    <meta property="og:image" content="https://mystickahvezda.cz/img/crystal-ball-3d.webp">
-    <meta property="og:locale" content="cs_CZ">
-    <meta name="twitter:card" content="summary_large_image">
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Křišťálová Koule",
-        "applicationCategory": "LifestyleApplication",
-        "operatingSystem": "Web"
-    }
-    </script>
-    <title>Křišťálová Koule | Mystická Hvězda</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
-
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="img/icon-192.webp">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-    <style>
-        /* Crystal Ball Specific Styles */
-        .ball-container {
-            position: relative;
-            width: 400px;
-            height: 400px;
-            margin: 0 auto;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .ball-image {
-            width: 100%;
-            height: auto;
-            position: relative;
-            z-index: 2;
-            filter: drop-shadow(0 0 30px rgba(157, 78, 221, 0.4));
-            transition: filter 0.3s ease;
-        }
-
-        .ball-container:hover .ball-image {
-            transform: scale(1.02);
-            filter: drop-shadow(0 0 50px rgba(157, 78, 221, 0.6));
-        }
-
-        .ball-glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60%;
-            height: 60%;
-            background: radial-gradient(circle, rgba(157, 78, 221, 0.6) 0%, transparent 70%);
-            border-radius: 50%;
-            z-index: 1;
-            opacity: 0.5;
-            animation: pulse-glow 4s infinite ease-in-out;
-        }
-
-        @keyframes pulse-glow {
-
-            0%,
-            100% {
-                opacity: 0.5;
-                transform: translate(-50%, -50%) scale(1);
-            }
-
-            50% {
-                opacity: 0.8;
-                transform: translate(-50%, -50%) scale(1.2);
-            }
-        }
-
-        .ball-container.shaking .ball-image {
-            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both infinite;
-        }
-
-        @keyframes shake {
-
-            10%,
-            90% {
-                transform: translate3d(-1px, 0, 0);
-            }
-
-            20%,
-            80% {
-                transform: translate3d(2px, 0, 0);
-            }
-
-            30%,
-            50%,
-            70% {
-                transform: translate3d(-4px, 0, 0);
-            }
-
-            40%,
-            60% {
-                transform: translate3d(4px, 0, 0);
-            }
-        }
-
-        /* Answer Box (Glassmorphism) */
-        .answer-box {
-            margin: var(--space-xl) auto;
-            /* Space between ball and answer */
-            max-width: 600px;
-            min-height: 100px;
-            /* Prevent layout jump */
-            padding: var(--space-lg);
-            border-radius: var(--radius-lg);
-            background: rgba(10, 17, 40, 0.6);
-            border: 1px solid rgba(157, 78, 221, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
-        }
-
-        .answer-box.visible {
-            opacity: 1;
-            transform: translateY(0);
-            box-shadow: 0 0 30px rgba(157, 78, 221, 0.2);
-        }
-
-        #answer-text {
-            color: var(--color-starlight);
-            font-family: var(--font-heading);
-            font-size: var(--text-xl);
-            line-height: 1.6;
-            margin: 0;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .instruction-text {
-            color: var(--color-silver-mist);
-            font-style: italic;
-        }
-
-        .shake-input {
-            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
-            border-color: #ff4d4d !important;
-        }
-    </style>
-
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H22CGHF34K"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-H22CGHF34K', {
-        'page_path': window.location.pathname,
-        'anonymize_ip': true
-      });
-    </script>
-</head>
-
-<body>
-    <!-- Skip to main content -->
-    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
-
-    <div class="stars" aria-hidden="true"></div>
-
-    <!-- HEADER (loaded dynamically) -->
-    <div id="header-placeholder"></div>
-
-    <!-- FREEMIUM LIMIT BANNER (pro nepřihlášené a free uživatele) -->
-    <div id="freemium-banner" style="display:none; background: linear-gradient(90deg, rgba(212,175,55,0.1), rgba(155,89,182,0.1)); border-bottom: 1px solid rgba(212,175,55,0.2); padding: 0.65rem 1rem; text-align: center; font-size: 0.88rem; color: rgba(255,255,255,0.8);">
-        <span id="freemium-banner-text">?? Dnes zbývá: <strong id="freemium-count">...</strong> výkladů zdarma</span>
-        &nbsp;•&nbsp;
-        <a href="cenik.html" style="color: #d4af37; font-weight: 600;">? Získat Premium — 7 dní zdarma ›</a>
-        &nbsp;
-        <button onclick="document.getElementById('freemium-banner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:1rem;vertical-align:middle;">×</button>
-    </div>
-    <script>
-    (function() {
-        const today = new Date().toDateString();
-        const storageKey = 'mh_daily_crystal_' + today;
-        const DAILY_LIMIT = 3;
-        const used = parseInt(localStorage.getItem(storageKey) || '0');
-        const remaining = Math.max(0, DAILY_LIMIT - used);
-        
-        const banner = document.getElementById('freemium-banner');
-        const countEl = document.getElementById('freemium-count');
-        
-        // Zobrazit jen nepřihlášeným nebo free uživatelům
-        document.addEventListener('DOMContentLoaded', () => {
-            const auth = window.Auth;
-            if (!auth || !auth.isPremium()) {
-                if (countEl) countEl.textContent = remaining + ' / ' + DAILY_LIMIT;
-                if (banner) banner.style.display = 'block';
-            }
-        });
-    })();
-    </script>
-
-
-    <main id="main-content">
-        <!-- HERO -->
-        <section class="section section--hero" style="min-height: 80vh; display: flex; align-items: center;">
-            <div class="container text-center">
-
-                <h1 class="hero__title mb-xl">
-                    <span class="text-gradient">Hlas Intuice</span>
-                </h1>
-
-                <div id="crystal-ball" class="ball-container">
-                    <img loading="lazy" src="img/crystal-ball-3d.webp" alt="Magická Křišťálová Koule" class="ball-image">
-
-                    <!-- Glow effect behind -->
-                    <div class="ball-glow"></div>
-                </div>
-
-                <!-- Answer Section (Now Below) -->
-                <div id="answer-container" class="answer-box">
-                    <p id="answer-text">Odpověď se ukáže zde...</p>
-                </div>
-
-                <!-- Question Input for AI -->
-                <div class="question-form" style="max-width: 500px; margin: var(--space-xl) auto;">
-                    <input type="text" id="question-input" class="email-form__input" placeholder="Napiš svou otázku..."
-                        style="width: 100%; text-align: center;">
-                </div>
-
-                <p class="instruction-text mb-lg">
-                    Zhluboka se nadechněte, uklidněte mysl a položte otázku. Nechte promluvit symboly.
-                </p>
-
-                <div>
-                    <button class="btn btn--primary" id="ask-btn">Zeptat se koule</button>
-                    <button class="btn btn--ghost" id="reset-btn"
-                        style="opacity: 0; pointer-events: none; margin-left: var(--space-md);">Nová otázka</button>
-                </div>
-
-            </div>
-        </section>
-
-    
-    
-    
-    <!-- CROSS-LINKING SEKCE -->
-    <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
-        <div class="container" style="max-width: 860px;">
-            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">Pokračujte ve své duchovní cestě</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-                <a href="andelske-karty.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">???</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Andělská Karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Poselství na dnešní den</div>
-                </a>
-                
-                <a href="tarot.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Tarotový výklad</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Hloubkový vhled</div>
-                </a>
-                <a href="horoskopy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení dnes</div>
-                </a>
-                <a href="mentor.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Hvězdný Průvodce</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovní mentor</div>
-                </a>
-                <a href="natalni-karta.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný otisk</div>
-                </a>
-                <a href="partnerska-shoda.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahů</div>
-                </a>
-                <a href="numerologie.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel</div>
-                </a>
-                <a href="astro-mapa.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve světě</div>
-                </a>
-                <a href="snar.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snů</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Analýza vašeho snu</div>
-                </a>
-                <a href="biorytmy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
-                </a>
-                <a href="runy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská moudrost</div>
-                </a>
-            </div>
-        </div>
-    </section>
-    </main>
-
-    <!-- FOOTER (loaded dynamically) -->
-    <div id="footer-placeholder"></div>
-
-
-
-
-
-
-    <script src="js/favorites-helper.js" defer></script>
-    <script src="js/crystal-ball.js" defer></script>
-
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(reg => console.log('? Service Worker registered'))
-                    .catch(err => console.log('SW registration failed:', err));
-            });
-        }
-    </script>
-
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/templates.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-        <script src="js/share-result.js" defer></script>
-        <script src="js/nameday.js" defer></script>
-    <script src="js/exit-intent.js" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="description" content="Zeptejte se křišťálové koule na cokoliv. AI věštba pro váš osobní dotaz.">
+
+    <meta name="keywords" content="křišťálová koule, věštění, orákulum, předpověď">
+
+    <meta name="theme-color" content="#0a0a1a">
+
+    <!-- Open Graph -->
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:title" content="Křišťálová Koule | Mystická Hvězda">
+
+    <meta property="og:description" content="Zeptejte se křišťálové koule na cokoliv. AI věštba pro váš osobní dotaz.">
+
+    <meta property="og:image" content="https://mystickahvezda.cz/img/crystal-ball-3d.webp">
+
+    <meta property="og:locale" content="cs_CZ">
+
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- JSON-LD Structured Data -->
+
+    <script type="application/ld+json">
+
+    {
+
+        "@context": "https://schema.org",
+
+        "@type": "WebApplication",
+
+        "name": "Křišťálová Koule",
+
+        "applicationCategory": "LifestyleApplication",
+
+        "operatingSystem": "Web"
+
+    }
+
+    </script>
+
+    <title>Křišťálová Koule | Mystická Hvězda</title>
+
+
+
+    <!-- Favicon -->
+
+    <link rel="icon" type="image/svg+xml"
+
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
+
+
+
+    <!-- PWA -->
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+    <style>
+
+        /* Crystal Ball Specific Styles */
+
+        .ball-container {
+
+            position: relative;
+
+            width: 400px;
+
+            height: 400px;
+
+            margin: 0 auto;
+
+            cursor: pointer;
+
+            transition: transform 0.3s ease;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+        }
+
+
+
+        .ball-image {
+
+            width: 100%;
+
+            height: auto;
+
+            position: relative;
+
+            z-index: 2;
+
+            filter: drop-shadow(0 0 30px rgba(157, 78, 221, 0.4));
+
+            transition: filter 0.3s ease;
+
+        }
+
+
+
+        .ball-container:hover .ball-image {
+
+            transform: scale(1.02);
+
+            filter: drop-shadow(0 0 50px rgba(157, 78, 221, 0.6));
+
+        }
+
+
+
+        .ball-glow {
+
+            position: absolute;
+
+            top: 50%;
+
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            width: 60%;
+
+            height: 60%;
+
+            background: radial-gradient(circle, rgba(157, 78, 221, 0.6) 0%, transparent 70%);
+
+            border-radius: 50%;
+
+            z-index: 1;
+
+            opacity: 0.5;
+
+            animation: pulse-glow 4s infinite ease-in-out;
+
+        }
+
+
+
+        @keyframes pulse-glow {
+
+
+
+            0%,
+
+            100% {
+
+                opacity: 0.5;
+
+                transform: translate(-50%, -50%) scale(1);
+
+            }
+
+
+
+            50% {
+
+                opacity: 0.8;
+
+                transform: translate(-50%, -50%) scale(1.2);
+
+            }
+
+        }
+
+
+
+        .ball-container.shaking .ball-image {
+
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both infinite;
+
+        }
+
+
+
+        @keyframes shake {
+
+
+
+            10%,
+
+            90% {
+
+                transform: translate3d(-1px, 0, 0);
+
+            }
+
+
+
+            20%,
+
+            80% {
+
+                transform: translate3d(2px, 0, 0);
+
+            }
+
+
+
+            30%,
+
+            50%,
+
+            70% {
+
+                transform: translate3d(-4px, 0, 0);
+
+            }
+
+
+
+            40%,
+
+            60% {
+
+                transform: translate3d(4px, 0, 0);
+
+            }
+
+        }
+
+
+
+        /* Answer Box (Glassmorphism) */
+
+        .answer-box {
+
+            margin: var(--space-xl) auto;
+
+            /* Space between ball and answer */
+
+            max-width: 600px;
+
+            min-height: 100px;
+
+            /* Prevent layout jump */
+
+            padding: var(--space-lg);
+
+            border-radius: var(--radius-lg);
+
+            background: rgba(10, 17, 40, 0.6);
+
+            border: 1px solid rgba(157, 78, 221, 0.3);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            opacity: 0;
+
+            transform: translateY(20px);
+
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+            pointer-events: none;
+
+        }
+
+
+
+        .answer-box.visible {
+
+            opacity: 1;
+
+            transform: translateY(0);
+
+            box-shadow: 0 0 30px rgba(157, 78, 221, 0.2);
+
+        }
+
+
+
+        #answer-text {
+
+            color: var(--color-starlight);
+
+            font-family: var(--font-heading);
+
+            font-size: var(--text-xl);
+
+            line-height: 1.6;
+
+            margin: 0;
+
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+
+        }
+
+
+
+        .instruction-text {
+
+            color: var(--color-silver-mist);
+
+            font-style: italic;
+
+        }
+
+
+
+        .shake-input {
+
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+
+            border-color: #ff4d4d !important;
+
+        }
+
+    </style>
+
+
+
+    <!-- Google Analytics 4 -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H22CGHF34K"></script>
+
+    <script>
+
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag(){dataLayer.push(arguments);}
+
+      gtag('js', new Date());
+
+      gtag('config', 'G-H22CGHF34K', {
+
+        'page_path': window.location.pathname,
+
+        'anonymize_ip': true
+
+      });
+
+    </script>
+
+</head>
+
+
+
+<body>
+
+    <!-- Skip to main content -->
+
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+
+
+    <div class="stars" aria-hidden="true"></div>
+
+
+
+    <!-- HEADER (loaded dynamically) -->
+
+    <div id="header-placeholder"></div>
+
+
+
+    <!-- FREEMIUM LIMIT BANNER (pro nepřihlášené a free uživatele) -->
+
+    <div id="freemium-banner" style="display:none; background: linear-gradient(90deg, rgba(212,175,55,0.1), rgba(155,89,182,0.1)); border-bottom: 1px solid rgba(212,175,55,0.2); padding: 0.65rem 1rem; text-align: center; font-size: 0.88rem; color: rgba(255,255,255,0.8);">
+
+        <span id="freemium-banner-text">?? Dnes zbývá: <strong id="freemium-count">...</strong> výkladů zdarma</span>
+
+        &nbsp;•&nbsp;
+
+        <a href="cenik.html" style="color: #d4af37; font-weight: 600;">? Získat Premium — 7 dní zdarma ›</a>
+
+        &nbsp;
+
+        <button onclick="document.getElementById('freemium-banner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:1rem;vertical-align:middle;">×</button>
+
+    </div>
+
+    <script>
+
+    (function() {
+
+        const today = new Date().toDateString();
+
+        const storageKey = 'mh_daily_crystal_' + today;
+
+        const DAILY_LIMIT = 3;
+
+        const used = parseInt(localStorage.getItem(storageKey) || '0');
+
+        const remaining = Math.max(0, DAILY_LIMIT - used);
+
+        
+
+        const banner = document.getElementById('freemium-banner');
+
+        const countEl = document.getElementById('freemium-count');
+
+        
+
+        // Zobrazit jen nepřihlášeným nebo free uživatelům
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const auth = window.Auth;
+
+            if (!auth || !auth.isPremium()) {
+
+                if (countEl) countEl.textContent = remaining + ' / ' + DAILY_LIMIT;
+
+                if (banner) banner.style.display = 'block';
+
+            }
+
+        });
+
+    })();
+
+    </script>
+
+
+
+
+
+    <main id="main-content">
+
+        <!-- HERO -->
+
+        <section class="section section--hero" style="min-height: 80vh; display: flex; align-items: center;">
+
+            <div class="container text-center">
+
+
+
+                <h1 class="hero__title mb-xl">
+
+                    <span class="text-gradient">Hlas Intuice</span>
+
+                </h1>
+
+
+
+                <div id="crystal-ball" class="ball-container">
+
+                    <img loading="lazy" src="img/crystal-ball-3d.webp" alt="Magická Křišťálová Koule" class="ball-image">
+
+
+
+                    <!-- Glow effect behind -->
+
+                    <div class="ball-glow"></div>
+
+                </div>
+
+
+
+                <!-- Answer Section (Now Below) -->
+
+                <div id="answer-container" class="answer-box">
+
+                    <p id="answer-text">Odpověď se ukáže zde...</p>
+
+                </div>
+
+
+
+                <!-- Question Input for AI -->
+
+                <div class="question-form" style="max-width: 500px; margin: var(--space-xl) auto;">
+
+                    <input type="text" id="question-input" class="email-form__input" placeholder="Napiš svou otázku..."
+
+                        style="width: 100%; text-align: center;">
+
+                </div>
+
+
+
+                <p class="instruction-text mb-lg">
+
+                    Zhluboka se nadechněte, uklidněte mysl a položte otázku. Nechte promluvit symboly.
+
+                </p>
+
+
+
+                <div>
+
+                    <button class="btn btn--primary" id="ask-btn">Zeptat se koule</button>
+
+                    <button class="btn btn--ghost" id="reset-btn"
+
+                        style="opacity: 0; pointer-events: none; margin-left: var(--space-md);">Nová otázka</button>
+
+                </div>
+
+
+
+            </div>
+
+        </section>
+
+
+
+    
+
+    
+
+    
+
+    <!-- CROSS-LINKING SEKCE -->
+
+    <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
+
+        <div class="container" style="max-width: 860px;">
+
+            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">Pokračujte ve své duchovní cestě</h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+
+                <a href="andelske-karty.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">???</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Andělská Karta</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Poselství na dnešní den</div>
+
+                </a>
+
+                
+
+                <a href="tarot.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Tarotový výklad</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Hloubkový vhled</div>
+
+                </a>
+
+                <a href="horoskopy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení dnes</div>
+
+                </a>
+
+                <a href="mentor.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Hvězdný Průvodce</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovní mentor</div>
+
+                </a>
+
+                <a href="natalni-karta.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný otisk</div>
+
+                </a>
+
+                <a href="partnerska-shoda.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahů</div>
+
+                </a>
+
+                <a href="numerologie.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel</div>
+
+                </a>
+
+                <a href="astro-mapa.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve světě</div>
+
+                </a>
+
+                <a href="snar.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snů</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Analýza vašeho snu</div>
+
+                </a>
+
+                <a href="biorytmy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
+
+                </a>
+
+                <a href="runy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská moudrost</div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    </main>
+
+
+
+    <!-- FOOTER (loaded dynamically) -->
+
+    <div id="footer-placeholder"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="js/favorites-helper.js" defer></script>
+
+    <script src="js/crystal-ball.js" defer></script>
+
+
+
+    <!-- Service Worker Registration -->
+
+    <script>
+
+        if ('serviceWorker' in navigator) {
+
+            window.addEventListener('load', () => {
+
+                navigator.serviceWorker.register('/service-worker.js')
+
+                    .then(reg => console.log('? Service Worker registered'))
+
+                    .catch(err => console.log('SW registration failed:', err));
+
+            });
+
+        }
+
+    </script>
+
+
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/templates.js?v=10" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+        <script src="js/share-result.js" defer></script>
+
+        <script src="js/nameday.js" defer></script>
+
+    <script src="js/exit-intent.js" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+
+
+</body>
+
+
+
+</html>
+

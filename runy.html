@@ -1,359 +1,718 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description"
-        content="Vytáhněte si denní runu. Prastarý severský systém Elder Futhark vám nabízí šamanské poselství a radu na dnešní den.">
-    <meta name="keywords" content="runy, elder futhark, věštění z run, runa dne, severská mytologie, odin">
-    <meta name="theme-color" content="#0a0a1a">
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Věštění z Run | Mystická Hvězda">
-    <meta property="og:description"
-        content="Vytáhněte si denní runu. Prastarý severský systém Elder Futhark vám nabízí šamanské poselství a radu na dnešní den.">
-    <meta property="og:image" content="https://www.mystickahvezda.cz/img/og-runes.webp">
-    <meta property="og:locale" content="cs_CZ">
-    <meta name="twitter:card" content="summary_large_image">
-    <link rel="canonical" href="https://www.mystickahvezda.cz/runy.html">
-    <title>Věštění z Run | Mystická Hvězda</title>
-
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="img/icon-192.webp">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-    <style>
-        .runes-hero {
-            background: radial-gradient(circle at center, rgba(100, 110, 130, 0.15) 0%, transparent 70%);
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-        }
-
-        .rune-pouch-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            margin: 2rem auto;
-            min-height: 300px;
-        }
-
-        .rune-stone {
-            width: 140px;
-            height: 180px;
-            background: linear-gradient(145deg, #2b2f36, #1a1c20);
-            border-radius: 40% 60% 50% 50% / 50% 50% 60% 40%;
-            box-shadow:
-                inset -5px -5px 15px rgba(0, 0, 0, 0.8),
-                inset 5px 5px 15px rgba(255, 255, 255, 0.1),
-                0 15px 35px rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 5rem;
-            color: #d4af37;
-            /* Mystic Gold */
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.6), inset 0 0 2px #000;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-family: serif;
-            /* fallback for unicode runes */
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
-        }
-
-        /* Othala and other wide runes adjustment */
-        .rune-stone span {
-            transform: translateY(-5px);
-            filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.8));
-        }
-
-        .rune-stone:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow:
-                inset -5px -5px 15px rgba(0, 0, 0, 0.8),
-                inset 5px 5px 15px rgba(255, 255, 255, 0.2),
-                0 25px 45px rgba(212, 175, 55, 0.2);
-            color: #f9d976;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.4);
-        }
-
-        .rune-stone.hidden {
-            opacity: 1;
-            transform: scale(1);
-            color: transparent;
-            text-shadow: none;
-            cursor: pointer;
-            animation: breathe 3s infinite ease-in-out;
-            background: linear-gradient(145deg, #1c1f24, #0f1114);
-        }
-
-        .rune-stone.hidden span {
-            display: none;
-        }
-
-        .rune-stone.hidden::before {
-            content: "?";
-            font-family: var(--font-heading);
-            font-size: 3rem;
-            color: rgba(255, 255, 255, 0.1);
-        }
-
-        .rune-stone.shuffling {
-            animation: shakeRune 0.5s ease-in-out infinite;
-            filter: blur(1px);
-        }
-
-        @keyframes shakeRune {
-
-            0%,
-            100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-
-            25% {
-                transform: translate(-5px, 5px) rotate(-5deg);
-            }
-
-            50% {
-                transform: translate(5px, -5px) rotate(5deg);
-            }
-
-            75% {
-                transform: translate(5px, 5px) rotate(-5deg);
-            }
-        }
-
-        @keyframes breathe {
-
-            0%,
-            100% {
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.02);
-            }
-
-            50% {
-                box-shadow: 0 15px 35px rgba(212, 175, 55, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.05);
-            }
-        }
-
-        .rune-result-frame {
-            background: rgba(15, 15, 25, 0.85);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            margin-top: 2rem;
-            max-width: 600px;
-            width: 100%;
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s ease-out;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .rune-result-frame.visible {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .share-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-        }
-    </style>
-</head>
-
-<body>
-    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
-    <div class="stars" aria-hidden="true"></div>
-    <div id="header-placeholder"></div>
-
-    <!-- FREEMIUM LIMIT BANNER (pro nepřihlášené a free uživatele) -->
-    <div id="freemium-banner" style="display:none; background: linear-gradient(90deg, rgba(212,175,55,0.1), rgba(155,89,182,0.1)); border-bottom: 1px solid rgba(212,175,55,0.2); padding: 0.65rem 1rem; text-align: center; font-size: 0.88rem; color: rgba(255,255,255,0.8);">
-        <span id="freemium-banner-text">?? Dnes zbývá: <strong id="freemium-count">...</strong> výkladů zdarma</span>
-        &nbsp;•&nbsp;
-        <a href="cenik.html" style="color: #d4af37; font-weight: 600;">? Získat Premium — 7 dní zdarma ›</a>
-        &nbsp;
-        <button onclick="document.getElementById('freemium-banner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:1rem;vertical-align:middle;">×</button>
-    </div>
-    <script>
-    (function() {
-        const today = new Date().toDateString();
-        const storageKey = 'mh_daily_runes_' + today;
-        const DAILY_LIMIT = 2;
-        const used = parseInt(localStorage.getItem(storageKey) || '0');
-        const remaining = Math.max(0, DAILY_LIMIT - used);
-        
-        const banner = document.getElementById('freemium-banner');
-        const countEl = document.getElementById('freemium-count');
-        
-        // Zobrazit jen nepřihlášeným nebo free uživatelům
-        document.addEventListener('DOMContentLoaded', () => {
-            const auth = window.Auth;
-            if (!auth || !auth.isPremium()) {
-                if (countEl) countEl.textContent = remaining + ' / ' + DAILY_LIMIT;
-                if (banner) banner.style.display = 'block';
-            }
-        });
-    })();
-    </script>
-
-
-    <main id="main-content">
-        <section class="section runes-hero">
-            <div class="container text-center">
-                <span class="badge mb-sm"
-                    style="background: rgba(212,175,55,0.1); color: var(--color-mystic-gold); border: 1px solid var(--color-mystic-gold);">Starší
-                    Futhark</span>
-                <h1 class="hero__title mb-md"><span class="text-gradient">Věštění z Run</span></h1>
-                <p class="hero__subtitle mb-xl">Sáhněte do pomyslného měšce a vytáhněte si kámen s poselstvím na dnešní
-                    den. Prastará severská moudrost čeká.</p>
-
-                <div class="rune-pouch-container">
-                    <!-- The stone itself -->
-                    <div id="active-rune" class="rune-stone hidden" role="button" tabindex="0"
-                        aria-label="Vytáhnout runu">
-                        <span id="rune-symbol"></span>
-                    </div>
-
-                    <button class="btn btn--primary" id="btn-draw">Vytáhnout Runu Dne</button>
-                    <!-- Loading state -->
-                    <div id="loading" class="loading" style="display: none;">
-                        <div class="loading__spinner"></div>
-                        <p class="mt-sm" style="color: var(--color-silver-mist)">Šaman naslouchá runám...</p>
-                    </div>
-
-                    <!-- Result -->
-                    <div id="rune-result" class="rune-result-frame">
-                        <h3 id="rune-name"
-                            style="font-family: var(--font-heading); color: var(--color-starlight); font-size: 2rem; margin-bottom: 0.5rem;">
-                        </h3>
-                        <p id="rune-meaning"
-                            style="color: var(--color-mystic-gold); font-size: 1.1rem; margin-bottom: 1.5rem; font-style: italic;">
-                        </p>
-                        <p id="rune-desc" style="color: var(--color-silver-mist); line-height: 1.6;"></p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SEO Content Section -->
-        <section class="section"
-            style="background: rgba(10, 10, 15, 0.5); border-top: 1px solid rgba(255,255,255,0.05);">
-            <div class="container" style="max-width: 800px;">
-                <h2 style="font-family: var(--font-heading); color: var(--color-mystic-gold); margin-bottom: 1.5rem;">
-                    Věštění z run: Moudrost severských bohů</h2>
-                <div style="color: var(--color-silver-mist); line-height: 1.7; font-size: 1.05rem;">
-                    <p class="mb-md">Runy (Elder Futhark) jsou prastarý germánský a severský magický systém. Nejedná se
-                        jen o starobylé písmo, ale o ucelený systém archetypů, skrze které komunikovali severskí šamani
-                        a kněží s božskými entitami. Každý znak reprezentuje specifickou přírodní a kosmickou sílu.</p>
-                    <p class="mb-md">Na rozdíl od andělských karet, které jsou vždy jemné a utěšující, jsou runy
-                        zemitější, údernější a mnohem přímější. Věštění z run se nebojí ukázat životní překážky nebo
-                        blížící se bouři ("Hagalaz"), ale vždy nabízí způsob, jak ji s odvahou překonat.</p>
-                    <h3 style="color: var(--color-starlight); margin: 2rem 0 1rem; font-size: 1.3rem;">Jak používat Runu
-                        Dne?</h3>
-                    <p>Každý den si můžete vytáhnout jeden kámen. Zatímco andělé tiší vaši duši, runa vás volá k akci,
-                        odhodlání nebo ostražitosti. Vytažená runa symbolizuje klíčovou lekci nebo energii, která bude
-                        ovlivňovat vašich nadcházejících 24 hodin.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Cross-linking placeholder (will be filled by index/script logic or inserted directly) -->
-        
-    
-    <!-- CROSS-LINKING SEKCE -->
-    <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
-        <div class="container" style="max-width: 860px;">
-            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">Pokračujte ve své duchovní cestě</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-                <a href="andelske-karty.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">???</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Andělská Karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Poselství na dnešní den</div>
-                </a>
-                <a href="kristalova-koule.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Křišťálová koule</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zeptejte se na cokoli</div>
-                </a>
-                <a href="tarot.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Tarotový výklad</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Hloubkový vhled</div>
-                </a>
-                <a href="horoskopy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení dnes</div>
-                </a>
-                <a href="mentor.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Hvězdný Průvodce</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovní mentor</div>
-                </a>
-                <a href="natalni-karta.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný otisk</div>
-                </a>
-                <a href="partnerska-shoda.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahů</div>
-                </a>
-                <a href="numerologie.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel</div>
-                </a>
-                <a href="astro-mapa.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve světě</div>
-                </a>
-                <a href="snar.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snů</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Analýza vašeho snu</div>
-                </a>
-                <a href="biorytmy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
-                </a>
-                
-            </div>
-        </div>
-    </section>
-    </main>
-
-    <div id="footer-placeholder"></div>
-
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/templates.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-        <script src="js/share-result.js" defer></script>
-        <script src="js/nameday.js" defer></script>
-    <script src="js/exit-intent.js" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-    <script src="js/runes.js" defer></script>
-    <script src="js/favorites-helper.js" defer></script>
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="description"
+
+        content="Vytáhněte si denní runu. Prastarý severský systém Elder Futhark vám nabízí šamanské poselství a radu na dnešní den.">
+
+    <meta name="keywords" content="runy, elder futhark, věštění z run, runa dne, severská mytologie, odin">
+
+    <meta name="theme-color" content="#0a0a1a">
+
+    <!-- Open Graph -->
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:title" content="Věštění z Run | Mystická Hvězda">
+
+    <meta property="og:description"
+
+        content="Vytáhněte si denní runu. Prastarý severský systém Elder Futhark vám nabízí šamanské poselství a radu na dnešní den.">
+
+    <meta property="og:image" content="https://www.mystickahvezda.cz/img/og-runes.webp">
+
+    <meta property="og:locale" content="cs_CZ">
+
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="canonical" href="https://www.mystickahvezda.cz/runy.html">
+
+    <title>Věštění z Run | Mystická Hvězda</title>
+
+
+
+    <link rel="icon" type="image/svg+xml"
+
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+    <style>
+
+        .runes-hero {
+
+            background: radial-gradient(circle at center, rgba(100, 110, 130, 0.15) 0%, transparent 70%);
+
+            min-height: 80vh;
+
+            display: flex;
+
+            align-items: center;
+
+        }
+
+
+
+        .rune-pouch-container {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 2rem;
+
+            margin: 2rem auto;
+
+            min-height: 300px;
+
+        }
+
+
+
+        .rune-stone {
+
+            width: 140px;
+
+            height: 180px;
+
+            background: linear-gradient(145deg, #2b2f36, #1a1c20);
+
+            border-radius: 40% 60% 50% 50% / 50% 50% 60% 40%;
+
+            box-shadow:
+
+                inset -5px -5px 15px rgba(0, 0, 0, 0.8),
+
+                inset 5px 5px 15px rgba(255, 255, 255, 0.1),
+
+                0 15px 35px rgba(0, 0, 0, 0.6);
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-size: 5rem;
+
+            color: #d4af37;
+
+            /* Mystic Gold */
+
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.6), inset 0 0 2px #000;
+
+            cursor: pointer;
+
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+            font-family: serif;
+
+            /* fallback for unicode runes */
+
+            border: 1px solid rgba(255, 255, 255, 0.05);
+
+            position: relative;
+
+        }
+
+
+
+        /* Othala and other wide runes adjustment */
+
+        .rune-stone span {
+
+            transform: translateY(-5px);
+
+            filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.8));
+
+        }
+
+
+
+        .rune-stone:hover {
+
+            transform: translateY(-10px) scale(1.05);
+
+            box-shadow:
+
+                inset -5px -5px 15px rgba(0, 0, 0, 0.8),
+
+                inset 5px 5px 15px rgba(255, 255, 255, 0.2),
+
+                0 25px 45px rgba(212, 175, 55, 0.2);
+
+            color: #f9d976;
+
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.4);
+
+        }
+
+
+
+        .rune-stone.hidden {
+
+            opacity: 1;
+
+            transform: scale(1);
+
+            color: transparent;
+
+            text-shadow: none;
+
+            cursor: pointer;
+
+            animation: breathe 3s infinite ease-in-out;
+
+            background: linear-gradient(145deg, #1c1f24, #0f1114);
+
+        }
+
+
+
+        .rune-stone.hidden span {
+
+            display: none;
+
+        }
+
+
+
+        .rune-stone.hidden::before {
+
+            content: "?";
+
+            font-family: var(--font-heading);
+
+            font-size: 3rem;
+
+            color: rgba(255, 255, 255, 0.1);
+
+        }
+
+
+
+        .rune-stone.shuffling {
+
+            animation: shakeRune 0.5s ease-in-out infinite;
+
+            filter: blur(1px);
+
+        }
+
+
+
+        @keyframes shakeRune {
+
+
+
+            0%,
+
+            100% {
+
+                transform: translate(0, 0) rotate(0deg);
+
+            }
+
+
+
+            25% {
+
+                transform: translate(-5px, 5px) rotate(-5deg);
+
+            }
+
+
+
+            50% {
+
+                transform: translate(5px, -5px) rotate(5deg);
+
+            }
+
+
+
+            75% {
+
+                transform: translate(5px, 5px) rotate(-5deg);
+
+            }
+
+        }
+
+
+
+        @keyframes breathe {
+
+
+
+            0%,
+
+            100% {
+
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.02);
+
+            }
+
+
+
+            50% {
+
+                box-shadow: 0 15px 35px rgba(212, 175, 55, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.05);
+
+            }
+
+        }
+
+
+
+        .rune-result-frame {
+
+            background: rgba(15, 15, 25, 0.85);
+
+            border: 1px solid rgba(212, 175, 55, 0.3);
+
+            border-radius: var(--radius-lg);
+
+            padding: var(--space-xl);
+
+            margin-top: 2rem;
+
+            max-width: 600px;
+
+            width: 100%;
+
+            display: none;
+
+            opacity: 0;
+
+            transform: translateY(20px);
+
+            transition: all 0.5s ease-out;
+
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+
+        }
+
+
+
+        .rune-result-frame.visible {
+
+            display: block;
+
+            opacity: 1;
+
+            transform: translateY(0);
+
+        }
+
+
+
+        .share-actions {
+
+            display: flex;
+
+            gap: 1rem;
+
+            justify-content: center;
+
+            margin-top: 1.5rem;
+
+            flex-wrap: wrap;
+
+        }
+
+    </style>
+
+</head>
+
+
+
+<body>
+
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+    <div class="stars" aria-hidden="true"></div>
+
+    <div id="header-placeholder"></div>
+
+
+
+    <!-- FREEMIUM LIMIT BANNER (pro nepřihlášené a free uživatele) -->
+
+    <div id="freemium-banner" style="display:none; background: linear-gradient(90deg, rgba(212,175,55,0.1), rgba(155,89,182,0.1)); border-bottom: 1px solid rgba(212,175,55,0.2); padding: 0.65rem 1rem; text-align: center; font-size: 0.88rem; color: rgba(255,255,255,0.8);">
+
+        <span id="freemium-banner-text">?? Dnes zbývá: <strong id="freemium-count">...</strong> výkladů zdarma</span>
+
+        &nbsp;•&nbsp;
+
+        <a href="cenik.html" style="color: #d4af37; font-weight: 600;">? Získat Premium — 7 dní zdarma ›</a>
+
+        &nbsp;
+
+        <button onclick="document.getElementById('freemium-banner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:1rem;vertical-align:middle;">×</button>
+
+    </div>
+
+    <script>
+
+    (function() {
+
+        const today = new Date().toDateString();
+
+        const storageKey = 'mh_daily_runes_' + today;
+
+        const DAILY_LIMIT = 2;
+
+        const used = parseInt(localStorage.getItem(storageKey) || '0');
+
+        const remaining = Math.max(0, DAILY_LIMIT - used);
+
+        
+
+        const banner = document.getElementById('freemium-banner');
+
+        const countEl = document.getElementById('freemium-count');
+
+        
+
+        // Zobrazit jen nepřihlášeným nebo free uživatelům
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const auth = window.Auth;
+
+            if (!auth || !auth.isPremium()) {
+
+                if (countEl) countEl.textContent = remaining + ' / ' + DAILY_LIMIT;
+
+                if (banner) banner.style.display = 'block';
+
+            }
+
+        });
+
+    })();
+
+    </script>
+
+
+
+
+
+    <main id="main-content">
+
+        <section class="section runes-hero">
+
+            <div class="container text-center">
+
+                <span class="badge mb-sm"
+
+                    style="background: rgba(212,175,55,0.1); color: var(--color-mystic-gold); border: 1px solid var(--color-mystic-gold);">Starší
+
+                    Futhark</span>
+
+                <h1 class="hero__title mb-md"><span class="text-gradient">Věštění z Run</span></h1>
+
+                <p class="hero__subtitle mb-xl">Sáhněte do pomyslného měšce a vytáhněte si kámen s poselstvím na dnešní
+
+                    den. Prastará severská moudrost čeká.</p>
+
+
+
+                <div class="rune-pouch-container">
+
+                    <!-- The stone itself -->
+
+                    <div id="active-rune" class="rune-stone hidden" role="button" tabindex="0"
+
+                        aria-label="Vytáhnout runu">
+
+                        <span id="rune-symbol"></span>
+
+                    </div>
+
+
+
+                    <button class="btn btn--primary" id="btn-draw">Vytáhnout Runu Dne</button>
+
+                    <!-- Loading state -->
+
+                    <div id="loading" class="loading" style="display: none;">
+
+                        <div class="loading__spinner"></div>
+
+                        <p class="mt-sm" style="color: var(--color-silver-mist)">Šaman naslouchá runám...</p>
+
+                    </div>
+
+
+
+                    <!-- Result -->
+
+                    <div id="rune-result" class="rune-result-frame">
+
+                        <h3 id="rune-name"
+
+                            style="font-family: var(--font-heading); color: var(--color-starlight); font-size: 2rem; margin-bottom: 0.5rem;">
+
+                        </h3>
+
+                        <p id="rune-meaning"
+
+                            style="color: var(--color-mystic-gold); font-size: 1.1rem; margin-bottom: 1.5rem; font-style: italic;">
+
+                        </p>
+
+                        <p id="rune-desc" style="color: var(--color-silver-mist); line-height: 1.6;"></p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SEO Content Section -->
+
+        <section class="section"
+
+            style="background: rgba(10, 10, 15, 0.5); border-top: 1px solid rgba(255,255,255,0.05);">
+
+            <div class="container" style="max-width: 800px;">
+
+                <h2 style="font-family: var(--font-heading); color: var(--color-mystic-gold); margin-bottom: 1.5rem;">
+
+                    Věštění z run: Moudrost severských bohů</h2>
+
+                <div style="color: var(--color-silver-mist); line-height: 1.7; font-size: 1.05rem;">
+
+                    <p class="mb-md">Runy (Elder Futhark) jsou prastarý germánský a severský magický systém. Nejedná se
+
+                        jen o starobylé písmo, ale o ucelený systém archetypů, skrze které komunikovali severskí šamani
+
+                        a kněží s božskými entitami. Každý znak reprezentuje specifickou přírodní a kosmickou sílu.</p>
+
+                    <p class="mb-md">Na rozdíl od andělských karet, které jsou vždy jemné a utěšující, jsou runy
+
+                        zemitější, údernější a mnohem přímější. Věštění z run se nebojí ukázat životní překážky nebo
+
+                        blížící se bouři ("Hagalaz"), ale vždy nabízí způsob, jak ji s odvahou překonat.</p>
+
+                    <h3 style="color: var(--color-starlight); margin: 2rem 0 1rem; font-size: 1.3rem;">Jak používat Runu
+
+                        Dne?</h3>
+
+                    <p>Každý den si můžete vytáhnout jeden kámen. Zatímco andělé tiší vaši duši, runa vás volá k akci,
+
+                        odhodlání nebo ostražitosti. Vytažená runa symbolizuje klíčovou lekci nebo energii, která bude
+
+                        ovlivňovat vašich nadcházejících 24 hodin.</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- Cross-linking placeholder (will be filled by index/script logic or inserted directly) -->
+
+        
+
+    
+
+    <!-- CROSS-LINKING SEKCE -->
+
+    <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
+
+        <div class="container" style="max-width: 860px;">
+
+            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">Pokračujte ve své duchovní cestě</h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+
+                <a href="andelske-karty.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">???</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Andělská Karta</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Poselství na dnešní den</div>
+
+                </a>
+
+                <a href="kristalova-koule.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Křišťálová koule</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zeptejte se na cokoli</div>
+
+                </a>
+
+                <a href="tarot.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Tarotový výklad</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Hloubkový vhled</div>
+
+                </a>
+
+                <a href="horoskopy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení dnes</div>
+
+                </a>
+
+                <a href="mentor.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Hvězdný Průvodce</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovní mentor</div>
+
+                </a>
+
+                <a href="natalni-karta.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný otisk</div>
+
+                </a>
+
+                <a href="partnerska-shoda.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahů</div>
+
+                </a>
+
+                <a href="numerologie.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel</div>
+
+                </a>
+
+                <a href="astro-mapa.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve světě</div>
+
+                </a>
+
+                <a href="snar.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snů</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Analýza vašeho snu</div>
+
+                </a>
+
+                <a href="biorytmy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
+
+                </a>
+
+                
+
+            </div>
+
+        </div>
+
+    </section>
+
+    </main>
+
+
+
+    <div id="footer-placeholder"></div>
+
+
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/templates.js?v=10" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+        <script src="js/share-result.js" defer></script>
+
+        <script src="js/nameday.js" defer></script>
+
+    <script src="js/exit-intent.js" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+    <script src="js/runes.js" defer></script>
+
+    <script src="js/favorites-helper.js" defer></script>
+
+</body>
+
+
+
+</html>
+

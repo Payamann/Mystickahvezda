@@ -1,642 +1,1284 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description"
-        content="Vytáhněte si svou Andělskou kartu pro dnešní den. Jemná andělská podpora a poselství světla pro vaši duši.">
-    <meta name="keywords" content="andělské karty, karta dne, andělé, věštění, duchovní podpora, archandělé">
-    <meta name="theme-color" content="#0a0a1a">
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Andělská Karta Dne | Mystická Hvězda">
-    <meta property="og:description"
-        content="Zastavte se a nechte se vést. Vytáhněte si andělskou kartu s laskavým poselstvím.">
-    <meta property="og:image" content="https://www.mystickahvezda.cz/img/og-angel-card.webp">
-    <meta property="og:locale" content="cs_CZ">
-    <meta name="twitter:card" content="summary_large_image">
-    <link rel="canonical" href="https://www.mystickahvezda.cz/andelske-karty.html">
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Andělská Karta Dne",
-        "applicationCategory": "LifestyleApplication",
-        "operatingSystem": "Web"
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-            {
-                "@type": "Question",
-                "name": "Co je andělská karta dne?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Andělská karta dne je duchovní nástroj, který vám každý den nabídne poselství od vašich nebeských průvodců. Každá karta nese unikátní energii archanděla nebo anděla, která vás provede vaší denní cestou."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Mohu vytáhnout andělskou kartu zdarma?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Ano! Základní vytáhnutí andělské karty a zobrazení poselství je zcela zdarma bez nutnosti registrace. Prémiové funkce jako hluboký AI výklad jsou dostupné pro členy Hvězdného Průvodce."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Jak často mohu vytáhnout andělskou kartu?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Každý den můžete vytáhnout jednu novou kartu. Systém si pamatuje vaši denní kartu — zůstává stejná po celý den, abyste mohli její poselství skutečně integrovat do svého života."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Co znamená karta Archanděla Michaela?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Archanděl Michael symbolizuje odvahu, ochranu a sílu. Pokud si vytáhnete jeho kartu, je to zpráva, že jste v bezpečí pod ochranou nebeské síly. Je čas jít odvážně za svým cílem a osvobodit se od strachů."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Jaký je rozdíl mezi andělskými kartami a tarotem?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Tarot je hlubší, psychologičtější nástroj, který může ukázat i výzvy. Andělské karty vždy přinášejí povzbuzující, laskavé poselství a bezpodmínečnou podporu. Jsou ideální pro ty, kteří hledají klidné potvrzení a laskavé vedení."
-                }
-            }
-        ]
-    }
-    </script>
-    <title>Andělská Karta Dne | Mystická Hvězda</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
-
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="img/icon-192.webp">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-    <style>
-        /* Angel Cards Specific Styles - Soft Gold & White Theme */
-        .angel-hero {
-            background: radial-gradient(circle at center, rgba(235, 192, 102, 0.15) 0%, transparent 70%);
-        }
-
-        .angel-card-container {
-            perspective: 1200px;
-            width: 280px;
-            height: 480px;
-            margin: 0 auto;
-            cursor: pointer;
-        }
-
-        .angel-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-        }
-
-        .angel-card-container.is-flipped .angel-card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .angel-card-front,
-        .angel-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            border-radius: var(--radius-lg);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: var(--space-lg);
-            border: 2px solid var(--color-mystic-gold);
-        }
-
-        .angel-card-front {
-            background-image: url('img/angel-card-back.webp');
-            background-size: cover;
-            background-position: center;
-            border: 2px solid rgba(235, 192, 102, 0.8);
-            box-shadow: 0 0 30px rgba(235, 192, 102, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.8);
-        }
-
-        .angel-card-front::after {
-            content: "";
-        }
-
-        .angel-card-front::before {
-            content: "";
-            position: absolute;
-            inset: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: calc(var(--radius-lg) - 5px);
-            pointer-events: none;
-        }
-
-        .angel-card-back {
-            background: linear-gradient(180deg, #1a0a2e 0%, #0a0a1a 100%);
-            transform: rotateY(180deg);
-            background-size: cover;
-            background-position: center;
-            overflow: hidden;
-            border: 2px solid rgba(235, 192, 102, 0.8);
-            box-shadow: 0 0 40px rgba(235, 192, 102, 0.4), inset 0 0 40px rgba(255, 255, 255, 0.05);
-        }
-
-        .angel-card-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.1) 100%);
-            z-index: 1;
-        }
-
-        .angel-card-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            margin-top: auto;
-            width: 100%;
-        }
-
-        .angel-name {
-            font-family: var(--font-heading);
-            font-size: 1.8rem;
-            color: var(--color-mystic-gold);
-            margin-bottom: 0.5rem;
-            text-shadow: 0 4px 10px rgba(235, 192, 102, 0.5);
-            letter-spacing: 1px;
-        }
-
-        .angel-theme {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: #fff;
-            opacity: 0.8;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid rgba(235, 192, 102, 0.3);
-            padding-bottom: 10px;
-            display: inline-block;
-        }
-
-        .glow-effect {
-            animation: softPulse 3s infinite alternate;
-        }
-
-        @keyframes softPulse {
-            from {
-                box-shadow: 0 0 20px rgba(235, 192, 102, 0.2);
-            }
-
-            to {
-                box-shadow: 0 0 40px rgba(235, 192, 102, 0.6);
-            }
-        }
-
-        /* Ambient floating feathers/light */
-        .ambient-light {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent 70%);
-            pointer-events: none;
-            opacity: 0;
-        }
-
-        .message-box {
-            background: rgba(20, 15, 30, 0.7);
-            border: 1px solid rgba(235, 192, 102, 0.4);
-            border-radius: 20px;
-            padding: var(--space-2xl);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 40px rgba(235, 192, 102, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        .message-box::before {
-            content: "“";
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            font-size: 10rem;
-            font-family: var(--font-heading);
-            color: rgba(235, 192, 102, 0.15);
-            line-height: 1;
-            z-index: 0;
-        }
-
-        .message-box::after {
-            content: "”";
-            position: absolute;
-            bottom: -50px;
-            right: 20px;
-            font-size: 10rem;
-            font-family: var(--font-heading);
-            color: rgba(235, 192, 102, 0.15);
-            line-height: 1;
-            z-index: 0;
-        }
-
-        #angel-results {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
-        #angel-results.animate-in {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .wow-title {
-            font-size: 2.5rem;
-            font-family: var(--font-heading);
-            color: var(--color-mystic-gold);
-            text-shadow: 0 3px 15px rgba(235, 192, 102, 0.4);
-            margin-bottom: 1rem;
-            letter-spacing: 2px;
-        }
-
-        .wow-message {
-            font-size: 1.35rem;
-            line-height: 1.8;
-            color: rgba(255, 255, 255, 0.95);
-            font-weight: 300;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
-        }
-
-        .divider-gold {
-            width: 150px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--color-mystic-gold), transparent);
-            margin: 1.5rem auto;
-            opacity: 0.7;
-        }
-
-        .btn-magical {
-            background: linear-gradient(135deg, #d4af37, #aa7c11);
-            color: #1a0a2e;
-            font-weight: 700;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-            padding: 1.2rem 2.5rem;
-            border-radius: 50px;
-            border: none;
-            box-shadow: 0 0 30px rgba(235, 192, 102, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.4);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .btn-magical:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 0 40px rgba(235, 192, 102, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.6);
-            color: #000;
-        }
-
-        .angel-hero {
-            padding-top: calc(var(--header-height, 100px) + 3rem);
-        }
-    </style>
-</head>
-
-<body>
-    <!-- Skip to main content -->
-    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
-
-    <div class="stars" aria-hidden="true"></div>
-
-    <!-- HEADER (loaded dynamically) -->
-    <div id="header-placeholder"></div>
-
-    <main id="main-content">
-        <!-- HERO -->
-        <section class="section angel-hero" style="min-height: auto; padding-bottom: 0;">
-            <div class="container text-center">
-                <h1 class="hero__title">
-                    Andělská <span class="text-gradient">Karta Dne</span>
-                </h1>
-                <p class="hero__subtitle">
-                    Zastavte se, zhluboka se nadechněte a dovolte nebeským průvodcům, aby vám předali zprávu plnou
-                    naděje a lásky.
-                </p>
-            </div>
-        </section>
-
-        <!-- APP WORKSPACE -->
-        <section class="section">
-            <div class="container">
-
-                <!-- PRE-DRAW STATE -->
-                <div id="angel-intro" class="text-center" data-animate>
-                    <p class="mb-xl text-lg w-mx-md mx-auto" style="color: var(--color-silver-mist);">
-                        Soustřeďte se na svůj aktuální pocit nebo otázku. Až budete připraveni, klikněte na balíček a
-                        vytáhněte si svou kartu pro tento den.
-                    </p>
-
-                    <div class="angel-card-container glow-effect" id="draw-btn" role="button" tabindex="0"
-                        aria-label="Vytáhnout andělskou kartu">
-                        <div class="angel-card-inner">
-                            <div class="angel-card-front">
-                                <!-- Card Back Design is handled by CSS -->
-                            </div>
-                            <div class="angel-card-back">
-                                <!-- Will be filled by JS -->
-                            </div>
-                        </div>
-                    </div>
-                    <p class="mt-md text-sm" style="color: var(--color-silver-mist);"><small>Klikněte pro vytažení
-                            karty</small></p>
-                </div>
-
-                <!-- POST-DRAW STATE -->
-                <div id="angel-results" style="display: none; margin-top: 3rem; position:relative; z-index: 10;">
-
-                    <div
-                        style="width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 3rem;">
-
-                        <!-- Centered Static Message -->
-                        <div class="message-box text-center" data-animate style="max-width: 600px; margin: 0 auto;">
-                            <h3 class="wow-title" style="position: relative; z-index: 1;">Poselství vaší karty</h3>
-                            <div class="divider-gold" style="position: relative; z-index: 1;"></div>
-
-                            <p id="angel-short-message" class="wow-message mb-xl"
-                                style="position: relative; z-index: 1;">
-                                <!-- Static message goes here -->
-                            </p>
-
-                            <div class="mt-xl text-center" style="position: relative; z-index: 1;">
-                                <button id="btn-share-card" class="btn btn--glass"
-                                    style="border-radius: 50px; padding: 0.8rem 2rem;">
-                                    ?? Sdílet kartu
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- CROSS-LINKING SEKCE -->
-        <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
-            <div class="container" style="max-width: 860px;">
-                <h3
-                    style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">
-                    Pokračujte ve své duchovní cestě</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-
-                    <a href="kristalova-koule.html" class="card"
-                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
-                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
-                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Křišťálová koule</div>
-                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zeptejte se
-                            na cokoli</div>
-                    </a>
-                    <a href="tarot.html" class="card"
-                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
-                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
-                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Tarotový výklad</div>
-                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Hloubkový
-                            vhled</div>
-                    </a>
-                    <a href="horoskopy.html" class="card"
-                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
-                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
-                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
-                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
-                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení
-                            dnes</div>
-                    </a>
-                    <a href="mentor.html" class="card"
-                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
-                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
-                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Hvězdný Průvodce</div>
-                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovní
-                            mentor</div>
-                    </a>
-                    <a href="natalni-karta.html" class="card"
-                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
-                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
-                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
-                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný
-                            otisk</div>
-                    </a>
-                    <a href="partnerska-shoda.html" class="card"
-                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
-                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
-                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
-                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie
-                            vztahů</div>
-                    </a>
-                    <a href="numerologie.html" class="card"
-                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
-                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
-                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
-                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel
-                        </div>
-                    </a>
-                    <a href="astro-mapa.html" class="card"
-                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
-                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
-                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
-                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve
-                            světě</div>
-                    </a>
-                    <a href="snar.html" class="card"
-                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
-                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
-                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snů</div>
-                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Analýza
-                            vašeho snu</div>
-                    </a>
-                    <a href="biorytmy.html" class="card"
-                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
-                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
-                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
-                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky
-                            energie</div>
-                    </a>
-                    <a href="runy.html" class="card"
-                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
-                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
-                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
-                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská
-                            moudrost</div>
-                    </a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- SEO TEXTOVÁ SEKCE -->
-    <section class="section" style="padding-top: 0; padding-bottom: 2rem;">
-        <div class="container" style="max-width: 860px;">
-
-            <!-- Popis andělských karet -->
-            <div
-                style="background: rgba(20,15,30,0.5); border: 1px solid rgba(235,192,102,0.15); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem;">
-                <h2
-                    style="font-family: var(--font-heading); color: var(--color-mystic-gold); font-size: 1.6rem; margin-bottom: 1rem;">
-                    Jak fungují andělské karty?</h2>
-                <p style="color: rgba(255,255,255,0.8); line-height: 1.8; margin-bottom: 1rem;">
-                    Andělské karty jsou jemným duchovním nástrojem, který nám pomáhá napojit se na vyšší vedení, naději
-                    a intuici.
-                    Na rozdíl od tarotu, který může přinášet náročný konfrontační pohled, andělské karty vždy nabízejí
-                    bezpodmínečnou lásku, naději a laskavé vedení.
-                </p>
-                <p style="color: rgba(255,255,255,0.8); line-height: 1.8; margin-bottom: 1rem;">
-                    Každý archanděl a anděl v naší sadě 41 karet reprezentuje jinou energii a oblast vaší životní cesty
-                    — od odvahy a lásky, přes uzdravení a hojnost, až po duchovní pochopení a životní poslání.
-                    Práce s andělskými kartami nás učí zastavit se, zhluboka nadechnout a naslouchat tichému, vlídnému
-                    hlasu, který v nás neustále promlouvá.
-                </p>
-                <p style="color: rgba(255,255,255,0.8); line-height: 1.8;">
-                    Na Mystické Hvězdě dostáváte každý den novou andělskou kartu. Karta zůstává pro daný den stálá — je
-                    to pozvání hluboce ji promeditovat, nosit si její poselství s sebou a vrátit se k ní v průběhu dne.
-                    Prémioví členové mohou navíc získat hluboký AI výklad se čtyřmi oblastmi: láska a vztahy, poslání,
-                    duchovní mantra a doporučený krystal pro daný den.
-                </p>
-            </div>
-
-            <!-- FAQ -->
-            <div
-                style="background: rgba(20,15,30,0.5); border: 1px solid rgba(235,192,102,0.15); border-radius: 20px; padding: 2.5rem;">
-                <h2
-                    style="font-family: var(--font-heading); color: var(--color-mystic-gold); font-size: 1.6rem; margin-bottom: 1.5rem;">
-                    Časté otázky o andělských kartách</h2>
-
-                <details
-                    style="border-bottom: 1px solid rgba(235,192,102,0.15); padding-bottom: 1rem; margin-bottom: 1rem;">
-                    <summary
-                        style="cursor: pointer; color: #fff; font-size: 1.05rem; font-weight: 500; padding: 0.5rem 0;">
-                        Co je andělská karta dne?</summary>
-                    <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 0.75rem;">Andělská karta dne
-                        je duchovní nástroj, který vám každý den nabídne poselství od vašich nebeských průvodců. Každá
-                        karta nese unikátní energii archanděla nebo anděla, která vás provede vaší denní cestou.</p>
-                </details>
-
-                <details
-                    style="border-bottom: 1px solid rgba(235,192,102,0.15); padding-bottom: 1rem; margin-bottom: 1rem;">
-                    <summary
-                        style="cursor: pointer; color: #fff; font-size: 1.05rem; font-weight: 500; padding: 0.5rem 0;">
-                        Mohu vytáhnout andělskou kartu zdarma?</summary>
-                    <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 0.75rem;">Ano! Základní
-                        vytáhnutí andělské karty a zobrazení poselství je zcela zdarma bez nutnosti registrace. Prémiové
-                        funkce (hluboký AI výklad) jsou dostupné pro členy Hvězdného Průvodce.</p>
-                </details>
-
-                <details
-                    style="border-bottom: 1px solid rgba(235,192,102,0.15); padding-bottom: 1rem; margin-bottom: 1rem;">
-                    <summary
-                        style="cursor: pointer; color: #fff; font-size: 1.05rem; font-weight: 500; padding: 0.5rem 0;">
-                        Jak často mohu vytáhnout andělskou kartu?</summary>
-                    <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 0.75rem;">Každý den můžete
-                        vytáhnout jednu novou kartu. Systém si pamatuje vaši denní kartu — karta zůstává stejná po celý
-                        den, abyste mohli její poselství skutečně integrovat do svého života.</p>
-                </details>
-
-                <details
-                    style="border-bottom: 1px solid rgba(235,192,102,0.15); padding-bottom: 1rem; margin-bottom: 1rem;">
-                    <summary
-                        style="cursor: pointer; color: #fff; font-size: 1.05rem; font-weight: 500; padding: 0.5rem 0;">
-                        Co znamená karta Archanděla Michaela?</summary>
-                    <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 0.75rem;">Archanděl Michael
-                        symbolizuje odvahu, ochranu a sílu. Pokud si vytáhnete jeho kartu, je to zpráva, že jste v
-                        bezpečí pod ochranou nebeské síly. Je čas jít odvážně za svým cílem a osvobodit se od strachů.
-                    </p>
-                </details>
-
-                <details style="padding-bottom: 1rem;">
-                    <summary
-                        style="cursor: pointer; color: #fff; font-size: 1.05rem; font-weight: 500; padding: 0.5rem 0;">
-                        Jaký je rozdíl mezi andělskými kartami a tarotem?</summary>
-                    <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 0.75rem;">Tarot je hlubší,
-                        psychologičtější nástroj, který může ukázat i odpojení nebo výzvy. Andělské karty vždy přinášejí
-                        povzbuzující, laskavé poselství a bezpodmínečnou podporu. Jsou ideální pro ty, kteří hledají
-                        klidné potvrzení a laskavé vedení na své denní cestě.</p>
-                </details>
-            </div>
-
-        </div>
-    </section>
-
-
-
-    <!-- FOOTER (loaded dynamically) -->
-    <div id="footer-placeholder"></div>
-
-    <script type="module" src="js/angel-cards.js?v=1"></script>
-
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(reg => console.log('? Service Worker registered'))
-                    .catch(err => console.log('SW registration failed:', err));
-            });
-        }
-    </script>
-
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/templates.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-    <script src="js/share-result.js" defer></script>
-    <script src="js/nameday.js" defer></script>
-    <script src="js/exit-intent.js" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-
-    <script src="js/newsletter-popup.js" defer></script>
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="description"
+
+        content="Vytáhněte si svou Andělskou kartu pro dnešní den. Jemná andělská podpora a poselství světla pro vaši duši.">
+
+    <meta name="keywords" content="andělské karty, karta dne, andělé, věštění, duchovní podpora, archandělé">
+
+    <meta name="theme-color" content="#0a0a1a">
+
+    <!-- Open Graph -->
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:title" content="Andělská Karta Dne | Mystická Hvězda">
+
+    <meta property="og:description"
+
+        content="Zastavte se a nechte se vést. Vytáhněte si andělskou kartu s laskavým poselstvím.">
+
+    <meta property="og:image" content="https://www.mystickahvezda.cz/img/og-angel-card.webp">
+
+    <meta property="og:locale" content="cs_CZ">
+
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="canonical" href="https://www.mystickahvezda.cz/andelske-karty.html">
+
+    <!-- JSON-LD Structured Data -->
+
+    <script type="application/ld+json">
+
+    {
+
+        "@context": "https://schema.org",
+
+        "@type": "WebApplication",
+
+        "name": "Andělská Karta Dne",
+
+        "applicationCategory": "LifestyleApplication",
+
+        "operatingSystem": "Web"
+
+    }
+
+    </script>
+
+    <script type="application/ld+json">
+
+    {
+
+        "@context": "https://schema.org",
+
+        "@type": "FAQPage",
+
+        "mainEntity": [
+
+            {
+
+                "@type": "Question",
+
+                "name": "Co je andělská karta dne?",
+
+                "acceptedAnswer": {
+
+                    "@type": "Answer",
+
+                    "text": "Andělská karta dne je duchovní nástroj, který vám každý den nabídne poselství od vašich nebeských průvodců. Každá karta nese unikátní energii archanděla nebo anděla, která vás provede vaší denní cestou."
+
+                }
+
+            },
+
+            {
+
+                "@type": "Question",
+
+                "name": "Mohu vytáhnout andělskou kartu zdarma?",
+
+                "acceptedAnswer": {
+
+                    "@type": "Answer",
+
+                    "text": "Ano! Základní vytáhnutí andělské karty a zobrazení poselství je zcela zdarma bez nutnosti registrace. Prémiové funkce jako hluboký AI výklad jsou dostupné pro členy Hvězdného Průvodce."
+
+                }
+
+            },
+
+            {
+
+                "@type": "Question",
+
+                "name": "Jak často mohu vytáhnout andělskou kartu?",
+
+                "acceptedAnswer": {
+
+                    "@type": "Answer",
+
+                    "text": "Každý den můžete vytáhnout jednu novou kartu. Systém si pamatuje vaši denní kartu — zůstává stejná po celý den, abyste mohli její poselství skutečně integrovat do svého života."
+
+                }
+
+            },
+
+            {
+
+                "@type": "Question",
+
+                "name": "Co znamená karta Archanděla Michaela?",
+
+                "acceptedAnswer": {
+
+                    "@type": "Answer",
+
+                    "text": "Archanděl Michael symbolizuje odvahu, ochranu a sílu. Pokud si vytáhnete jeho kartu, je to zpráva, že jste v bezpečí pod ochranou nebeské síly. Je čas jít odvážně za svým cílem a osvobodit se od strachů."
+
+                }
+
+            },
+
+            {
+
+                "@type": "Question",
+
+                "name": "Jaký je rozdíl mezi andělskými kartami a tarotem?",
+
+                "acceptedAnswer": {
+
+                    "@type": "Answer",
+
+                    "text": "Tarot je hlubší, psychologičtější nástroj, který může ukázat i výzvy. Andělské karty vždy přinášejí povzbuzující, laskavé poselství a bezpodmínečnou podporu. Jsou ideální pro ty, kteří hledají klidné potvrzení a laskavé vedení."
+
+                }
+
+            }
+
+        ]
+
+    }
+
+    </script>
+
+    <title>Andělská Karta Dne | Mystická Hvězda</title>
+
+
+
+    <!-- Favicon -->
+
+    <link rel="icon" type="image/svg+xml"
+
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
+
+
+
+    <!-- PWA -->
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+    <style>
+
+        /* Angel Cards Specific Styles - Soft Gold & White Theme */
+
+        .angel-hero {
+
+            background: radial-gradient(circle at center, rgba(235, 192, 102, 0.15) 0%, transparent 70%);
+
+        }
+
+
+
+        .angel-card-container {
+
+            perspective: 1200px;
+
+            width: 280px;
+
+            height: 480px;
+
+            margin: 0 auto;
+
+            cursor: pointer;
+
+        }
+
+
+
+        .angel-card-inner {
+
+            position: relative;
+
+            width: 100%;
+
+            height: 100%;
+
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+            transform-style: preserve-3d;
+
+        }
+
+
+
+        .angel-card-container.is-flipped .angel-card-inner {
+
+            transform: rotateY(180deg);
+
+        }
+
+
+
+        .angel-card-front,
+
+        .angel-card-back {
+
+            position: absolute;
+
+            width: 100%;
+
+            height: 100%;
+
+            -webkit-backface-visibility: hidden;
+
+            backface-visibility: hidden;
+
+            border-radius: var(--radius-lg);
+
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: var(--space-lg);
+
+            border: 2px solid var(--color-mystic-gold);
+
+        }
+
+
+
+        .angel-card-front {
+
+            background-image: url('img/angel-card-back.webp');
+
+            background-size: cover;
+
+            background-position: center;
+
+            border: 2px solid rgba(235, 192, 102, 0.8);
+
+            box-shadow: 0 0 30px rgba(235, 192, 102, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.8);
+
+        }
+
+
+
+        .angel-card-front::after {
+
+            content: "";
+
+        }
+
+
+
+        .angel-card-front::before {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 8px;
+
+            border: 1px solid rgba(255, 255, 255, 0.3);
+
+            border-radius: calc(var(--radius-lg) - 5px);
+
+            pointer-events: none;
+
+        }
+
+
+
+        .angel-card-back {
+
+            background: linear-gradient(180deg, #1a0a2e 0%, #0a0a1a 100%);
+
+            transform: rotateY(180deg);
+
+            background-size: cover;
+
+            background-position: center;
+
+            overflow: hidden;
+
+            border: 2px solid rgba(235, 192, 102, 0.8);
+
+            box-shadow: 0 0 40px rgba(235, 192, 102, 0.4), inset 0 0 40px rgba(255, 255, 255, 0.05);
+
+        }
+
+
+
+        .angel-card-overlay {
+
+            position: absolute;
+
+            inset: 0;
+
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.1) 100%);
+
+            z-index: 1;
+
+        }
+
+
+
+        .angel-card-content {
+
+            position: relative;
+
+            z-index: 2;
+
+            text-align: center;
+
+            margin-top: auto;
+
+            width: 100%;
+
+        }
+
+
+
+        .angel-name {
+
+            font-family: var(--font-heading);
+
+            font-size: 1.8rem;
+
+            color: var(--color-mystic-gold);
+
+            margin-bottom: 0.5rem;
+
+            text-shadow: 0 4px 10px rgba(235, 192, 102, 0.5);
+
+            letter-spacing: 1px;
+
+        }
+
+
+
+        .angel-theme {
+
+            font-size: 0.85rem;
+
+            text-transform: uppercase;
+
+            letter-spacing: 3px;
+
+            color: #fff;
+
+            opacity: 0.8;
+
+            margin-bottom: 1rem;
+
+            border-bottom: 1px solid rgba(235, 192, 102, 0.3);
+
+            padding-bottom: 10px;
+
+            display: inline-block;
+
+        }
+
+
+
+        .glow-effect {
+
+            animation: softPulse 3s infinite alternate;
+
+        }
+
+
+
+        @keyframes softPulse {
+
+            from {
+
+                box-shadow: 0 0 20px rgba(235, 192, 102, 0.2);
+
+            }
+
+
+
+            to {
+
+                box-shadow: 0 0 40px rgba(235, 192, 102, 0.6);
+
+            }
+
+        }
+
+
+
+        /* Ambient floating feathers/light */
+
+        .ambient-light {
+
+            position: absolute;
+
+            border-radius: 50%;
+
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent 70%);
+
+            pointer-events: none;
+
+            opacity: 0;
+
+        }
+
+
+
+        .message-box {
+
+            background: rgba(20, 15, 30, 0.7);
+
+            border: 1px solid rgba(235, 192, 102, 0.4);
+
+            border-radius: 20px;
+
+            padding: var(--space-2xl);
+
+            position: relative;
+
+            overflow: hidden;
+
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 40px rgba(235, 192, 102, 0.05);
+
+            backdrop-filter: blur(20px);
+
+            -webkit-backdrop-filter: blur(20px);
+
+        }
+
+
+
+        .message-box::before {
+
+            content: "“";
+
+            position: absolute;
+
+            top: -10px;
+
+            left: 20px;
+
+            font-size: 10rem;
+
+            font-family: var(--font-heading);
+
+            color: rgba(235, 192, 102, 0.15);
+
+            line-height: 1;
+
+            z-index: 0;
+
+        }
+
+
+
+        .message-box::after {
+
+            content: "”";
+
+            position: absolute;
+
+            bottom: -50px;
+
+            right: 20px;
+
+            font-size: 10rem;
+
+            font-family: var(--font-heading);
+
+            color: rgba(235, 192, 102, 0.15);
+
+            line-height: 1;
+
+            z-index: 0;
+
+        }
+
+
+
+        #angel-results {
+
+            opacity: 0;
+
+            transform: translateY(30px);
+
+            transition: opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+        }
+
+
+
+        #angel-results.animate-in {
+
+            opacity: 1;
+
+            transform: translateY(0);
+
+        }
+
+
+
+        .wow-title {
+
+            font-size: 2.5rem;
+
+            font-family: var(--font-heading);
+
+            color: var(--color-mystic-gold);
+
+            text-shadow: 0 3px 15px rgba(235, 192, 102, 0.4);
+
+            margin-bottom: 1rem;
+
+            letter-spacing: 2px;
+
+        }
+
+
+
+        .wow-message {
+
+            font-size: 1.35rem;
+
+            line-height: 1.8;
+
+            color: rgba(255, 255, 255, 0.95);
+
+            font-weight: 300;
+
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+
+        }
+
+
+
+        .divider-gold {
+
+            width: 150px;
+
+            height: 2px;
+
+            background: linear-gradient(90deg, transparent, var(--color-mystic-gold), transparent);
+
+            margin: 1.5rem auto;
+
+            opacity: 0.7;
+
+        }
+
+
+
+        .btn-magical {
+
+            background: linear-gradient(135deg, #d4af37, #aa7c11);
+
+            color: #1a0a2e;
+
+            font-weight: 700;
+
+            font-size: 1.1rem;
+
+            letter-spacing: 1px;
+
+            padding: 1.2rem 2.5rem;
+
+            border-radius: 50px;
+
+            border: none;
+
+            box-shadow: 0 0 30px rgba(235, 192, 102, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.4);
+
+            transition: all 0.3s ease;
+
+            text-transform: uppercase;
+
+            display: inline-block;
+
+            cursor: pointer;
+
+        }
+
+
+
+        .btn-magical:hover {
+
+            transform: translateY(-2px) scale(1.02);
+
+            box-shadow: 0 0 40px rgba(235, 192, 102, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.6);
+
+            color: #000;
+
+        }
+
+
+
+        .angel-hero {
+
+            padding-top: calc(var(--header-height, 100px) + 3rem);
+
+        }
+
+    </style>
+
+</head>
+
+
+
+<body>
+
+    <!-- Skip to main content -->
+
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+
+
+    <div class="stars" aria-hidden="true"></div>
+
+
+
+    <!-- HEADER (loaded dynamically) -->
+
+    <div id="header-placeholder"></div>
+
+
+
+    <main id="main-content">
+
+        <!-- HERO -->
+
+        <section class="section angel-hero" style="min-height: auto; padding-bottom: 0;">
+
+            <div class="container text-center">
+
+                <h1 class="hero__title">
+
+                    Andělská <span class="text-gradient">Karta Dne</span>
+
+                </h1>
+
+                <p class="hero__subtitle">
+
+                    Zastavte se, zhluboka se nadechněte a dovolte nebeským průvodcům, aby vám předali zprávu plnou
+
+                    naděje a lásky.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- APP WORKSPACE -->
+
+        <section class="section">
+
+            <div class="container">
+
+
+
+                <!-- PRE-DRAW STATE -->
+
+                <div id="angel-intro" class="text-center" data-animate>
+
+                    <p class="mb-xl text-lg w-mx-md mx-auto" style="color: var(--color-silver-mist);">
+
+                        Soustřeďte se na svůj aktuální pocit nebo otázku. Až budete připraveni, klikněte na balíček a
+
+                        vytáhněte si svou kartu pro tento den.
+
+                    </p>
+
+
+
+                    <div class="angel-card-container glow-effect" id="draw-btn" role="button" tabindex="0"
+
+                        aria-label="Vytáhnout andělskou kartu">
+
+                        <div class="angel-card-inner">
+
+                            <div class="angel-card-front">
+
+                                <!-- Card Back Design is handled by CSS -->
+
+                            </div>
+
+                            <div class="angel-card-back">
+
+                                <!-- Will be filled by JS -->
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <p class="mt-md text-sm" style="color: var(--color-silver-mist);"><small>Klikněte pro vytažení
+
+                            karty</small></p>
+
+                </div>
+
+
+
+                <!-- POST-DRAW STATE -->
+
+                <div id="angel-results" style="display: none; margin-top: 3rem; position:relative; z-index: 10;">
+
+
+
+                    <div
+
+                        style="width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 3rem;">
+
+
+
+                        <!-- Centered Static Message -->
+
+                        <div class="message-box text-center" data-animate style="max-width: 600px; margin: 0 auto;">
+
+                            <h3 class="wow-title" style="position: relative; z-index: 1;">Poselství vaší karty</h3>
+
+                            <div class="divider-gold" style="position: relative; z-index: 1;"></div>
+
+
+
+                            <p id="angel-short-message" class="wow-message mb-xl"
+
+                                style="position: relative; z-index: 1;">
+
+                                <!-- Static message goes here -->
+
+                            </p>
+
+
+
+                            <div class="mt-xl text-center" style="position: relative; z-index: 1;">
+
+                                <button id="btn-share-card" class="btn btn--glass"
+
+                                    style="border-radius: 50px; padding: 0.8rem 2rem;">
+
+                                    ?? Sdílet kartu
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- CROSS-LINKING SEKCE -->
+
+        <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
+
+            <div class="container" style="max-width: 860px;">
+
+                <h3
+
+                    style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">
+
+                    Pokračujte ve své duchovní cestě</h3>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+
+
+
+                    <a href="kristalova-koule.html" class="card"
+
+                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
+
+                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
+
+                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Křišťálová koule</div>
+
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zeptejte se
+
+                            na cokoli</div>
+
+                    </a>
+
+                    <a href="tarot.html" class="card"
+
+                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
+
+                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
+
+                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Tarotový výklad</div>
+
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Hloubkový
+
+                            vhled</div>
+
+                    </a>
+
+                    <a href="horoskopy.html" class="card"
+
+                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
+
+                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
+
+                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
+
+                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
+
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení
+
+                            dnes</div>
+
+                    </a>
+
+                    <a href="mentor.html" class="card"
+
+                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
+
+                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
+
+                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Hvězdný Průvodce</div>
+
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovní
+
+                            mentor</div>
+
+                    </a>
+
+                    <a href="natalni-karta.html" class="card"
+
+                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
+
+                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
+
+                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
+
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný
+
+                            otisk</div>
+
+                    </a>
+
+                    <a href="partnerska-shoda.html" class="card"
+
+                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
+
+                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
+
+                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
+
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie
+
+                            vztahů</div>
+
+                    </a>
+
+                    <a href="numerologie.html" class="card"
+
+                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
+
+                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
+
+                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
+
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel
+
+                        </div>
+
+                    </a>
+
+                    <a href="astro-mapa.html" class="card"
+
+                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
+
+                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
+
+                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
+
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve
+
+                            světě</div>
+
+                    </a>
+
+                    <a href="snar.html" class="card"
+
+                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
+
+                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
+
+                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snů</div>
+
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Analýza
+
+                            vašeho snu</div>
+
+                    </a>
+
+                    <a href="biorytmy.html" class="card"
+
+                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
+
+                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
+
+                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
+
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky
+
+                            energie</div>
+
+                    </a>
+
+                    <a href="runy.html" class="card"
+
+                        style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;"
+
+                        onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'"
+
+                        onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                        <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
+
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská
+
+                            moudrost</div>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- SEO TEXTOVÁ SEKCE -->
+
+    <section class="section" style="padding-top: 0; padding-bottom: 2rem;">
+
+        <div class="container" style="max-width: 860px;">
+
+
+
+            <!-- Popis andělských karet -->
+
+            <div
+
+                style="background: rgba(20,15,30,0.5); border: 1px solid rgba(235,192,102,0.15); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem;">
+
+                <h2
+
+                    style="font-family: var(--font-heading); color: var(--color-mystic-gold); font-size: 1.6rem; margin-bottom: 1rem;">
+
+                    Jak fungují andělské karty?</h2>
+
+                <p style="color: rgba(255,255,255,0.8); line-height: 1.8; margin-bottom: 1rem;">
+
+                    Andělské karty jsou jemným duchovním nástrojem, který nám pomáhá napojit se na vyšší vedení, naději
+
+                    a intuici.
+
+                    Na rozdíl od tarotu, který může přinášet náročný konfrontační pohled, andělské karty vždy nabízejí
+
+                    bezpodmínečnou lásku, naději a laskavé vedení.
+
+                </p>
+
+                <p style="color: rgba(255,255,255,0.8); line-height: 1.8; margin-bottom: 1rem;">
+
+                    Každý archanděl a anděl v naší sadě 41 karet reprezentuje jinou energii a oblast vaší životní cesty
+
+                    — od odvahy a lásky, přes uzdravení a hojnost, až po duchovní pochopení a životní poslání.
+
+                    Práce s andělskými kartami nás učí zastavit se, zhluboka nadechnout a naslouchat tichému, vlídnému
+
+                    hlasu, který v nás neustále promlouvá.
+
+                </p>
+
+                <p style="color: rgba(255,255,255,0.8); line-height: 1.8;">
+
+                    Na Mystické Hvězdě dostáváte každý den novou andělskou kartu. Karta zůstává pro daný den stálá — je
+
+                    to pozvání hluboce ji promeditovat, nosit si její poselství s sebou a vrátit se k ní v průběhu dne.
+
+                    Prémioví členové mohou navíc získat hluboký AI výklad se čtyřmi oblastmi: láska a vztahy, poslání,
+
+                    duchovní mantra a doporučený krystal pro daný den.
+
+                </p>
+
+            </div>
+
+
+
+            <!-- FAQ -->
+
+            <div
+
+                style="background: rgba(20,15,30,0.5); border: 1px solid rgba(235,192,102,0.15); border-radius: 20px; padding: 2.5rem;">
+
+                <h2
+
+                    style="font-family: var(--font-heading); color: var(--color-mystic-gold); font-size: 1.6rem; margin-bottom: 1.5rem;">
+
+                    Časté otázky o andělských kartách</h2>
+
+
+
+                <details
+
+                    style="border-bottom: 1px solid rgba(235,192,102,0.15); padding-bottom: 1rem; margin-bottom: 1rem;">
+
+                    <summary
+
+                        style="cursor: pointer; color: #fff; font-size: 1.05rem; font-weight: 500; padding: 0.5rem 0;">
+
+                        Co je andělská karta dne?</summary>
+
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 0.75rem;">Andělská karta dne
+
+                        je duchovní nástroj, který vám každý den nabídne poselství od vašich nebeských průvodců. Každá
+
+                        karta nese unikátní energii archanděla nebo anděla, která vás provede vaší denní cestou.</p>
+
+                </details>
+
+
+
+                <details
+
+                    style="border-bottom: 1px solid rgba(235,192,102,0.15); padding-bottom: 1rem; margin-bottom: 1rem;">
+
+                    <summary
+
+                        style="cursor: pointer; color: #fff; font-size: 1.05rem; font-weight: 500; padding: 0.5rem 0;">
+
+                        Mohu vytáhnout andělskou kartu zdarma?</summary>
+
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 0.75rem;">Ano! Základní
+
+                        vytáhnutí andělské karty a zobrazení poselství je zcela zdarma bez nutnosti registrace. Prémiové
+
+                        funkce (hluboký AI výklad) jsou dostupné pro členy Hvězdného Průvodce.</p>
+
+                </details>
+
+
+
+                <details
+
+                    style="border-bottom: 1px solid rgba(235,192,102,0.15); padding-bottom: 1rem; margin-bottom: 1rem;">
+
+                    <summary
+
+                        style="cursor: pointer; color: #fff; font-size: 1.05rem; font-weight: 500; padding: 0.5rem 0;">
+
+                        Jak často mohu vytáhnout andělskou kartu?</summary>
+
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 0.75rem;">Každý den můžete
+
+                        vytáhnout jednu novou kartu. Systém si pamatuje vaši denní kartu — karta zůstává stejná po celý
+
+                        den, abyste mohli její poselství skutečně integrovat do svého života.</p>
+
+                </details>
+
+
+
+                <details
+
+                    style="border-bottom: 1px solid rgba(235,192,102,0.15); padding-bottom: 1rem; margin-bottom: 1rem;">
+
+                    <summary
+
+                        style="cursor: pointer; color: #fff; font-size: 1.05rem; font-weight: 500; padding: 0.5rem 0;">
+
+                        Co znamená karta Archanděla Michaela?</summary>
+
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 0.75rem;">Archanděl Michael
+
+                        symbolizuje odvahu, ochranu a sílu. Pokud si vytáhnete jeho kartu, je to zpráva, že jste v
+
+                        bezpečí pod ochranou nebeské síly. Je čas jít odvážně za svým cílem a osvobodit se od strachů.
+
+                    </p>
+
+                </details>
+
+
+
+                <details style="padding-bottom: 1rem;">
+
+                    <summary
+
+                        style="cursor: pointer; color: #fff; font-size: 1.05rem; font-weight: 500; padding: 0.5rem 0;">
+
+                        Jaký je rozdíl mezi andělskými kartami a tarotem?</summary>
+
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 0.75rem;">Tarot je hlubší,
+
+                        psychologičtější nástroj, který může ukázat i odpojení nebo výzvy. Andělské karty vždy přinášejí
+
+                        povzbuzující, laskavé poselství a bezpodmínečnou podporu. Jsou ideální pro ty, kteří hledají
+
+                        klidné potvrzení a laskavé vedení na své denní cestě.</p>
+
+                </details>
+
+            </div>
+
+
+
+        </div>
+
+    </section>
+
+
+
+
+
+
+
+    <!-- FOOTER (loaded dynamically) -->
+
+    <div id="footer-placeholder"></div>
+
+
+
+    <script type="module" src="js/angel-cards.js?v=1"></script>
+
+
+
+    <!-- Service Worker Registration -->
+
+    <script>
+
+        if ('serviceWorker' in navigator) {
+
+            window.addEventListener('load', () => {
+
+                navigator.serviceWorker.register('/service-worker.js')
+
+                    .then(reg => console.log('? Service Worker registered'))
+
+                    .catch(err => console.log('SW registration failed:', err));
+
+            });
+
+        }
+
+    </script>
+
+
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/templates.js?v=10" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+    <script src="js/share-result.js" defer></script>
+
+    <script src="js/nameday.js" defer></script>
+
+    <script src="js/exit-intent.js" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+
+
+    <script src="js/newsletter-popup.js" defer></script>
+
+</body>
+
+
+
+</html>
+

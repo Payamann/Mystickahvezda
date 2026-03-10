@@ -1,537 +1,1074 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Přehled cen a předplatných pro Premium funkce Mystické Hvězdy.">
-    <meta name="keywords" content="ceník, předplatné, premium, služby">
-    <meta name="theme-color" content="#0a0a1a">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Ceník Služeb | Mystická Hvězda">
-    <meta property="og:description" content="Přehled cen a předplatných pro Premium funkce Mystické Hvězdy.">
-    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
-    <meta property="og:locale" content="cs_CZ">
-    <meta name="twitter:card" content="summary_large_image">
-
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Ceník Služeb",
-        "applicationCategory": "LifestyleApplication",
-        "operatingSystem": "Web"
-    }
-    </script>
-
-    <title>Ceník Služeb | Mystická Hvězda</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
-
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="img/icon-192.webp">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-    <script src="https://js.stripe.com/v3/" async></script>
-    <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/cenik.html">
-    <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/cenik.html">
-    <link rel="alternate" hreflang="x-default" href="https://mystickahvezda.cz/cenik.html">
-    <link rel="canonical" href="https://mystickahvezda.cz/cenik.html">
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-            {
-                "@type": "Question",
-                "name": "Jak funguje 7 dní zdarma?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Po registraci získáte plný přístup ke všem funkcím Premium plánu na 7 dní zcela zdarma. Není potřeba zadávat platební kartu. Po uplynutí trialu se rozhodnete, zda chcete pokračovat."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Mohu kdykoliv zrušit předplatné?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Ano, předplatné můžete zrušit kdykoliv bez závazků přímo v nastavení svého profilu. Žádné skryté poplatky ani podmínky."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Jaký je rozdíl mezi plány?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Plán Poutník je zdarma a zahrnuje základní denní horoskop, 1 tarotový výklad denně a omezené funkce. Hvězdný Průvodce (199 Kč/měsíc) přidává neomezené výklady, týdenní a měsíční horoskopy, interpretaci natální karty a numerologii."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Jsou moje data v bezpečí?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Absolutně. Vaše osobní data a datum narození jsou šifrována a nikdy nejsou sdílena s třetími stranami. Dodržujeme GDPR a českou legislativu ochrany soukromí."
-                }
-            }
-        ]
-    }
-    </script>
-
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H22CGHF34K"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-H22CGHF34K', {
-        'page_path': window.location.pathname,
-        'anonymize_ip': true
-      });
-    </script>
-</head>
-
-<body>
-    <!-- Skip to main content -->
-    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
-
-    <div class="stars" aria-hidden="true"></div>
-
-    <!-- HEADER (loaded dynamically) -->
-    <div id="header-placeholder"></div>
-
-    <main id="main-content">
-        <!-- HERO -->
-        <section class="section section--hero" style="min-height: auto; padding-bottom: var(--space-lg);">
-            <div class="container text-center">
-                <h1 class="hero__title">
-                    Jednoduchý a transparentní <span class="text-gradient">ceník</span>
-                </h1>
-                <p class="hero__subtitle">
-                    Vyberte si úroveň podpory, kterou potřebujete pro svou duchovní cestu.
-                    Můžete kdykoliv změnit nebo zrušit.
-                </p>
-            </div>
-        </section>
-
-        <!-- SOCIAL PROOF -->
-        <section style="padding:0.5rem 0 3rem; text-align:center;">
-            <div class="container">
-                <p style="color:rgba(255,255,255,0.45);font-size:0.9rem;letter-spacing:1px;">
-                    ????? &nbsp;Přes <strong style="color:rgba(255,255,255,0.7);">12 000 uživatelů</strong> hledá
-                    odpovědi v hvězdách každý den
-                </p>
-            </div>
-        </section>
-
-        <!-- PRICING TABLES -->
-        <section class="section" style="padding-top: 0;">
-            <div class="container">
-                <div class="grid grid-4" data-animate style="gap: var(--space-lg);">
-                    <!-- FREE -->
-                    <div class="card card--pricing">
-                        <h4 class="card__title">Poutník</h4>
-                        <p class="card__text">Pro občasné nahlédnutí</p>
-                        <div class="card__price">0 Kč<span>/měsíc</span></div>
-                        <ul class="card__features">
-                            <li>Denní horoskop</li>
-                            <li>Tarot (1 karta denně)</li>
-                            <li>Křišťálová koule (3/den)</li>
-                            <li>Osobní Průvodce (3/den)</li>
-                            <li>Partnerská shoda (skóre)</li>
-                            <li>Natální karta (grafika)</li>
-                        </ul>
-                        <a href="#" class="btn btn--secondary" data-plan="poutnik" style="width: 100%;">Vytvořit
-                            účet</a>
-                    </div>
-
-                    <!-- PREMIUM -->
-                    <div class="card card--pricing featured">
-                        <div
-                            style="position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); background: var(--color-mystic-gold); color: #000; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
-                            Nejoblíbenější</div>
-                        <h4 class="card__title">Hvězdný Průvodce</h4>
-                        <p class="card__text">Pro pravidelné vedení</p>
-                        <div class="card__price">
-                            <span
-                                style="font-size:0.85rem;color:var(--color-mystic-gold);display:block;margin-bottom:0.2rem;">??
-                                7 dní zdarma</span>
-                            199 Kč<span>/měsíc</span>
-                        </div>
-                        <ul class="card__features">
-                            <li>Vše z Poutníka +</li>
-                            <li><strong>Neomezené tarotové výklady</strong></li>
-                            <li><strong>Týdenní + měsíční horoskopy</strong></li>
-                            <li><strong>Natální karta (interpretace)</strong></li>
-                            <li><strong>Numerologie + Astrokartografie</strong></li>
-                            <li><strong>Neomezený chat + koule</strong></li>
-                        </ul>
-                        <a href="#" class="btn btn--primary" data-plan="pruvodce" style="width: 100%;">Začít 7 dní
-                            zdarma ›</a>
-                        <p style="text-align:center;font-size:0.78rem;color:rgba(255,255,255,0.4);margin-top:0.5rem;">
-                            Bez platební karty • Zrušení kdykoliv</p>
-                    </div>
-
-                    <!-- EXCLUSIVE -->
-                    <div class="card card--pricing">
-                        <h4 class="card__title">Osvícení</h4>
-                        <p class="card__text">Pro hlubokou transformaci</p>
-                        <div class="card__price">499 Kč<span>/měsíc</span></div>
-                        <ul class="card__features">
-                            <li>Vše z Průvodce +</li>
-                            <li><strong>Prioritní odpovědi</strong></li>
-                            <li><strong>Exkluzivní obsah</strong></li>
-                            <li><strong>Budoucí prémiové funkce</strong></li>
-                            <li><strong>Early access k novinkám</strong></li>
-                            <li>Email podpora do 24h</li>
-                        </ul>
-                        <a href="#" class="btn btn--secondary" data-plan="osviceni" style="width: 100%;">Zakoupit
-                            předplatné</a>
-                    </div>
-
-                    <!-- VIP VĚŠTECKÝ MAJESTÁT -->
-                    <div class="card card--pricing"
-                        style="border: 2px solid var(--color-mystic-gold); background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(30, 20, 50, 0.95));">
-                        <div
-                            style="position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, var(--color-mystic-gold), #c9a227); color: #000; padding: 6px 16px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
-                            ? Exkluzivní VIP</div>
-                        <h4 class="card__title" style="color: var(--color-mystic-gold); margin-top: 1rem;">VIP Věštecký Majestát</h4>
-                        <p class="card__text">Pro hluboký duchovní vývoj</p>
-                        <div class="card__price" style="color: var(--color-mystic-gold);">999 Kč<span>/měsíc</span></div>
-                        <ul class="card__features">
-                            <li>Vše z Osvícení +</li>
-                            <li><strong>Priority 24/7 podpora</strong> (do 2h)</li>
-                            <li><strong>Personalizovaný Daily Horoscope</strong></li>
-                            <li><strong>Neomezené konzultace</strong> s AI Mentorem</li>
-                            <li><strong>Exkluzivní měsíční Tarot</strong> (3 speciální výklady)</li>
-                            <li><strong>Astrokartografické mapy</strong> (4x/rok)</li>
-                            <li><strong>VIP komunita</strong> s diskusí a tipy</li>
-                        </ul>
-                        <a href="#" class="btn btn--primary" data-plan="vip-majestrat" style="width: 100%; background: linear-gradient(135deg, var(--color-mystic-gold), #c9a227); color: #000; border: 2px solid var(--color-mystic-gold);">Aktivovat VIP přístup ›</a>
-                        <p style="text-align:center;font-size:0.78rem;color:rgba(212,175,55,0.6);margin-top:0.5rem;">
-                            7 dní zdarma • Zrušení kdykoliv</p>
-                    </div>
-
-                    <!-- VIP PRIVÁTNÍ -->
-                    <div class="card card--pricing"
-                        style="border: 2px solid rgba(212, 175, 55, 0.4); background: rgba(30, 20, 50, 0.8);">
-                        <h4 class="card__title" style="color: rgba(212, 175, 55, 0.8);">VIP Privátní</h4>
-                        <p class="card__text">Individuální konzultace</p>
-                        <div class="card__price" style="font-size: 1.6rem; color: rgba(212, 175, 55, 0.7);">Na míru</div>
-                        <ul class="card__features">
-                            <li>Osobní konzultace 1-on-1</li>
-                            <li>Hluboká astrologická analýza</li>
-                            <li>Odpovědi na konkrétní otázky</li>
-                            <li>Dedikovaný čas specialisty</li>
-                            <li>Naprosto diskrétní a soukromé</li>
-                        </ul>
-                        <a href="mailto:kontakt@mystickahvezda.cz?subject=VIP%20Privátní%20konzultace"
-                            class="btn btn--secondary"
-                            style="width: 100%;">Nezávazně se zeptejte ›</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- COMPARISON TABLE -->
-        <section class="section section--alt">
-            <div class="container">
-                <div class="section__header" data-animate>
-                    <span class="section__badge">Srovnání funkcí</span>
-                    <h2 class="section__title">Detailní přehled</h2>
-                </div>
-
-                <div class="table-container" style="overflow-x: auto;" data-animate>
-                    <table style="width: 100%; border-collapse: collapse; min-width: 800px;">
-                        <thead>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                <th
-                                    style="padding: var(--space-lg); text-align: left; color: var(--color-silver-mist);">
-                                    Funkce</th>
-                                <th
-                                    style="padding: var(--space-lg); text-align: center; color: var(--color-starlight);">
-                                    Poutník</th>
-                                <th
-                                    style="padding: var(--space-lg); text-align: center; color: var(--color-mystic-gold);">
-                                    Průvodce</th>
-                                <th
-                                    style="padding: var(--space-lg); text-align: center; color: var(--color-starlight);">
-                                    Osvícení</th>
-                                <th
-                                    style="padding: var(--space-lg); text-align: center; color: var(--color-mystic-gold); background: linear-gradient(to bottom, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.1)); border-top: 2px solid var(--color-mystic-gold); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);">
-                                    ?? VIP Majestát</th>
-                                <th
-                                    style="padding: var(--space-lg); text-align: center; color: rgba(212, 175, 55, 0.7); background: rgba(212, 175, 55, 0.05);">
-                                    VIP Privátní</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <td style="padding: var(--space-lg);">Horoskopy</td>
-                                <td style="padding: var(--space-lg); text-align: center;">Denní</td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Denní + Týdenní +
-                                        Měsíční</strong></td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Denní + Týdenní +
-                                        Měsíční</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Personalizovaný Daily</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
-                                    Osobní předpovědi</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <td style="padding: var(--space-lg);">Tarotové výklady</td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; color: var(--color-silver-mist);">
-                                    1 karta / Ukázka</td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezené</strong>
-                                    (Vztahy, Kariéra)</td>
-                                <td style="padding: var(--space-lg); text-align: center;">Neomezené</td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Neomezené +</strong> <br><strong>3 Speciální/měsíc</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
-                                    Neomezené</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <td style="padding: var(--space-lg);">Osobní Průvodce (Chat)</td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; color: var(--color-silver-mist);">
-                                    3 zprávy/den</td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezeně</strong>
-                                </td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezeně</strong>
-                                </td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Neomezeně</strong> <br><strong>+ Priority odpovědi</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
-                                    Osobní sesion</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <td style="padding: var(--space-lg);">Partnerská Shoda</td>
-                                <td style="padding: var(--space-lg); text-align: center;">Pouze % skóre</td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Detailní AI
-                                        analýza</strong></td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Detailní AI
-                                        analýza</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Detailní +</strong> <br><strong>Prognóza</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
-                                    Osobní konzultace</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <td style="padding: var(--space-lg);">Numerologie</td>
-                                <td style="padding: var(--space-lg); text-align: center;">—</td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Plný AI
-                                        rozbor</strong></td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Plný AI
-                                        rozbor</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Plný +</strong> <br><strong>Roční??</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
-                                    Osobní konzultace
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <td style="padding: var(--space-lg);">Natální Karta</td>
-                                <td style="padding: var(--space-lg); text-align: center;">Jen grafika</td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Grafika + AI
-                                        interpretace</strong></td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Grafika + AI
-                                        interpretace</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Grafika + Detailní</strong> <br><strong>Analýza</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
-                                    Osobní konzultace
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <td style="padding: var(--space-lg);">Astrokartografie</td>
-                                <td style="padding: var(--space-lg); text-align: center;">—</td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Plný přístup</strong>
-                                </td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Plný přístup</strong>
-                                </td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Plný +</strong> <br><strong>4 mapy/rok</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
-                                    Osobní konzultace
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <td style="padding: var(--space-lg);">Křišťálová koule</td>
-                                <td style="padding: var(--space-lg); text-align: center;">3 otázky/den</td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezeně</strong>
-                                </td>
-                                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezeně</strong>
-                                </td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); color: var(--color-mystic-gold); font-weight: 600; border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Neomezeně</strong> <br><strong>+ Priority</strong></td>
-                                <td
-                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05); color: var(--color-mystic-gold); font-weight: 600; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                                    Neomezeně</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-        <!-- TESTIMONIALS -->
-        <section class="section" style="padding-top: 0;">
-            <div class="container">
-                <div class="section__header" data-animate>
-                    <span class="section__badge">Recenze</span>
-                    <h2 class="section__title">Co říkají naši uživatelé</h2>
-                </div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2rem;" data-animate>
-                    <div style="padding:2rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;">
-                        <div style="color:var(--color-mystic-gold);margin-bottom:1rem;">?????</div>
-                        <p style="color:rgba(255,255,255,0.8);font-style:italic;line-height:1.7;margin-bottom:1rem;">&bdquo;Tarotové výklady jsou překvapivě přesné. Každé pondělí kontroluji horoskop a je to první věc, co ráno čtu.&ldquo;</p>
-                        <div style="display:flex;align-items:center;gap:.75rem;">
-                            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#9b59b6,#3498db);display:flex;align-items:center;justify-content:center;font-weight:700;">A</div>
-                            <div><strong style="color:white;font-size:.9rem;">Andrea K.</strong><br><span style="color:rgba(255,255,255,0.4);font-size:.8rem;">Praha • Průvodce plán</span></div>
-                        </div>
-                    </div>
-                    <div style="padding:2rem;background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.25);border-radius:16px;">
-                        <div style="color:var(--color-mystic-gold);margin-bottom:1rem;">?????</div>
-                        <p style="color:rgba(255,255,255,0.8);font-style:italic;line-height:1.7;margin-bottom:1rem;">&bdquo;Natální karta mě dostala. Popsala věci o mé osobnosti, které jsem nikdy nikomu neříkala. Stojí to za každou korunu.&ldquo;</p>
-                        <div style="display:flex;align-items:center;gap:.75rem;">
-                            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#e74c3c,#9b59b6);display:flex;align-items:center;justify-content:center;font-weight:700;">L</div>
-                            <div><strong style="color:white;font-size:.9rem;">Lucie M.</strong><br><span style="color:rgba(255,255,255,0.4);font-size:.8rem;">Brno • Průvodce plán</span></div>
-                        </div>
-                    </div>
-                    <div style="padding:2rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;">
-                        <div style="color:var(--color-mystic-gold);margin-bottom:1rem;">?????</div>
-                        <p style="color:rgba(255,255,255,0.8);font-style:italic;line-height:1.7;margin-bottom:1rem;">&bdquo;Myslel jsem, že astrologie je blbost. Po měsíci jsem přesvědčený, že tohle má smysl. Partnerská shoda byla neuvěřitelně přesná.&ldquo;</p>
-                        <div style="display:flex;align-items:center;gap:.75rem;">
-                            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#27ae60,#3498db);display:flex;align-items:center;justify-content:center;font-weight:700;">J</div>
-                            <div><strong style="color:white;font-size:.9rem;">Jan P.</strong><br><span style="color:rgba(255,255,255,0.4);font-size:.8rem;">Ostrava • Osvícení plán</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- FAQ -->
-        <section class="section" id="faq">
-            <div class="container">
-                <div class="section__header" data-animate>
-                    <span class="section__badge">FAQ</span>
-                    <h2 class="section__title">Časté dotazy</h2>
-                </div>
-
-                <div style="max-width: 700px; margin: 0 auto;" data-animate>
-                    <div class="faq-item">
-                        <button class="faq-question">
-                            Bude mi stačit verze zdarma?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>Pro základní denní inspiraci je plán Poutník ideální. Pokud hledáte hlubší pochopení a
-                                neomezené výklady tarotu pro konkrétní životní situace, Hvězdný Průvodce za 199 Kč/měsíc
-                                je naší nejpopulárnější volbou.</p>
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <button class="faq-question">
-                            Jak přesné jsou vaše horoskopy?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>Naše horoskopy jsou sestavovány na základě přesných astronomických dat (efemerid) a
-                                planetárních pozic.
-                                Používáme pokročilé výpočetní metody, které zajišťují maximální přesnost a relevanci pro
-                                vaši aktuální životní situaci.</p>
-                        </div>
-                    </div>
-
-
-
-                    <div class="faq-item">
-                        <button class="faq-question">
-                            Mohu předplatné kdykoliv zrušit?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>Ano, předplatné můžete zrušit kdykoliv ve svém profilu. Po zrušení budete mít přístup
-                                k prémiovým funkcím do konce aktuálního zaplaceného období.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTA -->
-        <section class="section">
-            <div class="container">
-                <div class="cta-banner" data-animate>
-                    <div class="cta-banner__content">
-                        <h2 class="cta-banner__title">Začněte ještě dnes</h2>
-                        <p class="cta-banner__text">
-                            Tisíce lidí každý den hledají odpovědi v hvězdách. Registrace trvá 30 sekund a první výklady
-                            jsou zdarma – bez platební karty.
-                        </p>
-                        <a href="#" class="btn btn--primary">Vyzkoušet zdarma bez karty ›</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- FOOTER (loaded dynamically) -->
-    <div id="footer-placeholder"></div>
-
-
-
-
-
-    <script type="module">
-        import { initPaymentButtons } from './js/platby.js';
-        document.addEventListener('DOMContentLoaded', () => {
-            initPaymentButtons();
-        });
-    </script>
-
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(reg => console.log('? Service Worker registered'))
-                    .catch(err => console.log('SW registration failed:', err));
-            });
-        }
-    </script>
-
-    <script src="js/analytics.js?v=5" defer></script>
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/templates.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script src="js/retention.js?v=5" defer></script>
-    <script src="js/personalization.js?v=5" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="description" content="Přehled cen a předplatných pro Premium funkce Mystické Hvězdy.">
+
+    <meta name="keywords" content="ceník, předplatné, premium, služby">
+
+    <meta name="theme-color" content="#0a0a1a">
+
+
+
+    <!-- Open Graph -->
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:title" content="Ceník Služeb | Mystická Hvězda">
+
+    <meta property="og:description" content="Přehled cen a předplatných pro Premium funkce Mystické Hvězdy.">
+
+    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
+
+    <meta property="og:locale" content="cs_CZ">
+
+    <meta name="twitter:card" content="summary_large_image">
+
+
+
+    <!-- JSON-LD Structured Data -->
+
+    <script type="application/ld+json">
+
+    {
+
+        "@context": "https://schema.org",
+
+        "@type": "WebApplication",
+
+        "name": "Ceník Služeb",
+
+        "applicationCategory": "LifestyleApplication",
+
+        "operatingSystem": "Web"
+
+    }
+
+    </script>
+
+
+
+    <title>Ceník Služeb | Mystická Hvězda</title>
+
+
+
+    <!-- Favicon -->
+
+    <link rel="icon" type="image/svg+xml"
+
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
+
+
+
+    <!-- PWA -->
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+    <script src="https://js.stripe.com/v3/" async></script>
+
+    <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/cenik.html">
+
+    <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/cenik.html">
+
+    <link rel="alternate" hreflang="x-default" href="https://mystickahvezda.cz/cenik.html">
+
+    <link rel="canonical" href="https://mystickahvezda.cz/cenik.html">
+
+    <script type="application/ld+json">
+
+    {
+
+        "@context": "https://schema.org",
+
+        "@type": "FAQPage",
+
+        "mainEntity": [
+
+            {
+
+                "@type": "Question",
+
+                "name": "Jak funguje 7 dní zdarma?",
+
+                "acceptedAnswer": {
+
+                    "@type": "Answer",
+
+                    "text": "Po registraci získáte plný přístup ke všem funkcím Premium plánu na 7 dní zcela zdarma. Není potřeba zadávat platební kartu. Po uplynutí trialu se rozhodnete, zda chcete pokračovat."
+
+                }
+
+            },
+
+            {
+
+                "@type": "Question",
+
+                "name": "Mohu kdykoliv zrušit předplatné?",
+
+                "acceptedAnswer": {
+
+                    "@type": "Answer",
+
+                    "text": "Ano, předplatné můžete zrušit kdykoliv bez závazků přímo v nastavení svého profilu. Žádné skryté poplatky ani podmínky."
+
+                }
+
+            },
+
+            {
+
+                "@type": "Question",
+
+                "name": "Jaký je rozdíl mezi plány?",
+
+                "acceptedAnswer": {
+
+                    "@type": "Answer",
+
+                    "text": "Plán Poutník je zdarma a zahrnuje základní denní horoskop, 1 tarotový výklad denně a omezené funkce. Hvězdný Průvodce (199 Kč/měsíc) přidává neomezené výklady, týdenní a měsíční horoskopy, interpretaci natální karty a numerologii."
+
+                }
+
+            },
+
+            {
+
+                "@type": "Question",
+
+                "name": "Jsou moje data v bezpečí?",
+
+                "acceptedAnswer": {
+
+                    "@type": "Answer",
+
+                    "text": "Absolutně. Vaše osobní data a datum narození jsou šifrována a nikdy nejsou sdílena s třetími stranami. Dodržujeme GDPR a českou legislativu ochrany soukromí."
+
+                }
+
+            }
+
+        ]
+
+    }
+
+    </script>
+
+
+
+    <!-- Google Analytics 4 -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H22CGHF34K"></script>
+
+    <script>
+
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag(){dataLayer.push(arguments);}
+
+      gtag('js', new Date());
+
+      gtag('config', 'G-H22CGHF34K', {
+
+        'page_path': window.location.pathname,
+
+        'anonymize_ip': true
+
+      });
+
+    </script>
+
+</head>
+
+
+
+<body>
+
+    <!-- Skip to main content -->
+
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+
+
+    <div class="stars" aria-hidden="true"></div>
+
+
+
+    <!-- HEADER (loaded dynamically) -->
+
+    <div id="header-placeholder"></div>
+
+
+
+    <main id="main-content">
+
+        <!-- HERO -->
+
+        <section class="section section--hero" style="min-height: auto; padding-bottom: var(--space-lg);">
+
+            <div class="container text-center">
+
+                <h1 class="hero__title">
+
+                    Jednoduchý a transparentní <span class="text-gradient">ceník</span>
+
+                </h1>
+
+                <p class="hero__subtitle">
+
+                    Vyberte si úroveň podpory, kterou potřebujete pro svou duchovní cestu.
+
+                    Můžete kdykoliv změnit nebo zrušit.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SOCIAL PROOF -->
+
+        <section style="padding:0.5rem 0 3rem; text-align:center;">
+
+            <div class="container">
+
+                <p style="color:rgba(255,255,255,0.45);font-size:0.9rem;letter-spacing:1px;">
+
+                    ????? &nbsp;Přes <strong style="color:rgba(255,255,255,0.7);">12 000 uživatelů</strong> hledá
+
+                    odpovědi v hvězdách každý den
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- PRICING TABLES -->
+
+        <section class="section" style="padding-top: 0;">
+
+            <div class="container">
+
+                <div class="grid grid-4" data-animate style="gap: var(--space-lg);">
+
+                    <!-- FREE -->
+
+                    <div class="card card--pricing">
+
+                        <h4 class="card__title">Poutník</h4>
+
+                        <p class="card__text">Pro občasné nahlédnutí</p>
+
+                        <div class="card__price">0 Kč<span>/měsíc</span></div>
+
+                        <ul class="card__features">
+
+                            <li>Denní horoskop</li>
+
+                            <li>Tarot (1 karta denně)</li>
+
+                            <li>Křišťálová koule (3/den)</li>
+
+                            <li>Osobní Průvodce (3/den)</li>
+
+                            <li>Partnerská shoda (skóre)</li>
+
+                            <li>Natální karta (grafika)</li>
+
+                        </ul>
+
+                        <a href="#" class="btn btn--secondary" data-plan="poutnik" style="width: 100%;">Vytvořit
+
+                            účet</a>
+
+                    </div>
+
+
+
+                    <!-- PREMIUM -->
+
+                    <div class="card card--pricing featured">
+
+                        <div
+
+                            style="position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); background: var(--color-mystic-gold); color: #000; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+
+                            Nejoblíbenější</div>
+
+                        <h4 class="card__title">Hvězdný Průvodce</h4>
+
+                        <p class="card__text">Pro pravidelné vedení</p>
+
+                        <div class="card__price">
+
+                            <span
+
+                                style="font-size:0.85rem;color:var(--color-mystic-gold);display:block;margin-bottom:0.2rem;">??
+
+                                7 dní zdarma</span>
+
+                            199 Kč<span>/měsíc</span>
+
+                        </div>
+
+                        <ul class="card__features">
+
+                            <li>Vše z Poutníka +</li>
+
+                            <li><strong>Neomezené tarotové výklady</strong></li>
+
+                            <li><strong>Týdenní + měsíční horoskopy</strong></li>
+
+                            <li><strong>Natální karta (interpretace)</strong></li>
+
+                            <li><strong>Numerologie + Astrokartografie</strong></li>
+
+                            <li><strong>Neomezený chat + koule</strong></li>
+
+                        </ul>
+
+                        <a href="#" class="btn btn--primary" data-plan="pruvodce" style="width: 100%;">Začít 7 dní
+
+                            zdarma ›</a>
+
+                        <p style="text-align:center;font-size:0.78rem;color:rgba(255,255,255,0.4);margin-top:0.5rem;">
+
+                            Bez platební karty • Zrušení kdykoliv</p>
+
+                    </div>
+
+
+
+                    <!-- EXCLUSIVE -->
+
+                    <div class="card card--pricing">
+
+                        <h4 class="card__title">Osvícení</h4>
+
+                        <p class="card__text">Pro hlubokou transformaci</p>
+
+                        <div class="card__price">499 Kč<span>/měsíc</span></div>
+
+                        <ul class="card__features">
+
+                            <li>Vše z Průvodce +</li>
+
+                            <li><strong>Prioritní odpovědi</strong></li>
+
+                            <li><strong>Exkluzivní obsah</strong></li>
+
+                            <li><strong>Budoucí prémiové funkce</strong></li>
+
+                            <li><strong>Early access k novinkám</strong></li>
+
+                            <li>Email podpora do 24h</li>
+
+                        </ul>
+
+                        <a href="#" class="btn btn--secondary" data-plan="osviceni" style="width: 100%;">Zakoupit
+
+                            předplatné</a>
+
+                    </div>
+
+
+
+                    <!-- VIP VĚŠTECKÝ MAJESTÁT -->
+
+                    <div class="card card--pricing"
+
+                        style="border: 2px solid var(--color-mystic-gold); background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(30, 20, 50, 0.95));">
+
+                        <div
+
+                            style="position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, var(--color-mystic-gold), #c9a227); color: #000; padding: 6px 16px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+
+                            ? Exkluzivní VIP</div>
+
+                        <h4 class="card__title" style="color: var(--color-mystic-gold); margin-top: 1rem;">VIP Věštecký Majestát</h4>
+
+                        <p class="card__text">Pro hluboký duchovní vývoj</p>
+
+                        <div class="card__price" style="color: var(--color-mystic-gold);">999 Kč<span>/měsíc</span></div>
+
+                        <ul class="card__features">
+
+                            <li>Vše z Osvícení +</li>
+
+                            <li><strong>Priority 24/7 podpora</strong> (do 2h)</li>
+
+                            <li><strong>Personalizovaný Daily Horoscope</strong></li>
+
+                            <li><strong>Neomezené konzultace</strong> s AI Mentorem</li>
+
+                            <li><strong>Exkluzivní měsíční Tarot</strong> (3 speciální výklady)</li>
+
+                            <li><strong>Astrokartografické mapy</strong> (4x/rok)</li>
+
+                            <li><strong>VIP komunita</strong> s diskusí a tipy</li>
+
+                        </ul>
+
+                        <a href="#" class="btn btn--primary" data-plan="vip-majestrat" style="width: 100%; background: linear-gradient(135deg, var(--color-mystic-gold), #c9a227); color: #000; border: 2px solid var(--color-mystic-gold);">Aktivovat VIP přístup ›</a>
+
+                        <p style="text-align:center;font-size:0.78rem;color:rgba(212,175,55,0.6);margin-top:0.5rem;">
+
+                            7 dní zdarma • Zrušení kdykoliv</p>
+
+                    </div>
+
+
+
+                    <!-- VIP PRIVÁTNÍ -->
+
+                    <div class="card card--pricing"
+
+                        style="border: 2px solid rgba(212, 175, 55, 0.4); background: rgba(30, 20, 50, 0.8);">
+
+                        <h4 class="card__title" style="color: rgba(212, 175, 55, 0.8);">VIP Privátní</h4>
+
+                        <p class="card__text">Individuální konzultace</p>
+
+                        <div class="card__price" style="font-size: 1.6rem; color: rgba(212, 175, 55, 0.7);">Na míru</div>
+
+                        <ul class="card__features">
+
+                            <li>Osobní konzultace 1-on-1</li>
+
+                            <li>Hluboká astrologická analýza</li>
+
+                            <li>Odpovědi na konkrétní otázky</li>
+
+                            <li>Dedikovaný čas specialisty</li>
+
+                            <li>Naprosto diskrétní a soukromé</li>
+
+                        </ul>
+
+                        <a href="mailto:kontakt@mystickahvezda.cz?subject=VIP%20Privátní%20konzultace"
+
+                            class="btn btn--secondary"
+
+                            style="width: 100%;">Nezávazně se zeptejte ›</a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- COMPARISON TABLE -->
+
+        <section class="section section--alt">
+
+            <div class="container">
+
+                <div class="section__header" data-animate>
+
+                    <span class="section__badge">Srovnání funkcí</span>
+
+                    <h2 class="section__title">Detailní přehled</h2>
+
+                </div>
+
+
+
+                <div class="table-container" style="overflow-x: auto;" data-animate>
+
+                    <table style="width: 100%; border-collapse: collapse; min-width: 800px;">
+
+                        <thead>
+
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+
+                                <th
+
+                                    style="padding: var(--space-lg); text-align: left; color: var(--color-silver-mist);">
+
+                                    Funkce</th>
+
+                                <th
+
+                                    style="padding: var(--space-lg); text-align: center; color: var(--color-starlight);">
+
+                                    Poutník</th>
+
+                                <th
+
+                                    style="padding: var(--space-lg); text-align: center; color: var(--color-mystic-gold);">
+
+                                    Průvodce</th>
+
+                                <th
+
+                                    style="padding: var(--space-lg); text-align: center; color: var(--color-starlight);">
+
+                                    Osvícení</th>
+
+                                <th
+
+                                    style="padding: var(--space-lg); text-align: center; color: var(--color-mystic-gold); background: linear-gradient(to bottom, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.1)); border-top: 2px solid var(--color-mystic-gold); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);">
+
+                                    ?? VIP Majestát</th>
+
+                                <th
+
+                                    style="padding: var(--space-lg); text-align: center; color: rgba(212, 175, 55, 0.7); background: rgba(212, 175, 55, 0.05);">
+
+                                    VIP Privátní</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+
+                                <td style="padding: var(--space-lg);">Horoskopy</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;">Denní</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Denní + Týdenní +
+
+                                        Měsíční</strong></td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Denní + Týdenní +
+
+                                        Měsíční</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Personalizovaný Daily</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
+
+                                    Osobní předpovědi</td>
+
+                            </tr>
+
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+
+                                <td style="padding: var(--space-lg);">Tarotové výklady</td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; color: var(--color-silver-mist);">
+
+                                    1 karta / Ukázka</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezené</strong>
+
+                                    (Vztahy, Kariéra)</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;">Neomezené</td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Neomezené +</strong> <br><strong>3 Speciální/měsíc</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
+
+                                    Neomezené</td>
+
+                            </tr>
+
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+
+                                <td style="padding: var(--space-lg);">Osobní Průvodce (Chat)</td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; color: var(--color-silver-mist);">
+
+                                    3 zprávy/den</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezeně</strong>
+
+                                </td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezeně</strong>
+
+                                </td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Neomezeně</strong> <br><strong>+ Priority odpovědi</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
+
+                                    Osobní sesion</td>
+
+                            </tr>
+
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+
+                                <td style="padding: var(--space-lg);">Partnerská Shoda</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;">Pouze % skóre</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Detailní AI
+
+                                        analýza</strong></td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Detailní AI
+
+                                        analýza</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Detailní +</strong> <br><strong>Prognóza</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
+
+                                    Osobní konzultace</td>
+
+                            </tr>
+
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+
+                                <td style="padding: var(--space-lg);">Numerologie</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;">—</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Plný AI
+
+                                        rozbor</strong></td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Plný AI
+
+                                        rozbor</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Plný +</strong> <br><strong>Roční??</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
+
+                                    Osobní konzultace
+
+                                </td>
+
+                            </tr>
+
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+
+                                <td style="padding: var(--space-lg);">Natální Karta</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;">Jen grafika</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Grafika + AI
+
+                                        interpretace</strong></td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Grafika + AI
+
+                                        interpretace</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Grafika + Detailní</strong> <br><strong>Analýza</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
+
+                                    Osobní konzultace
+
+                                </td>
+
+                            </tr>
+
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+
+                                <td style="padding: var(--space-lg);">Astrokartografie</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;">—</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Plný přístup</strong>
+
+                                </td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Plný přístup</strong>
+
+                                </td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Plný +</strong> <br><strong>4 mapy/rok</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05);">
+
+                                    Osobní konzultace
+
+                                </td>
+
+                            </tr>
+
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+
+                                <td style="padding: var(--space-lg);">Křišťálová koule</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;">3 otázky/den</td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezeně</strong>
+
+                                </td>
+
+                                <td style="padding: var(--space-lg); text-align: center;"><strong>Neomezeně</strong>
+
+                                </td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.1); color: var(--color-mystic-gold); font-weight: 600; border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3);"><strong>Neomezeně</strong> <br><strong>+ Priority</strong></td>
+
+                                <td
+
+                                    style="padding: var(--space-lg); text-align: center; background: rgba(212, 175, 55, 0.05); color: var(--color-mystic-gold); font-weight: 600; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+
+                                    Neomezeně</td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- TESTIMONIALS -->
+
+        <section class="section" style="padding-top: 0;">
+
+            <div class="container">
+
+                <div class="section__header" data-animate>
+
+                    <span class="section__badge">Recenze</span>
+
+                    <h2 class="section__title">Co říkají naši uživatelé</h2>
+
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2rem;" data-animate>
+
+                    <div style="padding:2rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;">
+
+                        <div style="color:var(--color-mystic-gold);margin-bottom:1rem;">?????</div>
+
+                        <p style="color:rgba(255,255,255,0.8);font-style:italic;line-height:1.7;margin-bottom:1rem;">&bdquo;Tarotové výklady jsou překvapivě přesné. Každé pondělí kontroluji horoskop a je to první věc, co ráno čtu.&ldquo;</p>
+
+                        <div style="display:flex;align-items:center;gap:.75rem;">
+
+                            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#9b59b6,#3498db);display:flex;align-items:center;justify-content:center;font-weight:700;">A</div>
+
+                            <div><strong style="color:white;font-size:.9rem;">Andrea K.</strong><br><span style="color:rgba(255,255,255,0.4);font-size:.8rem;">Praha • Průvodce plán</span></div>
+
+                        </div>
+
+                    </div>
+
+                    <div style="padding:2rem;background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.25);border-radius:16px;">
+
+                        <div style="color:var(--color-mystic-gold);margin-bottom:1rem;">?????</div>
+
+                        <p style="color:rgba(255,255,255,0.8);font-style:italic;line-height:1.7;margin-bottom:1rem;">&bdquo;Natální karta mě dostala. Popsala věci o mé osobnosti, které jsem nikdy nikomu neříkala. Stojí to za každou korunu.&ldquo;</p>
+
+                        <div style="display:flex;align-items:center;gap:.75rem;">
+
+                            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#e74c3c,#9b59b6);display:flex;align-items:center;justify-content:center;font-weight:700;">L</div>
+
+                            <div><strong style="color:white;font-size:.9rem;">Lucie M.</strong><br><span style="color:rgba(255,255,255,0.4);font-size:.8rem;">Brno • Průvodce plán</span></div>
+
+                        </div>
+
+                    </div>
+
+                    <div style="padding:2rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;">
+
+                        <div style="color:var(--color-mystic-gold);margin-bottom:1rem;">?????</div>
+
+                        <p style="color:rgba(255,255,255,0.8);font-style:italic;line-height:1.7;margin-bottom:1rem;">&bdquo;Myslel jsem, že astrologie je blbost. Po měsíci jsem přesvědčený, že tohle má smysl. Partnerská shoda byla neuvěřitelně přesná.&ldquo;</p>
+
+                        <div style="display:flex;align-items:center;gap:.75rem;">
+
+                            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#27ae60,#3498db);display:flex;align-items:center;justify-content:center;font-weight:700;">J</div>
+
+                            <div><strong style="color:white;font-size:.9rem;">Jan P.</strong><br><span style="color:rgba(255,255,255,0.4);font-size:.8rem;">Ostrava • Osvícení plán</span></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+
+
+        <!-- FAQ -->
+
+        <section class="section" id="faq">
+
+            <div class="container">
+
+                <div class="section__header" data-animate>
+
+                    <span class="section__badge">FAQ</span>
+
+                    <h2 class="section__title">Časté dotazy</h2>
+
+                </div>
+
+
+
+                <div style="max-width: 700px; margin: 0 auto;" data-animate>
+
+                    <div class="faq-item">
+
+                        <button class="faq-question">
+
+                            Bude mi stačit verze zdarma?
+
+                            <span class="faq-icon">+</span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p>Pro základní denní inspiraci je plán Poutník ideální. Pokud hledáte hlubší pochopení a
+
+                                neomezené výklady tarotu pro konkrétní životní situace, Hvězdný Průvodce za 199 Kč/měsíc
+
+                                je naší nejpopulárnější volbou.</p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="faq-item">
+
+                        <button class="faq-question">
+
+                            Jak přesné jsou vaše horoskopy?
+
+                            <span class="faq-icon">+</span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p>Naše horoskopy jsou sestavovány na základě přesných astronomických dat (efemerid) a
+
+                                planetárních pozic.
+
+                                Používáme pokročilé výpočetní metody, které zajišťují maximální přesnost a relevanci pro
+
+                                vaši aktuální životní situaci.</p>
+
+                        </div>
+
+                    </div>
+
+
+
+
+
+
+
+                    <div class="faq-item">
+
+                        <button class="faq-question">
+
+                            Mohu předplatné kdykoliv zrušit?
+
+                            <span class="faq-icon">+</span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p>Ano, předplatné můžete zrušit kdykoliv ve svém profilu. Po zrušení budete mít přístup
+
+                                k prémiovým funkcím do konce aktuálního zaplaceného období.</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- CTA -->
+
+        <section class="section">
+
+            <div class="container">
+
+                <div class="cta-banner" data-animate>
+
+                    <div class="cta-banner__content">
+
+                        <h2 class="cta-banner__title">Začněte ještě dnes</h2>
+
+                        <p class="cta-banner__text">
+
+                            Tisíce lidí každý den hledají odpovědi v hvězdách. Registrace trvá 30 sekund a první výklady
+
+                            jsou zdarma – bez platební karty.
+
+                        </p>
+
+                        <a href="#" class="btn btn--primary">Vyzkoušet zdarma bez karty ›</a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- FOOTER (loaded dynamically) -->
+
+    <div id="footer-placeholder"></div>
+
+
+
+
+
+
+
+
+
+
+
+    <script type="module">
+
+        import { initPaymentButtons } from './js/platby.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            initPaymentButtons();
+
+        });
+
+    </script>
+
+
+
+    <!-- Service Worker Registration -->
+
+    <script>
+
+        if ('serviceWorker' in navigator) {
+
+            window.addEventListener('load', () => {
+
+                navigator.serviceWorker.register('/service-worker.js')
+
+                    .then(reg => console.log('? Service Worker registered'))
+
+                    .catch(err => console.log('SW registration failed:', err));
+
+            });
+
+        }
+
+    </script>
+
+
+
+    <script src="js/analytics.js?v=5" defer></script>
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/templates.js?v=10" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script src="js/retention.js?v=5" defer></script>
+
+    <script src="js/personalization.js?v=5" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+
+
+</body>
+
+
+
+</html>
+

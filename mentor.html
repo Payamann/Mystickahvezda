@@ -1,410 +1,820 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Hvězdný Průvodce | Mystická Hvězda</title>
-    <meta name="description" content="Váš osobní duchovní mentor. Ptejte se na osud, vztahy a životní směr.">
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-    <style>
-        /* Specific Styles for Mentor Chat */
-        .chat-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            height: 70vh;
-            display: flex;
-            flex-direction: column;
-            background: rgba(10, 10, 26, 0.8);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(155, 89, 182, 0.1);
-        }
-
-        .chat-header {
-            padding: 1.5rem;
-            background: rgba(212, 175, 55, 0.05);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .mentor-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-mystic-gold), #9b59b6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-            position: relative;
-        }
-
-        .mentor-avatar::after {
-            content: '';
-            position: absolute;
-            bottom: 0px;
-            right: 0px;
-            width: 12px;
-            height: 12px;
-            background: #4CAF50;
-            border: 2px solid #0a0a1a;
-            border-radius: 50%;
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 1.5rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            scroll-behavior: smooth;
-        }
-
-        .message {
-            max-width: 80%;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            line-height: 1.6;
-            position: relative;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message--mentor {
-            align-self: flex-start;
-            background: rgba(255, 255, 255, 0.05);
-            border-bottom-left-radius: 2px;
-            color: var(--color-starlight);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .message--user {
-            align-self: flex-end;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(155, 89, 182, 0.2));
-            border-bottom-right-radius: 2px;
-            color: #fff;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-
-        .chat-input-area {
-            padding: 1.5rem;
-            background: rgba(10, 10, 26, 0.95);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            gap: 1rem;
-            align-items: flex-end;
-        }
-
-        .chat-input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1rem;
-            color: #fff;
-            font-family: inherit;
-            resize: none;
-            min-height: 50px;
-            max-height: 120px;
-            transition: all 0.3s ease;
-            cursor: text !important;
-            caret-color: white !important;
-            /* Force white caret for visibility */
-        }
-
-        .chat-input:focus {
-            outline: none;
-            border-color: var(--color-mystic-gold);
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .send-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--color-mystic-gold);
-            border: none;
-            color: #0a0a1a;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .send-btn:hover:not(:disabled) {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-        }
-
-        .send-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #444;
-        }
-
-        .typing-indicator {
-            display: flex;
-            gap: 4px;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            align-self: flex-start;
-            margin-bottom: 1rem;
-            display: none;
-        }
-
-        .typing-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--color-mystic-gold);
-            border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-
-        .typing-dot:nth-child(1) {
-            animation-delay: -0.32s;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: -0.16s;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            80%,
-            100% {
-                transform: scale(0);
-            }
-
-            40% {
-                transform: scale(1);
-            }
-        }
-
-        /* Paywall Overlay */
-        .limit-reached-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 26, 0.8);
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            z-index: 10;
-            display: none;
-            /* Hidden by default */
-        }
-    </style>
-</head>
-
-<body class="page-mentor">
-    <div class="stars" aria-hidden="true"></div>
-
-    <!-- Headers Placeholder -->
-    <div id="header-placeholder"></div>
-
-    <!-- FREEMIUM LIMIT BANNER (pro nepřihlášené a free uživatele) -->
-    <div id="freemium-banner" style="display:none; background: linear-gradient(90deg, rgba(212,175,55,0.1), rgba(155,89,182,0.1)); border-bottom: 1px solid rgba(212,175,55,0.2); padding: 0.65rem 1rem; text-align: center; font-size: 0.88rem; color: rgba(255,255,255,0.8);">
-        <span id="freemium-banner-text">?? Dnes zbývá: <strong id="freemium-count">...</strong> výkladů zdarma</span>
-        &nbsp;•&nbsp;
-        <a href="cenik.html" style="color: #d4af37; font-weight: 600;">? Získat Premium — 7 dní zdarma ›</a>
-        &nbsp;
-        <button onclick="document.getElementById('freemium-banner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:1rem;vertical-align:middle;">×</button>
-    </div>
-    <script>
-    (function() {
-        const today = new Date().toDateString();
-        const storageKey = 'mh_daily_mentor_' + today;
-        const DAILY_LIMIT = 3;
-        const used = parseInt(localStorage.getItem(storageKey) || '0');
-        const remaining = Math.max(0, DAILY_LIMIT - used);
-        
-        const banner = document.getElementById('freemium-banner');
-        const countEl = document.getElementById('freemium-count');
-        
-        // Zobrazit jen nepřihlášeným nebo free uživatelům
-        document.addEventListener('DOMContentLoaded', () => {
-            const auth = window.Auth;
-            if (!auth || !auth.isPremium()) {
-                if (countEl) countEl.textContent = remaining + ' / ' + DAILY_LIMIT;
-                if (banner) banner.style.display = 'block';
-            }
-        });
-    })();
-    </script>
-
-
-    <main class="section section--hero" style="min-height: 100vh; padding-top: 180px;">
-        <div class="container">
-            <div style="text-align: center; margin-bottom: 2rem; position: relative; z-index: 2;" data-animate>
-                <h1 class="hero__title">Hvězdný <span class="text-gradient">Průvodce</span></h1>
-                <p class="hero__subtitle">
-                    Položte libovolnou otázku o vztazích, kariéře nebo duchovní cestě. Váš Hvězdný Průvodce odpoví okamžitě s přihlédnutím k vašemu znamení a aktuálním planetárním energiím.
-                </p>
-            </div>
-
-            <div class="chat-container box-shadow-glow" data-animate>
-                <!-- Chat Header -->
-                <div class="chat-header">
-                    <div class="mentor-avatar">???>?</div>
-                    <div>
-                        <h3 style="margin: 0; color: var(--color-mystic-gold);">Mentor</h3>
-                        <span style="font-size: 0.8rem; color: var(--color-silver-mist);">Online • Zde pro tvé životní
-                            otázky</span>
-                    </div>
-                </div>
-
-                <!-- Messages Area -->
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Welcome Message -->
-                    <div class="message message--mentor">
-                        Vítej, poutníku. Cítím tvou energii. Jsem zde, abych ti pomohl nahlédnout za oponu reality
-                        pomocí moudrosti hvězd. Na co se chceš dnes zeptat? ??
-                    </div>
-
-                    <!-- Typing Indicator -->
-                    <div class="typing-indicator" id="typing-indicator">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
-                </div>
-
-                <!-- Input Area -->
-                <div class="chat-input-area">
-                    <textarea id="chat-input" class="chat-input"
-                        placeholder="Napiš svou otázku... (např. Co mě čeká v lásce?)" rows="1"></textarea>
-                    <button id="send-btn" class="send-btn" disabled>
-                        ?
-                    </button>
-
-                    <!-- Limit Overlay (Inside Input Area for FREE users) -->
-                    <!-- Logic handled in JS -->
-                </div>
-            </div>
-        </div>
-    
-    
-    
-    <!-- CROSS-LINKING SEKCE -->
-    <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
-        <div class="container" style="max-width: 860px;">
-            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">Pokračujte ve své duchovní cestě</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-                <a href="andelske-karty.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">???</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Andělská Karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Poselství na dnešní den</div>
-                </a>
-                <a href="kristalova-koule.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Křišťálová koule</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zeptejte se na cokoli</div>
-                </a>
-                <a href="tarot.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Tarotový výklad</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Hloubkový vhled</div>
-                </a>
-                <a href="horoskopy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení dnes</div>
-                </a>
-                
-                <a href="natalni-karta.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný otisk</div>
-                </a>
-                <a href="partnerska-shoda.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahů</div>
-                </a>
-                <a href="numerologie.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel</div>
-                </a>
-                <a href="astro-mapa.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve světě</div>
-                </a>
-                <a href="snar.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snů</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Analýza vašeho snu</div>
-                </a>
-                <a href="biorytmy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
-                </a>
-                <a href="runy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská moudrost</div>
-                </a>
-            </div>
-        </div>
-    </section>
-    </main>
-
-    <!-- Footer Placeholder -->
-    <div id="footer-placeholder"></div>
-
-    <!-- Scripts -->
-
-
-
-    <!-- Added for header scroll effect -->
-    <script type="module" src="js/mentor.js"></script>
-
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/templates.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-        <script src="js/share-result.js" defer></script>
-        <script src="js/nameday.js" defer></script>
-    <script src="js/exit-intent.js" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>Hvězdný Průvodce | Mystická Hvězda</title>
+
+    <meta name="description" content="Váš osobní duchovní mentor. Ptejte se na osud, vztahy a životní směr.">
+
+
+
+    <!-- Fonts -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+
+
+    <!-- Styles -->
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+    <style>
+
+        /* Specific Styles for Mentor Chat */
+
+        .chat-container {
+
+            max-width: 800px;
+
+            margin: 2rem auto;
+
+            height: 70vh;
+
+            display: flex;
+
+            flex-direction: column;
+
+            background: rgba(10, 10, 26, 0.8);
+
+            border: 1px solid rgba(212, 175, 55, 0.2);
+
+            border-radius: 16px;
+
+            backdrop-filter: blur(10px);
+
+            overflow: hidden;
+
+            box-shadow: 0 0 30px rgba(155, 89, 182, 0.1);
+
+        }
+
+
+
+        .chat-header {
+
+            padding: 1.5rem;
+
+            background: rgba(212, 175, 55, 0.05);
+
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 1rem;
+
+        }
+
+
+
+        .mentor-avatar {
+
+            width: 50px;
+
+            height: 50px;
+
+            border-radius: 50%;
+
+            background: linear-gradient(135deg, var(--color-mystic-gold), #9b59b6);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 1.5rem;
+
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+
+            position: relative;
+
+        }
+
+
+
+        .mentor-avatar::after {
+
+            content: '';
+
+            position: absolute;
+
+            bottom: 0px;
+
+            right: 0px;
+
+            width: 12px;
+
+            height: 12px;
+
+            background: #4CAF50;
+
+            border: 2px solid #0a0a1a;
+
+            border-radius: 50%;
+
+        }
+
+
+
+        .chat-messages {
+
+            flex: 1;
+
+            padding: 1.5rem;
+
+            overflow-y: auto;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 1.5rem;
+
+            scroll-behavior: smooth;
+
+        }
+
+
+
+        .message {
+
+            max-width: 80%;
+
+            padding: 1rem 1.5rem;
+
+            border-radius: 12px;
+
+            line-height: 1.6;
+
+            position: relative;
+
+            animation: fadeIn 0.3s ease-out;
+
+        }
+
+
+
+        @keyframes fadeIn {
+
+            from {
+
+                opacity: 0;
+
+                transform: translateY(10px);
+
+            }
+
+
+
+            to {
+
+                opacity: 1;
+
+                transform: translateY(0);
+
+            }
+
+        }
+
+
+
+        .message--mentor {
+
+            align-self: flex-start;
+
+            background: rgba(255, 255, 255, 0.05);
+
+            border-bottom-left-radius: 2px;
+
+            color: var(--color-starlight);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        }
+
+
+
+        .message--user {
+
+            align-self: flex-end;
+
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(155, 89, 182, 0.2));
+
+            border-bottom-right-radius: 2px;
+
+            color: #fff;
+
+            border: 1px solid rgba(212, 175, 55, 0.3);
+
+        }
+
+
+
+        .chat-input-area {
+
+            padding: 1.5rem;
+
+            background: rgba(10, 10, 26, 0.95);
+
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+            display: flex;
+
+            gap: 1rem;
+
+            align-items: flex-end;
+
+        }
+
+
+
+        .chat-input {
+
+            flex: 1;
+
+            background: rgba(255, 255, 255, 0.05);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: 12px;
+
+            padding: 1rem;
+
+            color: #fff;
+
+            font-family: inherit;
+
+            resize: none;
+
+            min-height: 50px;
+
+            max-height: 120px;
+
+            transition: all 0.3s ease;
+
+            cursor: text !important;
+
+            caret-color: white !important;
+
+            /* Force white caret for visibility */
+
+        }
+
+
+
+        .chat-input:focus {
+
+            outline: none;
+
+            border-color: var(--color-mystic-gold);
+
+            background: rgba(255, 255, 255, 0.08);
+
+        }
+
+
+
+        .send-btn {
+
+            width: 50px;
+
+            height: 50px;
+
+            border-radius: 50%;
+
+            background: var(--color-mystic-gold);
+
+            border: none;
+
+            color: #0a0a1a;
+
+            font-size: 1.2rem;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            transition: all 0.3s ease;
+
+        }
+
+
+
+        .send-btn:hover:not(:disabled) {
+
+            transform: scale(1.1);
+
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+
+        }
+
+
+
+        .send-btn:disabled {
+
+            opacity: 0.5;
+
+            cursor: not-allowed;
+
+            background: #444;
+
+        }
+
+
+
+        .typing-indicator {
+
+            display: flex;
+
+            gap: 4px;
+
+            padding: 0.5rem 1rem;
+
+            background: rgba(255, 255, 255, 0.05);
+
+            border-radius: 12px;
+
+            align-self: flex-start;
+
+            margin-bottom: 1rem;
+
+            display: none;
+
+        }
+
+
+
+        .typing-dot {
+
+            width: 6px;
+
+            height: 6px;
+
+            background: var(--color-mystic-gold);
+
+            border-radius: 50%;
+
+            animation: bounce 1.4s infinite ease-in-out both;
+
+        }
+
+
+
+        .typing-dot:nth-child(1) {
+
+            animation-delay: -0.32s;
+
+        }
+
+
+
+        .typing-dot:nth-child(2) {
+
+            animation-delay: -0.16s;
+
+        }
+
+
+
+        @keyframes bounce {
+
+
+
+            0%,
+
+            80%,
+
+            100% {
+
+                transform: scale(0);
+
+            }
+
+
+
+            40% {
+
+                transform: scale(1);
+
+            }
+
+        }
+
+
+
+        /* Paywall Overlay */
+
+        .limit-reached-overlay {
+
+            position: absolute;
+
+            bottom: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            background: rgba(10, 10, 26, 0.8);
+
+            backdrop-filter: blur(5px);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-direction: column;
+
+            z-index: 10;
+
+            display: none;
+
+            /* Hidden by default */
+
+        }
+
+    </style>
+
+</head>
+
+
+
+<body class="page-mentor">
+
+    <div class="stars" aria-hidden="true"></div>
+
+
+
+    <!-- Headers Placeholder -->
+
+    <div id="header-placeholder"></div>
+
+
+
+    <!-- FREEMIUM LIMIT BANNER (pro nepřihlášené a free uživatele) -->
+
+    <div id="freemium-banner" style="display:none; background: linear-gradient(90deg, rgba(212,175,55,0.1), rgba(155,89,182,0.1)); border-bottom: 1px solid rgba(212,175,55,0.2); padding: 0.65rem 1rem; text-align: center; font-size: 0.88rem; color: rgba(255,255,255,0.8);">
+
+        <span id="freemium-banner-text">?? Dnes zbývá: <strong id="freemium-count">...</strong> výkladů zdarma</span>
+
+        &nbsp;•&nbsp;
+
+        <a href="cenik.html" style="color: #d4af37; font-weight: 600;">? Získat Premium — 7 dní zdarma ›</a>
+
+        &nbsp;
+
+        <button onclick="document.getElementById('freemium-banner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:1rem;vertical-align:middle;">×</button>
+
+    </div>
+
+    <script>
+
+    (function() {
+
+        const today = new Date().toDateString();
+
+        const storageKey = 'mh_daily_mentor_' + today;
+
+        const DAILY_LIMIT = 3;
+
+        const used = parseInt(localStorage.getItem(storageKey) || '0');
+
+        const remaining = Math.max(0, DAILY_LIMIT - used);
+
+        
+
+        const banner = document.getElementById('freemium-banner');
+
+        const countEl = document.getElementById('freemium-count');
+
+        
+
+        // Zobrazit jen nepřihlášeným nebo free uživatelům
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const auth = window.Auth;
+
+            if (!auth || !auth.isPremium()) {
+
+                if (countEl) countEl.textContent = remaining + ' / ' + DAILY_LIMIT;
+
+                if (banner) banner.style.display = 'block';
+
+            }
+
+        });
+
+    })();
+
+    </script>
+
+
+
+
+
+    <main class="section section--hero" style="min-height: 100vh; padding-top: 180px;">
+
+        <div class="container">
+
+            <div style="text-align: center; margin-bottom: 2rem; position: relative; z-index: 2;" data-animate>
+
+                <h1 class="hero__title">Hvězdný <span class="text-gradient">Průvodce</span></h1>
+
+                <p class="hero__subtitle">
+
+                    Položte libovolnou otázku o vztazích, kariéře nebo duchovní cestě. Váš Hvězdný Průvodce odpoví okamžitě s přihlédnutím k vašemu znamení a aktuálním planetárním energiím.
+
+                </p>
+
+            </div>
+
+
+
+            <div class="chat-container box-shadow-glow" data-animate>
+
+                <!-- Chat Header -->
+
+                <div class="chat-header">
+
+                    <div class="mentor-avatar">???>?</div>
+
+                    <div>
+
+                        <h3 style="margin: 0; color: var(--color-mystic-gold);">Mentor</h3>
+
+                        <span style="font-size: 0.8rem; color: var(--color-silver-mist);">Online • Zde pro tvé životní
+
+                            otázky</span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Messages Area -->
+
+                <div class="chat-messages" id="chat-messages">
+
+                    <!-- Welcome Message -->
+
+                    <div class="message message--mentor">
+
+                        Vítej, poutníku. Cítím tvou energii. Jsem zde, abych ti pomohl nahlédnout za oponu reality
+
+                        pomocí moudrosti hvězd. Na co se chceš dnes zeptat? ??
+
+                    </div>
+
+
+
+                    <!-- Typing Indicator -->
+
+                    <div class="typing-indicator" id="typing-indicator">
+
+                        <div class="typing-dot"></div>
+
+                        <div class="typing-dot"></div>
+
+                        <div class="typing-dot"></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Input Area -->
+
+                <div class="chat-input-area">
+
+                    <textarea id="chat-input" class="chat-input"
+
+                        placeholder="Napiš svou otázku... (např. Co mě čeká v lásce?)" rows="1"></textarea>
+
+                    <button id="send-btn" class="send-btn" disabled>
+
+                        ?
+
+                    </button>
+
+
+
+                    <!-- Limit Overlay (Inside Input Area for FREE users) -->
+
+                    <!-- Logic handled in JS -->
+
+                </div>
+
+            </div>
+
+        </div>
+
+    
+
+    
+
+    
+
+    <!-- CROSS-LINKING SEKCE -->
+
+    <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
+
+        <div class="container" style="max-width: 860px;">
+
+            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">Pokračujte ve své duchovní cestě</h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+
+                <a href="andelske-karty.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">???</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Andělská Karta</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Poselství na dnešní den</div>
+
+                </a>
+
+                <a href="kristalova-koule.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Křišťálová koule</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zeptejte se na cokoli</div>
+
+                </a>
+
+                <a href="tarot.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Tarotový výklad</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Hloubkový vhled</div>
+
+                </a>
+
+                <a href="horoskopy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení dnes</div>
+
+                </a>
+
+                
+
+                <a href="natalni-karta.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný otisk</div>
+
+                </a>
+
+                <a href="partnerska-shoda.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahů</div>
+
+                </a>
+
+                <a href="numerologie.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel</div>
+
+                </a>
+
+                <a href="astro-mapa.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve světě</div>
+
+                </a>
+
+                <a href="snar.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snů</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Analýza vašeho snu</div>
+
+                </a>
+
+                <a href="biorytmy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
+
+                </a>
+
+                <a href="runy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská moudrost</div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    </main>
+
+
+
+    <!-- Footer Placeholder -->
+
+    <div id="footer-placeholder"></div>
+
+
+
+    <!-- Scripts -->
+
+
+
+
+
+
+
+    <!-- Added for header scroll effect -->
+
+    <script type="module" src="js/mentor.js"></script>
+
+
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/templates.js?v=10" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+        <script src="js/share-result.js" defer></script>
+
+        <script src="js/nameday.js" defer></script>
+
+    <script src="js/exit-intent.js" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+
+
+</body>
+
+
+
+</html>
+

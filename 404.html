@@ -1,148 +1,296 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stránka nenalezena | Mystická Hvězda</title>
-    <meta name="robots" content="noindex, nofollow">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-    <style>
-        .page-404 {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .page-404__inner {
-            max-width: 600px;
-        }
-
-        .page-404__number {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(6rem, 20vw, 12rem);
-            font-weight: 700;
-            line-height: 1;
-            background: linear-gradient(135deg, #d4af37, #9b59b6, #3498db);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: block;
-            animation: glow 3s ease-in-out infinite;
-        }
-
-        @keyframes glow {
-
-            0%,
-            100% {
-                filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
-            }
-
-            50% {
-                filter: drop-shadow(0 0 40px rgba(155, 89, 182, 0.5));
-            }
-        }
-
-        .page-404__icon {
-            font-size: 4rem;
-            display: block;
-            margin: 1rem 0;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-15px);
-            }
-        }
-
-        .page-404__title {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            color: white;
-            margin-bottom: 1rem;
-        }
-
-        .page-404__subtitle {
-            color: rgba(255, 255, 255, 0.6);
-            line-height: 1.7;
-            margin-bottom: 2rem;
-            font-size: 1.05rem;
-        }
-
-        .page-404__links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-
-        .page-404__links a {
-            padding: 0.6rem 1.3rem;
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-
-        .page-404__links a:hover {
-            background: rgba(155, 89, 182, 0.2);
-            border-color: rgba(155, 89, 182, 0.5);
-            color: white;
-            transform: translateY(-2px);
-        }
-    </style>
-</head>
-
-<body>
-    <div class="stars" aria-hidden="true"></div>
-    <div id="header-placeholder"></div>
-
-    <main>
-        <div class="page-404">
-            <div class="page-404__inner" data-animate>
-                <span class="page-404__number">404</span>
-                <span class="page-404__icon">🔮</span>
-                <h1 class="page-404__title">Hvězdy vás sem nevedly</h1>
-                <p class="page-404__subtitle">
-                    Stránka, kterou hledáte, neexistuje nebo byla přesunuta.<br>
-                    Ale třeba vás sem přivedly hvězdy, aby vás vedly jinam.
-                </p>
-                <a href="index.html" class="btn btn--primary">← Zpět na hlavní stránku</a>
-                <div class="page-404__links">
-                    <a href="horoskopy.html">🌌 Horoskopy</a>
-                    <a href="tarot.html">🃏 Tarot</a>
-                    <a href="blog.html">📝 Blog</a>
-                    <a href="natalni-karta.html">⭐ Natální karta</a>
-                    <a href="kristalova-koule.html">🔮 Křišťálová koule</a>
-                    <a href="mentor.html">🧭 Průvodce</a>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <div id="footer-placeholder"></div>
-
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Stránka nenalezena | Mystická Hvězda</title>
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+    <style>
+
+        .page-404 {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            padding: 2rem;
+
+        }
+
+
+
+        .page-404__inner {
+
+            max-width: 600px;
+
+        }
+
+
+
+        .page-404__number {
+
+            font-family: 'Cinzel', serif;
+
+            font-size: clamp(6rem, 20vw, 12rem);
+
+            font-weight: 700;
+
+            line-height: 1;
+
+            background: linear-gradient(135deg, #d4af37, #9b59b6, #3498db);
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+
+            background-clip: text;
+
+            display: block;
+
+            animation: glow 3s ease-in-out infinite;
+
+        }
+
+
+
+        @keyframes glow {
+
+
+
+            0%,
+
+            100% {
+
+                filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
+
+            }
+
+
+
+            50% {
+
+                filter: drop-shadow(0 0 40px rgba(155, 89, 182, 0.5));
+
+            }
+
+        }
+
+
+
+        .page-404__icon {
+
+            font-size: 4rem;
+
+            display: block;
+
+            margin: 1rem 0;
+
+            animation: float 3s ease-in-out infinite;
+
+        }
+
+
+
+        @keyframes float {
+
+
+
+            0%,
+
+            100% {
+
+                transform: translateY(0);
+
+            }
+
+
+
+            50% {
+
+                transform: translateY(-15px);
+
+            }
+
+        }
+
+
+
+        .page-404__title {
+
+            font-family: 'Cinzel', serif;
+
+            font-size: 1.5rem;
+
+            color: white;
+
+            margin-bottom: 1rem;
+
+        }
+
+
+
+        .page-404__subtitle {
+
+            color: rgba(255, 255, 255, 0.6);
+
+            line-height: 1.7;
+
+            margin-bottom: 2rem;
+
+            font-size: 1.05rem;
+
+        }
+
+
+
+        .page-404__links {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 0.75rem;
+
+            justify-content: center;
+
+            margin-top: 2rem;
+
+        }
+
+
+
+        .page-404__links a {
+
+            padding: 0.6rem 1.3rem;
+
+            border-radius: 50px;
+
+            background: rgba(255, 255, 255, 0.05);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            color: rgba(255, 255, 255, 0.8);
+
+            text-decoration: none;
+
+            font-size: 0.9rem;
+
+            transition: all 0.3s;
+
+        }
+
+
+
+        .page-404__links a:hover {
+
+            background: rgba(155, 89, 182, 0.2);
+
+            border-color: rgba(155, 89, 182, 0.5);
+
+            color: white;
+
+            transform: translateY(-2px);
+
+        }
+
+    </style>
+
+</head>
+
+
+
+<body>
+
+    <div class="stars" aria-hidden="true"></div>
+
+    <div id="header-placeholder"></div>
+
+
+
+    <main>
+
+        <div class="page-404">
+
+            <div class="page-404__inner" data-animate>
+
+                <span class="page-404__number">404</span>
+
+                <span class="page-404__icon">🔮</span>
+
+                <h1 class="page-404__title">Hvězdy vás sem nevedly</h1>
+
+                <p class="page-404__subtitle">
+
+                    Stránka, kterou hledáte, neexistuje nebo byla přesunuta.<br>
+
+                    Ale třeba vás sem přivedly hvězdy, aby vás vedly jinam.
+
+                </p>
+
+                <a href="index.html" class="btn btn--primary">← Zpět na hlavní stránku</a>
+
+                <div class="page-404__links">
+
+                    <a href="horoskopy.html">🌌 Horoskopy</a>
+
+                    <a href="tarot.html">🃏 Tarot</a>
+
+                    <a href="blog.html">📝 Blog</a>
+
+                    <a href="natalni-karta.html">⭐ Natální karta</a>
+
+                    <a href="kristalova-koule.html">🔮 Křišťálová koule</a>
+
+                    <a href="mentor.html">🧭 Průvodce</a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+
+    <div id="footer-placeholder"></div>
+
+
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+</body>
+
+
+
+</html>
+

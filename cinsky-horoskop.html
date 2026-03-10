@@ -1,310 +1,620 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Čínský horoskop 2026 — Zjistěte své čínské znamení | Mystická Hvězda</title>
-    <meta name="description"
-        content="Čínský horoskop 2026 — zadejte rok narození a zjistěte své čínské zvěrokruhové znamení. Krysa, Bůvol, Tygr, Drak a dalších 8 zvířat s prognózou na rok 2026.">
-    <link rel="canonical" href="https://mystickahvezda.cz/cinsky-horoskop.html">
-    <meta property="og:title" content="Čínský horoskop 2026 | Mystická Hvězda">
-    <meta property="og:description" content="Zjistěte své čínské zvěrokruhové znamení a prognózu na rok 2026.">
-    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-    <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"WebPage","name":"Čínský horoskop 2026","breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://mystickahvezda.cz/"},{"@type":"ListItem","position":2,"name":"Čínský horoskop","item":"https://mystickahvezda.cz/cinsky-horoskop.html"}]}}
-    </script>
-    <style>
-        .animal-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 0.75rem;
-            max-width: 800px;
-            margin: 2rem auto;
-        }
-
-        .animal-btn {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            padding: 1rem 0.5rem;
-            cursor: pointer;
-            transition: all 0.25s;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.75);
-            font-size: 0.82rem;
-            font-family: inherit;
-        }
-
-        .animal-btn:hover,
-        .animal-btn.active {
-            background: rgba(212, 175, 55, 0.12);
-            border-color: rgba(212, 175, 55, 0.4);
-            color: white;
-            transform: translateY(-3px);
-        }
-
-        .animal-btn span {
-            display: block;
-            font-size: 2rem;
-            margin-bottom: 0.4rem;
-        }
-
-        .result-section {
-            max-width: 700px;
-            margin: 2rem auto;
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .result-section.show {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px)
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0)
-            }
-        }
-
-        .result-hero {
-            padding: 2.5rem 2rem;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .detail-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-        }
-
-        .detail-card h3 {
-            color: #d4af37;
-            font-family: 'Cinzel', serif;
-            font-size: 1rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .compat-grid {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 0.5rem;
-        }
-
-        .compat-badge {
-            padding: 0.3rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.82rem;
-        }
-
-        .compat-good {
-            background: rgba(46, 204, 113, 0.15);
-            border: 1px solid rgba(46, 204, 113, 0.3);
-            color: #2ecc71;
-        }
-
-        .compat-bad {
-            background: rgba(231, 76, 60, 0.12);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            color: #ff6b6b;
-        }
-
-        .year-input {
-            padding: 0.85rem 1.25rem;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 12px;
-            color: white;
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-            outline: none;
-            width: 140px;
-            text-align: center;
-        }
-
-        .year-input:focus {
-            border-color: rgba(212, 175, 55, 0.5);
-        }
-    </style>
-</head>
-
-<body>
-    <div class="stars" aria-hidden="true"></div>
-    <div id="header-placeholder"></div>
-
-    <main>
-        <section class="section" style="padding-top:5rem;text-align:center;">
-            <div class="container" style="max-width:800px;">
-                <div data-animate>
-                    <span class="section__badge">12-letý cyklus</span>
-                    <h1 class="section__title">Čínský <span class="text-gradient">Horoskop</span> 2026</h1>
-                    <p class="section__text">Zadejte rok svého narození nebo vyberte zvíře přímo ze seznamu.</p>
-                </div>
-
-                <!-- Rok zadání -->
-                <div style="margin:2rem 0 1rem;display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;"
-                    data-animate>
-                    <input type="number" id="birth-year" class="year-input" placeholder="Rok nar." min="1900" max="2100"
-                        aria-label="Rok narození">
-                    <button id="btn-calculate" class="btn btn--primary">🐉 Zjistit mé znamení</button>
-                </div>
-
-                <!-- Mřížka zvířat -->
-                <div class="animal-grid" data-animate>
-                    <button class="animal-btn" id="btn-krysa" data-slug="krysa"><span>🐭</span>Krysa</button>
-                    <button class="animal-btn" id="btn-buvol" data-slug="buvol"><span>🐂</span>Buvol</button>
-                    <button class="animal-btn" id="btn-tygr" data-slug="tygr"><span>🐯</span>Tygr</button>
-                    <button class="animal-btn" id="btn-zajic" data-slug="zajic"><span>🐰</span>Zajíc</button>
-                    <button class="animal-btn" id="btn-drak" data-slug="drak"><span>🐲</span>Drak</button>
-                    <button class="animal-btn" id="btn-had" data-slug="had"><span>🐍</span>Had</button>
-                    <button class="animal-btn" id="btn-kun" data-slug="kun"><span>🐴</span>Kůň</button>
-                    <button class="animal-btn" id="btn-koza" data-slug="koza"><span>🐐</span>Koza</button>
-                    <button class="animal-btn" id="btn-opice" data-slug="opice"><span>🐒</span>Opice</button>
-                    <button class="animal-btn" id="btn-kohout" data-slug="kohout"><span>🐓</span>Kohout</button>
-                    <button class="animal-btn" id="btn-pes" data-slug="pes"><span>🐕</span>Pes</button>
-                    <button class="animal-btn" id="btn-prase" data-slug="prase"><span>🐷</span>Prase</button>
-                </div>
-
-                <!-- Výsledek -->
-                <div class="result-section" id="result-section">
-                    <div class="result-hero" id="result-hero">
-                        <div id="result-emoji" style="font-size:5rem;margin-bottom:0.75rem;"></div>
-                        <h2 id="result-name"
-                            style="font-family:'Cinzel',serif;font-size:2rem;color:white;margin-bottom:0.25rem;"></h2>
-                        <p id="result-years" style="color:rgba(255,255,255,0.5);font-size:0.9rem;margin-bottom:0.5rem;">
-                        </p>
-                        <p id="result-element" style="color:#d4af37;font-size:0.95rem;"></p>
-                    </div>
-
-                    <div class="detail-card">
-                        <h3>🌟 Charakteristika</h3>
-                        <p id="result-desc" style="color:rgba(255,255,255,0.8);line-height:1.8;"></p>
-                    </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-                        <div class="detail-card">
-                            <h3>❤️ V lásce</h3>
-                            <p id="result-love" style="color:rgba(255,255,255,0.75);line-height:1.6;font-size:0.92rem;">
-                            </p>
-                        </div>
-                        <div class="detail-card">
-                            <h3>💼 V kariéře</h3>
-                            <p id="result-career"
-                                style="color:rgba(255,255,255,0.75);line-height:1.6;font-size:0.92rem;"></p>
-                        </div>
-                    </div>
-                    <div class="detail-card">
-                        <h3>🔮 Prognóza 2026 — Rok Koně</h3>
-                        <p id="result-2026" style="color:rgba(255,255,255,0.8);line-height:1.8;"></p>
-                    </div>
-                    <div class="detail-card">
-                        <h3>🤝 Kompatibilita</h3>
-                        <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin-bottom:0.75rem;">Ideální
-                            partneři:</p>
-                        <div class="compat-grid" id="compat-good"></div>
-                        <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin:0.75rem 0 0.5rem;">Náročné
-                            kombinace:</p>
-                        <div class="compat-grid" id="compat-bad"></div>
-                    </div>
-                    <div
-                        style="text-align:center;margin-top:1.5rem;display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
-                        <a href="horoskopy.html" class="btn btn--primary">🌌 Západní horoskop</a>
-                        <a href="partnerska-shoda.html" class="btn btn--ghost">💕 Shoda znamení</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ČÍNSKÁ KOMPATIBILITA -->
-        <section class="section section--alt" id="chinese-synastry" style="padding-top:3rem; padding-bottom:5rem;">
-            <div class="container" style="max-width:800px; text-align:center;">
-                <span class="section__badge">Partnerská shoda</span>
-                <h2 class="section__title">Čínská <span class="text-gradient">Synastrie</span></h2>
-                <p class="section__text">Zjistěte, jak se k sobě hodíte s partnerem podle staleté čínské moudrosti pěti
-                    elementů a dvanácti zvířat.</p>
-
-                <div class="card" style="margin-top:2rem; padding:2rem; background:rgba(20,15,30,0.6);" data-animate>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
-                        <div>
-                            <label for="synastry-year1"
-                                style="display:block; color:var(--color-silver-mist); margin-bottom:0.5rem; font-size:0.9rem;">Váš
-                                rok narození</label>
-                            <input type="number" id="synastry-year1" class="year-input" placeholder="Např. 1986"
-                                min="1900" max="2100" style="width:100%;">
-                        </div>
-                        <div>
-                            <label for="synastry-year2"
-                                style="display:block; color:var(--color-silver-mist); margin-bottom:0.5rem; font-size:0.9rem;">Rok
-                                partnera</label>
-                            <input type="number" id="synastry-year2" class="year-input" placeholder="Např. 1990"
-                                min="1900" max="2100" style="width:100%;">
-                        </div>
-                    </div>
-                    <button id="btn-synastry" class="btn btn--primary" style="width:100%;">💞
-                        Vypočítat shodu vztahu</button>
-
-                    <!-- Vysledek synastrie -->
-                    <div id="synastry-result"
-                        style="display:none; margin-top:2rem; text-align:left; border-top:1px solid rgba(255,255,255,0.1); padding-top:2rem; animation:fadeIn 0.5s ease;">
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
-                            <div style="text-align:center; flex:1;">
-                                <div id="syn-emoji1" style="font-size:3rem;"></div>
-                                <div id="syn-name1"
-                                    style="color:var(--color-mystic-gold); font-weight:bold; font-family:'Cinzel', serif; font-size:1.1rem; margin-top:0.5rem;">
-                                </div>
-                            </div>
-                            <div style="font-size:2rem; opacity:0.5;">💖</div>
-                            <div style="text-align:center; flex:1;">
-                                <div id="syn-emoji2" style="font-size:3rem;"></div>
-                                <div id="syn-name2"
-                                    style="color:var(--color-mystic-gold); font-weight:bold; font-family:'Cinzel', serif; font-size:1.1rem; margin-top:0.5rem;">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="detail-card" style="text-align:center; background:rgba(0,0,0,0.2);">
-                            <h3 id="syn-title" style="font-size:1.4rem; margin-bottom:0.75rem;"></h3>
-                            <p id="syn-desc" style="color:rgba(255,255,255,0.85); line-height:1.6; font-size:0.95rem;">
-                            </p>
-                        </div>
-
-                        <!-- CTA Do Synastrie Západní a Premium -->
-                        <div style="text-align:center; margin-top:1.5rem;">
-                            <a href="partnerska-shoda.html" class="btn btn--primary"
-                                style="background:linear-gradient(135deg, #d4af37, #f1c40f); color:#000; border:none; box-shadow:0 0 15px rgba(212,175,55,0.6);"><i
-                                    class="fas fa-magic"></i> Získat hloubkový astrologický rozbor páru</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <div id="footer-placeholder"></div>
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script src="js/nameday.js" defer></script>
-    <script src="js/exit-intent.js" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-    <!-- Nový dynamický skript pro čínský horoskop (Zvířata, Elementy podle ročníku a Synastrie) -->
-    <script src="js/cinsky-horoskop.js?v=6" defer></script>
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Čínský horoskop 2026 — Zjistěte své čínské znamení | Mystická Hvězda</title>
+
+    <meta name="description"
+
+        content="Čínský horoskop 2026 — zadejte rok narození a zjistěte své čínské zvěrokruhové znamení. Krysa, Bůvol, Tygr, Drak a dalších 8 zvířat s prognózou na rok 2026.">
+
+    <link rel="canonical" href="https://mystickahvezda.cz/cinsky-horoskop.html">
+
+    <meta property="og:title" content="Čínský horoskop 2026 | Mystická Hvězda">
+
+    <meta property="og:description" content="Zjistěte své čínské zvěrokruhové znamení a prognózu na rok 2026.">
+
+    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+    <script type="application/ld+json">
+
+    {"@context":"https://schema.org","@type":"WebPage","name":"Čínský horoskop 2026","breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://mystickahvezda.cz/"},{"@type":"ListItem","position":2,"name":"Čínský horoskop","item":"https://mystickahvezda.cz/cinsky-horoskop.html"}]}}
+
+    </script>
+
+    <style>
+
+        .animal-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+
+            gap: 0.75rem;
+
+            max-width: 800px;
+
+            margin: 2rem auto;
+
+        }
+
+
+
+        .animal-btn {
+
+            background: rgba(255, 255, 255, 0.04);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: 14px;
+
+            padding: 1rem 0.5rem;
+
+            cursor: pointer;
+
+            transition: all 0.25s;
+
+            text-align: center;
+
+            color: rgba(255, 255, 255, 0.75);
+
+            font-size: 0.82rem;
+
+            font-family: inherit;
+
+        }
+
+
+
+        .animal-btn:hover,
+
+        .animal-btn.active {
+
+            background: rgba(212, 175, 55, 0.12);
+
+            border-color: rgba(212, 175, 55, 0.4);
+
+            color: white;
+
+            transform: translateY(-3px);
+
+        }
+
+
+
+        .animal-btn span {
+
+            display: block;
+
+            font-size: 2rem;
+
+            margin-bottom: 0.4rem;
+
+        }
+
+
+
+        .result-section {
+
+            max-width: 700px;
+
+            margin: 2rem auto;
+
+            display: none;
+
+            animation: fadeIn 0.4s ease;
+
+        }
+
+
+
+        .result-section.show {
+
+            display: block;
+
+        }
+
+
+
+        @keyframes fadeIn {
+
+            from {
+
+                opacity: 0;
+
+                transform: translateY(20px)
+
+            }
+
+
+
+            to {
+
+                opacity: 1;
+
+                transform: translateY(0)
+
+            }
+
+        }
+
+
+
+        .result-hero {
+
+            padding: 2.5rem 2rem;
+
+            border-radius: 20px;
+
+            text-align: center;
+
+            margin-bottom: 1.5rem;
+
+        }
+
+
+
+        .detail-card {
+
+            background: rgba(255, 255, 255, 0.04);
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            border-radius: 14px;
+
+            padding: 1.25rem;
+
+            margin-bottom: 1rem;
+
+        }
+
+
+
+        .detail-card h3 {
+
+            color: #d4af37;
+
+            font-family: 'Cinzel', serif;
+
+            font-size: 1rem;
+
+            margin-bottom: 0.75rem;
+
+        }
+
+
+
+        .compat-grid {
+
+            display: flex;
+
+            gap: 1rem;
+
+            flex-wrap: wrap;
+
+            margin-top: 0.5rem;
+
+        }
+
+
+
+        .compat-badge {
+
+            padding: 0.3rem 0.75rem;
+
+            border-radius: 50px;
+
+            font-size: 0.82rem;
+
+        }
+
+
+
+        .compat-good {
+
+            background: rgba(46, 204, 113, 0.15);
+
+            border: 1px solid rgba(46, 204, 113, 0.3);
+
+            color: #2ecc71;
+
+        }
+
+
+
+        .compat-bad {
+
+            background: rgba(231, 76, 60, 0.12);
+
+            border: 1px solid rgba(231, 76, 60, 0.3);
+
+            color: #ff6b6b;
+
+        }
+
+
+
+        .year-input {
+
+            padding: 0.85rem 1.25rem;
+
+            background: rgba(255, 255, 255, 0.06);
+
+            border: 1px solid rgba(255, 255, 255, 0.12);
+
+            border-radius: 12px;
+
+            color: white;
+
+            font-size: 1rem;
+
+            font-family: 'Inter', sans-serif;
+
+            outline: none;
+
+            width: 140px;
+
+            text-align: center;
+
+        }
+
+
+
+        .year-input:focus {
+
+            border-color: rgba(212, 175, 55, 0.5);
+
+        }
+
+    </style>
+
+</head>
+
+
+
+<body>
+
+    <div class="stars" aria-hidden="true"></div>
+
+    <div id="header-placeholder"></div>
+
+
+
+    <main>
+
+        <section class="section" style="padding-top:5rem;text-align:center;">
+
+            <div class="container" style="max-width:800px;">
+
+                <div data-animate>
+
+                    <span class="section__badge">12-letý cyklus</span>
+
+                    <h1 class="section__title">Čínský <span class="text-gradient">Horoskop</span> 2026</h1>
+
+                    <p class="section__text">Zadejte rok svého narození nebo vyberte zvíře přímo ze seznamu.</p>
+
+                </div>
+
+
+
+                <!-- Rok zadání -->
+
+                <div style="margin:2rem 0 1rem;display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;"
+
+                    data-animate>
+
+                    <input type="number" id="birth-year" class="year-input" placeholder="Rok nar." min="1900" max="2100"
+
+                        aria-label="Rok narození">
+
+                    <button id="btn-calculate" class="btn btn--primary">🐉 Zjistit mé znamení</button>
+
+                </div>
+
+
+
+                <!-- Mřížka zvířat -->
+
+                <div class="animal-grid" data-animate>
+
+                    <button class="animal-btn" id="btn-krysa" data-slug="krysa"><span>🐭</span>Krysa</button>
+
+                    <button class="animal-btn" id="btn-buvol" data-slug="buvol"><span>🐂</span>Buvol</button>
+
+                    <button class="animal-btn" id="btn-tygr" data-slug="tygr"><span>🐯</span>Tygr</button>
+
+                    <button class="animal-btn" id="btn-zajic" data-slug="zajic"><span>🐰</span>Zajíc</button>
+
+                    <button class="animal-btn" id="btn-drak" data-slug="drak"><span>🐲</span>Drak</button>
+
+                    <button class="animal-btn" id="btn-had" data-slug="had"><span>🐍</span>Had</button>
+
+                    <button class="animal-btn" id="btn-kun" data-slug="kun"><span>🐴</span>Kůň</button>
+
+                    <button class="animal-btn" id="btn-koza" data-slug="koza"><span>🐐</span>Koza</button>
+
+                    <button class="animal-btn" id="btn-opice" data-slug="opice"><span>🐒</span>Opice</button>
+
+                    <button class="animal-btn" id="btn-kohout" data-slug="kohout"><span>🐓</span>Kohout</button>
+
+                    <button class="animal-btn" id="btn-pes" data-slug="pes"><span>🐕</span>Pes</button>
+
+                    <button class="animal-btn" id="btn-prase" data-slug="prase"><span>🐷</span>Prase</button>
+
+                </div>
+
+
+
+                <!-- Výsledek -->
+
+                <div class="result-section" id="result-section">
+
+                    <div class="result-hero" id="result-hero">
+
+                        <div id="result-emoji" style="font-size:5rem;margin-bottom:0.75rem;"></div>
+
+                        <h2 id="result-name"
+
+                            style="font-family:'Cinzel',serif;font-size:2rem;color:white;margin-bottom:0.25rem;"></h2>
+
+                        <p id="result-years" style="color:rgba(255,255,255,0.5);font-size:0.9rem;margin-bottom:0.5rem;">
+
+                        </p>
+
+                        <p id="result-element" style="color:#d4af37;font-size:0.95rem;"></p>
+
+                    </div>
+
+
+
+                    <div class="detail-card">
+
+                        <h3>🌟 Charakteristika</h3>
+
+                        <p id="result-desc" style="color:rgba(255,255,255,0.8);line-height:1.8;"></p>
+
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+
+                        <div class="detail-card">
+
+                            <h3>❤️ V lásce</h3>
+
+                            <p id="result-love" style="color:rgba(255,255,255,0.75);line-height:1.6;font-size:0.92rem;">
+
+                            </p>
+
+                        </div>
+
+                        <div class="detail-card">
+
+                            <h3>💼 V kariéře</h3>
+
+                            <p id="result-career"
+
+                                style="color:rgba(255,255,255,0.75);line-height:1.6;font-size:0.92rem;"></p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="detail-card">
+
+                        <h3>🔮 Prognóza 2026 — Rok Koně</h3>
+
+                        <p id="result-2026" style="color:rgba(255,255,255,0.8);line-height:1.8;"></p>
+
+                    </div>
+
+                    <div class="detail-card">
+
+                        <h3>🤝 Kompatibilita</h3>
+
+                        <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin-bottom:0.75rem;">Ideální
+
+                            partneři:</p>
+
+                        <div class="compat-grid" id="compat-good"></div>
+
+                        <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin:0.75rem 0 0.5rem;">Náročné
+
+                            kombinace:</p>
+
+                        <div class="compat-grid" id="compat-bad"></div>
+
+                    </div>
+
+                    <div
+
+                        style="text-align:center;margin-top:1.5rem;display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+
+                        <a href="horoskopy.html" class="btn btn--primary">🌌 Západní horoskop</a>
+
+                        <a href="partnerska-shoda.html" class="btn btn--ghost">💕 Shoda znamení</a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ČÍNSKÁ KOMPATIBILITA -->
+
+        <section class="section section--alt" id="chinese-synastry" style="padding-top:3rem; padding-bottom:5rem;">
+
+            <div class="container" style="max-width:800px; text-align:center;">
+
+                <span class="section__badge">Partnerská shoda</span>
+
+                <h2 class="section__title">Čínská <span class="text-gradient">Synastrie</span></h2>
+
+                <p class="section__text">Zjistěte, jak se k sobě hodíte s partnerem podle staleté čínské moudrosti pěti
+
+                    elementů a dvanácti zvířat.</p>
+
+
+
+                <div class="card" style="margin-top:2rem; padding:2rem; background:rgba(20,15,30,0.6);" data-animate>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+
+                        <div>
+
+                            <label for="synastry-year1"
+
+                                style="display:block; color:var(--color-silver-mist); margin-bottom:0.5rem; font-size:0.9rem;">Váš
+
+                                rok narození</label>
+
+                            <input type="number" id="synastry-year1" class="year-input" placeholder="Např. 1986"
+
+                                min="1900" max="2100" style="width:100%;">
+
+                        </div>
+
+                        <div>
+
+                            <label for="synastry-year2"
+
+                                style="display:block; color:var(--color-silver-mist); margin-bottom:0.5rem; font-size:0.9rem;">Rok
+
+                                partnera</label>
+
+                            <input type="number" id="synastry-year2" class="year-input" placeholder="Např. 1990"
+
+                                min="1900" max="2100" style="width:100%;">
+
+                        </div>
+
+                    </div>
+
+                    <button id="btn-synastry" class="btn btn--primary" style="width:100%;">💞
+
+                        Vypočítat shodu vztahu</button>
+
+
+
+                    <!-- Vysledek synastrie -->
+
+                    <div id="synastry-result"
+
+                        style="display:none; margin-top:2rem; text-align:left; border-top:1px solid rgba(255,255,255,0.1); padding-top:2rem; animation:fadeIn 0.5s ease;">
+
+                        <div
+
+                            style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+
+                            <div style="text-align:center; flex:1;">
+
+                                <div id="syn-emoji1" style="font-size:3rem;"></div>
+
+                                <div id="syn-name1"
+
+                                    style="color:var(--color-mystic-gold); font-weight:bold; font-family:'Cinzel', serif; font-size:1.1rem; margin-top:0.5rem;">
+
+                                </div>
+
+                            </div>
+
+                            <div style="font-size:2rem; opacity:0.5;">💖</div>
+
+                            <div style="text-align:center; flex:1;">
+
+                                <div id="syn-emoji2" style="font-size:3rem;"></div>
+
+                                <div id="syn-name2"
+
+                                    style="color:var(--color-mystic-gold); font-weight:bold; font-family:'Cinzel', serif; font-size:1.1rem; margin-top:0.5rem;">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="detail-card" style="text-align:center; background:rgba(0,0,0,0.2);">
+
+                            <h3 id="syn-title" style="font-size:1.4rem; margin-bottom:0.75rem;"></h3>
+
+                            <p id="syn-desc" style="color:rgba(255,255,255,0.85); line-height:1.6; font-size:0.95rem;">
+
+                            </p>
+
+                        </div>
+
+
+
+                        <!-- CTA Do Synastrie Západní a Premium -->
+
+                        <div style="text-align:center; margin-top:1.5rem;">
+
+                            <a href="partnerska-shoda.html" class="btn btn--primary"
+
+                                style="background:linear-gradient(135deg, #d4af37, #f1c40f); color:#000; border:none; box-shadow:0 0 15px rgba(212,175,55,0.6);"><i
+
+                                    class="fas fa-magic"></i> Získat hloubkový astrologický rozbor páru</a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script src="js/nameday.js" defer></script>
+
+    <script src="js/exit-intent.js" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+    <!-- Nový dynamický skript pro čínský horoskop (Zvířata, Elementy podle ročníku a Synastrie) -->
+
+    <script src="js/cinsky-horoskop.js?v=6" defer></script>
+
+</body>
+
+
+
+</html>
+

@@ -1,122 +1,243 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Databáze jmen — Původ, Význam, Numerologie | Mystická Hvězda</title>
-    <meta name="description" content="Zjistěte původ a duchovní význam vašeho jména. Databáze českých jmen — numerologie, barva aury, živel a osobnostní profil.">
-    <link rel="canonical" href="https://mystickahvezda.cz/jmena/">
-    <meta property="og:title" content="Databáze jmen — Původ a duchovní výklad | Mystická Hvězda">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.v2.min.css?v=4">
-    <style>
-        .name-search { max-width:500px; margin:2rem auto; display:flex; gap:0.75rem; }
-        .name-input { flex:1; padding:0.9rem 1.25rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:12px; color:white; font-family:inherit; font-size:1rem; outline:none; }
-        .name-input:focus { border-color:rgba(212,175,55,0.5); }
-        .names-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:0.75rem; max-width:900px; margin:2rem auto; }
-        .name-btn { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:0.85rem; cursor:pointer; text-align:center; color:rgba(255,255,255,0.8); font-size:0.9rem; font-family:inherit; transition:all 0.2s; }
-        .name-btn:hover { background:rgba(212,175,55,0.1); border-color:rgba(212,175,55,0.3); color:white; }
-        .result { max-width:650px; margin:2rem auto; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:2rem; display:none; animation:fadeIn 0.4s ease; }
-        .result.show { display:block; }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(15px)} to{opacity:1;transform:translateY(0)} }
-        .detail-row { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem; }
-        .detail-item { background:rgba(255,255,255,0.03); border-radius:10px; padding:0.85rem; font-size:0.88rem; }
-        .detail-item strong { display:block; color:#d4af37; font-size:0.75rem; margin-bottom:0.3rem; text-transform:uppercase; letter-spacing:0.5px; }
-    </style>
-</head>
-<body>
-    <div class="stars" aria-hidden="true"></div>
-    <div id="header-placeholder"></div>
-    <main>
-        <section class="section" style="padding-top:5rem;text-align:center;">
-            <div class="container">
-                <div data-animate>
-                    <span class="section__badge">Duchovní výklad</span>
-                    <h1 class="section__title">Databáze <span class="text-gradient">Jmen</span></h1>
-                    <p class="section__text">Zjistěte původ, duchovní význam a numerologický profil svého jména.</p>
-                </div>
-                <div class="name-search" data-animate>
-                    <input type="text" id="name-search" class="name-input" placeholder="Zadejte jméno..." aria-label="Hledejte jméno">
-                    <button id="btn-search-name" class="btn btn--primary">Hledat</button>
-                </div>
-                <div class="names-grid" id="names-grid" data-animate></div>
-                <div class="result" id="name-result">
-                    <h2 id="res-name" style="font-family:'Cinzel',serif;font-size:2rem;margin-bottom:0.25rem;color:#d4af37;"></h2>
-                    <p id="res-meaning" style="color:rgba(255,255,255,0.55);margin-bottom:1rem;font-size:0.9rem;font-style:italic;"></p>
-                    <p id="res-personality" style="color:rgba(255,255,255,0.8);line-height:1.8;"></p>
-                    <div class="detail-row">
-                        <div class="detail-item"><strong>📅 Svátek</strong><span id="res-nameday"></span></div>
-                        <div class="detail-item"><strong>🔢 Numerologie</strong><span id="res-numerology">číslo <span id="res-num"></span></span></div>
-                        <div class="detail-item"><strong>🌈 Aura</strong><span id="res-aura"></span></div>
-                        <div class="detail-item"><strong>🌿 Živel</strong><span id="res-element"></span></div>
-                    </div>
-                    <div style="margin-top:0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
-                        <div class="detail-item"><strong>❤️ V lásce</strong><span id="res-love" style="font-size:0.83rem;color:rgba(255,255,255,0.65);line-height:1.5;"></span></div>
-                        <div class="detail-item"><strong>💼 Kariéra</strong><span id="res-career" style="font-size:0.83rem;color:rgba(255,255,255,0.65);line-height:1.5;"></span></div>
-                    </div>
-                    <div style="display:flex;gap:0.75rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;">
-                        <a href="../numerologie.html" class="btn btn--ghost" style="font-size:0.88rem;">🔢 Numerologie</a>
-                        <a href="../aura.html" class="btn btn--ghost" style="font-size:0.88rem;">🌈 Aura kalkulačka</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-    <div id="footer-placeholder"></div>
-    <script src="../js/api-config.js?v=5" defer></script>
-    <script src="../js/auth-client.js?v=5" defer></script>
-    <script src="../js/components.js?v=5" defer></script>
-    <script src="../js/nameday.js" defer></script>
-    <script src="../js/exit-intent.js" defer></script>
-    <script type="module" src="../js/main.js?v=5"></script>
-    <script>
-    let allNames = {};
-    fetch('../data/jmena.json').then(r=>r.json()).then(data=>{
-        allNames = data;
-        renderGrid(Object.keys(data));
-    });
-
-    function renderGrid(names) {
-        const grid = document.getElementById('names-grid');
-        grid.innerHTML = names.slice(0,40).map(n=>`<button class="name-btn" data-name="${n}">${n}</button>`).join('');
-    }
-
-    window.searchName = function() {
-        const q = document.getElementById('name-search').value.trim();
-        if (!q) return;
-        const found = Object.keys(allNames).filter(n=>n.toLowerCase().startsWith(q.toLowerCase()));
-        if (found.length === 1) { showName(found[0]); return; }
-        if (found.length > 1) { renderGrid(found); return; }
-        // Try exact match case-insensitive
-        const exact = Object.keys(allNames).find(n=>n.toLowerCase()===q.toLowerCase());
-        if (exact) showName(exact);
-        else { renderGrid([]); document.getElementById('names-grid').innerHTML = '<p style="color:rgba(255,255,255,0.4);grid-column:1/-1;">Jméno nenalezeno.</p>'; }
-    };
-
-    window.showName = function(name) {
-        const d = allNames[name];
-        if (!d) return;
-        document.getElementById('res-name').textContent = name;
-        document.getElementById('res-meaning').textContent = `Původ: ${d.origin} | Význam: "${d.meaning}"`;
-        document.getElementById('res-personality').textContent = d.personality;
-        document.getElementById('res-nameday').textContent = d.nameday;
-        document.getElementById('res-num').textContent = d.numerology;
-        document.getElementById('res-aura').textContent = d.aura;
-        document.getElementById('res-element').textContent = d.element;
-        document.getElementById('res-love').textContent = d.love;
-        document.getElementById('res-career').textContent = d.career;
-        const r = document.getElementById('name-result');
-        r.classList.add('show');
-        r.scrollIntoView({behavior:'smooth',block:'nearest'});
-    };
-
-    document.getElementById('btn-search-name').addEventListener('click', searchName);
-    document.getElementById('name-search').addEventListener('keydown',e=>{ if(e.key==='Enter') searchName(); });
-    document.getElementById('names-grid').addEventListener('click', e => {
-        const btn = e.target.closest('.name-btn[data-name]');
-        if (btn) showName(btn.dataset.name);
-    });
-    </script>
-</body>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Databáze jmen — Původ, Význam, Numerologie | Mystická Hvězda</title>
+
+    <meta name="description" content="Zjistěte původ a duchovní význam vašeho jména. Databáze českých jmen — numerologie, barva aury, živel a osobnostní profil.">
+
+    <link rel="canonical" href="https://mystickahvezda.cz/jmena/">
+
+    <meta property="og:title" content="Databáze jmen — Původ a duchovní výklad | Mystická Hvězda">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=4">
+
+    <style>
+
+        .name-search { max-width:500px; margin:2rem auto; display:flex; gap:0.75rem; }
+
+        .name-input { flex:1; padding:0.9rem 1.25rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:12px; color:white; font-family:inherit; font-size:1rem; outline:none; }
+
+        .name-input:focus { border-color:rgba(212,175,55,0.5); }
+
+        .names-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:0.75rem; max-width:900px; margin:2rem auto; }
+
+        .name-btn { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:0.85rem; cursor:pointer; text-align:center; color:rgba(255,255,255,0.8); font-size:0.9rem; font-family:inherit; transition:all 0.2s; }
+
+        .name-btn:hover { background:rgba(212,175,55,0.1); border-color:rgba(212,175,55,0.3); color:white; }
+
+        .result { max-width:650px; margin:2rem auto; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:2rem; display:none; animation:fadeIn 0.4s ease; }
+
+        .result.show { display:block; }
+
+        @keyframes fadeIn { from{opacity:0;transform:translateY(15px)} to{opacity:1;transform:translateY(0)} }
+
+        .detail-row { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem; }
+
+        .detail-item { background:rgba(255,255,255,0.03); border-radius:10px; padding:0.85rem; font-size:0.88rem; }
+
+        .detail-item strong { display:block; color:#d4af37; font-size:0.75rem; margin-bottom:0.3rem; text-transform:uppercase; letter-spacing:0.5px; }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="stars" aria-hidden="true"></div>
+
+    <div id="header-placeholder"></div>
+
+    <main>
+
+        <section class="section" style="padding-top:5rem;text-align:center;">
+
+            <div class="container">
+
+                <div data-animate>
+
+                    <span class="section__badge">Duchovní výklad</span>
+
+                    <h1 class="section__title">Databáze <span class="text-gradient">Jmen</span></h1>
+
+                    <p class="section__text">Zjistěte původ, duchovní význam a numerologický profil svého jména.</p>
+
+                </div>
+
+                <div class="name-search" data-animate>
+
+                    <input type="text" id="name-search" class="name-input" placeholder="Zadejte jméno..." aria-label="Hledejte jméno">
+
+                    <button id="btn-search-name" class="btn btn--primary">Hledat</button>
+
+                </div>
+
+                <div class="names-grid" id="names-grid" data-animate></div>
+
+                <div class="result" id="name-result">
+
+                    <h2 id="res-name" style="font-family:'Cinzel',serif;font-size:2rem;margin-bottom:0.25rem;color:#d4af37;"></h2>
+
+                    <p id="res-meaning" style="color:rgba(255,255,255,0.55);margin-bottom:1rem;font-size:0.9rem;font-style:italic;"></p>
+
+                    <p id="res-personality" style="color:rgba(255,255,255,0.8);line-height:1.8;"></p>
+
+                    <div class="detail-row">
+
+                        <div class="detail-item"><strong>📅 Svátek</strong><span id="res-nameday"></span></div>
+
+                        <div class="detail-item"><strong>🔢 Numerologie</strong><span id="res-numerology">číslo <span id="res-num"></span></span></div>
+
+                        <div class="detail-item"><strong>🌈 Aura</strong><span id="res-aura"></span></div>
+
+                        <div class="detail-item"><strong>🌿 Živel</strong><span id="res-element"></span></div>
+
+                    </div>
+
+                    <div style="margin-top:0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+
+                        <div class="detail-item"><strong>❤️ V lásce</strong><span id="res-love" style="font-size:0.83rem;color:rgba(255,255,255,0.65);line-height:1.5;"></span></div>
+
+                        <div class="detail-item"><strong>💼 Kariéra</strong><span id="res-career" style="font-size:0.83rem;color:rgba(255,255,255,0.65);line-height:1.5;"></span></div>
+
+                    </div>
+
+                    <div style="display:flex;gap:0.75rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;">
+
+                        <a href="../numerologie.html" class="btn btn--ghost" style="font-size:0.88rem;">🔢 Numerologie</a>
+
+                        <a href="../aura.html" class="btn btn--ghost" style="font-size:0.88rem;">🌈 Aura kalkulačka</a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/api-config.js?v=5" defer></script>
+
+    <script src="../js/auth-client.js?v=5" defer></script>
+
+    <script src="../js/components.js?v=10" defer></script>
+
+    <script src="../js/nameday.js" defer></script>
+
+    <script src="../js/exit-intent.js" defer></script>
+
+    <script type="module" src="../js/main.js?v=10"></script>
+
+    <script>
+
+    let allNames = {};
+
+    fetch('../data/jmena.json').then(r=>r.json()).then(data=>{
+
+        allNames = data;
+
+        renderGrid(Object.keys(data));
+
+    });
+
+
+
+    function renderGrid(names) {
+
+        const grid = document.getElementById('names-grid');
+
+        grid.innerHTML = names.slice(0,40).map(n=>`<button class="name-btn" data-name="${n}">${n}</button>`).join('');
+
+    }
+
+
+
+    window.searchName = function() {
+
+        const q = document.getElementById('name-search').value.trim();
+
+        if (!q) return;
+
+        const found = Object.keys(allNames).filter(n=>n.toLowerCase().startsWith(q.toLowerCase()));
+
+        if (found.length === 1) { showName(found[0]); return; }
+
+        if (found.length > 1) { renderGrid(found); return; }
+
+        // Try exact match case-insensitive
+
+        const exact = Object.keys(allNames).find(n=>n.toLowerCase()===q.toLowerCase());
+
+        if (exact) showName(exact);
+
+        else { renderGrid([]); document.getElementById('names-grid').innerHTML = '<p style="color:rgba(255,255,255,0.4);grid-column:1/-1;">Jméno nenalezeno.</p>'; }
+
+    };
+
+
+
+    window.showName = function(name) {
+
+        const d = allNames[name];
+
+        if (!d) return;
+
+        document.getElementById('res-name').textContent = name;
+
+        document.getElementById('res-meaning').textContent = `Původ: ${d.origin} | Význam: "${d.meaning}"`;
+
+        document.getElementById('res-personality').textContent = d.personality;
+
+        document.getElementById('res-nameday').textContent = d.nameday;
+
+        document.getElementById('res-num').textContent = d.numerology;
+
+        document.getElementById('res-aura').textContent = d.aura;
+
+        document.getElementById('res-element').textContent = d.element;
+
+        document.getElementById('res-love').textContent = d.love;
+
+        document.getElementById('res-career').textContent = d.career;
+
+        const r = document.getElementById('name-result');
+
+        r.classList.add('show');
+
+        r.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+    };
+
+
+
+    document.getElementById('btn-search-name').addEventListener('click', searchName);
+
+    document.getElementById('name-search').addEventListener('keydown',e=>{ if(e.key==='Enter') searchName(); });
+
+    document.getElementById('names-grid').addEventListener('click', e => {
+
+        const btn = e.target.closest('.name-btn[data-name]');
+
+        if (btn) showName(btn.dataset.name);
+
+    });
+
+    </script>
+
+</body>
+
 </html>

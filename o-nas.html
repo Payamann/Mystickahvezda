@@ -1,215 +1,430 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Seznamte se s týmem Mystické Hvězdy. Náš příběh a mise.">
-    <meta name="keywords" content="o nás, tým, mise, astrologie">
-    <meta name="theme-color" content="#0a0a1a">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="O Nás | Mystická Hvězda">
-    <meta property="og:description" content="Seznamte se s týmem Mystické Hvězdy. Náš příběh a mise.">
-    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
-    <meta property="og:locale" content="cs_CZ">
-    <meta name="twitter:card" content="summary_large_image">
-
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "AboutPage",
-        "name": "O Nás",
-        "description": "Seznamte se s týmem Mystické Hvězdy"
-    }
-    </script>
-
-    <title>O Nás | Mystická Hvězda</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>?</text></svg>">
-
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="img/icon-192.webp">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-</head>
-
-<body>
-    <!-- Skip to main content -->
-    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
-
-    <div class="stars" aria-hidden="true"></div>
-
-    <!-- HEADER (loaded dynamically) -->
-    <div id="header-placeholder"></div>
-
-    <main id="main-content">
-        <!-- HERO -->
-        <section class="section section--hero" style="min-height: 60vh;">
-            <div class="container">
-                <div class="grid grid-2" style="align-items: center;" data-animate>
-                    <div class="hero__content text-left">
-                        <h1 class="hero__title">
-                            Vaše útočiště pro <span class="text-gradient">klid duše</span>
-                        </h1>
-                        <p class="hero__subtitle" style="margin-left: 0;">
-                            Mystická Hvězda je víc než vesmírná předpověď. Je to bezpečný přístav, kde najdete pochopení
-                            a směr, když se cítíte ztraceni ve vlnách života.
-                        </p>
-                    </div>
-                    <!-- Abstract Visual Representation -->
-                    <div class="flex-center">
-                        <img src="img/icon-sanctuary.webp" alt="Mystická svatyně" class="animate-float"
-                            style="max-width: 400px; width: 100%; height: auto; border-radius: 24px; filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.3));"
-                            fetchpriority="high">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- MISSION & VALUES -->
-        <section class="section section--alt">
-            <div class="container">
-                <div class="grid grid-3" data-animate>
-                    <div class="card card--service">
-                        <span class="card__icon">??</span>
-                        <h3 class="card__title">Naše mise</h3>
-                        <p class="card__text">
-                            Pomáhat vám objevit vlastní sílu. Věříme, že hvězdy nejsou rozsudek, ale nástroj k tomu,
-                            abyste se stali autory svého příběhu.
-                        </p>
-                    </div>
-                    <div class="card card--service">
-                        <span class="card__icon">??</span>
-                        <h3 class="card__title">Osobní přístup</h3>
-                        <p class="card__text">
-                            Každý výklad je unikátní. Nepoužíváme generické šablony, ale přistupujeme
-                            ke každému klientovi s maximální pečlivostí a empatií.
-                        </p>
-                    </div>
-                    <div class="card card--service">
-                        <span class="card__icon">??</span>
-                        <h3 class="card__title">Důvěra a diskrétnost</h3>
-                        <p class="card__text">
-                            Vaše soukromí je pro nás posvátné. Všechny konzultace a data jsou
-                            přísně chráněna a zůstávají pouze mezi vámi a vaším astrologem.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- STATISTICS -->
-        <section class="section">
-            <div class="container">
-                <div class="grid grid-4 text-center" data-animate>
-                    <div>
-                        <div class="text-gradient"
-                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">5K+</div>
-                        <p style="color: var(--color-silver-mist);">Výkladů měsíčně</p>
-                    </div>
-                    <div>
-                        <div class="text-gradient"
-                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">4.8?</div>
-                        <p style="color: var(--color-silver-mist);">Průměrné hodnocení</p>
-                    </div>
-                    <div>
-                        <div class="text-gradient"
-                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">100%</div>
-                        <p style="color: var(--color-silver-mist);">Diskrétnost</p>
-                    </div>
-                    <div>
-                        <div class="text-gradient"
-                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">24/7</div>
-                        <p style="color: var(--color-silver-mist);">Podpora</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TEAM / METHODOLOGY -->
-        <section class="section section--alt">
-            <div class="container">
-                <div class="grid grid-2" style="align-items: center; gap: var(--space-4xl);" data-animate>
-                    <div>
-                        <div class="flex-center">
-                            <img src="img/icon-ancient-scroll.webp" alt="Starodávný svitek" class="animate-float"
-                                style="max-width: 300px; width: 100%; height: auto; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"
-                                loading="lazy">
-                        </div>
-                    </div>
-                    <div>
-                        <span class="section__badge">Naše metody</span>
-                        <h2 class="section__title">Spojení starověké moudrosti a moderní praxe</h2>
-                        <p class="mb-lg">
-                            Využíváme ověřené astrologické systémy (Placidus, Koch) v kombinaci s tarotovou symbolikou.
-                            Každý výklad je pečlivě sestaven podle tradičních astrologických pravidel a interpretován s
-                            ohledem na vaši jedinečnou životní situaci.
-                        </p>
-                        <p class="mb-xl">
-                            Naše služba spojuje přesné astronomické výpočty s hlubokým porozuměním symbolice a významu
-                            planetárních pozic. Důraz klademe na relevanci a praktickou použitelnost každého výkladu.
-                        </p>
-                        <a href="cenik.html" class="btn btn--primary">Stát se klientem</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTA -->
-        <section class="section">
-            <div class="container">
-                <div class="cta-banner" data-animate>
-                    <div class="cta-banner__content">
-                        <h2 class="cta-banner__title">Máte otázky?</h2>
-                        <p class="cta-banner__text">
-                            Náš tým podpory je vám k dispozici. Napište nám a my vám rádi pomůžeme
-                            vybrat tu správnou službu pro vás.
-                        </p>
-                        <a href="kontakt.html" class="btn btn--secondary btn--lg">Kontaktovat podporu</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- FOOTER (loaded dynamically) -->
-    <div id="footer-placeholder"></div>
-
-
-
-
-
-
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(reg => console.log('? Service Worker registered'))
-                    .catch(err => console.log('SW registration failed:', err));
-            });
-        }
-    </script>
-
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/templates.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="description" content="Seznamte se s týmem Mystické Hvězdy. Náš příběh a mise.">
+
+    <meta name="keywords" content="o nás, tým, mise, astrologie">
+
+    <meta name="theme-color" content="#0a0a1a">
+
+
+
+    <!-- Open Graph -->
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:title" content="O Nás | Mystická Hvězda">
+
+    <meta property="og:description" content="Seznamte se s týmem Mystické Hvězdy. Náš příběh a mise.">
+
+    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
+
+    <meta property="og:locale" content="cs_CZ">
+
+    <meta name="twitter:card" content="summary_large_image">
+
+
+
+    <!-- JSON-LD Structured Data -->
+
+    <script type="application/ld+json">
+
+    {
+
+        "@context": "https://schema.org",
+
+        "@type": "AboutPage",
+
+        "name": "O Nás",
+
+        "description": "Seznamte se s týmem Mystické Hvězdy"
+
+    }
+
+    </script>
+
+
+
+    <title>O Nás | Mystická Hvězda</title>
+
+
+
+    <!-- Favicon -->
+
+    <link rel="icon" type="image/svg+xml"
+
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>?</text></svg>">
+
+
+
+    <!-- PWA -->
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+</head>
+
+
+
+<body>
+
+    <!-- Skip to main content -->
+
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+
+
+    <div class="stars" aria-hidden="true"></div>
+
+
+
+    <!-- HEADER (loaded dynamically) -->
+
+    <div id="header-placeholder"></div>
+
+
+
+    <main id="main-content">
+
+        <!-- HERO -->
+
+        <section class="section section--hero" style="min-height: 60vh;">
+
+            <div class="container">
+
+                <div class="grid grid-2" style="align-items: center;" data-animate>
+
+                    <div class="hero__content text-left">
+
+                        <h1 class="hero__title">
+
+                            Vaše útočiště pro <span class="text-gradient">klid duše</span>
+
+                        </h1>
+
+                        <p class="hero__subtitle" style="margin-left: 0;">
+
+                            Mystická Hvězda je víc než vesmírná předpověď. Je to bezpečný přístav, kde najdete pochopení
+
+                            a směr, když se cítíte ztraceni ve vlnách života.
+
+                        </p>
+
+                    </div>
+
+                    <!-- Abstract Visual Representation -->
+
+                    <div class="flex-center">
+
+                        <img src="img/icon-sanctuary.webp" alt="Mystická svatyně" class="animate-float"
+
+                            style="max-width: 400px; width: 100%; height: auto; border-radius: 24px; filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.3));"
+
+                            fetchpriority="high">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- MISSION & VALUES -->
+
+        <section class="section section--alt">
+
+            <div class="container">
+
+                <div class="grid grid-3" data-animate>
+
+                    <div class="card card--service">
+
+                        <span class="card__icon">??</span>
+
+                        <h3 class="card__title">Naše mise</h3>
+
+                        <p class="card__text">
+
+                            Pomáhat vám objevit vlastní sílu. Věříme, že hvězdy nejsou rozsudek, ale nástroj k tomu,
+
+                            abyste se stali autory svého příběhu.
+
+                        </p>
+
+                    </div>
+
+                    <div class="card card--service">
+
+                        <span class="card__icon">??</span>
+
+                        <h3 class="card__title">Osobní přístup</h3>
+
+                        <p class="card__text">
+
+                            Každý výklad je unikátní. Nepoužíváme generické šablony, ale přistupujeme
+
+                            ke každému klientovi s maximální pečlivostí a empatií.
+
+                        </p>
+
+                    </div>
+
+                    <div class="card card--service">
+
+                        <span class="card__icon">??</span>
+
+                        <h3 class="card__title">Důvěra a diskrétnost</h3>
+
+                        <p class="card__text">
+
+                            Vaše soukromí je pro nás posvátné. Všechny konzultace a data jsou
+
+                            přísně chráněna a zůstávají pouze mezi vámi a vaším astrologem.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- STATISTICS -->
+
+        <section class="section">
+
+            <div class="container">
+
+                <div class="grid grid-4 text-center" data-animate>
+
+                    <div>
+
+                        <div class="text-gradient"
+
+                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">5K+</div>
+
+                        <p style="color: var(--color-silver-mist);">Výkladů měsíčně</p>
+
+                    </div>
+
+                    <div>
+
+                        <div class="text-gradient"
+
+                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">4.8?</div>
+
+                        <p style="color: var(--color-silver-mist);">Průměrné hodnocení</p>
+
+                    </div>
+
+                    <div>
+
+                        <div class="text-gradient"
+
+                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">100%</div>
+
+                        <p style="color: var(--color-silver-mist);">Diskrétnost</p>
+
+                    </div>
+
+                    <div>
+
+                        <div class="text-gradient"
+
+                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">24/7</div>
+
+                        <p style="color: var(--color-silver-mist);">Podpora</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- TEAM / METHODOLOGY -->
+
+        <section class="section section--alt">
+
+            <div class="container">
+
+                <div class="grid grid-2" style="align-items: center; gap: var(--space-4xl);" data-animate>
+
+                    <div>
+
+                        <div class="flex-center">
+
+                            <img src="img/icon-ancient-scroll.webp" alt="Starodávný svitek" class="animate-float"
+
+                                style="max-width: 300px; width: 100%; height: auto; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"
+
+                                loading="lazy">
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="section__badge">Naše metody</span>
+
+                        <h2 class="section__title">Spojení starověké moudrosti a moderní praxe</h2>
+
+                        <p class="mb-lg">
+
+                            Využíváme ověřené astrologické systémy (Placidus, Koch) v kombinaci s tarotovou symbolikou.
+
+                            Každý výklad je pečlivě sestaven podle tradičních astrologických pravidel a interpretován s
+
+                            ohledem na vaši jedinečnou životní situaci.
+
+                        </p>
+
+                        <p class="mb-xl">
+
+                            Naše služba spojuje přesné astronomické výpočty s hlubokým porozuměním symbolice a významu
+
+                            planetárních pozic. Důraz klademe na relevanci a praktickou použitelnost každého výkladu.
+
+                        </p>
+
+                        <a href="cenik.html" class="btn btn--primary">Stát se klientem</a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- CTA -->
+
+        <section class="section">
+
+            <div class="container">
+
+                <div class="cta-banner" data-animate>
+
+                    <div class="cta-banner__content">
+
+                        <h2 class="cta-banner__title">Máte otázky?</h2>
+
+                        <p class="cta-banner__text">
+
+                            Náš tým podpory je vám k dispozici. Napište nám a my vám rádi pomůžeme
+
+                            vybrat tu správnou službu pro vás.
+
+                        </p>
+
+                        <a href="kontakt.html" class="btn btn--secondary btn--lg">Kontaktovat podporu</a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- FOOTER (loaded dynamically) -->
+
+    <div id="footer-placeholder"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Service Worker Registration -->
+
+    <script>
+
+        if ('serviceWorker' in navigator) {
+
+            window.addEventListener('load', () => {
+
+                navigator.serviceWorker.register('/service-worker.js')
+
+                    .then(reg => console.log('? Service Worker registered'))
+
+                    .catch(err => console.log('SW registration failed:', err));
+
+            });
+
+        }
+
+    </script>
+
+
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/templates.js?v=10" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+
+
+</body>
+
+
+
+</html>
+

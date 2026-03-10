@@ -1,336 +1,672 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description"
-        content="Váš osobní profil na Mystické Hvězdě. Historie výkladů, nastavení účtu a předplatné.">
-    <meta name="keywords" content="profil, účet, historie, výklady, nastavení">
-    <meta name="theme-color" content="#0a0a1a">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Můj Profil | Mystická Hvězda">
-    <meta property="og:description" content="Váš osobní dashboard s historií výkladů.">
-    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
-    <meta property="og:locale" content="cs_CZ">
-
-    <title>Můj Profil | Mystická Hvězda</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
-
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="img/icon-192.webp">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-
-
-
-
-
-
-
-
-    <script type="module" src="js/profile/dashboard.js?v=13" defer></script>
-
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H22CGHF34K"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-H22CGHF34K', {
-        'page_path': window.location.pathname,
-        'anonymize_ip': true
-      });
-    </script>
-</head>
-
-<body>
-    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
-    <div class="stars" aria-hidden="true"></div>
-
-    <!-- HEADER -->
-    <div id="header-placeholder"></div>
-
-    <main id="main-content">
-        <!-- PROFILE HERO -->
-        <section class="section hero hero--mini">
-            <div class="container">
-                <h1 class="hero__title">Můj <span class="text-gradient">Profil</span></h1>
-                <p class="hero__subtitle" id="profile-greeting">Načítání...</p>
-            </div>
-        </section>
-
-        <!-- PROFILE CONTENT -->
-        <section class="section">
-            <div class="container">
-                <!-- Login Required Message -->
-                <div id="login-required" class="card glass-card text-center" style="display: none;">
-                    <h2>?? Přihlášení vyžadováno</h2>
-                    <p style="margin: 1rem 0;">Pro zobrazení profilu se prosím přihlaste.</p>
-                    <a href="#" id="profile-login-btn" class="btn btn--primary">Přihlásit se</a>
-                </div>
-
-                <!-- Profile Dashboard -->
-                <div id="profile-dashboard" style="display: none;">
-                    <!-- User Info Card -->
-                    <div class="card glass-card profile-user-card" style="margin-bottom: 2rem;">
-                        <div class="profile-user-info">
-                            <div class="profile-user-left">
-                                <button id="user-avatar" class="profile-avatar" aria-label="Změnit avatar"
-                                    title="Klikněte pro změnu avataru">??</button>
-                                <div class="profile-user-details">
-                                    <h2 class="profile-user-email"><span id="user-email">-</span></h2>
-                                    <p class="profile-user-plan">
-                                        Předplatné: <span id="user-plan" class="badge">-</span>
-                                    </p>
-                                    <p id="user-zodiac" class="profile-user-zodiac" style="display: none;"></p>
-                                </div>
-                            </div>
-                            <div class="profile-user-right">
-                                <button id="logout-btn" class="btn btn--secondary btn--sm">Odhlásit</button>
-                            </div>
-                        </div>
-                        <!-- Avatar Picker (hidden by default) -->
-                        <div id="avatar-picker" class="avatar-picker" style="display: none;">
-                            <p class="avatar-picker__label">Vyberte si avatar:</p>
-                            <div class="avatar-picker__grid">
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="?">?</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="?">?</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                                <button class="avatar-option" data-avatar="??">??</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Stats Cards -->
-                    <div class="stats-grid">
-                        <div class="stat-card card glass-card">
-                            <div class="stat-icon">??</div>
-                            <div id="stat-total" class="stat-value">0</div>
-                            <div class="stat-label">Celkem výkladů</div>
-                        </div>
-                        <div class="stat-card card glass-card">
-                            <div class="stat-icon">??</div>
-                            <div id="stat-month" class="stat-value">0</div>
-                            <div class="stat-label">Tento měsíc</div>
-                        </div>
-                        <div class="stat-card card glass-card">
-                            <div class="stat-icon">?</div>
-                            <div id="stat-favorites" class="stat-value">0</div>
-                            <div class="stat-label">Oblíbené</div>
-                        </div>
-                        <div class="stat-card card glass-card">
-                            <div class="stat-icon">??</div>
-                            <div id="stat-streak" class="stat-value">0</div>
-                            <div class="stat-label">Denní série</div>
-                        </div>
-                    </div>
-
-                    <!-- Sanctuary Dashboard (Biorhythms + Journal) -->
-                    <div class="profile-grid">
-
-
-                        <!-- Manifestation Journal -->
-                        <div class="card glass-card">
-                            <h3 class="card-title">?? Manifestační Deník</h3>
-                            <textarea id="journal-input" class="form-input" rows="3"
-                                placeholder="Napište své přání Vesmíru... (např. Cítím vděčnost za...)"></textarea>
-                            <button id="journal-submit" class="btn btn--primary journal-submit-btn">? Vyslat
-                                přání</button>
-
-                            <div class="journal-recent">
-                                <h4 class="journal-recent-title">Poslední záznamy</h4>
-                                <div id="journal-entries" class="journal-entries-list">
-                                    <p class="journal-empty">Zatím prázdno...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tabs -->
-                    <div class="profile-tabs" role="tablist" aria-label="Sekce profilu">
-                        <button class="profile-tab active" role="tab" id="tab-btn-history" data-tab="history"
-                            aria-selected="true" aria-controls="tab-history">
-                            <span class="profile-tab-icon" aria-hidden="true">??</span>
-                            <span class="profile-tab-label">Historie výkladů</span>
-                        </button>
-                        <button class="profile-tab" role="tab" id="tab-btn-favorites" data-tab="favorites"
-                            aria-selected="false" aria-controls="tab-favorites">
-                            <span class="profile-tab-icon" aria-hidden="true">?</span>
-                            <span class="profile-tab-label">Oblíbené</span>
-                        </button>
-                        <button class="profile-tab" role="tab" id="tab-btn-settings" data-tab="settings"
-                            aria-selected="false" aria-controls="tab-settings">
-                            <span class="profile-tab-icon" aria-hidden="true">??</span>
-                            <span class="profile-tab-label">Nastavení</span>
-                        </button>
-                    </div>
-
-                    <!-- History Tab -->
-                    <div class="tab-content active" id="tab-history" role="tabpanel" aria-labelledby="tab-btn-history">
-                        <div class="card glass-card">
-                            <div class="readings-header">
-                                <h3>Vaše poslední výklady</h3>
-                                <select id="readings-filter" class="form-input readings-filter"
-                                    aria-label="Filtrovat podle typu">
-                                    <option value="all">Vše</option>
-                                    <option value="tarot">?? Tarot</option>
-                                    <option value="horoscope">? Horoskop</option>
-                                    <option value="crystal">?? Křišťálová koule</option>
-                                    <option value="natal">?? Natální karta</option>
-                                    <option value="numerology">?? Numerologie</option>
-                                    <option value="synastry">?? Partnerská shoda</option>
-                                </select>
-                            </div>
-                            <div id="readings-list" class="readings-list">
-                                <p class="text-center" style="opacity: 0.6;">Načítání historie...</p>
-                            </div>
-                            <div id="readings-pagination" class="readings-pagination" style="display: none;">
-                                <button id="readings-load-more" class="btn btn--glass btn--sm">Načíst další</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Favorites Tab -->
-                    <div class="tab-content" id="tab-favorites" style="display: none;" role="tabpanel"
-                        aria-labelledby="tab-btn-favorites">
-                        <div class="card glass-card">
-                            <h3>Uložené výklady</h3>
-                            <div id="favorites-list">
-                                <div class="empty-state">
-                                    <div class="empty-state__icon">?</div>
-                                    <h4 class="empty-state__title">Žádné oblíbené výklady</h4>
-                                    <p class="empty-state__text">Klikněte na ? u výkladu pro přidání do oblíbených</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Settings Tab -->
-                    <div class="tab-content" id="tab-settings" style="display: none;" role="tabpanel"
-                        aria-labelledby="tab-btn-settings">
-                        <div class="card glass-card">
-                            <h3>Nastavení účtu</h3>
-                            <div class="settings-form">
-                                <h4 class="settings-section-title">Osobní údaje</h4>
-                                <div>
-                                    <label class="form-label" for="settings-name">Jméno / Přezdívka</label>
-                                    <input type="text" id="settings-name" class="form-input" placeholder="Vaše jméno">
-                                </div>
-                                <div>
-                                    <label class="form-label" for="settings-birthdate">Datum narození</label>
-                                    <input type="date" id="settings-birthdate" class="form-input" max="">
-                                </div>
-                                <div class="settings-row">
-                                    <div>
-                                        <label class="form-label" for="settings-birthtime">Čas narození</label>
-                                        <input type="time" id="settings-birthtime" class="form-input">
-                                    </div>
-                                    <div>
-                                        <label class="form-label" for="settings-birthplace">Místo narození</label>
-                                        <input type="text" id="settings-birthplace" class="form-input"
-                                            placeholder="Např. Praha">
-                                    </div>
-                                </div>
-
-                                <h4 class="settings-section-title">Účet</h4>
-                                <div>
-                                    <label class="form-label" for="settings-email">Email</label>
-                                    <input type="email" id="settings-email" class="form-input" disabled
-                                        title="Email nelze změnit">
-                                </div>
-                                <div>
-                                    <label class="form-label" for="settings-current-password">Aktuální heslo</label>
-                                    <input type="password" id="settings-current-password" class="form-input"
-                                        placeholder="Vyžadováno pro změnu hesla" autocomplete="current-password">
-                                </div>
-                                <div>
-                                    <label class="form-label" for="settings-password">Nové heslo</label>
-                                    <input type="password" id="settings-password" class="form-input"
-                                        placeholder="Min. 8 znaků" minlength="8" autocomplete="new-password">
-                                </div>
-                                <button id="save-settings-btn" class="btn btn--primary">Uložit změny</button>
-                            </div>
-                        </div>
-
-                        <!-- Subscription Management Card -->
-                        <div class="card glass-card subscription-card" style="margin-top: 2rem;" id="subscription-card">
-                            <h3>?? Správa předplatného</h3>
-                            <div id="subscription-details" class="subscription-details">
-                                <p style="opacity: 0.6;">Načítání...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Reading Detail Modal -->
-    <div id="reading-modal" class="modal reading-modal" role="dialog" aria-modal="true" aria-label="Detail výkladu"
-        style="display: none;">
-        <div class="modal__content reading-modal__content">
-            <button id="reading-modal-close" class="modal__close" aria-label="Zavřít">?</button>
-            <div id="reading-modal-content">
-                <p style="text-align: center; opacity: 0.6;">Načítání...</p>
-            </div>
-            <div class="reading-modal__actions">
-                <button id="modal-favorite-btn" class="btn btn--secondary btn--sm" aria-label="Přidat do oblíbených">?
-                    Přidat do oblíbených</button>
-                <button id="modal-delete-btn" class="btn btn--sm btn--danger" aria-label="Smazat výklad">???
-                    Smazat</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <div id="footer-placeholder"></div>
-
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(reg => console.log('? Service Worker registered'))
-                    .catch(err => console.log('SW registration failed:', err));
-            });
-        }
-    </script>
-
-    <script src="js/analytics.js?v=5" defer></script>
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/templates.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script src="js/retention.js?v=5" defer></script>
-    <script src="js/personalization.js?v=5" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="description"
+
+        content="Váš osobní profil na Mystické Hvězdě. Historie výkladů, nastavení účtu a předplatné.">
+
+    <meta name="keywords" content="profil, účet, historie, výklady, nastavení">
+
+    <meta name="theme-color" content="#0a0a1a">
+
+
+
+    <!-- Open Graph -->
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:title" content="Můj Profil | Mystická Hvězda">
+
+    <meta property="og:description" content="Váš osobní dashboard s historií výkladů.">
+
+    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
+
+    <meta property="og:locale" content="cs_CZ">
+
+
+
+    <title>Můj Profil | Mystická Hvězda</title>
+
+
+
+    <!-- Favicon -->
+
+    <link rel="icon" type="image/svg+xml"
+
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
+
+
+
+    <!-- PWA -->
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script type="module" src="js/profile/dashboard.js?v=13" defer></script>
+
+
+
+    <!-- Google Analytics 4 -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H22CGHF34K"></script>
+
+    <script>
+
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag(){dataLayer.push(arguments);}
+
+      gtag('js', new Date());
+
+      gtag('config', 'G-H22CGHF34K', {
+
+        'page_path': window.location.pathname,
+
+        'anonymize_ip': true
+
+      });
+
+    </script>
+
+</head>
+
+
+
+<body>
+
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+    <div class="stars" aria-hidden="true"></div>
+
+
+
+    <!-- HEADER -->
+
+    <div id="header-placeholder"></div>
+
+
+
+    <main id="main-content">
+
+        <!-- PROFILE HERO -->
+
+        <section class="section hero hero--mini">
+
+            <div class="container">
+
+                <h1 class="hero__title">Můj <span class="text-gradient">Profil</span></h1>
+
+                <p class="hero__subtitle" id="profile-greeting">Načítání...</p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- PROFILE CONTENT -->
+
+        <section class="section">
+
+            <div class="container">
+
+                <!-- Login Required Message -->
+
+                <div id="login-required" class="card glass-card text-center" style="display: none;">
+
+                    <h2>?? Přihlášení vyžadováno</h2>
+
+                    <p style="margin: 1rem 0;">Pro zobrazení profilu se prosím přihlaste.</p>
+
+                    <a href="#" id="profile-login-btn" class="btn btn--primary">Přihlásit se</a>
+
+                </div>
+
+
+
+                <!-- Profile Dashboard -->
+
+                <div id="profile-dashboard" style="display: none;">
+
+                    <!-- User Info Card -->
+
+                    <div class="card glass-card profile-user-card" style="margin-bottom: 2rem;">
+
+                        <div class="profile-user-info">
+
+                            <div class="profile-user-left">
+
+                                <button id="user-avatar" class="profile-avatar" aria-label="Změnit avatar"
+
+                                    title="Klikněte pro změnu avataru">??</button>
+
+                                <div class="profile-user-details">
+
+                                    <h2 class="profile-user-email"><span id="user-email">-</span></h2>
+
+                                    <p class="profile-user-plan">
+
+                                        Předplatné: <span id="user-plan" class="badge">-</span>
+
+                                    </p>
+
+                                    <p id="user-zodiac" class="profile-user-zodiac" style="display: none;"></p>
+
+                                </div>
+
+                            </div>
+
+                            <div class="profile-user-right">
+
+                                <button id="logout-btn" class="btn btn--secondary btn--sm">Odhlásit</button>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Avatar Picker (hidden by default) -->
+
+                        <div id="avatar-picker" class="avatar-picker" style="display: none;">
+
+                            <p class="avatar-picker__label">Vyberte si avatar:</p>
+
+                            <div class="avatar-picker__grid">
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="?">?</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="?">?</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                                <button class="avatar-option" data-avatar="??">??</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Stats Cards -->
+
+                    <div class="stats-grid">
+
+                        <div class="stat-card card glass-card">
+
+                            <div class="stat-icon">??</div>
+
+                            <div id="stat-total" class="stat-value">0</div>
+
+                            <div class="stat-label">Celkem výkladů</div>
+
+                        </div>
+
+                        <div class="stat-card card glass-card">
+
+                            <div class="stat-icon">??</div>
+
+                            <div id="stat-month" class="stat-value">0</div>
+
+                            <div class="stat-label">Tento měsíc</div>
+
+                        </div>
+
+                        <div class="stat-card card glass-card">
+
+                            <div class="stat-icon">?</div>
+
+                            <div id="stat-favorites" class="stat-value">0</div>
+
+                            <div class="stat-label">Oblíbené</div>
+
+                        </div>
+
+                        <div class="stat-card card glass-card">
+
+                            <div class="stat-icon">??</div>
+
+                            <div id="stat-streak" class="stat-value">0</div>
+
+                            <div class="stat-label">Denní série</div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Sanctuary Dashboard (Biorhythms + Journal) -->
+
+                    <div class="profile-grid">
+
+
+
+
+
+                        <!-- Manifestation Journal -->
+
+                        <div class="card glass-card">
+
+                            <h3 class="card-title">?? Manifestační Deník</h3>
+
+                            <textarea id="journal-input" class="form-input" rows="3"
+
+                                placeholder="Napište své přání Vesmíru... (např. Cítím vděčnost za...)"></textarea>
+
+                            <button id="journal-submit" class="btn btn--primary journal-submit-btn">? Vyslat
+
+                                přání</button>
+
+
+
+                            <div class="journal-recent">
+
+                                <h4 class="journal-recent-title">Poslední záznamy</h4>
+
+                                <div id="journal-entries" class="journal-entries-list">
+
+                                    <p class="journal-empty">Zatím prázdno...</p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Tabs -->
+
+                    <div class="profile-tabs" role="tablist" aria-label="Sekce profilu">
+
+                        <button class="profile-tab active" role="tab" id="tab-btn-history" data-tab="history"
+
+                            aria-selected="true" aria-controls="tab-history">
+
+                            <span class="profile-tab-icon" aria-hidden="true">??</span>
+
+                            <span class="profile-tab-label">Historie výkladů</span>
+
+                        </button>
+
+                        <button class="profile-tab" role="tab" id="tab-btn-favorites" data-tab="favorites"
+
+                            aria-selected="false" aria-controls="tab-favorites">
+
+                            <span class="profile-tab-icon" aria-hidden="true">?</span>
+
+                            <span class="profile-tab-label">Oblíbené</span>
+
+                        </button>
+
+                        <button class="profile-tab" role="tab" id="tab-btn-settings" data-tab="settings"
+
+                            aria-selected="false" aria-controls="tab-settings">
+
+                            <span class="profile-tab-icon" aria-hidden="true">??</span>
+
+                            <span class="profile-tab-label">Nastavení</span>
+
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- History Tab -->
+
+                    <div class="tab-content active" id="tab-history" role="tabpanel" aria-labelledby="tab-btn-history">
+
+                        <div class="card glass-card">
+
+                            <div class="readings-header">
+
+                                <h3>Vaše poslední výklady</h3>
+
+                                <select id="readings-filter" class="form-input readings-filter"
+
+                                    aria-label="Filtrovat podle typu">
+
+                                    <option value="all">Vše</option>
+
+                                    <option value="tarot">?? Tarot</option>
+
+                                    <option value="horoscope">? Horoskop</option>
+
+                                    <option value="crystal">?? Křišťálová koule</option>
+
+                                    <option value="natal">?? Natální karta</option>
+
+                                    <option value="numerology">?? Numerologie</option>
+
+                                    <option value="synastry">?? Partnerská shoda</option>
+
+                                </select>
+
+                            </div>
+
+                            <div id="readings-list" class="readings-list">
+
+                                <p class="text-center" style="opacity: 0.6;">Načítání historie...</p>
+
+                            </div>
+
+                            <div id="readings-pagination" class="readings-pagination" style="display: none;">
+
+                                <button id="readings-load-more" class="btn btn--glass btn--sm">Načíst další</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Favorites Tab -->
+
+                    <div class="tab-content" id="tab-favorites" style="display: none;" role="tabpanel"
+
+                        aria-labelledby="tab-btn-favorites">
+
+                        <div class="card glass-card">
+
+                            <h3>Uložené výklady</h3>
+
+                            <div id="favorites-list">
+
+                                <div class="empty-state">
+
+                                    <div class="empty-state__icon">?</div>
+
+                                    <h4 class="empty-state__title">Žádné oblíbené výklady</h4>
+
+                                    <p class="empty-state__text">Klikněte na ? u výkladu pro přidání do oblíbených</p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Settings Tab -->
+
+                    <div class="tab-content" id="tab-settings" style="display: none;" role="tabpanel"
+
+                        aria-labelledby="tab-btn-settings">
+
+                        <div class="card glass-card">
+
+                            <h3>Nastavení účtu</h3>
+
+                            <div class="settings-form">
+
+                                <h4 class="settings-section-title">Osobní údaje</h4>
+
+                                <div>
+
+                                    <label class="form-label" for="settings-name">Jméno / Přezdívka</label>
+
+                                    <input type="text" id="settings-name" class="form-input" placeholder="Vaše jméno">
+
+                                </div>
+
+                                <div>
+
+                                    <label class="form-label" for="settings-birthdate">Datum narození</label>
+
+                                    <input type="date" id="settings-birthdate" class="form-input" max="">
+
+                                </div>
+
+                                <div class="settings-row">
+
+                                    <div>
+
+                                        <label class="form-label" for="settings-birthtime">Čas narození</label>
+
+                                        <input type="time" id="settings-birthtime" class="form-input">
+
+                                    </div>
+
+                                    <div>
+
+                                        <label class="form-label" for="settings-birthplace">Místo narození</label>
+
+                                        <input type="text" id="settings-birthplace" class="form-input"
+
+                                            placeholder="Např. Praha">
+
+                                    </div>
+
+                                </div>
+
+
+
+                                <h4 class="settings-section-title">Účet</h4>
+
+                                <div>
+
+                                    <label class="form-label" for="settings-email">Email</label>
+
+                                    <input type="email" id="settings-email" class="form-input" disabled
+
+                                        title="Email nelze změnit">
+
+                                </div>
+
+                                <div>
+
+                                    <label class="form-label" for="settings-current-password">Aktuální heslo</label>
+
+                                    <input type="password" id="settings-current-password" class="form-input"
+
+                                        placeholder="Vyžadováno pro změnu hesla" autocomplete="current-password">
+
+                                </div>
+
+                                <div>
+
+                                    <label class="form-label" for="settings-password">Nové heslo</label>
+
+                                    <input type="password" id="settings-password" class="form-input"
+
+                                        placeholder="Min. 8 znaků" minlength="8" autocomplete="new-password">
+
+                                </div>
+
+                                <button id="save-settings-btn" class="btn btn--primary">Uložit změny</button>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- Subscription Management Card -->
+
+                        <div class="card glass-card subscription-card" style="margin-top: 2rem;" id="subscription-card">
+
+                            <h3>?? Správa předplatného</h3>
+
+                            <div id="subscription-details" class="subscription-details">
+
+                                <p style="opacity: 0.6;">Načítání...</p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- Reading Detail Modal -->
+
+    <div id="reading-modal" class="modal reading-modal" role="dialog" aria-modal="true" aria-label="Detail výkladu"
+
+        style="display: none;">
+
+        <div class="modal__content reading-modal__content">
+
+            <button id="reading-modal-close" class="modal__close" aria-label="Zavřít">?</button>
+
+            <div id="reading-modal-content">
+
+                <p style="text-align: center; opacity: 0.6;">Načítání...</p>
+
+            </div>
+
+            <div class="reading-modal__actions">
+
+                <button id="modal-favorite-btn" class="btn btn--secondary btn--sm" aria-label="Přidat do oblíbených">?
+
+                    Přidat do oblíbených</button>
+
+                <button id="modal-delete-btn" class="btn btn--sm btn--danger" aria-label="Smazat výklad">???
+
+                    Smazat</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Footer -->
+
+    <div id="footer-placeholder"></div>
+
+
+
+    <!-- Service Worker Registration -->
+
+    <script>
+
+        if ('serviceWorker' in navigator) {
+
+            window.addEventListener('load', () => {
+
+                navigator.serviceWorker.register('/service-worker.js')
+
+                    .then(reg => console.log('? Service Worker registered'))
+
+                    .catch(err => console.log('SW registration failed:', err));
+
+            });
+
+        }
+
+    </script>
+
+
+
+    <script src="js/analytics.js?v=5" defer></script>
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/templates.js?v=10" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script src="js/retention.js?v=5" defer></script>
+
+    <script src="js/personalization.js?v=5" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+
+
+</body>
+
+
+
+</html>
+

@@ -1,377 +1,754 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description"
-        content="Online tarotové výklady s AI interpretací. Vyberte si z 22 karet Velké Arkány a získejte personalizovaný výklad.">
-    <meta name="keywords" content="tarot, tarotové karty, výklad, věštění, velká arkána">
-    <meta name="theme-color" content="#0a0a1a">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Tarotové Výklady Online | Mystická Hvězda">
-    <meta property="og:description"
-        content="Online tarotové výklady s AI interpretací. Vyberte si z 22 karet Velké Arkány a získejte personalizovaný výklad.">
-    <meta property="og:image" content="https://mystickahvezda.cz/img/tarot-back.webp">
-    <meta property="og:locale" content="cs_CZ">
-    <meta name="twitter:card" content="summary_large_image">
-
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Tarotové Výklady Online",
-        "applicationCategory": "LifestyleApplication",
-        "operatingSystem": "Web"
-    }
-    </script>
-
-    
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-            {"@type": "Question", "name": "Jak funguje online tarotový výklad?", "acceptedAnswer": {"@type": "Answer", "text": "Tarotový výklad funguje na principu synchronicity. Zamícháte karty a systém vybere ty, které rezonují s vaší energií. Výklad interpretuje archetypy karet ve vztahu k vaší otázce."}},
-            {"@type": "Question", "name": "Co je Keltský kříž v tarotu?", "acceptedAnswer": {"@type": "Answer", "text": "Keltský kříž je 10-kartový rozklad pokrývající situaci, vlivy z minulosti, nevědomé faktory, nejbližší budoucnost, naděje, obavy a konečný výsledek."}},
-            {"@type": "Question", "name": "Je tarot věštění budoucnosti?", "acceptedAnswer": {"@type": "Answer", "text": "Tarot nepředpovídá pevnou budoucnost – ukazuje energetické tendence. Pomáhá uvědoměleji realizovat volby vedoucí k požadovanému výsledku."}},
-            {"@type": "Question", "name": "Mohu se zeptat na konkrétní otázku?", "acceptedAnswer": {"@type": "Answer", "text": "Ano. Formulujte otevřenou otázku (ne ano/ne) a s touto otázkou v mysli vyberte karty."}}
-        ]
-    }
-    </script><title>Tarotové Výklady Online | Mystická Hvězda</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
-
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="img/icon-192.webp">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-    <link rel="canonical" href="https://mystickahvezda.cz/tarot.html">
-    <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/tarot.html">
-    <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/tarot.html">
-    <link rel="alternate" hreflang="x-default" href="https://mystickahvezda.cz/tarot.html">    <script type="application/ld+json">
-    {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    "name": "Jak číst tarotové karty pro začátečníky",
-    "description": "Tarot je nástroj pro sebepoznání a intuitivní vedení. Naučte se základy tarotového výkladu.",
-    "totalTime": "PT5M",
-    "step": [
-        {
-            "@type": "HowToStep",
-            "position": 1,
-            "name": "Připravte se na výklad",
-            "text": "Najděte klidné místo, uklidněte mysl a formulujte svou otázku nebo záměr."
-        },
-        {
-            "@type": "HowToStep",
-            "position": 2,
-            "name": "Vyberte počet karet",
-            "text": "Jeden karet pro rychlou odpověď, tři karty pro minulost-přítomnost-budoucnost, nebo Celtic Cross pro hluboký vhled."
-        },
-        {
-            "@type": "HowToStep",
-            "position": 3,
-            "name": "Otočte kartu a přečtěte výklad",
-            "text": "Každá karta má unikátní symboliku. Přečtěte výklad, který rezonuje s vaší situací."
-        },
-        {
-            "@type": "HowToStep",
-            "position": 4,
-            "name": "Integrujte poselství",
-            "text": "Nechte symboliku karet promlouvat k vaší intuici. Tarot nebere vaši svobodnou vůli — ukazuje možnosti."
-        }
-    ]
-}
-    </script>
-</head>
-
-<body>
-    <!-- Skip to main content -->
-    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
-
-    <div class="stars" aria-hidden="true"></div>
-
-    <!-- HEADER (loaded dynamically) -->
-    <div id="header-placeholder"></div>
-
-    <!-- FREEMIUM LIMIT BANNER (pro nepřihlášené a free uživatele) -->
-    <div id="freemium-banner" style="display:none; background: linear-gradient(90deg, rgba(212,175,55,0.1), rgba(155,89,182,0.1)); border-bottom: 1px solid rgba(212,175,55,0.2); padding: 0.65rem 1rem; text-align: center; font-size: 0.88rem; color: rgba(255,255,255,0.8);">
-        <span id="freemium-banner-text">?? Dnes zbývá: <strong id="freemium-count">...</strong> výkladů zdarma</span>
-        &nbsp;•&nbsp;
-        <a href="cenik.html" style="color: #d4af37; font-weight: 600;">? Získat Premium — 7 dní zdarma ›</a>
-        &nbsp;
-        <button onclick="document.getElementById('freemium-banner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:1rem;vertical-align:middle;">×</button>
-    </div>
-    <script>
-    (function() {
-        const today = new Date().toDateString();
-        const storageKey = 'mh_daily_tarot_' + today;
-        const DAILY_LIMIT = 1;
-        const used = parseInt(localStorage.getItem(storageKey) || '0');
-        const remaining = Math.max(0, DAILY_LIMIT - used);
-        
-        const banner = document.getElementById('freemium-banner');
-        const countEl = document.getElementById('freemium-count');
-        
-        // Zobrazit jen nepřihlášeným nebo free uživatelům
-        document.addEventListener('DOMContentLoaded', () => {
-            const auth = window.Auth;
-            if (!auth || !auth.isPremium()) {
-                if (countEl) countEl.textContent = remaining + ' / ' + DAILY_LIMIT;
-                if (banner) banner.style.display = 'block';
-            }
-        });
-    })();
-    </script>
-
-
-    <main id="main-content">
-        <!-- HERO WITH SPREAD SELECTION -->
-        <section class="section section--hero" style="min-height: 80vh; padding-top: 140px;">
-            <div class="container">
-                <div class="hero__content">
-                    <h1 class="hero__title">
-                        <span class="text-gradient">Zrcadlo Duše</span>
-                    </h1>
-                    <p class="hero__subtitle mb-xl">
-                        Karty vám neřeknou, co musíte udělat. Ukáží vám cestu, kterou vaše srdce už zná, ale rozum ji
-                        možná nevidí.
-                    </p>
-
-                    <!-- Spread Selection Grid embedded in Hero -->
-                    <div class="t-spread-grid" data-animate style="margin-top: 3rem;">
-                        <!-- Single Card -->
-                        <div class="t-spread-card">
-                            <div class="t-spread-icon">
-                                <img loading="lazy" src="img/icon-tarot-one.webp" alt="Jedna karta"
-                                    style="width: 80px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));">
-                            </div>
-                            <h3 class="t-spread-title">Jedna Karta</h3>
-                            <p class="t-spread-desc">
-                                Rychlá odpověď na jednoduchou otázku. Ideální pro denní inspiraci.
-                            </p>
-                            <div class="t-spread-price">Zdarma</div>
-                            <button class="btn btn--glass btn--full spread-trigger"
-                                data-spread-type="Jedna karta">Vyložit kartu</button>
-                        </div>
-
-                        <!-- Three Cards -->
-                        <div class="t-spread-card featured">
-                            <div class="t-spread-icon">
-                                <img loading="lazy" src="img/icon-tarot-three.webp" alt="Tři karty"
-                                    style="width: 80px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));">
-                            </div>
-                            <h3 class="t-spread-title">Tři Karty</h3>
-                            <p class="t-spread-desc">
-                                Klasický rozklad Minulost - Přítomnost - Budoucnost. Pochopení souvislostí.
-                            </p>
-                            <div class="t-spread-price text-gold">Premium</div>
-                            <button class="btn btn--primary btn--full spread-trigger"
-                                data-spread-type="Tři karty">Vyložit karty</button>
-                        </div>
-
-                        <!-- Celtic Cross -->
-                        <div class="t-spread-card">
-                            <div class="t-spread-icon">
-                                <img loading="lazy" src="img/icon-tarot-celtic.webp" alt="Celtic Cross"
-                                    style="width: 80px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));">
-                            </div>
-                            <h3 class="t-spread-title">Keltský Kříž</h3>
-                            <p class="t-spread-desc">
-                                Nejkomplexnější 10-kartový rozklad. Hluboká analýza situace a vlivů.
-                            </p>
-                            <div class="t-spread-price text-gold">VIP</div>
-                            <button class="btn btn--glass btn--full spread-trigger"
-                                data-spread-type="Celtic Cross">Vyložit karty</button>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- SAMPLE READING -->
-        <section class="section" style="padding-top: 2rem;">
-            <div class="container">
-                <div class="section__header" data-animate>
-                    <span class="section__badge">Ukázka výkladu</span>
-                    <h2 class="section__title">Jak vypadá profesionální interpretace</h2>
-                </div>
-
-                <div class="card" style="max-width: 800px; margin: 0 auto;" data-animate>
-                    <div class="flex-between mb-xl" style="flex-wrap: wrap; gap: var(--space-md);">
-                        <div>
-                            <h3 style="color: var(--color-mystic-gold);">Hvězda</h3>
-                            <p class="text-sm" style="color: var(--color-silver-mist);">Velká Arkána · Pozice:
-                                Budoucnost</p>
-                        </div>
-                        <div style="font-size: 4rem;">?</div>
-                    </div>
-
-                    <h4 class="mb-md" style="color: var(--color-starlight);">? Interpretace od našeho astrologa:</h4>
-                    <p class="mb-lg">
-                        Karta Hvězdy ve vaší pozici Budoucnosti je nádherným znamením naděje a obnovy.
-                        Po období turbulencí, které jste možná zažívali (jak naznačuje vaše karta Minulosti),
-                        přichází čas uzdravení a jasnosti.
-                    </p>
-                    <p class="mb-lg">
-                        <strong style="color: var(--color-starlight);">V kontextu vaší otázky o kariéře:</strong>
-                        Hvězda naznačuje, že vaše sny nejsou tak daleko, jak si možná myslíte.
-                        Klíčové je zachovat víru a pokračovat ve své cestě, i když výsledky nejsou
-                        okamžitě viditelné.
-                    </p>
-                    <p class="mb-xl">
-                        <strong style="color: var(--color-starlight);">Praktická rada:</strong>
-                        Věnujte čas sebereflexii a načerpání energie. Příští 2-3 týdny jsou ideální
-                        pro plánování a vizualizaci vašich cílů.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- INTERACTIVE TAROT DECK -->
-        <section class="section">
-            <div class="container text-center">
-                <p class="mb-xl" style="color: var(--color-silver-mist);">Klikněte na kartu pro zamíchání balíčku</p>
-                <div class="tarot-deck">
-                    <div class="tarot-card">
-                        <img loading="lazy" src="img/tarot-back.webp" alt="Tarot Card"
-                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
-                    </div>
-                    <div class="tarot-card">
-                        <img loading="lazy" src="img/tarot-back.webp" alt="Tarot Card"
-                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
-                    </div>
-                    <div class="tarot-card">
-                        <img loading="lazy" src="img/tarot-back.webp" alt="Tarot Card"
-                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
-                    </div>
-                    <div class="tarot-card">
-                        <img loading="lazy" src="img/tarot-back.webp" alt="Tarot Card"
-                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    
-    
-    
-    <!-- CROSS-LINKING SEKCE -->
-    <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
-        <div class="container" style="max-width: 860px;">
-            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">Pokračujte ve své duchovní cestě</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-                <a href="andelske-karty.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">???</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Andělská Karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Poselství na dnešní den</div>
-                </a>
-                <a href="kristalova-koule.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Křišťálová koule</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zeptejte se na cokoli</div>
-                </a>
-                
-                <a href="horoskopy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení dnes</div>
-                </a>
-                <a href="mentor.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Hvězdný Průvodce</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovní mentor</div>
-                </a>
-                <a href="natalni-karta.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný otisk</div>
-                </a>
-                <a href="partnerska-shoda.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahů</div>
-                </a>
-                <a href="numerologie.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel</div>
-                </a>
-                <a href="astro-mapa.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve světě</div>
-                </a>
-                <a href="snar.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snů</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Analýza vašeho snu</div>
-                </a>
-                <a href="biorytmy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
-                </a>
-                <a href="runy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská moudrost</div>
-                </a>
-            </div>
-        </div>
-    </section>
-    </main>
-
-    <!-- FOOTER (loaded dynamically) -->
-    <div id="footer-placeholder"></div>
-
-
-
-
-
-
-    <script src="js/favorites-helper.js" defer></script>
-    <script src="js/tarot.js?v=2" defer></script>
-
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(reg => console.log('? Service Worker registered'))
-                    .catch(err => console.log('SW registration failed:', err));
-            });
-        }
-    </script>
-
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/templates.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-        <script src="js/share-result.js" defer></script>
-        <script src="js/nameday.js" defer></script>
-    <script src="js/exit-intent.js" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script src="js/retention.js?v=5" defer></script>
-    <script src="js/personalization.js?v=5" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-
-    <script src="js/newsletter-popup.js" defer></script>
-    <script src="js/push-notifications.js" defer></script>
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="description"
+
+        content="Online tarotové výklady s AI interpretací. Vyberte si z 22 karet Velké Arkány a získejte personalizovaný výklad.">
+
+    <meta name="keywords" content="tarot, tarotové karty, výklad, věštění, velká arkána">
+
+    <meta name="theme-color" content="#0a0a1a">
+
+
+
+    <!-- Open Graph -->
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:title" content="Tarotové Výklady Online | Mystická Hvězda">
+
+    <meta property="og:description"
+
+        content="Online tarotové výklady s AI interpretací. Vyberte si z 22 karet Velké Arkány a získejte personalizovaný výklad.">
+
+    <meta property="og:image" content="https://mystickahvezda.cz/img/tarot-back.webp">
+
+    <meta property="og:locale" content="cs_CZ">
+
+    <meta name="twitter:card" content="summary_large_image">
+
+
+
+    <!-- JSON-LD Structured Data -->
+
+    <script type="application/ld+json">
+
+    {
+
+        "@context": "https://schema.org",
+
+        "@type": "WebApplication",
+
+        "name": "Tarotové Výklady Online",
+
+        "applicationCategory": "LifestyleApplication",
+
+        "operatingSystem": "Web"
+
+    }
+
+    </script>
+
+
+
+    
+
+    <script type="application/ld+json">
+
+    {
+
+        "@context": "https://schema.org",
+
+        "@type": "FAQPage",
+
+        "mainEntity": [
+
+            {"@type": "Question", "name": "Jak funguje online tarotový výklad?", "acceptedAnswer": {"@type": "Answer", "text": "Tarotový výklad funguje na principu synchronicity. Zamícháte karty a systém vybere ty, které rezonují s vaší energií. Výklad interpretuje archetypy karet ve vztahu k vaší otázce."}},
+
+            {"@type": "Question", "name": "Co je Keltský kříž v tarotu?", "acceptedAnswer": {"@type": "Answer", "text": "Keltský kříž je 10-kartový rozklad pokrývající situaci, vlivy z minulosti, nevědomé faktory, nejbližší budoucnost, naděje, obavy a konečný výsledek."}},
+
+            {"@type": "Question", "name": "Je tarot věštění budoucnosti?", "acceptedAnswer": {"@type": "Answer", "text": "Tarot nepředpovídá pevnou budoucnost – ukazuje energetické tendence. Pomáhá uvědoměleji realizovat volby vedoucí k požadovanému výsledku."}},
+
+            {"@type": "Question", "name": "Mohu se zeptat na konkrétní otázku?", "acceptedAnswer": {"@type": "Answer", "text": "Ano. Formulujte otevřenou otázku (ne ano/ne) a s touto otázkou v mysli vyberte karty."}}
+
+        ]
+
+    }
+
+    </script><title>Tarotové Výklady Online | Mystická Hvězda</title>
+
+
+
+    <!-- Favicon -->
+
+    <link rel="icon" type="image/svg+xml"
+
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
+
+
+
+    <!-- PWA -->
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+    <link rel="canonical" href="https://mystickahvezda.cz/tarot.html">
+
+    <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/tarot.html">
+
+    <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/tarot.html">
+
+    <link rel="alternate" hreflang="x-default" href="https://mystickahvezda.cz/tarot.html">    <script type="application/ld+json">
+
+    {
+
+    "@context": "https://schema.org",
+
+    "@type": "HowTo",
+
+    "name": "Jak číst tarotové karty pro začátečníky",
+
+    "description": "Tarot je nástroj pro sebepoznání a intuitivní vedení. Naučte se základy tarotového výkladu.",
+
+    "totalTime": "PT5M",
+
+    "step": [
+
+        {
+
+            "@type": "HowToStep",
+
+            "position": 1,
+
+            "name": "Připravte se na výklad",
+
+            "text": "Najděte klidné místo, uklidněte mysl a formulujte svou otázku nebo záměr."
+
+        },
+
+        {
+
+            "@type": "HowToStep",
+
+            "position": 2,
+
+            "name": "Vyberte počet karet",
+
+            "text": "Jeden karet pro rychlou odpověď, tři karty pro minulost-přítomnost-budoucnost, nebo Celtic Cross pro hluboký vhled."
+
+        },
+
+        {
+
+            "@type": "HowToStep",
+
+            "position": 3,
+
+            "name": "Otočte kartu a přečtěte výklad",
+
+            "text": "Každá karta má unikátní symboliku. Přečtěte výklad, který rezonuje s vaší situací."
+
+        },
+
+        {
+
+            "@type": "HowToStep",
+
+            "position": 4,
+
+            "name": "Integrujte poselství",
+
+            "text": "Nechte symboliku karet promlouvat k vaší intuici. Tarot nebere vaši svobodnou vůli — ukazuje možnosti."
+
+        }
+
+    ]
+
+}
+
+    </script>
+
+</head>
+
+
+
+<body>
+
+    <!-- Skip to main content -->
+
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+
+
+
+    <div class="stars" aria-hidden="true"></div>
+
+
+
+    <!-- HEADER (loaded dynamically) -->
+
+    <div id="header-placeholder"></div>
+
+
+
+    <!-- FREEMIUM LIMIT BANNER (pro nepřihlášené a free uživatele) -->
+
+    <div id="freemium-banner" style="display:none; background: linear-gradient(90deg, rgba(212,175,55,0.1), rgba(155,89,182,0.1)); border-bottom: 1px solid rgba(212,175,55,0.2); padding: 0.65rem 1rem; text-align: center; font-size: 0.88rem; color: rgba(255,255,255,0.8);">
+
+        <span id="freemium-banner-text">?? Dnes zbývá: <strong id="freemium-count">...</strong> výkladů zdarma</span>
+
+        &nbsp;•&nbsp;
+
+        <a href="cenik.html" style="color: #d4af37; font-weight: 600;">? Získat Premium — 7 dní zdarma ›</a>
+
+        &nbsp;
+
+        <button onclick="document.getElementById('freemium-banner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:1rem;vertical-align:middle;">×</button>
+
+    </div>
+
+    <script>
+
+    (function() {
+
+        const today = new Date().toDateString();
+
+        const storageKey = 'mh_daily_tarot_' + today;
+
+        const DAILY_LIMIT = 1;
+
+        const used = parseInt(localStorage.getItem(storageKey) || '0');
+
+        const remaining = Math.max(0, DAILY_LIMIT - used);
+
+        
+
+        const banner = document.getElementById('freemium-banner');
+
+        const countEl = document.getElementById('freemium-count');
+
+        
+
+        // Zobrazit jen nepřihlášeným nebo free uživatelům
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const auth = window.Auth;
+
+            if (!auth || !auth.isPremium()) {
+
+                if (countEl) countEl.textContent = remaining + ' / ' + DAILY_LIMIT;
+
+                if (banner) banner.style.display = 'block';
+
+            }
+
+        });
+
+    })();
+
+    </script>
+
+
+
+
+
+    <main id="main-content">
+
+        <!-- HERO WITH SPREAD SELECTION -->
+
+        <section class="section section--hero" style="min-height: 80vh; padding-top: 140px;">
+
+            <div class="container">
+
+                <div class="hero__content">
+
+                    <h1 class="hero__title">
+
+                        <span class="text-gradient">Zrcadlo Duše</span>
+
+                    </h1>
+
+                    <p class="hero__subtitle mb-xl">
+
+                        Karty vám neřeknou, co musíte udělat. Ukáží vám cestu, kterou vaše srdce už zná, ale rozum ji
+
+                        možná nevidí.
+
+                    </p>
+
+
+
+                    <!-- Spread Selection Grid embedded in Hero -->
+
+                    <div class="t-spread-grid" data-animate style="margin-top: 3rem;">
+
+                        <!-- Single Card -->
+
+                        <div class="t-spread-card">
+
+                            <div class="t-spread-icon">
+
+                                <img loading="lazy" src="img/icon-tarot-one.webp" alt="Jedna karta"
+
+                                    style="width: 80px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));">
+
+                            </div>
+
+                            <h3 class="t-spread-title">Jedna Karta</h3>
+
+                            <p class="t-spread-desc">
+
+                                Rychlá odpověď na jednoduchou otázku. Ideální pro denní inspiraci.
+
+                            </p>
+
+                            <div class="t-spread-price">Zdarma</div>
+
+                            <button class="btn btn--glass btn--full spread-trigger"
+
+                                data-spread-type="Jedna karta">Vyložit kartu</button>
+
+                        </div>
+
+
+
+                        <!-- Three Cards -->
+
+                        <div class="t-spread-card featured">
+
+                            <div class="t-spread-icon">
+
+                                <img loading="lazy" src="img/icon-tarot-three.webp" alt="Tři karty"
+
+                                    style="width: 80px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));">
+
+                            </div>
+
+                            <h3 class="t-spread-title">Tři Karty</h3>
+
+                            <p class="t-spread-desc">
+
+                                Klasický rozklad Minulost - Přítomnost - Budoucnost. Pochopení souvislostí.
+
+                            </p>
+
+                            <div class="t-spread-price text-gold">Premium</div>
+
+                            <button class="btn btn--primary btn--full spread-trigger"
+
+                                data-spread-type="Tři karty">Vyložit karty</button>
+
+                        </div>
+
+
+
+                        <!-- Celtic Cross -->
+
+                        <div class="t-spread-card">
+
+                            <div class="t-spread-icon">
+
+                                <img loading="lazy" src="img/icon-tarot-celtic.webp" alt="Celtic Cross"
+
+                                    style="width: 80px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));">
+
+                            </div>
+
+                            <h3 class="t-spread-title">Keltský Kříž</h3>
+
+                            <p class="t-spread-desc">
+
+                                Nejkomplexnější 10-kartový rozklad. Hluboká analýza situace a vlivů.
+
+                            </p>
+
+                            <div class="t-spread-price text-gold">VIP</div>
+
+                            <button class="btn btn--glass btn--full spread-trigger"
+
+                                data-spread-type="Celtic Cross">Vyložit karty</button>
+
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SAMPLE READING -->
+
+        <section class="section" style="padding-top: 2rem;">
+
+            <div class="container">
+
+                <div class="section__header" data-animate>
+
+                    <span class="section__badge">Ukázka výkladu</span>
+
+                    <h2 class="section__title">Jak vypadá profesionální interpretace</h2>
+
+                </div>
+
+
+
+                <div class="card" style="max-width: 800px; margin: 0 auto;" data-animate>
+
+                    <div class="flex-between mb-xl" style="flex-wrap: wrap; gap: var(--space-md);">
+
+                        <div>
+
+                            <h3 style="color: var(--color-mystic-gold);">Hvězda</h3>
+
+                            <p class="text-sm" style="color: var(--color-silver-mist);">Velká Arkána · Pozice:
+
+                                Budoucnost</p>
+
+                        </div>
+
+                        <div style="font-size: 4rem;">?</div>
+
+                    </div>
+
+
+
+                    <h4 class="mb-md" style="color: var(--color-starlight);">? Interpretace od našeho astrologa:</h4>
+
+                    <p class="mb-lg">
+
+                        Karta Hvězdy ve vaší pozici Budoucnosti je nádherným znamením naděje a obnovy.
+
+                        Po období turbulencí, které jste možná zažívali (jak naznačuje vaše karta Minulosti),
+
+                        přichází čas uzdravení a jasnosti.
+
+                    </p>
+
+                    <p class="mb-lg">
+
+                        <strong style="color: var(--color-starlight);">V kontextu vaší otázky o kariéře:</strong>
+
+                        Hvězda naznačuje, že vaše sny nejsou tak daleko, jak si možná myslíte.
+
+                        Klíčové je zachovat víru a pokračovat ve své cestě, i když výsledky nejsou
+
+                        okamžitě viditelné.
+
+                    </p>
+
+                    <p class="mb-xl">
+
+                        <strong style="color: var(--color-starlight);">Praktická rada:</strong>
+
+                        Věnujte čas sebereflexii a načerpání energie. Příští 2-3 týdny jsou ideální
+
+                        pro plánování a vizualizaci vašich cílů.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- INTERACTIVE TAROT DECK -->
+
+        <section class="section">
+
+            <div class="container text-center">
+
+                <p class="mb-xl" style="color: var(--color-silver-mist);">Klikněte na kartu pro zamíchání balíčku</p>
+
+                <div class="tarot-deck">
+
+                    <div class="tarot-card">
+
+                        <img loading="lazy" src="img/tarot-back.webp" alt="Tarot Card"
+
+                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+
+                    </div>
+
+                    <div class="tarot-card">
+
+                        <img loading="lazy" src="img/tarot-back.webp" alt="Tarot Card"
+
+                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+
+                    </div>
+
+                    <div class="tarot-card">
+
+                        <img loading="lazy" src="img/tarot-back.webp" alt="Tarot Card"
+
+                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+
+                    </div>
+
+                    <div class="tarot-card">
+
+                        <img loading="lazy" src="img/tarot-back.webp" alt="Tarot Card"
+
+                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+    
+
+    
+
+    
+
+    <!-- CROSS-LINKING SEKCE -->
+
+    <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
+
+        <div class="container" style="max-width: 860px;">
+
+            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">Pokračujte ve své duchovní cestě</h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+
+                <a href="andelske-karty.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">???</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Andělská Karta</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Poselství na dnešní den</div>
+
+                </a>
+
+                <a href="kristalova-koule.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Křišťálová koule</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zeptejte se na cokoli</div>
+
+                </a>
+
+                
+
+                <a href="horoskopy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení dnes</div>
+
+                </a>
+
+                <a href="mentor.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Hvězdný Průvodce</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovní mentor</div>
+
+                </a>
+
+                <a href="natalni-karta.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný otisk</div>
+
+                </a>
+
+                <a href="partnerska-shoda.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahů</div>
+
+                </a>
+
+                <a href="numerologie.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel</div>
+
+                </a>
+
+                <a href="astro-mapa.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve světě</div>
+
+                </a>
+
+                <a href="snar.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snů</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Analýza vašeho snu</div>
+
+                </a>
+
+                <a href="biorytmy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
+
+                </a>
+
+                <a href="runy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská moudrost</div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    </main>
+
+
+
+    <!-- FOOTER (loaded dynamically) -->
+
+    <div id="footer-placeholder"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="js/favorites-helper.js" defer></script>
+
+    <script src="js/tarot.js?v=2" defer></script>
+
+
+
+    <!-- Service Worker Registration -->
+
+    <script>
+
+        if ('serviceWorker' in navigator) {
+
+            window.addEventListener('load', () => {
+
+                navigator.serviceWorker.register('/service-worker.js')
+
+                    .then(reg => console.log('? Service Worker registered'))
+
+                    .catch(err => console.log('SW registration failed:', err));
+
+            });
+
+        }
+
+    </script>
+
+
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/templates.js?v=10" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+        <script src="js/share-result.js" defer></script>
+
+        <script src="js/nameday.js" defer></script>
+
+    <script src="js/exit-intent.js" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script src="js/retention.js?v=5" defer></script>
+
+    <script src="js/personalization.js?v=5" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+
+
+    <script src="js/newsletter-popup.js" defer></script>
+
+    <script src="js/push-notifications.js" defer></script>
+
+</body>
+
+
+
+</html>
+

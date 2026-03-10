@@ -1,278 +1,555 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Partnerská shoda: Lev a Váhy | Mystická Hvězda</title>
-    <meta name="description"
-        content="Hodí se k sobě Lev a Váhy? Detailní rozbor partnerské shody, lásky a vášně podle hvězd. Zjistěte, jestli vám to bude klapat.">
-    <meta name="robots" content="index, follow">
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="Partnerská shoda: Lev a Váhy">
-    <meta property="og:description"
-        content="Láska nebo válka? Zjistěte kompatibilitu mezi znameními Lev a Váhy.">
-    <meta property="og:image" content="../img/hero-3d.png">
-
-    <!-- Fonts & Styles -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.v2.css">
-
-    <style>
-        /* Specific styles for compatibility pages */
-        .compatibility-header {
-            text-align: center;
-            padding: 4rem 0;
-            background: linear-gradient(to bottom, transparent, rgba(155, 89, 182, 0.1));
-        }
-
-        .compatibility-score {
-            font-size: 4rem;
-            font-family: 'Cinzel', serif;
-            background: linear-gradient(135deg, #d4af37, #f1c40f);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 1rem 0;
-            font-weight: 700;
-        }
-
-        .compatibility-content {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(10, 10, 26, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 3rem;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .compatibility-content h3 {
-            color: var(--color-mystic-gold);
-            margin-top: 2rem;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-            padding-bottom: 0.5rem;
-        }
-
-        .compatibility-content p {
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-            color: var(--color-text-mutated);
-        }
-
-        .related-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 3rem;
-        }
-
-        .related-chip {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            color: var(--color-text-light);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .related-chip:hover {
-            background: var(--color-primary);
-            border-color: var(--color-primary);
-        }
-
-        .compatibility-meter-container {
-            width: 100%;
-            max-width: 400px;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            margin: 0.5rem auto 2rem;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .compatibility-meter-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #d4af37, #f1c40f);
-            width: 0%;
-            border-radius: 5px;
-            transition: width 1.5s ease-out;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-        }
-    </style>
-    <script type="application/ld+json">
-        {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Hodí se k sobě Lev a Váhy?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Jejich shoda je 82%. Lev, ohnivé znamení, touží po obdivu a uznání, což Váhy, vzdušné znamení, s radostí poskytují. Váhy vnášejí do vztahu harmonii a diplomacii, čímž tlumí Lví egocentričnost. Lev je okouzlen elegancí a šarmem Vah, zatímco Váhy oceňují Lví štědrost a vřelost. Emoční propojení je silné, založené na vzájemném obdivu a touze po harmonickém soužití. Občas se mohou vyskytnout nedorozumění, pokud Lev bude příliš dominantní a Váhy nerozhodné, ale celkově se jedná o velmi kompatibilní kombinaci."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Jaké je ideální rande pro Lev a Váhy?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Vezměte Lva na nóbl večeři do luxusní restaurace s živou hudbou, kde se bude cítit jako král. Váhy ocení elegantní prostředí a kvalitní konverzaci, Lev se bude moci blýsknout a oba si užijí romantickou atmosféru."
-          }
-        }
-      ]
-    },
-    {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Domů",
-          "item": "https://mystickahvezda.cz"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Partnerská shoda",
-          "item": "https://mystickahvezda.cz/partnerska-shoda"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": "Lev a Váhy",
-          "item": "https://mystickahvezda.cz/partnerska-shoda/leo-libra.html"
-        }
-      ]
-    }
-  ]
-}
-    </script>
-</head>
-
-<body>
-    <!-- Helper for navigation -->
-    <div class="stars" aria-hidden="true"></div>
-
-    <header class="header">
-        <div class="container">
-            <div class="header__inner">
-                <a href="../index.html" class="logo">
-                    <span style="margin-left: 10px;">Mystická<span class="text-gradient">Hvězda</span></span>
-                </a>
-                <nav class="nav">
-                    <button class="nav__toggle" aria-label="Menu">
-                        <span></span><span></span><span></span>
-                    </button>
-                    <ul class="nav__list">
-                        <li><a href="../index.html" class="nav__link">Domů</a></li>
-                        <li><a href="../horoskopy.html" class="nav__link">Horoskopy</a></li>
-                        <li><a href="../tarot.html" class="nav__link">Tarot</a></li>
-                        <li><a href="../natalni-karta.html" class="nav__link">Natální Karta</a></li>
-                        <li><a href="../partnerska-shoda.html" class="nav__link active">Shoda</a></li>
-                        <li><a href="../numerologie.html" class="nav__link">Numerologie</a></li>
-                        <li><a href="../kristalova-koule.html" class="nav__link">Věštírna</a></li>
-                        <li><a href="../cenik.html" class="nav__link">Ceník</a></li>
-                    </ul>
-                    <div class="auth-buttons" style="display: flex; gap: 0.5rem; align-items: center;">
-                        <a href="#" id="auth-register-btn" class="btn btn--secondary"
-                            style="margin-left: 1rem; font-size: 0.9em; padding: 0.5rem 1rem;">Registrace</a>
-                        <a href="#" id="auth-btn" class="btn btn--primary">Přihlásit</a>
-                    </div>
-                </nav>
-            </div>
-        </div>
-    </header>
-
-    <main>
-        <section class="compatibility-header">
-            <div class="container">
-                <span class="section__badge">Partnerská Shoda</span>
-                <h1 class="hero__title">Lev <span class="text-gradient">&</span> Váhy</h1>
-                <div class="compatibility-score">82%</div>
-                <div class="compatibility-meter-container">
-                    <div class="compatibility-meter-fill" style="width: 82%"></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <div class="container">
-                <div class="compatibility-content" data-animate>
-                    <h3>Emoční propojení</h3>
-<p>Lev, ohnivé znamení, touží po obdivu a uznání, což Váhy, vzdušné znamení, s radostí poskytují. Váhy vnášejí do vztahu harmonii a diplomacii, čímž tlumí Lví egocentričnost. Lev je okouzlen elegancí a šarmem Vah, zatímco Váhy oceňují Lví štědrost a vřelost. Emoční propojení je silné, založené na vzájemném obdivu a touze po harmonickém soužití. Občas se mohou vyskytnout nedorozumění, pokud Lev bude příliš dominantní a Váhy nerozhodné, ale celkově se jedná o velmi kompatibilní kombinaci.</p>
-
-<h3>Komunikace a intelekt</h3>
-<p>Komunikace mezi Lvem a Vahami je obvykle plynulá a inspirativní. Lev je výmluvný a rád se vyjadřuje, zatímco Váhy jsou vynikající posluchači a umí Lva podpořit a ocenit. Oba znamení mají rádi umění, kulturu a intelektuální diskuze, což je spojuje. Váhy vnášejí do komunikace objektivitu a diplomacii, což pomáhá vyhnout se zbytečným konfliktům. Lev může být občas příliš dramatický a Váhy příliš taktické, ale celkově si velmi dobře rozumí a inspirují se navzájem.</p>
-
-<h3>Intimita a vášeň</h3>
-<p>V intimní oblasti se Lev a Váhy skvěle doplňují. Lev přináší vášeň a energii, zatímco Váhy eleganci a smyslnost. Lev touží po obdivu a uznání i v ložnici, což Váhy s radostí poskytují. Váhy se snaží o harmonii a rovnováhu, což se projevuje i v intimním životě. Mohou se vyskytnout drobné neshody ohledně iniciativy, protože Lev je rád dominantní a Váhy preferují, aby se rozhodovalo společně. Nicméně, vzájemný respekt a touha po uspokojení partnera zajišťují, že intimní život bude naplněný a uspokojující.</p>
-
-<h3>Verdikt</h3>
-<p>Vztah mezi Lvem a Vahami má velký potenciál pro dlouhodobé a harmonické soužití. Vzájemný obdiv, intelektuální stimulace a vášeň vytvářejí silný základ pro úspěšný vztah. Je důležité, aby se Lev snažil být méně dominantní a Váhy více rozhodné, aby se předešlo zbytečným konfliktům. Celkově se jedná o velmi kompatibilní kombinaci, která má velkou šanci na štěstí.</p>
-
-                    <div
-                        style="margin-top: 3rem; background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 10px; border-left: 3px solid var(--color-primary);">
-                        <h3 style="margin-top:0; border:none; color: white;">💡 Tip na rande</h3>
-                        <p style="margin-bottom:0;">Vezměte Lva na nóbl večeři do luxusní restaurace s živou hudbou, kde se bude cítit jako král. Váhy ocení elegantní prostředí a kvalitní konverzaci, Lev se bude moci blýsknout a oba si užijí romantickou atmosféru.</p>
-                    </div>
-
-                    <div
-                        style="margin-top: 4rem; text-align: center; padding: 2rem; background: rgba(155, 89, 182, 0.1); border-radius: 15px;">
-                        <h3 style="border: none;">Chcete přesnější výpočet?</h3>
-                        <p>Tohle je obecná shoda slunečních znamení. Pro skutečnou analýzu vztahu potřebujeme vaše
-                            přesná data narození.</p>
-                        <a href="../partnerska-shoda.html#form" class="btn btn--primary">Vypočítat Synastrii Zdarma</a>
-                    </div>
-                </div>
-
-                <div class="section__header" style="margin-top: 4rem;">
-                    <h3 class="section__title" style="font-size: 1.5rem;">Další kombinace pro znamení Lev
-                    </h3>
-                </div>
-                <div class="related-links">
-                    <a href="leo-aries.html" class="related-chip">Lev + Beran</a>
-<a href="leo-taurus.html" class="related-chip">Lev + Býk</a>
-<a href="leo-gemini.html" class="related-chip">Lev + Blíženci</a>
-<a href="leo-cancer.html" class="related-chip">Lev + Rak</a>
-<a href="leo-virgo.html" class="related-chip">Lev + Panna</a>
-<a href="leo-libra.html" class="related-chip">Lev + Váhy</a>
-<a href="leo-scorpio.html" class="related-chip">Lev + Štír</a>
-<a href="leo-sagittarius.html" class="related-chip">Lev + Střelec</a>
-<a href="leo-capricorn.html" class="related-chip">Lev + Kozoroh</a>
-<a href="leo-aquarius.html" class="related-chip">Lev + Vodnář</a>
-<a href="leo-pisces.html" class="related-chip">Lev + Ryby</a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <div class="footer__bottom">
-                <p>© 2026 Mystická Hvězda. <a href="../index.html">Zpět na úvod</a>.</p>
-            </div>
-        </div>
-    </footer>
-    
-    
-
-    <script src="../js/api-config.js?v=5" defer></script>
-    <script src="../js/auth-client.js?v=5" defer></script>
-    <script src="../js/components.js?v=5" defer></script>
-    <script type="module" src="../js/main.js?v=5"></script>
-    
-</body>
-
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>Partnerská shoda: Lev a Váhy | Mystická Hvězda</title>
+
+    <meta name="description"
+
+        content="Hodí se k sobě Lev a Váhy? Detailní rozbor partnerské shody, lásky a vášně podle hvězd. Zjistěte, jestli vám to bude klapat.">
+
+    <meta name="robots" content="index, follow">
+
+
+
+    <!-- Open Graph -->
+
+    <meta property="og:title" content="Partnerská shoda: Lev a Váhy">
+
+    <meta property="og:description"
+
+        content="Láska nebo válka? Zjistěte kompatibilitu mezi znameními Lev a Váhy.">
+
+    <meta property="og:image" content="../img/hero-3d.png">
+
+
+
+    <!-- Fonts & Styles -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/style.v2.css">
+
+
+
+    <style>
+
+        /* Specific styles for compatibility pages */
+
+        .compatibility-header {
+
+            text-align: center;
+
+            padding: 4rem 0;
+
+            background: linear-gradient(to bottom, transparent, rgba(155, 89, 182, 0.1));
+
+        }
+
+
+
+        .compatibility-score {
+
+            font-size: 4rem;
+
+            font-family: 'Cinzel', serif;
+
+            background: linear-gradient(135deg, #d4af37, #f1c40f);
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+
+            margin: 1rem 0;
+
+            font-weight: 700;
+
+        }
+
+
+
+        .compatibility-content {
+
+            max-width: 800px;
+
+            margin: 0 auto;
+
+            background: rgba(10, 10, 26, 0.8);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            padding: 3rem;
+
+            border-radius: 20px;
+
+            backdrop-filter: blur(10px);
+
+        }
+
+
+
+        .compatibility-content h3 {
+
+            color: var(--color-mystic-gold);
+
+            margin-top: 2rem;
+
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+
+            padding-bottom: 0.5rem;
+
+        }
+
+
+
+        .compatibility-content p {
+
+            line-height: 1.8;
+
+            margin-bottom: 1.5rem;
+
+            color: var(--color-text-mutated);
+
+        }
+
+
+
+        .related-links {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 1rem;
+
+            justify-content: center;
+
+            margin-top: 3rem;
+
+        }
+
+
+
+        .related-chip {
+
+            background: rgba(255, 255, 255, 0.05);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            padding: 0.5rem 1rem;
+
+            border-radius: 50px;
+
+            color: var(--color-text-light);
+
+            text-decoration: none;
+
+            transition: all 0.3s ease;
+
+            font-size: 0.9rem;
+
+        }
+
+
+
+        .related-chip:hover {
+
+            background: var(--color-primary);
+
+            border-color: var(--color-primary);
+
+        }
+
+
+
+        .compatibility-meter-container {
+
+            width: 100%;
+
+            max-width: 400px;
+
+            height: 10px;
+
+            background: rgba(255, 255, 255, 0.1);
+
+            border-radius: 5px;
+
+            margin: 0.5rem auto 2rem;
+
+            overflow: hidden;
+
+            position: relative;
+
+        }
+
+
+
+        .compatibility-meter-fill {
+
+            height: 100%;
+
+            background: linear-gradient(90deg, #d4af37, #f1c40f);
+
+            width: 0%;
+
+            border-radius: 5px;
+
+            transition: width 1.5s ease-out;
+
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+
+        }
+
+    </style>
+
+    <script type="application/ld+json">
+
+        {
+
+  "@context": "https://schema.org",
+
+  "@graph": [
+
+    {
+
+      "@type": "FAQPage",
+
+      "mainEntity": [
+
+        {
+
+          "@type": "Question",
+
+          "name": "Hodí se k sobě Lev a Váhy?",
+
+          "acceptedAnswer": {
+
+            "@type": "Answer",
+
+            "text": "Jejich shoda je 82%. Lev, ohnivé znamení, touží po obdivu a uznání, což Váhy, vzdušné znamení, s radostí poskytují. Váhy vnášejí do vztahu harmonii a diplomacii, čímž tlumí Lví egocentričnost. Lev je okouzlen elegancí a šarmem Vah, zatímco Váhy oceňují Lví štědrost a vřelost. Emoční propojení je silné, založené na vzájemném obdivu a touze po harmonickém soužití. Občas se mohou vyskytnout nedorozumění, pokud Lev bude příliš dominantní a Váhy nerozhodné, ale celkově se jedná o velmi kompatibilní kombinaci."
+
+          }
+
+        },
+
+        {
+
+          "@type": "Question",
+
+          "name": "Jaké je ideální rande pro Lev a Váhy?",
+
+          "acceptedAnswer": {
+
+            "@type": "Answer",
+
+            "text": "Vezměte Lva na nóbl večeři do luxusní restaurace s živou hudbou, kde se bude cítit jako král. Váhy ocení elegantní prostředí a kvalitní konverzaci, Lev se bude moci blýsknout a oba si užijí romantickou atmosféru."
+
+          }
+
+        }
+
+      ]
+
+    },
+
+    {
+
+      "@type": "BreadcrumbList",
+
+      "itemListElement": [
+
+        {
+
+          "@type": "ListItem",
+
+          "position": 1,
+
+          "name": "Domů",
+
+          "item": "https://mystickahvezda.cz"
+
+        },
+
+        {
+
+          "@type": "ListItem",
+
+          "position": 2,
+
+          "name": "Partnerská shoda",
+
+          "item": "https://mystickahvezda.cz/partnerska-shoda"
+
+        },
+
+        {
+
+          "@type": "ListItem",
+
+          "position": 3,
+
+          "name": "Lev a Váhy",
+
+          "item": "https://mystickahvezda.cz/partnerska-shoda/leo-libra.html"
+
+        }
+
+      ]
+
+    }
+
+  ]
+
+}
+
+    </script>
+
+</head>
+
+
+
+<body>
+
+    <!-- Helper for navigation -->
+
+    <div class="stars" aria-hidden="true"></div>
+
+
+
+    <header class="header">
+
+        <div class="container">
+
+            <div class="header__inner">
+
+                <a href="../index.html" class="logo">
+
+                    <span style="margin-left: 10px;">Mystická<span class="text-gradient">Hvězda</span></span>
+
+                </a>
+
+                <nav class="nav">
+
+                    <button class="nav__toggle" aria-label="Menu">
+
+                        <span></span><span></span><span></span>
+
+                    </button>
+
+                    <ul class="nav__list">
+
+                        <li><a href="../index.html" class="nav__link">Domů</a></li>
+
+                        <li><a href="../horoskopy.html" class="nav__link">Horoskopy</a></li>
+
+                        <li><a href="../tarot.html" class="nav__link">Tarot</a></li>
+
+                        <li><a href="../natalni-karta.html" class="nav__link">Natální Karta</a></li>
+
+                        <li><a href="../partnerska-shoda.html" class="nav__link active">Shoda</a></li>
+
+                        <li><a href="../numerologie.html" class="nav__link">Numerologie</a></li>
+
+                        <li><a href="../kristalova-koule.html" class="nav__link">Věštírna</a></li>
+
+                        <li><a href="../cenik.html" class="nav__link">Ceník</a></li>
+
+                    </ul>
+
+                    <div class="auth-buttons" style="display: flex; gap: 0.5rem; align-items: center;">
+
+                        <a href="#" id="auth-register-btn" class="btn btn--secondary"
+
+                            style="margin-left: 1rem; font-size: 0.9em; padding: 0.5rem 1rem;">Registrace</a>
+
+                        <a href="#" id="auth-btn" class="btn btn--primary">Přihlásit</a>
+
+                    </div>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <main>
+
+        <section class="compatibility-header">
+
+            <div class="container">
+
+                <span class="section__badge">Partnerská Shoda</span>
+
+                <h1 class="hero__title">Lev <span class="text-gradient">&</span> Váhy</h1>
+
+                <div class="compatibility-score">82%</div>
+
+                <div class="compatibility-meter-container">
+
+                    <div class="compatibility-meter-fill" style="width: 82%"></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section class="section">
+
+            <div class="container">
+
+                <div class="compatibility-content" data-animate>
+
+                    <h3>Emoční propojení</h3>
+
+<p>Lev, ohnivé znamení, touží po obdivu a uznání, což Váhy, vzdušné znamení, s radostí poskytují. Váhy vnášejí do vztahu harmonii a diplomacii, čímž tlumí Lví egocentričnost. Lev je okouzlen elegancí a šarmem Vah, zatímco Váhy oceňují Lví štědrost a vřelost. Emoční propojení je silné, založené na vzájemném obdivu a touze po harmonickém soužití. Občas se mohou vyskytnout nedorozumění, pokud Lev bude příliš dominantní a Váhy nerozhodné, ale celkově se jedná o velmi kompatibilní kombinaci.</p>
+
+
+
+<h3>Komunikace a intelekt</h3>
+
+<p>Komunikace mezi Lvem a Vahami je obvykle plynulá a inspirativní. Lev je výmluvný a rád se vyjadřuje, zatímco Váhy jsou vynikající posluchači a umí Lva podpořit a ocenit. Oba znamení mají rádi umění, kulturu a intelektuální diskuze, což je spojuje. Váhy vnášejí do komunikace objektivitu a diplomacii, což pomáhá vyhnout se zbytečným konfliktům. Lev může být občas příliš dramatický a Váhy příliš taktické, ale celkově si velmi dobře rozumí a inspirují se navzájem.</p>
+
+
+
+<h3>Intimita a vášeň</h3>
+
+<p>V intimní oblasti se Lev a Váhy skvěle doplňují. Lev přináší vášeň a energii, zatímco Váhy eleganci a smyslnost. Lev touží po obdivu a uznání i v ložnici, což Váhy s radostí poskytují. Váhy se snaží o harmonii a rovnováhu, což se projevuje i v intimním životě. Mohou se vyskytnout drobné neshody ohledně iniciativy, protože Lev je rád dominantní a Váhy preferují, aby se rozhodovalo společně. Nicméně, vzájemný respekt a touha po uspokojení partnera zajišťují, že intimní život bude naplněný a uspokojující.</p>
+
+
+
+<h3>Verdikt</h3>
+
+<p>Vztah mezi Lvem a Vahami má velký potenciál pro dlouhodobé a harmonické soužití. Vzájemný obdiv, intelektuální stimulace a vášeň vytvářejí silný základ pro úspěšný vztah. Je důležité, aby se Lev snažil být méně dominantní a Váhy více rozhodné, aby se předešlo zbytečným konfliktům. Celkově se jedná o velmi kompatibilní kombinaci, která má velkou šanci na štěstí.</p>
+
+
+
+                    <div
+
+                        style="margin-top: 3rem; background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 10px; border-left: 3px solid var(--color-primary);">
+
+                        <h3 style="margin-top:0; border:none; color: white;">💡 Tip na rande</h3>
+
+                        <p style="margin-bottom:0;">Vezměte Lva na nóbl večeři do luxusní restaurace s živou hudbou, kde se bude cítit jako král. Váhy ocení elegantní prostředí a kvalitní konverzaci, Lev se bude moci blýsknout a oba si užijí romantickou atmosféru.</p>
+
+                    </div>
+
+
+
+                    <div
+
+                        style="margin-top: 4rem; text-align: center; padding: 2rem; background: rgba(155, 89, 182, 0.1); border-radius: 15px;">
+
+                        <h3 style="border: none;">Chcete přesnější výpočet?</h3>
+
+                        <p>Tohle je obecná shoda slunečních znamení. Pro skutečnou analýzu vztahu potřebujeme vaše
+
+                            přesná data narození.</p>
+
+                        <a href="../partnerska-shoda.html#form" class="btn btn--primary">Vypočítat Synastrii Zdarma</a>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="section__header" style="margin-top: 4rem;">
+
+                    <h3 class="section__title" style="font-size: 1.5rem;">Další kombinace pro znamení Lev
+
+                    </h3>
+
+                </div>
+
+                <div class="related-links">
+
+                    <a href="leo-aries.html" class="related-chip">Lev + Beran</a>
+
+<a href="leo-taurus.html" class="related-chip">Lev + Býk</a>
+
+<a href="leo-gemini.html" class="related-chip">Lev + Blíženci</a>
+
+<a href="leo-cancer.html" class="related-chip">Lev + Rak</a>
+
+<a href="leo-virgo.html" class="related-chip">Lev + Panna</a>
+
+<a href="leo-libra.html" class="related-chip">Lev + Váhy</a>
+
+<a href="leo-scorpio.html" class="related-chip">Lev + Štír</a>
+
+<a href="leo-sagittarius.html" class="related-chip">Lev + Střelec</a>
+
+<a href="leo-capricorn.html" class="related-chip">Lev + Kozoroh</a>
+
+<a href="leo-aquarius.html" class="related-chip">Lev + Vodnář</a>
+
+<a href="leo-pisces.html" class="related-chip">Lev + Ryby</a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <footer class="footer">
+
+        <div class="container">
+
+            <div class="footer__bottom">
+
+                <p>© 2026 Mystická Hvězda. <a href="../index.html">Zpět na úvod</a>.</p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    
+
+    
+
+
+
+    <script src="../js/api-config.js?v=5" defer></script>
+
+    <script src="../js/auth-client.js?v=5" defer></script>
+
+    <script src="../js/components.js?v=10" defer></script>
+
+    <script type="module" src="../js/main.js?v=10"></script>
+
+    
+
+</body>
+
+
+
 </html>

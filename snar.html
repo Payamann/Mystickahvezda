@@ -1,1056 +1,2112 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description"
-        content="Lexikon snů a Hluboký snový výklad. Odhalte skryté poselství vašeho podvědomí. Rozklíčujte význam snových symbolů.">
-    <meta name="keywords"
-        content="snář, lexikon snů, výklad snů, co znamená sen, snové symboly, archetypy, hluboký výklad snu">
-    <meta name="theme-color" content="#0a0a1a">
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Snář: Výklad Snů & Lexikon Symbolů | Mystická Hvězda">
-    <meta property="og:description"
-        content="Rozlušte významy snu zdarma. 65+ snovch symbolů nebo hluboký osobní výklad celého snu.">
-    <meta property="og:image" content="https://mystickahvezda.cz/img/icon-moon.webp">
-    <meta property="og:locale" content="cs_CZ">
-    <meta name="twitter:card" content="summary_large_image">
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "WebPage",
-                "name": "Snář: Lexikon Snů & Hluboký Výklad | Mystická Hvězda",
-                "description": "Bezplatný online snář s výkladem 65+ snovch symbolů. Rozlušte značení vašeho snu.",
-                "url": "https://mystickahvezda.cz/snar.html",
-                "inLanguage": "cs",
-                "breadcrumb": {
-                    "@type": "BreadcrumbList",
-                    "itemListElement": [
-                        {"@type": "ListItem", "position": 1, "name": "Mystická Hvězda", "item": "https://mystickahvezda.cz"},
-                        {"@type": "ListItem", "position": 2, "name": "Snář & Lexikon Snů"}
-                    ]
-                }
-            },
-            {
-                "@type": "FAQPage",
-                "mainEntity": [
-                    {
-                        "@type": "Question",
-                        "name": "Co znamená, když vypadávají zuby ve snu?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Vypadávají-li vám zuby ve snu, je to jeden z nejrozbšířenějších snů vubec. Zuby symbolizují vaši asertivitu a schopnost komunikovat. Tento sen často odraží strach z údubě atraktivity, ze ztixení hlasu ve vážné situaci nebo úzkost z toho, že nejste brani vážně."}
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "Proč se mi zdá o létání?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Létání ve snu je jeden z nejkrásnějších a nejpovznesenějších zážitků. Pokud v něm cítite radost a volnost, vymanili jste se aktuálně z omezující situace. Pokud se létání bojíte nebo padáte, máte strach ze ztexplroání uzemění nebo závazků."}
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "Co znamená těhotenství ve snu?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Těhotenství ve snu (u žen i mužů) neznamená fyzické otěhotnění. Je to mocný symbol zárodu -- nápadu, projektu nebo nové živoťní etapy, která se ve vás pomalu zrá."}
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "Co znamená sen o bvlém ex-partnerovi?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Sen o bývalém partnerovi nejspodáčeji neznamená touhu se vrátit. Váš ex sym bolizuje nedovybřízené emoce nebo vlastnosti, které vás z tohoto vztahu nabildovaly a zůstávají nevyužity."}
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "Je sen o smrti vlastní nebo bílého zlobého špatné znamení?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Vůbec ne -- smrt ve snu je jeden z nejvlíce pozitivních symbolů. Označuje konec jedné etapy a potřebu transformace. Je to symbol přebudu ega a odložení starého, co už neslouixí."}
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "Proč se mi prostředí ve snid při padání?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Padání ve snu je klasický projev kumulované úzkosti a pocitu ztexplráty kontroly -- v práci, vztazích nebo sebevnímání. Váš mozek se takto 'vybijí' z nakumulovaného napix'tí."}
-                    }
-                ]
-            }
-        ]
-    }
-    </script>
-    <title>Snář: Výklad Snů & Lexikon Snovch Symbolů | Mystická Hvězda</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
-
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="img/icon-192.webp">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-
-    <style>
-        /* Modern Dream Lexicon Custom Styles */
-        .dream-hero {
-            background: radial-gradient(circle at top right, rgba(138, 43, 226, 0.15), transparent 60%),
-                radial-gradient(circle at bottom left, rgba(75, 0, 130, 0.2), transparent 60%);
-            padding-top: 140px;
-            /* offset for header */
-            padding-bottom: var(--space-xl);
-            position: relative;
-        }
-
-        .dream-hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            z-index: 0;
-            opacity: 0.5;
-        }
-
-        .dream-container {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Search & Alphabet section */
-        .search-section {
-            background: rgba(15, 10, 30, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            margin-bottom: var(--space-2xl);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .search-input-wrapper {
-            position: relative;
-            margin-bottom: var(--space-lg);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: var(--space-md);
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--color-silver-mist);
-            font-size: 1.2rem;
-        }
-
-        .dream-search-input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--color-mystic-gold);
-            border-radius: 30px;
-            padding: var(--space-md) var(--space-lg) var(--space-md) 3rem;
-            color: #fff;
-            font-size: 1.1rem;
-            transition: all var(--transition-base);
-        }
-
-        .dream-search-input:focus {
-            outline: none;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .alphabet-nav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            margin-bottom: var(--space-lg);
-        }
-
-        .alphabet-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--color-silver-mist);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            font-family: var(--font-heading);
-            font-size: 0.9rem;
-        }
-
-        .alphabet-btn:hover,
-        .alphabet-btn.active {
-            background: var(--color-mystic-gold);
-            color: #000;
-            border-color: var(--color-mystic-gold);
-            transform: translateY(-2px);
-        }
-
-        /* Dictionary Results Grid */
-        .dict-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: var(--space-md);
-        }
-
-        @media (min-width: 768px) {
-            .dict-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .dict-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: var(--space-lg);
-            }
-        }
-
-        .dict-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            transition: all var(--transition-base);
-            height: 100%;
-        }
-
-        .dict-card:hover {
-            border-color: rgba(212, 175, 55, 0.3);
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .dict-keyword {
-            font-family: var(--font-heading);
-            color: var(--color-mystic-gold);
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-            padding-bottom: 0.5rem;
-        }
-
-        .dict-desc {
-            font-size: 0.9rem;
-            color: var(--color-silver-mist);
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        /* AI Premium Section */
-        .ai-dream-section {
-            margin-top: var(--space-2xl);
-            background: linear-gradient(135deg, rgba(20, 10, 40, 0.8) 0%, rgba(40, 10, 60, 0.8) 100%);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            box-shadow: 0 10px 40px rgba(138, 43, 226, 0.15);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ai-dream-section::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .ai-textarea {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-md);
-            color: #fff;
-            padding: var(--space-md);
-            font-family: var(--font-body);
-            font-size: 1rem;
-            min-height: 150px;
-            resize: vertical;
-            margin-bottom: var(--space-md);
-            transition: border-color var(--transition-base);
-        }
-
-        .ai-textarea:focus {
-            outline: none;
-            border-color: var(--color-mystic-gold);
-            background: rgba(0, 0, 0, 0.6);
-        }
-
-        .ai-result-box {
-            display: none;
-            margin-top: var(--space-lg);
-            padding: var(--space-lg);
-            background: rgba(0, 0, 0, 0.3);
-            border-left: 3px solid var(--color-mystic-gold);
-            border-radius: 0 var(--radius-md) var(--radius-md) 0;
-            color: #eee;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .no-results {
-            text-align: center;
-            color: var(--color-silver-mist);
-            padding: var(--space-xl);
-            font-style: italic;
-            grid-column: 1 / -1;
-        }
-
-        .loading-animation {
-            display: none;
-            text-align: center;
-            margin: var(--space-lg) 0;
-        }
-
-        .moon-loader {
-            font-size: 3rem;
-            display: inline-block;
-            animation: orbBounce 2s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
-        }
-
-        /* Popular Dreams Quick Grid */
-        .popular-dreams-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: var(--space-xl) 0;
-        }
-
-        @media (min-width: 640px) {
-            .popular-dreams-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .popular-dreams-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        .popular-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: var(--space-md);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-        }
-
-        .popular-card:hover {
-            background: rgba(212, 175, 55, 0.1);
-            border-color: rgba(212, 175, 55, 0.4);
-            transform: translateY(-3px);
-        }
-
-        .popular-card-emoji {
-            font-size: 2rem;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .popular-card-label {
-            color: var(--color-starlight);
-            font-size: 0.85rem;
-            line-height: 1.3;
-        }
-
-        /* FAQ Section */
-        .faq-section {
-            margin-top: var(--space-3xl);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding-top: var(--space-2xl);
-        }
-
-        .faq-item {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            overflow: hidden;
-        }
-
-        .faq-question {
-            width: 100%;
-            background: none;
-            border: none;
-            color: var(--color-starlight);
-            font-family: var(--font-heading);
-            font-size: 1.05rem;
-            text-align: left;
-            padding: var(--space-md) 0;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .faq-question:hover {
-            color: var(--color-mystic-gold);
-        }
-
-        .faq-icon {
-            font-size: 1.2rem;
-            flex-shrink: 0;
-            transition: transform 0.3s ease;
-        }
-
-        .faq-item.open .faq-icon {
-            transform: rotate(45deg);
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease, padding 0.3s ease;
-            color: var(--color-silver-mist);
-            font-size: 0.95rem;
-            line-height: 1.8;
-        }
-
-        .faq-item.open .faq-answer {
-            max-height: 400px;
-            padding-bottom: var(--space-md);
-        }
-
-        /* Cross-links section */
-        .crosslinks-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-md);
-            margin-top: var(--space-lg);
-        }
-
-        @media (min-width: 768px) {
-            .crosslinks-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        .crosslink-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: var(--space-md);
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            text-decoration: none;
-            color: var(--color-silver-mist);
-            font-size: 0.9rem;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .crosslink-card:hover {
-            background: rgba(157, 78, 221, 0.1);
-            border-color: rgba(157, 78, 221, 0.3);
-            color: var(--color-starlight);
-            transform: translateY(-2px);
-        }
-
-        .crosslink-card .emoji {
-            font-size: 1.8rem;
-        }
-
-        /* Sen Dne (Dream of the Day) widget */
-        .dream-of-day {
-            background: linear-gradient(135deg, rgba(138, 43, 226, 0.12) 0%, rgba(75, 0, 130, 0.2) 100%);
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg) var(--space-xl);
-            margin-bottom: var(--space-xl);
-            display: flex;
-            align-items: center;
-            gap: var(--space-lg);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .dream-of-day::before {
-            content: '';
-            position: absolute;
-            top: -30px;
-            right: -30px;
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .dod-emoji {
-            font-size: 3.5rem;
-            flex-shrink: 0;
-            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.5));
-            animation: float 4s ease-in-out infinite;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-8px);
-            }
-        }
-
-        .dod-content {
-            flex: 1;
-        }
-
-        .dod-label {
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--color-mystic-gold);
-            opacity: 0.8;
-            margin-bottom: 4px;
-        }
-
-        .dod-keyword {
-            font-family: var(--font-heading);
-            font-size: 1.5rem;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-
-        .dod-desc {
-            font-size: 0.9rem;
-            color: var(--color-silver-mist);
-            line-height: 1.6;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* Stats bar */
-        .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: var(--space-2xl);
-            margin: var(--space-xl) 0 var(--space-lg);
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-family: var(--font-heading);
-            font-size: 2rem;
-            color: var(--color-mystic-gold);
-            display: block;
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--color-silver-mist);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* Random dream button */
-        .btn-random {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: var(--color-silver-mist);
-            border-radius: 30px;
-            padding: 8px 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-random:hover {
-            border-color: rgba(212, 175, 55, 0.4);
-            color: var(--color-mystic-gold);
-            background: rgba(212, 175, 55, 0.05);
-        }
-
-        /* Share button after result */
-        .share-bar {
-            display: none;
-            margin-top: var(--space-md);
-            gap: var(--space-sm);
-            flex-wrap: wrap;
-        }
-
-        .share-bar.visible {
-            display: flex;
-        }
-
-        .btn-share {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: var(--color-silver-mist);
-            border-radius: 20px;
-            padding: 6px 14px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-share:hover {
-            background: rgba(255, 255, 255, 0.12);
-            color: #fff;
-        }
-    </style>
-</head>
-
-<body>
-    <!-- App Container -->
-    <div id="app" class="app-container">
-        <!-- HTML structure requires header-placeholder and footer-placeholder for components.js -->
-        <div id="header-placeholder"></div>
-
-        <main>
-            <!-- Hero / Search Section -->
-            <section class="dream-hero">
-                <div class="container dream-container">
-                    <div class="text-center mb-5" data-animate>
-                        <span class="badge mb-3">Snové archetypy & Symboly</span>
-                        <h1 class="hero__title">
-                            Lexikon <span class="text-gradient">Snů</span>
-                        </h1>
-                        <p class="hero__subtitle mx-auto" style="max-width: 650px;">
-                            Naše sny jsou tajným jazykem podvědomí. Rozklíčujte význam symbolů, které se vám v noci
-                            zjevují, nebo svěřte celý děj snu našemu Hvězdnému Průvodci pro hlubokou psychologickou
-                            analýzu.
-                        </p>
-                    </div>
-
-                                        <!-- Stats bar -->
-                    <div class="stats-bar" data-animate>
-                        <div class="stat-item">
-                            <span class="stat-number" id="symbol-count">65+</span>
-                            <span class="stat-label">Symbolů ve snáři</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">??</span>
-                            <span class="stat-label">Každý den nový</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">Zdarma</span>
-                            <span class="stat-label">Bez registrace</span>
-                        </div>
-                    </div>
-
-                    <!-- Sen Dne (Dream of the Day) -->
-                    <div class="dream-of-day" data-animate style="animation-delay: 0.15s;">
-                        <span class="dod-emoji" id="dod-emoji">??</span>
-                        <div class="dod-content">
-                            <div class="dod-label">? Symbol dne</div>
-                            <div class="dod-keyword" id="dod-keyword">Načítám...</div>
-                            <div class="dod-desc" id="dod-desc"></div>
-                        </div>
-                        <button id="btn-random-dream" class="btn-random" title="Náhodný symbol">
-                            ?? Náhodný
-                        </button>
-                    </div>
-
-                    <!-- AI Premium Dream Analyzer -->
-                    <div class="ai-dream-section" data-animate style="animation-delay: 0.2s;">
-                        <h3
-                            style="color: #fff; font-family: var(--font-heading); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 10px;">
-                            <span>? Hluboký Výklad Snu</span>
-                            <span class="badge badge--premium"
-                                style="font-size: 0.7rem; padding: 2px 8px;">Premium</span>
-                        </h3>
-                        <p style="color: var(--color-silver-mist); margin-bottom: var(--space-md); font-size: 0.9rem;">
-                            Běžný snář bere slova vytržená z kontextu. Popište sem svůj sen co nejpodrobněji (jaké emoce
-                            jste cítili, jaké barvy jste viděli, kdo tam byl) a Hvězdný Průvodce rozebere celý příběh z
-                            pohledu hlubinné jungiánské psychologie a mystiky.
-                        </p>
-
-                        <textarea id="ai-dream-input" class="ai-textarea"
-                            placeholder="Včera v noci se mi zdálo, že jsem utíkal tajemným lesem. Zničehonic přede mnou spadl strom a já zjistil, že nemám boty..."></textarea>
-
-                        <button id="btn-analyze-dream" class="btn btn--primary btn--full-width">
-                            Předložit sen Průvodci
-                        </button>
-
-                        <div id="ai-loading" class="loading-animation">
-                            <div class="moon-loader">??</div>
-                            <p style="color: var(--color-mystic-gold); margin-top: 10px;">Noříme se do hlubin vašeho
-                                podvědomí...</p>
-                        </div>
-
-                        <div id="ai-result" class="ai-result-box">
-                            <!-- AI Output will go here -->
-                        </div>
-                    </div>
-
-                    <div style="margin: var(--space-2xl) 0;">
-                        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin-bottom: 2rem;">
-                        <h2 class="text-center"
-                            style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 0.5rem;">
-                            Nejhledánější
-                            Sny</h2>
-                        <p class="text-center"
-                            style="color: var(--color-silver-mist); margin-bottom: 1.5rem; font-size: 0.9rem;">Klikněte
-                            na symbol a ihned ho najděte ve slovínku</p>
-                        <div class="popular-dreams-grid" id="popular-dreams-grid">
-                            <button class="popular-card" data-search="Zuby">
-                                <span class="popular-card-emoji">??</span>
-                                <span class="popular-card-label">Zuby vypadávají</span>
-                            </button>
-                            <button class="popular-card" data-search="Létání">
-                                <span class="popular-card-emoji">??</span>
-                                <span class="popular-card-label">Létání ve snu</span>
-                            </button>
-                            <button class="popular-card" data-search="Padání">
-                                <span class="popular-card-emoji">??</span>
-                                <span class="popular-card-label">Padání do prázdna</span>
-                            </button>
-                            <button class="popular-card" data-search="Had">
-                                <span class="popular-card-emoji">??</span>
-                                <span class="popular-card-label">Had ve snu</span>
-                            </button>
-                            <button class="popular-card" data-search="Smrt">
-                                <span class="popular-card-emoji">??</span>
-                                <span class="popular-card-label">Smrt ve snu</span>
-                            </button>
-                            <button class="popular-card" data-search="Těhotenst">
-                                <span class="popular-card-emoji">??</span>
-                                <span class="popular-card-label">Těhotenství ve snu</span>
-                            </button>
-                            <button class="popular-card" data-search="Ex-partner">
-                                <span class="popular-card-emoji">??</span>
-                                <span class="popular-card-label">Sen o bývalém</span>
-                            </button>
-                            <button class="popular-card" data-search="Moře">
-                                <span class="popular-card-emoji">??</span>
-                                <span class="popular-card-label">More / Oceán</span>
-                            </button>
-                        </div>
-                        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2rem 0;">
-                        <h2 class="text-center"
-                            style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 1rem;">Abecední
-                            Snář</h2>
-                    </div>
-
-                    <!-- Dictionary Search & Filter -->
-                    <div class="search-section" data-animate style="animation-delay: 0.4s;">
-                        <div class="search-input-wrapper">
-                            <span class="search-icon">??</span>
-                            <input type="text" id="dream-search" class="dream-search-input"
-                                placeholder="Hledat snový symbol (např. hadi, nemoc, letání)...">
-                        </div>
-
-                        <div class="alphabet-nav" id="alphabet-nav">
-                            <!-- A-Z Buttons will be injected here via JS -->
-                        </div>
-
-                        <!-- Dictionary Results -->
-                        <div class="dict-grid" id="dict-grid">
-                            <div class="no-results">Načítám snovou knihovnu...</div>
-                            <!-- Cards will be injected here via JS -->
-                        </div>
-                    </div>
-
-                    <!-- FAQ Section for SEO -->
-                    <section class="faq-section" aria-label="Časté otázky o snách">
-                        <h2 class="text-center"
-                            style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 0.5rem;">Nejčastěji
-                            Kladené Otázky</h2>
-                        <p class="text-center"
-                            style="color: var(--color-silver-mist); margin-bottom: 2rem; font-size: 0.9rem;">Odpovědi z
-                            pohledu jungiánské psychologie a snového výkladu</p>
-                        <div style="max-width: 800px; margin: 0 auto;" itemscope itemtype="https://schema.org/FAQPage">
-
-                            <div class="faq-item" itemscope itemprop="mainEntity"
-                                itemtype="https://schema.org/Question">
-                                <button class="faq-question" aria-expanded="false">
-                                    <span itemprop="name">Co znamená, když mi vypadávají zuby ve snu?</span>
-                                    <span class="faq-icon">+</span>
-                                </button>
-                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
-                                    itemtype="https://schema.org/Answer">
-                                    <div itemprop="text">Zuby jsou symbolem vaší asertivity, schopnosti komunikovat a
-                                        sebedůvěry. Vypadávají-li vám ve snu zuby, je to jeden z vůbec nejčastějších
-                                        snovch zážitků. Odraxí strach ze ztexplráty své atraktivity, užost z hodnocení
-                                        nebo potřěbu říct něco důležitého, co jste dosud mlčeli. Víče ve slovníku ^
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="faq-item" itemscope itemprop="mainEntity"
-                                itemtype="https://schema.org/Question">
-                                <button class="faq-question" aria-expanded="false">
-                                    <span itemprop="name">Proč se mi zdá o létání?</span>
-                                    <span class="faq-icon">+</span>
-                                </button>
-                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
-                                    itemtype="https://schema.org/Answer">
-                                    <div itemprop="text">Létání ve snu je jedním z nejkrásnějších znaků. Pokud cítite
-                                        radost a volnost, vymanili jste se z nějakého omezujícího vzorce nebo situace.
-                                        Pokud se báte pádu, existuje strach ze ztextplráty uzemění nebo úzkost z
-                                        odpovědnosti. Létání v lucidnim snu lze dokánce ilvědomtě naucit se zvládat.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="faq-item" itemscope itemprop="mainEntity"
-                                itemtype="https://schema.org/Question">
-                                <button class="faq-question" aria-expanded="false">
-                                    <span itemprop="name">Co znamená těhotenství ve snu?</span>
-                                    <span class="faq-icon">+</span>
-                                </button>
-                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
-                                    itemtype="https://schema.org/Answer">
-                                    <div itemprop="text">Těhotenství ve snu (u žen i mužů) nezákoní fyzické otěhotnění.
-                                        Je to mocný archetyp zárodu — nápadu, projektu nebo nové živxotíní étapy.
-                                        Cítite-li v snu radost z těhotenství, něc vzrušujícího se roĎní ve vaší
-                                        psychice.</div>
-                                </div>
-                            </div>
-
-                            <div class="faq-item" itemscope itemprop="mainEntity"
-                                itemtype="https://schema.org/Question">
-                                <button class="faq-question" aria-expanded="false">
-                                    <span itemprop="name">Je sen o smrti negativní znamení?</span>
-                                    <span class="faq-icon">+</span>
-                                </button>
-                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
-                                    itemtype="https://schema.org/Answer">
-                                    <div itemprop="text">Vůbec ne. Smrt ve snu je ve skutečnosti jeden z
-                                        nejpozitivnějších symbolů, které vám podvědomí může poslat. Označuje konec jedné
-                                        etapy a zacátek něho nového. Je to symbol přerodu ega a zbavení se starých
-                                        vzorzců.</div>
-                                </div>
-                            </div>
-
-                            <div class="faq-item" itemscope itemprop="mainEntity"
-                                itemtype="https://schema.org/Question">
-                                <button class="faq-question" aria-expanded="false">
-                                    <span itemprop="name">Proč se mi zdá o bývalém partnerovi?</span>
-                                    <span class="faq-icon">+</span>
-                                </button>
-                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
-                                    itemtype="https://schema.org/Answer">
-                                    <div itemprop="text">Sen o ex-partnerovi nejspodáčeji neznamená touhu návratu. Váš
-                                        ex symbolizuje něco nedovybřízeného — emoci, vzorec chování nebo vlastnost,
-                                        která z vás stále je a vyžaduje vyřešení. Ptát se &bdquo;proč mi zdá o
-                                        bývalém&ldquo; je často brána k pochopení sebe sama.</div>
-                                </div>
-                            </div>
-
-                            <div class="faq-item" itemscope itemprop="mainEntity"
-                                itemtype="https://schema.org/Question">
-                                <button class="faq-question" aria-expanded="false">
-                                    <span itemprop="name">Co znamená, že mjá v snu padám a pak se probudy?</span>
-                                    <span class="faq-icon">+</span>
-                                </button>
-                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
-                                    itemtype="https://schema.org/Answer">
-                                    <div itemprop="text">Padání ve snu je průvodním jevem tzv. hypnického záskupu —
-                                        naprosto normální něrvové reakce těla při usnání. Z psychologického hlediska
-                                        padání odraží kumulovanou úzkost, pocit ztextplráty kontroly nebo přetížení. Po
-                                        probuzení z tohoto snu zkuste vědomtě dýchat.</div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </section>
-
-                    <!-- Internal Cross-links -->
-                    <section
-                        style="margin-top: var(--space-3xl); border-top: 1px solid rgba(255,255,255,0.08); padding-top: var(--space-2xl);"
-                        aria-label="Další nástroje">
-                        <h2 class="text-center"
-                            style="font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 0.5rem;">Mohlo by
-                            vás zajímat</h2>
-                        <p class="text-center"
-                            style="color: var(--color-silver-mist); margin-bottom: 1.5rem; font-size: 0.9rem;">Další
-                            nástroje pro sebepoznání na Mystické Hvězdě</p>
-                        <div class="crosslinks-grid">
-                            <a href="tarot.html" class="crosslink-card">
-                                <span class="emoji">??</span>
-                                <span>Výklad <strong>Tarot</strong>u</span>
-                            </a>
-                            <a href="kristalova-koule.html" class="crosslink-card">
-                                <span class="emoji">??</span>
-                                <span>Křišťálová <strong>Koule</strong></span>
-                            </a>
-                            <a href="biorytmy.html" class="crosslink-card">
-                                <span class="emoji">??</span>
-                                <span><strong>Biorytmy</strong></span>
-                            </a>
-                            <a href="numerologie.html" class="crosslink-card">
-                                <span class="emoji">??</span>
-                                <span><strong>Numerologie</strong></span>
-                            </a>
-                        </div>
-                    </section>
-
-                </div>
-            </section>
-        
-    
-    
-    <!-- CROSS-LINKING SEKCE -->
-    <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
-        <div class="container" style="max-width: 860px;">
-            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">Pokračujte ve své duchovní cestě</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-                <a href="andelske-karty.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">???</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Andělská Karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Poselství na dnešní den</div>
-                </a>
-                <a href="kristalova-koule.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Křišťálová koule</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zeptejte se na cokoli</div>
-                </a>
-                <a href="tarot.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Tarotový výklad</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Hloubkový vhled</div>
-                </a>
-                <a href="horoskopy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení dnes</div>
-                </a>
-                <a href="mentor.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Hvězdný Průvodce</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovní mentor</div>
-                </a>
-                <a href="natalni-karta.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný otisk</div>
-                </a>
-                <a href="partnerska-shoda.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahů</div>
-                </a>
-                <a href="numerologie.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel</div>
-                </a>
-                <a href="astro-mapa.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve světě</div>
-                </a>
-                
-                <a href="biorytmy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
-                </a>
-                <a href="runy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská moudrost</div>
-                </a>
-            </div>
-        </div>
-    </section>
-    </main>
-
-        <!-- Footer will be injected by main.js -->
-        <div id="footer-placeholder"></div>
-    </div>
-
-    <!-- Toast notifications -->
-    <div id="toast-container" class="toast-container"></div>
-
-    <!-- Global Scripts -->
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/templates.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-        <script src="js/share-result.js" defer></script>
-        <script src="js/nameday.js" defer></script>
-    <script src="js/exit-intent.js" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script src="js/snar.js?v=7" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-
-    <!-- FAQ Accordion + Popular Quick Search -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // FAQ Accordion
-            document.querySelectorAll('.faq-question').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const item = btn.closest('.faq-item');
-                    const isOpen = item.classList.contains('open');
-                    document.querySelectorAll('.faq-item.open').forEach(i => {
-                        i.classList.remove('open');
-                        i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
-                    });
-                    if (!isOpen) {
-                        item.classList.add('open');
-                        btn.setAttribute('aria-expanded', 'true');
-                    }
-                });
-            });
-
-            // Popular Cards -> trigger search + scroll to dict
-            document.querySelectorAll('.popular-card[data-search]').forEach(card => {
-                card.addEventListener('click', () => {
-                    const searchInput = document.getElementById('dream-search');
-                    if (searchInput) {
-                        searchInput.value = card.dataset.search;
-                        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        document.getElementById('dict-grid') && document.getElementById('dict-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                });
-            });
-
-            // Sen Dne — wired via globalDreamsData poll
-            function initDreamOfDay(dreams) {
-                if (!dreams || !dreams.length) return;
-                const countEl = document.getElementById('symbol-count');
-                if (countEl) countEl.textContent = dreams.length + '+';
-                const todayDream = dreams[Math.floor(Date.now() / 86400000) % dreams.length];
-                showDreamOfDay(todayDream);
-                const btnRandom = document.getElementById('btn-random-dream');
-                if (btnRandom) {
-                    btnRandom.addEventListener('click', () => {
-                        const random = dreams[Math.floor(Math.random() * dreams.length)];
-                        showDreamOfDay(random);
-                        const si = document.getElementById('dream-search');
-                        if (si) { si.value = random.keyword; si.dispatchEvent(new Event('input', { bubbles: true })); document.getElementById('dict-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-                    });
-                }
-            }
-            function showDreamOfDay(d) {
-                const e = document.getElementById('dod-emoji'); const k = document.getElementById('dod-keyword'); const desc = document.getElementById('dod-desc');
-                if (e) e.textContent = d.emoji || '??'; if (k) k.textContent = d.keyword; if (desc) desc.textContent = d.description;
-            }
-            let _pc = 0; const _pi = setInterval(() => { if (window.globalDreamsData && window.globalDreamsData.length) { clearInterval(_pi); initDreamOfDay(window.globalDreamsData); } else if (++_pc > 40) clearInterval(_pi); }, 150);
-            const _air = document.getElementById('ai-result');
-            if (_air) new MutationObserver(() => { const sb = document.getElementById('share-bar'); if (sb && _air.style.display !== 'none' && _air.innerHTML.trim()) sb.classList.add('visible'); }).observe(_air, { attributes: true, childList: true });
-                });
-    </script>
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="description"
+
+        content="Lexikon snů a Hluboký snový výklad. Odhalte skryté poselství vašeho podvědomí. Rozklíčujte význam snových symbolů.">
+
+    <meta name="keywords"
+
+        content="snář, lexikon snů, výklad snů, co znamená sen, snové symboly, archetypy, hluboký výklad snu">
+
+    <meta name="theme-color" content="#0a0a1a">
+
+    <!-- Open Graph -->
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:title" content="Snář: Výklad Snů & Lexikon Symbolů | Mystická Hvězda">
+
+    <meta property="og:description"
+
+        content="Rozlušte významy snu zdarma. 65+ snovch symbolů nebo hluboký osobní výklad celého snu.">
+
+    <meta property="og:image" content="https://mystickahvezda.cz/img/icon-moon.webp">
+
+    <meta property="og:locale" content="cs_CZ">
+
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- JSON-LD Structured Data -->
+
+    <script type="application/ld+json">
+
+    {
+
+        "@context": "https://schema.org",
+
+        "@graph": [
+
+            {
+
+                "@type": "WebPage",
+
+                "name": "Snář: Lexikon Snů & Hluboký Výklad | Mystická Hvězda",
+
+                "description": "Bezplatný online snář s výkladem 65+ snovch symbolů. Rozlušte značení vašeho snu.",
+
+                "url": "https://mystickahvezda.cz/snar.html",
+
+                "inLanguage": "cs",
+
+                "breadcrumb": {
+
+                    "@type": "BreadcrumbList",
+
+                    "itemListElement": [
+
+                        {"@type": "ListItem", "position": 1, "name": "Mystická Hvězda", "item": "https://mystickahvezda.cz"},
+
+                        {"@type": "ListItem", "position": 2, "name": "Snář & Lexikon Snů"}
+
+                    ]
+
+                }
+
+            },
+
+            {
+
+                "@type": "FAQPage",
+
+                "mainEntity": [
+
+                    {
+
+                        "@type": "Question",
+
+                        "name": "Co znamená, když vypadávají zuby ve snu?",
+
+                        "acceptedAnswer": {"@type": "Answer", "text": "Vypadávají-li vám zuby ve snu, je to jeden z nejrozbšířenějších snů vubec. Zuby symbolizují vaši asertivitu a schopnost komunikovat. Tento sen často odraží strach z údubě atraktivity, ze ztixení hlasu ve vážné situaci nebo úzkost z toho, že nejste brani vážně."}
+
+                    },
+
+                    {
+
+                        "@type": "Question",
+
+                        "name": "Proč se mi zdá o létání?",
+
+                        "acceptedAnswer": {"@type": "Answer", "text": "Létání ve snu je jeden z nejkrásnějších a nejpovznesenějších zážitků. Pokud v něm cítite radost a volnost, vymanili jste se aktuálně z omezující situace. Pokud se létání bojíte nebo padáte, máte strach ze ztexplroání uzemění nebo závazků."}
+
+                    },
+
+                    {
+
+                        "@type": "Question",
+
+                        "name": "Co znamená těhotenství ve snu?",
+
+                        "acceptedAnswer": {"@type": "Answer", "text": "Těhotenství ve snu (u žen i mužů) neznamená fyzické otěhotnění. Je to mocný symbol zárodu -- nápadu, projektu nebo nové živoťní etapy, která se ve vás pomalu zrá."}
+
+                    },
+
+                    {
+
+                        "@type": "Question",
+
+                        "name": "Co znamená sen o bvlém ex-partnerovi?",
+
+                        "acceptedAnswer": {"@type": "Answer", "text": "Sen o bývalém partnerovi nejspodáčeji neznamená touhu se vrátit. Váš ex sym bolizuje nedovybřízené emoce nebo vlastnosti, které vás z tohoto vztahu nabildovaly a zůstávají nevyužity."}
+
+                    },
+
+                    {
+
+                        "@type": "Question",
+
+                        "name": "Je sen o smrti vlastní nebo bílého zlobého špatné znamení?",
+
+                        "acceptedAnswer": {"@type": "Answer", "text": "Vůbec ne -- smrt ve snu je jeden z nejvlíce pozitivních symbolů. Označuje konec jedné etapy a potřebu transformace. Je to symbol přebudu ega a odložení starého, co už neslouixí."}
+
+                    },
+
+                    {
+
+                        "@type": "Question",
+
+                        "name": "Proč se mi prostředí ve snid při padání?",
+
+                        "acceptedAnswer": {"@type": "Answer", "text": "Padání ve snu je klasický projev kumulované úzkosti a pocitu ztexplráty kontroly -- v práci, vztazích nebo sebevnímání. Váš mozek se takto 'vybijí' z nakumulovaného napix'tí."}
+
+                    }
+
+                ]
+
+            }
+
+        ]
+
+    }
+
+    </script>
+
+    <title>Snář: Výklad Snů & Lexikon Snovch Symbolů | Mystická Hvězda</title>
+
+
+
+    <!-- Favicon -->
+
+    <link rel="icon" type="image/svg+xml"
+
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
+
+
+
+    <!-- PWA -->
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="apple-touch-icon" href="img/icon-192.webp">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+
+
+    <style>
+
+        /* Modern Dream Lexicon Custom Styles */
+
+        .dream-hero {
+
+            background: radial-gradient(circle at top right, rgba(138, 43, 226, 0.15), transparent 60%),
+
+                radial-gradient(circle at bottom left, rgba(75, 0, 130, 0.2), transparent 60%);
+
+            padding-top: 140px;
+
+            /* offset for header */
+
+            padding-bottom: var(--space-xl);
+
+            position: relative;
+
+        }
+
+
+
+        .dream-hero::before {
+
+            content: '';
+
+            position: absolute;
+
+            inset: 0;
+
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+
+            z-index: 0;
+
+            opacity: 0.5;
+
+        }
+
+
+
+        .dream-container {
+
+            position: relative;
+
+            z-index: 1;
+
+        }
+
+
+
+        /* Search & Alphabet section */
+
+        .search-section {
+
+            background: rgba(15, 10, 30, 0.7);
+
+            backdrop-filter: blur(10px);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: var(--radius-lg);
+
+            padding: var(--space-xl);
+
+            margin-bottom: var(--space-2xl);
+
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+        }
+
+
+
+        .search-input-wrapper {
+
+            position: relative;
+
+            margin-bottom: var(--space-lg);
+
+        }
+
+
+
+        .search-icon {
+
+            position: absolute;
+
+            left: var(--space-md);
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: var(--color-silver-mist);
+
+            font-size: 1.2rem;
+
+        }
+
+
+
+        .dream-search-input {
+
+            width: 100%;
+
+            background: rgba(0, 0, 0, 0.3);
+
+            border: 1px solid var(--color-mystic-gold);
+
+            border-radius: 30px;
+
+            padding: var(--space-md) var(--space-lg) var(--space-md) 3rem;
+
+            color: #fff;
+
+            font-size: 1.1rem;
+
+            transition: all var(--transition-base);
+
+        }
+
+
+
+        .dream-search-input:focus {
+
+            outline: none;
+
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+
+            background: rgba(0, 0, 0, 0.5);
+
+        }
+
+
+
+        .alphabet-nav {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            justify-content: center;
+
+            margin-bottom: var(--space-lg);
+
+        }
+
+
+
+        .alphabet-btn {
+
+            background: rgba(255, 255, 255, 0.05);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            color: var(--color-silver-mist);
+
+            width: 36px;
+
+            height: 36px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            cursor: pointer;
+
+            transition: all var(--transition-fast);
+
+            font-family: var(--font-heading);
+
+            font-size: 0.9rem;
+
+        }
+
+
+
+        .alphabet-btn:hover,
+
+        .alphabet-btn.active {
+
+            background: var(--color-mystic-gold);
+
+            color: #000;
+
+            border-color: var(--color-mystic-gold);
+
+            transform: translateY(-2px);
+
+        }
+
+
+
+        /* Dictionary Results Grid */
+
+        .dict-grid {
+
+            display: grid;
+
+            grid-template-columns: 1fr;
+
+            gap: var(--space-md);
+
+        }
+
+
+
+        @media (min-width: 768px) {
+
+            .dict-grid {
+
+                grid-template-columns: repeat(2, 1fr);
+
+            }
+
+        }
+
+
+
+        @media (min-width: 1024px) {
+
+            .dict-grid {
+
+                grid-template-columns: repeat(3, 1fr);
+
+                gap: var(--space-lg);
+
+            }
+
+        }
+
+
+
+        .dict-card {
+
+            background: rgba(255, 255, 255, 0.03);
+
+            border: 1px solid rgba(255, 255, 255, 0.05);
+
+            border-radius: var(--radius-md);
+
+            padding: var(--space-md);
+
+            transition: all var(--transition-base);
+
+            height: 100%;
+
+        }
+
+
+
+        .dict-card:hover {
+
+            border-color: rgba(212, 175, 55, 0.3);
+
+            background: rgba(255, 255, 255, 0.05);
+
+            transform: translateY(-2px);
+
+        }
+
+
+
+        .dict-keyword {
+
+            font-family: var(--font-heading);
+
+            color: var(--color-mystic-gold);
+
+            font-size: 1.2rem;
+
+            margin-bottom: 0.5rem;
+
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+
+            padding-bottom: 0.5rem;
+
+        }
+
+
+
+        .dict-desc {
+
+            font-size: 0.9rem;
+
+            color: var(--color-silver-mist);
+
+            line-height: 1.6;
+
+            margin: 0;
+
+        }
+
+
+
+        /* AI Premium Section */
+
+        .ai-dream-section {
+
+            margin-top: var(--space-2xl);
+
+            background: linear-gradient(135deg, rgba(20, 10, 40, 0.8) 0%, rgba(40, 10, 60, 0.8) 100%);
+
+            border-radius: var(--radius-lg);
+
+            padding: var(--space-xl);
+
+            border: 1px solid rgba(212, 175, 55, 0.4);
+
+            box-shadow: 0 10px 40px rgba(138, 43, 226, 0.15);
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+
+
+        .ai-dream-section::before {
+
+            content: '';
+
+            position: absolute;
+
+            top: -50px;
+
+            right: -50px;
+
+            width: 150px;
+
+            height: 150px;
+
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+
+            border-radius: 50%;
+
+        }
+
+
+
+        .ai-textarea {
+
+            width: 100%;
+
+            background: rgba(0, 0, 0, 0.4);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: var(--radius-md);
+
+            color: #fff;
+
+            padding: var(--space-md);
+
+            font-family: var(--font-body);
+
+            font-size: 1rem;
+
+            min-height: 150px;
+
+            resize: vertical;
+
+            margin-bottom: var(--space-md);
+
+            transition: border-color var(--transition-base);
+
+        }
+
+
+
+        .ai-textarea:focus {
+
+            outline: none;
+
+            border-color: var(--color-mystic-gold);
+
+            background: rgba(0, 0, 0, 0.6);
+
+        }
+
+
+
+        .ai-result-box {
+
+            display: none;
+
+            margin-top: var(--space-lg);
+
+            padding: var(--space-lg);
+
+            background: rgba(0, 0, 0, 0.3);
+
+            border-left: 3px solid var(--color-mystic-gold);
+
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+
+            color: #eee;
+
+            font-size: 0.95rem;
+
+            line-height: 1.6;
+
+        }
+
+
+
+        .no-results {
+
+            text-align: center;
+
+            color: var(--color-silver-mist);
+
+            padding: var(--space-xl);
+
+            font-style: italic;
+
+            grid-column: 1 / -1;
+
+        }
+
+
+
+        .loading-animation {
+
+            display: none;
+
+            text-align: center;
+
+            margin: var(--space-lg) 0;
+
+        }
+
+
+
+        .moon-loader {
+
+            font-size: 3rem;
+
+            display: inline-block;
+
+            animation: orbBounce 2s ease-in-out infinite;
+
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+
+        }
+
+
+
+        /* Popular Dreams Quick Grid */
+
+        .popular-dreams-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 10px;
+
+            margin: var(--space-xl) 0;
+
+        }
+
+
+
+        @media (min-width: 640px) {
+
+            .popular-dreams-grid {
+
+                grid-template-columns: repeat(4, 1fr);
+
+            }
+
+        }
+
+
+
+        @media (min-width: 1024px) {
+
+            .popular-dreams-grid {
+
+                grid-template-columns: repeat(4, 1fr);
+
+            }
+
+        }
+
+
+
+        .popular-card {
+
+            background: rgba(255, 255, 255, 0.04);
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            border-radius: 12px;
+
+            padding: var(--space-md);
+
+            text-align: center;
+
+            cursor: pointer;
+
+            transition: all 0.2s ease;
+
+            text-decoration: none;
+
+        }
+
+
+
+        .popular-card:hover {
+
+            background: rgba(212, 175, 55, 0.1);
+
+            border-color: rgba(212, 175, 55, 0.4);
+
+            transform: translateY(-3px);
+
+        }
+
+
+
+        .popular-card-emoji {
+
+            font-size: 2rem;
+
+            display: block;
+
+            margin-bottom: 8px;
+
+        }
+
+
+
+        .popular-card-label {
+
+            color: var(--color-starlight);
+
+            font-size: 0.85rem;
+
+            line-height: 1.3;
+
+        }
+
+
+
+        /* FAQ Section */
+
+        .faq-section {
+
+            margin-top: var(--space-3xl);
+
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+            padding-top: var(--space-2xl);
+
+        }
+
+
+
+        .faq-item {
+
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+            overflow: hidden;
+
+        }
+
+
+
+        .faq-question {
+
+            width: 100%;
+
+            background: none;
+
+            border: none;
+
+            color: var(--color-starlight);
+
+            font-family: var(--font-heading);
+
+            font-size: 1.05rem;
+
+            text-align: left;
+
+            padding: var(--space-md) 0;
+
+            cursor: pointer;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 1rem;
+
+        }
+
+
+
+        .faq-question:hover {
+
+            color: var(--color-mystic-gold);
+
+        }
+
+
+
+        .faq-icon {
+
+            font-size: 1.2rem;
+
+            flex-shrink: 0;
+
+            transition: transform 0.3s ease;
+
+        }
+
+
+
+        .faq-item.open .faq-icon {
+
+            transform: rotate(45deg);
+
+        }
+
+
+
+        .faq-answer {
+
+            max-height: 0;
+
+            overflow: hidden;
+
+            transition: max-height 0.4s ease, padding 0.3s ease;
+
+            color: var(--color-silver-mist);
+
+            font-size: 0.95rem;
+
+            line-height: 1.8;
+
+        }
+
+
+
+        .faq-item.open .faq-answer {
+
+            max-height: 400px;
+
+            padding-bottom: var(--space-md);
+
+        }
+
+
+
+        /* Cross-links section */
+
+        .crosslinks-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: var(--space-md);
+
+            margin-top: var(--space-lg);
+
+        }
+
+
+
+        @media (min-width: 768px) {
+
+            .crosslinks-grid {
+
+                grid-template-columns: repeat(4, 1fr);
+
+            }
+
+        }
+
+
+
+        .crosslink-card {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: var(--space-md);
+
+            background: rgba(255, 255, 255, 0.03);
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            border-radius: 12px;
+
+            text-decoration: none;
+
+            color: var(--color-silver-mist);
+
+            font-size: 0.9rem;
+
+            text-align: center;
+
+            transition: all 0.2s ease;
+
+        }
+
+
+
+        .crosslink-card:hover {
+
+            background: rgba(157, 78, 221, 0.1);
+
+            border-color: rgba(157, 78, 221, 0.3);
+
+            color: var(--color-starlight);
+
+            transform: translateY(-2px);
+
+        }
+
+
+
+        .crosslink-card .emoji {
+
+            font-size: 1.8rem;
+
+        }
+
+
+
+        /* Sen Dne (Dream of the Day) widget */
+
+        .dream-of-day {
+
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.12) 0%, rgba(75, 0, 130, 0.2) 100%);
+
+            border: 1px solid rgba(212, 175, 55, 0.25);
+
+            border-radius: var(--radius-lg);
+
+            padding: var(--space-lg) var(--space-xl);
+
+            margin-bottom: var(--space-xl);
+
+            display: flex;
+
+            align-items: center;
+
+            gap: var(--space-lg);
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+
+
+        .dream-of-day::before {
+
+            content: '';
+
+            position: absolute;
+
+            top: -30px;
+
+            right: -30px;
+
+            width: 120px;
+
+            height: 120px;
+
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
+
+            border-radius: 50%;
+
+        }
+
+
+
+        .dod-emoji {
+
+            font-size: 3.5rem;
+
+            flex-shrink: 0;
+
+            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.5));
+
+            animation: float 4s ease-in-out infinite;
+
+        }
+
+
+
+        @keyframes float {
+
+
+
+            0%,
+
+            100% {
+
+                transform: translateY(0);
+
+            }
+
+
+
+            50% {
+
+                transform: translateY(-8px);
+
+            }
+
+        }
+
+
+
+        .dod-content {
+
+            flex: 1;
+
+        }
+
+
+
+        .dod-label {
+
+            font-size: 0.75rem;
+
+            letter-spacing: 2px;
+
+            text-transform: uppercase;
+
+            color: var(--color-mystic-gold);
+
+            opacity: 0.8;
+
+            margin-bottom: 4px;
+
+        }
+
+
+
+        .dod-keyword {
+
+            font-family: var(--font-heading);
+
+            font-size: 1.5rem;
+
+            color: #fff;
+
+            margin-bottom: 6px;
+
+        }
+
+
+
+        .dod-desc {
+
+            font-size: 0.9rem;
+
+            color: var(--color-silver-mist);
+
+            line-height: 1.6;
+
+            display: -webkit-box;
+
+            -webkit-line-clamp: 2;
+
+            -webkit-box-orient: vertical;
+
+            overflow: hidden;
+
+        }
+
+
+
+        /* Stats bar */
+
+        .stats-bar {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: var(--space-2xl);
+
+            margin: var(--space-xl) 0 var(--space-lg);
+
+            flex-wrap: wrap;
+
+        }
+
+
+
+        .stat-item {
+
+            text-align: center;
+
+        }
+
+
+
+        .stat-number {
+
+            font-family: var(--font-heading);
+
+            font-size: 2rem;
+
+            color: var(--color-mystic-gold);
+
+            display: block;
+
+            line-height: 1;
+
+        }
+
+
+
+        .stat-label {
+
+            font-size: 0.8rem;
+
+            color: var(--color-silver-mist);
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+
+        }
+
+
+
+        /* Random dream button */
+
+        .btn-random {
+
+            background: transparent;
+
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+            color: var(--color-silver-mist);
+
+            border-radius: 30px;
+
+            padding: 8px 20px;
+
+            font-size: 0.85rem;
+
+            cursor: pointer;
+
+            transition: all 0.2s ease;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+        }
+
+
+
+        .btn-random:hover {
+
+            border-color: rgba(212, 175, 55, 0.4);
+
+            color: var(--color-mystic-gold);
+
+            background: rgba(212, 175, 55, 0.05);
+
+        }
+
+
+
+        /* Share button after result */
+
+        .share-bar {
+
+            display: none;
+
+            margin-top: var(--space-md);
+
+            gap: var(--space-sm);
+
+            flex-wrap: wrap;
+
+        }
+
+
+
+        .share-bar.visible {
+
+            display: flex;
+
+        }
+
+
+
+        .btn-share {
+
+            background: rgba(255, 255, 255, 0.06);
+
+            border: 1px solid rgba(255, 255, 255, 0.12);
+
+            color: var(--color-silver-mist);
+
+            border-radius: 20px;
+
+            padding: 6px 14px;
+
+            font-size: 0.8rem;
+
+            cursor: pointer;
+
+            transition: all 0.2s;
+
+        }
+
+
+
+        .btn-share:hover {
+
+            background: rgba(255, 255, 255, 0.12);
+
+            color: #fff;
+
+        }
+
+    </style>
+
+</head>
+
+
+
+<body>
+
+    <!-- App Container -->
+
+    <div id="app" class="app-container">
+
+        <!-- HTML structure requires header-placeholder and footer-placeholder for components.js -->
+
+        <div id="header-placeholder"></div>
+
+
+
+        <main>
+
+            <!-- Hero / Search Section -->
+
+            <section class="dream-hero">
+
+                <div class="container dream-container">
+
+                    <div class="text-center mb-5" data-animate>
+
+                        <span class="badge mb-3">Snové archetypy & Symboly</span>
+
+                        <h1 class="hero__title">
+
+                            Lexikon <span class="text-gradient">Snů</span>
+
+                        </h1>
+
+                        <p class="hero__subtitle mx-auto" style="max-width: 650px;">
+
+                            Naše sny jsou tajným jazykem podvědomí. Rozklíčujte význam symbolů, které se vám v noci
+
+                            zjevují, nebo svěřte celý děj snu našemu Hvězdnému Průvodci pro hlubokou psychologickou
+
+                            analýzu.
+
+                        </p>
+
+                    </div>
+
+
+
+                                        <!-- Stats bar -->
+
+                    <div class="stats-bar" data-animate>
+
+                        <div class="stat-item">
+
+                            <span class="stat-number" id="symbol-count">65+</span>
+
+                            <span class="stat-label">Symbolů ve snáři</span>
+
+                        </div>
+
+                        <div class="stat-item">
+
+                            <span class="stat-number">??</span>
+
+                            <span class="stat-label">Každý den nový</span>
+
+                        </div>
+
+                        <div class="stat-item">
+
+                            <span class="stat-number">Zdarma</span>
+
+                            <span class="stat-label">Bez registrace</span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Sen Dne (Dream of the Day) -->
+
+                    <div class="dream-of-day" data-animate style="animation-delay: 0.15s;">
+
+                        <span class="dod-emoji" id="dod-emoji">??</span>
+
+                        <div class="dod-content">
+
+                            <div class="dod-label">? Symbol dne</div>
+
+                            <div class="dod-keyword" id="dod-keyword">Načítám...</div>
+
+                            <div class="dod-desc" id="dod-desc"></div>
+
+                        </div>
+
+                        <button id="btn-random-dream" class="btn-random" title="Náhodný symbol">
+
+                            ?? Náhodný
+
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- AI Premium Dream Analyzer -->
+
+                    <div class="ai-dream-section" data-animate style="animation-delay: 0.2s;">
+
+                        <h3
+
+                            style="color: #fff; font-family: var(--font-heading); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 10px;">
+
+                            <span>? Hluboký Výklad Snu</span>
+
+                            <span class="badge badge--premium"
+
+                                style="font-size: 0.7rem; padding: 2px 8px;">Premium</span>
+
+                        </h3>
+
+                        <p style="color: var(--color-silver-mist); margin-bottom: var(--space-md); font-size: 0.9rem;">
+
+                            Běžný snář bere slova vytržená z kontextu. Popište sem svůj sen co nejpodrobněji (jaké emoce
+
+                            jste cítili, jaké barvy jste viděli, kdo tam byl) a Hvězdný Průvodce rozebere celý příběh z
+
+                            pohledu hlubinné jungiánské psychologie a mystiky.
+
+                        </p>
+
+
+
+                        <textarea id="ai-dream-input" class="ai-textarea"
+
+                            placeholder="Včera v noci se mi zdálo, že jsem utíkal tajemným lesem. Zničehonic přede mnou spadl strom a já zjistil, že nemám boty..."></textarea>
+
+
+
+                        <button id="btn-analyze-dream" class="btn btn--primary btn--full-width">
+
+                            Předložit sen Průvodci
+
+                        </button>
+
+
+
+                        <div id="ai-loading" class="loading-animation">
+
+                            <div class="moon-loader">??</div>
+
+                            <p style="color: var(--color-mystic-gold); margin-top: 10px;">Noříme se do hlubin vašeho
+
+                                podvědomí...</p>
+
+                        </div>
+
+
+
+                        <div id="ai-result" class="ai-result-box">
+
+                            <!-- AI Output will go here -->
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div style="margin: var(--space-2xl) 0;">
+
+                        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin-bottom: 2rem;">
+
+                        <h2 class="text-center"
+
+                            style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 0.5rem;">
+
+                            Nejhledánější
+
+                            Sny</h2>
+
+                        <p class="text-center"
+
+                            style="color: var(--color-silver-mist); margin-bottom: 1.5rem; font-size: 0.9rem;">Klikněte
+
+                            na symbol a ihned ho najděte ve slovínku</p>
+
+                        <div class="popular-dreams-grid" id="popular-dreams-grid">
+
+                            <button class="popular-card" data-search="Zuby">
+
+                                <span class="popular-card-emoji">??</span>
+
+                                <span class="popular-card-label">Zuby vypadávají</span>
+
+                            </button>
+
+                            <button class="popular-card" data-search="Létání">
+
+                                <span class="popular-card-emoji">??</span>
+
+                                <span class="popular-card-label">Létání ve snu</span>
+
+                            </button>
+
+                            <button class="popular-card" data-search="Padání">
+
+                                <span class="popular-card-emoji">??</span>
+
+                                <span class="popular-card-label">Padání do prázdna</span>
+
+                            </button>
+
+                            <button class="popular-card" data-search="Had">
+
+                                <span class="popular-card-emoji">??</span>
+
+                                <span class="popular-card-label">Had ve snu</span>
+
+                            </button>
+
+                            <button class="popular-card" data-search="Smrt">
+
+                                <span class="popular-card-emoji">??</span>
+
+                                <span class="popular-card-label">Smrt ve snu</span>
+
+                            </button>
+
+                            <button class="popular-card" data-search="Těhotenst">
+
+                                <span class="popular-card-emoji">??</span>
+
+                                <span class="popular-card-label">Těhotenství ve snu</span>
+
+                            </button>
+
+                            <button class="popular-card" data-search="Ex-partner">
+
+                                <span class="popular-card-emoji">??</span>
+
+                                <span class="popular-card-label">Sen o bývalém</span>
+
+                            </button>
+
+                            <button class="popular-card" data-search="Moře">
+
+                                <span class="popular-card-emoji">??</span>
+
+                                <span class="popular-card-label">More / Oceán</span>
+
+                            </button>
+
+                        </div>
+
+                        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2rem 0;">
+
+                        <h2 class="text-center"
+
+                            style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 1rem;">Abecední
+
+                            Snář</h2>
+
+                    </div>
+
+
+
+                    <!-- Dictionary Search & Filter -->
+
+                    <div class="search-section" data-animate style="animation-delay: 0.4s;">
+
+                        <div class="search-input-wrapper">
+
+                            <span class="search-icon">??</span>
+
+                            <input type="text" id="dream-search" class="dream-search-input"
+
+                                placeholder="Hledat snový symbol (např. hadi, nemoc, letání)...">
+
+                        </div>
+
+
+
+                        <div class="alphabet-nav" id="alphabet-nav">
+
+                            <!-- A-Z Buttons will be injected here via JS -->
+
+                        </div>
+
+
+
+                        <!-- Dictionary Results -->
+
+                        <div class="dict-grid" id="dict-grid">
+
+                            <div class="no-results">Načítám snovou knihovnu...</div>
+
+                            <!-- Cards will be injected here via JS -->
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- FAQ Section for SEO -->
+
+                    <section class="faq-section" aria-label="Časté otázky o snách">
+
+                        <h2 class="text-center"
+
+                            style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 0.5rem;">Nejčastěji
+
+                            Kladené Otázky</h2>
+
+                        <p class="text-center"
+
+                            style="color: var(--color-silver-mist); margin-bottom: 2rem; font-size: 0.9rem;">Odpovědi z
+
+                            pohledu jungiánské psychologie a snového výkladu</p>
+
+                        <div style="max-width: 800px; margin: 0 auto;" itemscope itemtype="https://schema.org/FAQPage">
+
+
+
+                            <div class="faq-item" itemscope itemprop="mainEntity"
+
+                                itemtype="https://schema.org/Question">
+
+                                <button class="faq-question" aria-expanded="false">
+
+                                    <span itemprop="name">Co znamená, když mi vypadávají zuby ve snu?</span>
+
+                                    <span class="faq-icon">+</span>
+
+                                </button>
+
+                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
+
+                                    itemtype="https://schema.org/Answer">
+
+                                    <div itemprop="text">Zuby jsou symbolem vaší asertivity, schopnosti komunikovat a
+
+                                        sebedůvěry. Vypadávají-li vám ve snu zuby, je to jeden z vůbec nejčastějších
+
+                                        snovch zážitků. Odraxí strach ze ztexplráty své atraktivity, užost z hodnocení
+
+                                        nebo potřěbu říct něco důležitého, co jste dosud mlčeli. Víče ve slovníku ^
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="faq-item" itemscope itemprop="mainEntity"
+
+                                itemtype="https://schema.org/Question">
+
+                                <button class="faq-question" aria-expanded="false">
+
+                                    <span itemprop="name">Proč se mi zdá o létání?</span>
+
+                                    <span class="faq-icon">+</span>
+
+                                </button>
+
+                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
+
+                                    itemtype="https://schema.org/Answer">
+
+                                    <div itemprop="text">Létání ve snu je jedním z nejkrásnějších znaků. Pokud cítite
+
+                                        radost a volnost, vymanili jste se z nějakého omezujícího vzorce nebo situace.
+
+                                        Pokud se báte pádu, existuje strach ze ztextplráty uzemění nebo úzkost z
+
+                                        odpovědnosti. Létání v lucidnim snu lze dokánce ilvědomtě naucit se zvládat.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="faq-item" itemscope itemprop="mainEntity"
+
+                                itemtype="https://schema.org/Question">
+
+                                <button class="faq-question" aria-expanded="false">
+
+                                    <span itemprop="name">Co znamená těhotenství ve snu?</span>
+
+                                    <span class="faq-icon">+</span>
+
+                                </button>
+
+                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
+
+                                    itemtype="https://schema.org/Answer">
+
+                                    <div itemprop="text">Těhotenství ve snu (u žen i mužů) nezákoní fyzické otěhotnění.
+
+                                        Je to mocný archetyp zárodu — nápadu, projektu nebo nové živxotíní étapy.
+
+                                        Cítite-li v snu radost z těhotenství, něc vzrušujícího se roĎní ve vaší
+
+                                        psychice.</div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="faq-item" itemscope itemprop="mainEntity"
+
+                                itemtype="https://schema.org/Question">
+
+                                <button class="faq-question" aria-expanded="false">
+
+                                    <span itemprop="name">Je sen o smrti negativní znamení?</span>
+
+                                    <span class="faq-icon">+</span>
+
+                                </button>
+
+                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
+
+                                    itemtype="https://schema.org/Answer">
+
+                                    <div itemprop="text">Vůbec ne. Smrt ve snu je ve skutečnosti jeden z
+
+                                        nejpozitivnějších symbolů, které vám podvědomí může poslat. Označuje konec jedné
+
+                                        etapy a zacátek něho nového. Je to symbol přerodu ega a zbavení se starých
+
+                                        vzorzců.</div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="faq-item" itemscope itemprop="mainEntity"
+
+                                itemtype="https://schema.org/Question">
+
+                                <button class="faq-question" aria-expanded="false">
+
+                                    <span itemprop="name">Proč se mi zdá o bývalém partnerovi?</span>
+
+                                    <span class="faq-icon">+</span>
+
+                                </button>
+
+                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
+
+                                    itemtype="https://schema.org/Answer">
+
+                                    <div itemprop="text">Sen o ex-partnerovi nejspodáčeji neznamená touhu návratu. Váš
+
+                                        ex symbolizuje něco nedovybřízeného — emoci, vzorec chování nebo vlastnost,
+
+                                        která z vás stále je a vyžaduje vyřešení. Ptát se &bdquo;proč mi zdá o
+
+                                        bývalém&ldquo; je často brána k pochopení sebe sama.</div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="faq-item" itemscope itemprop="mainEntity"
+
+                                itemtype="https://schema.org/Question">
+
+                                <button class="faq-question" aria-expanded="false">
+
+                                    <span itemprop="name">Co znamená, že mjá v snu padám a pak se probudy?</span>
+
+                                    <span class="faq-icon">+</span>
+
+                                </button>
+
+                                <div class="faq-answer" itemscope itemprop="acceptedAnswer"
+
+                                    itemtype="https://schema.org/Answer">
+
+                                    <div itemprop="text">Padání ve snu je průvodním jevem tzv. hypnického záskupu —
+
+                                        naprosto normální něrvové reakce těla při usnání. Z psychologického hlediska
+
+                                        padání odraží kumulovanou úzkost, pocit ztextplráty kontroly nebo přetížení. Po
+
+                                        probuzení z tohoto snu zkuste vědomtě dýchat.</div>
+
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </section>
+
+
+
+                    <!-- Internal Cross-links -->
+
+                    <section
+
+                        style="margin-top: var(--space-3xl); border-top: 1px solid rgba(255,255,255,0.08); padding-top: var(--space-2xl);"
+
+                        aria-label="Další nástroje">
+
+                        <h2 class="text-center"
+
+                            style="font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 0.5rem;">Mohlo by
+
+                            vás zajímat</h2>
+
+                        <p class="text-center"
+
+                            style="color: var(--color-silver-mist); margin-bottom: 1.5rem; font-size: 0.9rem;">Další
+
+                            nástroje pro sebepoznání na Mystické Hvězdě</p>
+
+                        <div class="crosslinks-grid">
+
+                            <a href="tarot.html" class="crosslink-card">
+
+                                <span class="emoji">??</span>
+
+                                <span>Výklad <strong>Tarot</strong>u</span>
+
+                            </a>
+
+                            <a href="kristalova-koule.html" class="crosslink-card">
+
+                                <span class="emoji">??</span>
+
+                                <span>Křišťálová <strong>Koule</strong></span>
+
+                            </a>
+
+                            <a href="biorytmy.html" class="crosslink-card">
+
+                                <span class="emoji">??</span>
+
+                                <span><strong>Biorytmy</strong></span>
+
+                            </a>
+
+                            <a href="numerologie.html" class="crosslink-card">
+
+                                <span class="emoji">??</span>
+
+                                <span><strong>Numerologie</strong></span>
+
+                            </a>
+
+                        </div>
+
+                    </section>
+
+
+
+                </div>
+
+            </section>
+
+        
+
+    
+
+    
+
+    <!-- CROSS-LINKING SEKCE -->
+
+    <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
+
+        <div class="container" style="max-width: 860px;">
+
+            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">Pokračujte ve své duchovní cestě</h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+
+                <a href="andelske-karty.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">???</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Andělská Karta</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Poselství na dnešní den</div>
+
+                </a>
+
+                <a href="kristalova-koule.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Křišťálová koule</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zeptejte se na cokoli</div>
+
+                </a>
+
+                <a href="tarot.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Tarotový výklad</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Hloubkový vhled</div>
+
+                </a>
+
+                <a href="horoskopy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení dnes</div>
+
+                </a>
+
+                <a href="mentor.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Hvězdný Průvodce</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovní mentor</div>
+
+                </a>
+
+                <a href="natalni-karta.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírný otisk</div>
+
+                </a>
+
+                <a href="partnerska-shoda.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahů</div>
+
+                </a>
+
+                <a href="numerologie.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor čísel</div>
+
+                </a>
+
+                <a href="astro-mapa.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Astro-mapa</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zóny síly ve světě</div>
+
+                </a>
+
+                
+
+                <a href="biorytmy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní křivky energie</div>
+
+                </a>
+
+                <a href="runy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
+
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Věštění z Run</div>
+
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská moudrost</div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    </main>
+
+
+
+        <!-- Footer will be injected by main.js -->
+
+        <div id="footer-placeholder"></div>
+
+    </div>
+
+
+
+    <!-- Toast notifications -->
+
+    <div id="toast-container" class="toast-container"></div>
+
+
+
+    <!-- Global Scripts -->
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/templates.js?v=10" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+        <script src="js/share-result.js" defer></script>
+
+        <script src="js/nameday.js" defer></script>
+
+    <script src="js/exit-intent.js" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script src="js/snar.js?v=7" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+
+
+    <!-- FAQ Accordion + Popular Quick Search -->
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // FAQ Accordion
+
+            document.querySelectorAll('.faq-question').forEach(btn => {
+
+                btn.addEventListener('click', () => {
+
+                    const item = btn.closest('.faq-item');
+
+                    const isOpen = item.classList.contains('open');
+
+                    document.querySelectorAll('.faq-item.open').forEach(i => {
+
+                        i.classList.remove('open');
+
+                        i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+
+                    });
+
+                    if (!isOpen) {
+
+                        item.classList.add('open');
+
+                        btn.setAttribute('aria-expanded', 'true');
+
+                    }
+
+                });
+
+            });
+
+
+
+            // Popular Cards -> trigger search + scroll to dict
+
+            document.querySelectorAll('.popular-card[data-search]').forEach(card => {
+
+                card.addEventListener('click', () => {
+
+                    const searchInput = document.getElementById('dream-search');
+
+                    if (searchInput) {
+
+                        searchInput.value = card.dataset.search;
+
+                        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+                        document.getElementById('dict-grid') && document.getElementById('dict-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                    }
+
+                });
+
+            });
+
+
+
+            // Sen Dne — wired via globalDreamsData poll
+
+            function initDreamOfDay(dreams) {
+
+                if (!dreams || !dreams.length) return;
+
+                const countEl = document.getElementById('symbol-count');
+
+                if (countEl) countEl.textContent = dreams.length + '+';
+
+                const todayDream = dreams[Math.floor(Date.now() / 86400000) % dreams.length];
+
+                showDreamOfDay(todayDream);
+
+                const btnRandom = document.getElementById('btn-random-dream');
+
+                if (btnRandom) {
+
+                    btnRandom.addEventListener('click', () => {
+
+                        const random = dreams[Math.floor(Math.random() * dreams.length)];
+
+                        showDreamOfDay(random);
+
+                        const si = document.getElementById('dream-search');
+
+                        if (si) { si.value = random.keyword; si.dispatchEvent(new Event('input', { bubbles: true })); document.getElementById('dict-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+                    });
+
+                }
+
+            }
+
+            function showDreamOfDay(d) {
+
+                const e = document.getElementById('dod-emoji'); const k = document.getElementById('dod-keyword'); const desc = document.getElementById('dod-desc');
+
+                if (e) e.textContent = d.emoji || '??'; if (k) k.textContent = d.keyword; if (desc) desc.textContent = d.description;
+
+            }
+
+            let _pc = 0; const _pi = setInterval(() => { if (window.globalDreamsData && window.globalDreamsData.length) { clearInterval(_pi); initDreamOfDay(window.globalDreamsData); } else if (++_pc > 40) clearInterval(_pi); }, 150);
+
+            const _air = document.getElementById('ai-result');
+
+            if (_air) new MutationObserver(() => { const sb = document.getElementById('share-bar'); if (sb && _air.style.display !== 'none' && _air.innerHTML.trim()) sb.classList.add('visible'); }).observe(_air, { attributes: true, childList: true });
+
+                });
+
+    </script>
+
+</body>
+
+
+
+</html>
+

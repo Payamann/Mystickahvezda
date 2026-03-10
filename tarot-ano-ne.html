@@ -1,285 +1,570 @@
-<!DOCTYPE html>
-<html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarot ANO nebo NE — Okamžitá odpověď zdarma | Mystická Hvězda</title>
-    <meta name="description"
-        content="Tarot ANO nebo NE — položte svou otázku, vyberte kartu a získejte okamžitou odpověď. Zdarma, bez registrace. Výklad tarotu online.">
-    <link rel="canonical" href="https://mystickahvezda.cz/tarot-ano-ne.html">
-    <meta property="og:title" content="Tarot ANO nebo NE — Okamžitá odpověď | Mystická Hvězda">
-    <meta property="og:description" content="Zeptejte se karet. ANO nebo NE — okamžitá odpověď zdarma.">
-    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-    <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"WebApplication","name":"Tarot ANO nebo NE","description":"Online tarotový výklad ANO nebo NE zdarma","applicationCategory":"EntertainmentApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"CZK"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://mystickahvezda.cz/"},{"@type":"ListItem","position":2,"name":"Tarot ANO nebo NE","item":"https://mystickahvezda.cz/tarot-ano-ne.html"}]}}
-    </script>
-    <style>
-        .cards-area {
-            display: flex;
-            justify-content: center;
-            gap: clamp(0.75rem, 3vw, 1.5rem);
-            flex-wrap: wrap;
-            margin: 2.5rem 0;
-            perspective: 1000px;
-        }
-
-        .tarot-card {
-            width: clamp(80px, 16vw, 115px);
-            height: clamp(130px, 26vw, 185px);
-            cursor: pointer;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 14px;
-        }
-
-        .tarot-card.flipped {
-            transform: rotateY(180deg);
-            pointer-events: none;
-        }
-
-        .card-face {
-            position: absolute;
-            inset: 0;
-            border-radius: 14px;
-            backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card-back {
-            background: linear-gradient(145deg, #1e0a3c, #3b1a6e);
-            border: 2px solid rgba(212, 175, 55, 0.5);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-        }
-
-        .card-back::before {
-            content: '★';
-            font-size: 2.5rem;
-            color: rgba(212, 175, 55, 0.4);
-        }
-
-        .card-back:hover {
-            border-color: rgba(212, 175, 55, 0.9);
-            box-shadow: 0 12px 40px rgba(155, 89, 182, 0.4);
-            transform: translateY(-6px);
-            transition: all 0.25s;
-        }
-
-        .card-front {
-            transform: rotateY(180deg);
-            flex-direction: column;
-            gap: 0.5rem;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .card-front.ano {
-            background: linear-gradient(145deg, #0d3b1e, #1a6e3b);
-            border: 2px solid rgba(46, 213, 115, 0.6);
-            box-shadow: 0 8px 32px rgba(46, 213, 115, 0.3);
-        }
-
-        .card-front.mozna {
-            background: linear-gradient(145deg, #2d2000, #5a4200);
-            border: 2px solid rgba(212, 175, 55, 0.6);
-            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
-        }
-
-        .card-front.ne {
-            background: linear-gradient(145deg, #3b0a0a, #6e1a1a);
-            border: 2px solid rgba(213, 46, 46, 0.6);
-            box-shadow: 0 8px 32px rgba(213, 46, 46, 0.3);
-        }
-
-        .answer-label {
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .ano .answer-label {
-            color: #2ed573;
-        }
-
-        .mozna .answer-label {
-            color: #d4af37;
-        }
-
-        .ne .answer-label {
-            color: #ff6b6b;
-        }
-
-        .card-emoji {
-            font-size: 2rem;
-        }
-
-        .result-panel {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .result-panel.show {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px)
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0)
-            }
-        }
-
-        .question-input {
-            width: 100%;
-            padding: 1rem 1.25rem;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 12px;
-            color: white;
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-            outline: none;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-
-        .question-input:focus {
-            border-color: rgba(212, 175, 55, 0.5);
-        }
-
-        .question-input::placeholder {
-            color: rgba(255, 255, 255, 0.35);
-        }
-
-        .shake {
-            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
-            transform: translate3d(0, 0, 0);
-        }
-
-        @keyframes shake {
-
-            10%,
-            90% {
-                transform: translate3d(-1px, 0, 0);
-            }
-
-            20%,
-            80% {
-                transform: translate3d(2px, 0, 0);
-            }
-
-            30%,
-            50%,
-            70% {
-                transform: translate3d(-4px, 0, 0);
-            }
-
-            40%,
-            60% {
-                transform: translate3d(4px, 0, 0);
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="stars" aria-hidden="true"></div>
-    <div id="header-placeholder"></div>
-
-    <main>
-        <section class="section" style="padding-top:5rem; text-align:center;">
-            <div class="container" style="max-width:750px;">
-                <div data-animate>
-                    <span class="section__badge">Okamžitá odpověď</span>
-                    <h1 class="section__title">Tarot <span class="text-gradient">ANO</span> nebo <span
-                            style="color:#ff6b6b;">NE</span></h1>
-                    <p class="section__text">Formulujte svou otázku, soustřeďte se na ni a vyberte jednu kartu.</p>
-                </div>
-
-                <!-- Otázka -->
-                <div style="margin:2rem 0 1.5rem;" data-animate>
-                    <input type="text" id="question-input" class="question-input"
-                        placeholder="Napište svou otázku... (např. Mám přijmout tuto nabídku?)" maxlength="200"
-                        aria-label="Vaše otázka">
-                </div>
-
-                <!-- Karty -->
-                <div class="cards-area" id="cards-area" aria-label="Tarotové karty — vyberte jednu">
-                    <div class="tarot-card" data-index="0" role="button" aria-label="Karta 1">
-                        <div class="card-back card-face"></div>
-                        <div class="card-front card-face"></div>
-                    </div>
-                    <div class="tarot-card" data-index="1" role="button" aria-label="Karta 2">
-                        <div class="card-back card-face"></div>
-                        <div class="card-front card-face"></div>
-                    </div>
-                    <div class="tarot-card" data-index="2" role="button" aria-label="Karta 3">
-                        <div class="card-back card-face"></div>
-                        <div class="card-front card-face"></div>
-                    </div>
-                    <div class="tarot-card" data-index="3" role="button" aria-label="Karta 4">
-                        <div class="card-back card-face"></div>
-                        <div class="card-front card-face"></div>
-                    </div>
-                    <div class="tarot-card" data-index="4" role="button" aria-label="Karta 5">
-                        <div class="card-back card-face"></div>
-                        <div class="card-front card-face"></div>
-                    </div>
-                </div>
-
-                <!-- Výsledek -->
-                <div class="result-panel" id="result-panel" role="region" aria-live="polite">
-                    <div id="result-emoji" style="font-size:3rem;margin-bottom:0.75rem;"></div>
-                    <h2 id="result-title" style="font-family:'Cinzel',serif;font-size:1.8rem;margin-bottom:0.75rem;">
-                    </h2>
-                    <p id="result-text" style="color:rgba(255,255,255,0.75);line-height:1.8;font-size:1rem;"></p>
-                    <div style="margin-top:1.5rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-                        <button id="btn-reset" class="btn btn--primary">🔄 Zeptat se znovu</button>
-                        <a href="tarot.html" class="btn btn--ghost">🃏 Plný tarotový výklad</a>
-                    </div>
-                </div>
-
-                <!-- Info sekce -->
-                <div style="margin-top:4rem;text-align:left;" data-animate>
-                    <h2 style="font-family:'Cinzel',serif;color:#d4af37;font-size:1.2rem;margin-bottom:1rem;">Jak tarot
-                        ANO/NE funguje?</h2>
-                    <p style="color:rgba(255,255,255,0.65);line-height:1.8;">Tarotové karty ANO nebo NE jsou
-                        nejjednodušší způsob jak požádat o vedení. Soustřeďte se na svou otázku, klidně zavřete oči, a
-                        poté vyberte kartu, která vás přitahuje. Odpověď vychází ze symboliky tarotu a vaší vlastní
-                        intuice.</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <div id="footer-placeholder"></div>
-
-    <script src="js/api-config.js?v=5" defer></script>
-    <script src="js/auth-client.js?v=5" defer></script>
-    <script src="js/components.js?v=5" defer></script>
-    <script src="js/nameday.js" defer></script>
-    <script src="js/exit-intent.js" defer></script>
-    <script type="module" src="js/main.js?v=9"></script>
-    <script src="js/tarot-ano-ne.js?v=6" defer></script>
-</body>
-
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tarot ANO nebo NE — Okamžitá odpověď zdarma | Mystická Hvězda</title>
+
+    <meta name="description"
+
+        content="Tarot ANO nebo NE — položte svou otázku, vyberte kartu a získejte okamžitou odpověď. Zdarma, bez registrace. Výklad tarotu online.">
+
+    <link rel="canonical" href="https://mystickahvezda.cz/tarot-ano-ne.html">
+
+    <meta property="og:title" content="Tarot ANO nebo NE — Okamžitá odpověď | Mystická Hvězda">
+
+    <meta property="og:description" content="Zeptejte se karet. ANO nebo NE — okamžitá odpověď zdarma.">
+
+    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext"
+
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+
+    <script type="application/ld+json">
+
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Tarot ANO nebo NE","description":"Online tarotový výklad ANO nebo NE zdarma","applicationCategory":"EntertainmentApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"CZK"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://mystickahvezda.cz/"},{"@type":"ListItem","position":2,"name":"Tarot ANO nebo NE","item":"https://mystickahvezda.cz/tarot-ano-ne.html"}]}}
+
+    </script>
+
+    <style>
+
+        .cards-area {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: clamp(0.75rem, 3vw, 1.5rem);
+
+            flex-wrap: wrap;
+
+            margin: 2.5rem 0;
+
+            perspective: 1000px;
+
+        }
+
+
+
+        .tarot-card {
+
+            width: clamp(80px, 16vw, 115px);
+
+            height: clamp(130px, 26vw, 185px);
+
+            cursor: pointer;
+
+            position: relative;
+
+            transform-style: preserve-3d;
+
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+
+            border-radius: 14px;
+
+        }
+
+
+
+        .tarot-card.flipped {
+
+            transform: rotateY(180deg);
+
+            pointer-events: none;
+
+        }
+
+
+
+        .card-face {
+
+            position: absolute;
+
+            inset: 0;
+
+            border-radius: 14px;
+
+            backface-visibility: hidden;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+
+
+        .card-back {
+
+            background: linear-gradient(145deg, #1e0a3c, #3b1a6e);
+
+            border: 2px solid rgba(212, 175, 55, 0.5);
+
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+
+        }
+
+
+
+        .card-back::before {
+
+            content: '★';
+
+            font-size: 2.5rem;
+
+            color: rgba(212, 175, 55, 0.4);
+
+        }
+
+
+
+        .card-back:hover {
+
+            border-color: rgba(212, 175, 55, 0.9);
+
+            box-shadow: 0 12px 40px rgba(155, 89, 182, 0.4);
+
+            transform: translateY(-6px);
+
+            transition: all 0.25s;
+
+        }
+
+
+
+        .card-front {
+
+            transform: rotateY(180deg);
+
+            flex-direction: column;
+
+            gap: 0.5rem;
+
+            padding: 1rem;
+
+            text-align: center;
+
+        }
+
+
+
+        .card-front.ano {
+
+            background: linear-gradient(145deg, #0d3b1e, #1a6e3b);
+
+            border: 2px solid rgba(46, 213, 115, 0.6);
+
+            box-shadow: 0 8px 32px rgba(46, 213, 115, 0.3);
+
+        }
+
+
+
+        .card-front.mozna {
+
+            background: linear-gradient(145deg, #2d2000, #5a4200);
+
+            border: 2px solid rgba(212, 175, 55, 0.6);
+
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
+
+        }
+
+
+
+        .card-front.ne {
+
+            background: linear-gradient(145deg, #3b0a0a, #6e1a1a);
+
+            border: 2px solid rgba(213, 46, 46, 0.6);
+
+            box-shadow: 0 8px 32px rgba(213, 46, 46, 0.3);
+
+        }
+
+
+
+        .answer-label {
+
+            font-family: 'Cinzel', serif;
+
+            font-size: 1.1rem;
+
+            font-weight: 700;
+
+        }
+
+
+
+        .ano .answer-label {
+
+            color: #2ed573;
+
+        }
+
+
+
+        .mozna .answer-label {
+
+            color: #d4af37;
+
+        }
+
+
+
+        .ne .answer-label {
+
+            color: #ff6b6b;
+
+        }
+
+
+
+        .card-emoji {
+
+            font-size: 2rem;
+
+        }
+
+
+
+        .result-panel {
+
+            max-width: 600px;
+
+            margin: 0 auto;
+
+            padding: 2rem;
+
+            background: rgba(255, 255, 255, 0.04);
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            border-radius: 20px;
+
+            display: none;
+
+            animation: fadeIn 0.5s ease;
+
+        }
+
+
+
+        .result-panel.show {
+
+            display: block;
+
+        }
+
+
+
+        @keyframes fadeIn {
+
+            from {
+
+                opacity: 0;
+
+                transform: translateY(20px)
+
+            }
+
+
+
+            to {
+
+                opacity: 1;
+
+                transform: translateY(0)
+
+            }
+
+        }
+
+
+
+        .question-input {
+
+            width: 100%;
+
+            padding: 1rem 1.25rem;
+
+            background: rgba(255, 255, 255, 0.06);
+
+            border: 1px solid rgba(255, 255, 255, 0.12);
+
+            border-radius: 12px;
+
+            color: white;
+
+            font-size: 1rem;
+
+            font-family: 'Inter', sans-serif;
+
+            outline: none;
+
+            box-sizing: border-box;
+
+            transition: border-color 0.2s;
+
+        }
+
+
+
+        .question-input:focus {
+
+            border-color: rgba(212, 175, 55, 0.5);
+
+        }
+
+
+
+        .question-input::placeholder {
+
+            color: rgba(255, 255, 255, 0.35);
+
+        }
+
+
+
+        .shake {
+
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+
+            transform: translate3d(0, 0, 0);
+
+        }
+
+
+
+        @keyframes shake {
+
+
+
+            10%,
+
+            90% {
+
+                transform: translate3d(-1px, 0, 0);
+
+            }
+
+
+
+            20%,
+
+            80% {
+
+                transform: translate3d(2px, 0, 0);
+
+            }
+
+
+
+            30%,
+
+            50%,
+
+            70% {
+
+                transform: translate3d(-4px, 0, 0);
+
+            }
+
+
+
+            40%,
+
+            60% {
+
+                transform: translate3d(4px, 0, 0);
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+
+<body>
+
+    <div class="stars" aria-hidden="true"></div>
+
+    <div id="header-placeholder"></div>
+
+
+
+    <main>
+
+        <section class="section" style="padding-top:5rem; text-align:center;">
+
+            <div class="container" style="max-width:750px;">
+
+                <div data-animate>
+
+                    <span class="section__badge">Okamžitá odpověď</span>
+
+                    <h1 class="section__title">Tarot <span class="text-gradient">ANO</span> nebo <span
+
+                            style="color:#ff6b6b;">NE</span></h1>
+
+                    <p class="section__text">Formulujte svou otázku, soustřeďte se na ni a vyberte jednu kartu.</p>
+
+                </div>
+
+
+
+                <!-- Otázka -->
+
+                <div style="margin:2rem 0 1.5rem;" data-animate>
+
+                    <input type="text" id="question-input" class="question-input"
+
+                        placeholder="Napište svou otázku... (např. Mám přijmout tuto nabídku?)" maxlength="200"
+
+                        aria-label="Vaše otázka">
+
+                </div>
+
+
+
+                <!-- Karty -->
+
+                <div class="cards-area" id="cards-area" aria-label="Tarotové karty — vyberte jednu">
+
+                    <div class="tarot-card" data-index="0" role="button" aria-label="Karta 1">
+
+                        <div class="card-back card-face"></div>
+
+                        <div class="card-front card-face"></div>
+
+                    </div>
+
+                    <div class="tarot-card" data-index="1" role="button" aria-label="Karta 2">
+
+                        <div class="card-back card-face"></div>
+
+                        <div class="card-front card-face"></div>
+
+                    </div>
+
+                    <div class="tarot-card" data-index="2" role="button" aria-label="Karta 3">
+
+                        <div class="card-back card-face"></div>
+
+                        <div class="card-front card-face"></div>
+
+                    </div>
+
+                    <div class="tarot-card" data-index="3" role="button" aria-label="Karta 4">
+
+                        <div class="card-back card-face"></div>
+
+                        <div class="card-front card-face"></div>
+
+                    </div>
+
+                    <div class="tarot-card" data-index="4" role="button" aria-label="Karta 5">
+
+                        <div class="card-back card-face"></div>
+
+                        <div class="card-front card-face"></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Výsledek -->
+
+                <div class="result-panel" id="result-panel" role="region" aria-live="polite">
+
+                    <div id="result-emoji" style="font-size:3rem;margin-bottom:0.75rem;"></div>
+
+                    <h2 id="result-title" style="font-family:'Cinzel',serif;font-size:1.8rem;margin-bottom:0.75rem;">
+
+                    </h2>
+
+                    <p id="result-text" style="color:rgba(255,255,255,0.75);line-height:1.8;font-size:1rem;"></p>
+
+                    <div style="margin-top:1.5rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+
+                        <button id="btn-reset" class="btn btn--primary">🔄 Zeptat se znovu</button>
+
+                        <a href="tarot.html" class="btn btn--ghost">🃏 Plný tarotový výklad</a>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Info sekce -->
+
+                <div style="margin-top:4rem;text-align:left;" data-animate>
+
+                    <h2 style="font-family:'Cinzel',serif;color:#d4af37;font-size:1.2rem;margin-bottom:1rem;">Jak tarot
+
+                        ANO/NE funguje?</h2>
+
+                    <p style="color:rgba(255,255,255,0.65);line-height:1.8;">Tarotové karty ANO nebo NE jsou
+
+                        nejjednodušší způsob jak požádat o vedení. Soustřeďte se na svou otázku, klidně zavřete oči, a
+
+                        poté vyberte kartu, která vás přitahuje. Odpověď vychází ze symboliky tarotu a vaší vlastní
+
+                        intuice.</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <div id="footer-placeholder"></div>
+
+
+
+    <script src="js/api-config.js?v=5" defer></script>
+
+    <script src="js/auth-client.js?v=5" defer></script>
+
+    <script src="js/components.js?v=10" defer></script>
+
+    <script src="js/nameday.js" defer></script>
+
+    <script src="js/exit-intent.js" defer></script>
+
+    <script type="module" src="js/main.js?v=10"></script>
+
+    <script src="js/tarot-ano-ne.js?v=6" defer></script>
+
+</body>
+
+
+
+</html>
+
