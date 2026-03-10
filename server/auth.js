@@ -3,9 +3,46 @@ import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import { supabase } from './db-supabase.js';
 import { JWT_SECRET } from './config/jwt.js';
+import { authenticateToken } from './middleware.js';
 import { validateEmail, validatePassword, validateName, validateBirthDate } from './utils/validation.js';
 
 const router = express.Router();
+
+// ============================================
+// Helper: Generate JWT Token
+// ============================================
+async function generateToken(userId) {
+    try {
+        // Fetch latest subscription info
+        const { data: sub } = await supabase
+            .from('subscriptions')
+            .select('plan_type, status, current_period_end')
+            .eq('user_id', userId)
+            .single();
+
+        const status = sub?.plan_type;
+        const isPremium = status && ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip_majestrat', 'vip'].includes(status) &&
+                         sub.status === 'active' &&
+                         new Date(sub.current_period_end) > new Date();
+
+        // Fetch user email
+        const { data: userData } = await supabase.auth.admin.getUserById(userId);
+        const userEmail = userData?.user?.email || '';
+
+        const token = jwt.sign({
+            id: userId,
+            email: userEmail,
+            subscription_status: status,
+            isPremium: isPremium,
+            premiumExpires: sub?.current_period_end || null
+        }, JWT_SECRET, { expiresIn: '30d' });
+
+        return token;
+    } catch (err) {
+        console.error('Token generation error:', err);
+        throw new Error('Failed to generate token');
+    }
+}
 
 // Strict rate limiting on auth endpoints to prevent brute force / credential stuffing
 const authLimiter = rateLimit({
@@ -221,6 +258,44 @@ router.post('/login', authLimiter, async (req, res) => {
     } catch (e) {
         console.error('Login Error:', e);
         res.status(500).json({ error: 'Server error during login' });
+    }
+});
+
+// Refresh Token - Get new JWT token before expiration
+router.post('/refresh-token', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user?.id;
+
+        if (!userId) {
+            return res.status(401).json({ error: 'Authentication required' });
+        }
+
+        // Generate new token with updated subscription info
+        const newToken = await generateToken(userId);
+
+        // Fetch fresh user data
+        const { data: profile } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .single();
+
+        res.json({
+            token: newToken,
+            user: {
+                id: userId,
+                email: req.user.email,
+                subscription_status: req.user.subscription_status,
+                first_name: profile?.first_name,
+                birth_date: profile?.birth_date,
+                birth_time: profile?.birth_time,
+                birth_place: profile?.birth_place,
+                avatar: profile?.avatar || null
+            }
+        });
+    } catch (e) {
+        console.error('Token Refresh Error:', e);
+        res.status(500).json({ error: 'Failed to refresh token' });
     }
 });
 
