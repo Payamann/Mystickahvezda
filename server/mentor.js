@@ -4,6 +4,7 @@ import { supabase } from './db-supabase.js';
 import { authenticateToken, requirePremiumSoft } from './middleware.js';
 import { callGemini } from './services/gemini.js';
 import { SYSTEM_PROMPTS } from './config/prompts.js';
+import xss from 'xss';
 
 const router = express.Router();
 
@@ -48,9 +49,11 @@ router.post('/chat', authenticateToken, requirePremiumSoft, async (req, res) => 
             }
         }
 
-        // Sanitize: strip control characters that could be used for prompt injection
-        const sanitizedMessage = message
-            .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+        // Sanitize: strip control characters and XSS attempts
+        const sanitizedMessage = xss(message, {
+            whiteList: {}, // No HTML tags allowed
+            stripIgnoredTag: true,
+        }).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
             .trim();
 
         console.log(`[Mentor] Request received from user ${userId}`);

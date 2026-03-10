@@ -7,6 +7,7 @@
 import express from 'express';
 import { supabase } from '../db-supabase.js';
 import rateLimit from 'express-rate-limit';
+import xss from 'xss';
 
 const router = express.Router();
 
@@ -60,8 +61,17 @@ router.post('/', postLimiter, async (req, res) => {
             return res.status(400).json({ error: 'Zpráva nevyhovuje podmínkám.' });
         }
 
-        const cleanNickname = (nickname || 'Anonym').substring(0, 30).replace(/<[^>]*>/g, '');
-        const cleanMessage = message.substring(0, 500).replace(/<[^>]*>/g, '');
+        // Sanitize using XSS library (removes all HTML/script tags)
+        const cleanNickname = xss((nickname || 'Anonym'), {
+            whiteList: {}, // No HTML tags allowed
+            stripIgnoredTag: true,
+        }).substring(0, 30);
+
+        const cleanMessage = xss(message, {
+            whiteList: {}, // No HTML tags allowed
+            stripIgnoredTag: true,
+        }).substring(0, 500);
+
         const validCategories = ['laska', 'zdravi', 'kariera', 'rodina', 'dek', 'jine'];
         const cleanCategory = validCategories.includes(category) ? category : 'jine';
 
