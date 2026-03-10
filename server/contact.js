@@ -1,5 +1,6 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
+import { validateEmail, validateName, validateString } from './utils/validation.js';
 
 const router = express.Router();
 
@@ -12,43 +13,25 @@ const contactLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-// Helper for email validation
-const isValidEmail = (email) => {
-    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$/.test(email);
-};
-
 // POST /contact
 router.post('/contact', contactLimiter, async (req, res) => {
     const { name, email, subject, message } = req.body;
 
-    // Validate inputs
-    if (!name || !email || !subject || !message) {
-        return res.status(400).json({
-            success: false,
-            error: 'Všechna pole jsou povinná.'
-        });
-    }
-
-    if (!isValidEmail(email)) {
-        return res.status(400).json({
-            success: false,
-            error: 'Zadejte prosím platnou emailovou adresu.'
-        });
-    }
-
-    // Sanitize inputs
-    const safeName = String(name).substring(0, 100);
-    const safeEmail = String(email).trim().toLowerCase().substring(0, 255);
-    const safeSubject = String(subject).substring(0, 200);
-    const safeMessage = String(message).substring(0, 2000);
-
     try {
+        // Validate inputs using centralized validators
+        const validatedName = validateName(name);
+        const validatedEmail = validateEmail(email);
+        const validatedSubject = validateString(subject, 'Subject', 5, 200);
+        const validatedMessage = validateString(message, 'Message', 10, 2000);
+
+        // Validated inputs are ready to use
+
         // Log contact form submission (you can later integrate email service)
         console.log('[Contact Form]', {
-            name: safeName,
-            email: safeEmail,
-            subject: safeSubject,
-            message: safeMessage,
+            name: validatedName,
+            email: validatedEmail,
+            subject: validatedSubject,
+            message: validatedMessage,
             timestamp: new Date().toISOString()
         });
 
@@ -60,6 +43,13 @@ router.post('/contact', contactLimiter, async (req, res) => {
         });
 
     } catch (e) {
+        // Check if it's a validation error (from our validators)
+        if (e.message && (e.message.includes('must') || e.message.includes('Invalid') || e.message.includes('required'))) {
+            return res.status(400).json({
+                success: false,
+                error: e.message
+            });
+        }
         console.error('Contact Form Error:', e);
         res.status(500).json({
             success: false,

@@ -1,6 +1,7 @@
 import express from 'express';
 import { supabase } from './db-supabase.js';
 import rateLimit from 'express-rate-limit'; // Security
+import { validateEmail, validateString } from './utils/validation.js';
 
 const router = express.Router();
 
@@ -13,36 +14,23 @@ const newsletterLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-// Helper for email validation (requires at least 2-char TLD)
-const isValidEmail = (email) => {
-    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$/.test(email);
-};
-
 // POST /subscribe
 router.post('/subscribe', newsletterLimiter, async (req, res) => {
-    let { email, source = 'web_footer' } = req.body;
-
-    // 1. Validate Input
-    if (!email || !isValidEmail(email)) {
-        return res.status(400).json({
-            success: false,
-            error: 'Zadejte prosím platnou emailovou adresu.'
-        });
-    }
-
-    // Normalize email and validate source
-    email = email.trim().toLowerCase();
-    const VALID_SOURCES = ['web_footer', 'web_popup', 'web_cenik', 'web_landing'];
-    if (!VALID_SOURCES.includes(source)) {
-        source = 'web_footer';
-    }
+    const { email: rawEmail, source: rawSource = 'web_footer' } = req.body;
 
     try {
+        // 1. Validate Input using centralized validator
+        const validatedEmail = validateEmail(rawEmail);
+
+        // Validate source
+        const VALID_SOURCES = ['web_footer', 'web_popup', 'web_cenik', 'web_landing'];
+        const validatedSource = VALID_SOURCES.includes(rawSource) ? rawSource : 'web_footer';
+
         // 2. Insert into Supabase
         const { data, error } = await supabase
             .from('newsletter_subscribers')
             .insert([
-                { email, source }
+                { email: validatedEmail, source: validatedSource }
             ])
             .select();
 
@@ -63,8 +51,14 @@ router.post('/subscribe', newsletterLimiter, async (req, res) => {
             message: 'Úspěšně přihlášeno k odběru! Děkujeme.'
         });
 
-    } catch (e) {
-        console.error('Newsletter Subscribe Error:', e);
+    } catch (validationError) {
+        if (validationError.message) {
+            return res.status(400).json({
+                success: false,
+                error: validationError.message
+            });
+        }
+        console.error('Newsletter Subscribe Error:', validationError);
         res.status(500).json({
             success: false,
             error: 'Omlouváme se, došlo k chybě serveru. Zkuste to prosím později.'
@@ -74,22 +68,16 @@ router.post('/subscribe', newsletterLimiter, async (req, res) => {
 
 // POST /unsubscribe (GDPR compliance)
 router.post('/unsubscribe', async (req, res) => {
-    let { email } = req.body;
-
-    if (!email || !isValidEmail(email)) {
-        return res.status(400).json({
-            success: false,
-            error: 'Zadejte prosím platnou emailovou adresu.'
-        });
-    }
-
-    email = email.trim().toLowerCase();
+    const { email: rawEmail } = req.body;
 
     try {
+        // Validate email
+        const validatedEmail = validateEmail(rawEmail);
+
         const { data, error } = await supabase
             .from('newsletter_subscribers')
             .update({ is_active: false })
-            .eq('email', email)
+            .eq('email', validatedEmail)
             .select();
 
         if (error) {
@@ -108,8 +96,14 @@ router.post('/unsubscribe', async (req, res) => {
             message: 'Úspěšně odhlášeno z odběru newsletteru.'
         });
 
-    } catch (e) {
-        console.error('Newsletter Unsubscribe Error:', e);
+    } catch (validationError) {
+        if (validationError.message && (validationError.message.includes('Invalid') || validationError.message.includes('required'))) {
+            return res.status(400).json({
+                success: false,
+                error: validationError.message
+            });
+        }
+        console.error('Newsletter Unsubscribe Error:', validationError);
         res.status(500).json({
             success: false,
             error: 'Omlouváme se, došlo k chybě serveru. Zkuste to prosím později.'
