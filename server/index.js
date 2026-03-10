@@ -188,18 +188,35 @@ app.use(helmet({
                 "'self'",
                 'data:',             // Base64 images (natal chart canvas)
                 'blob:',
+                'https:',            // Allow HTTPS images
             ],
             connectSrc: [
                 "'self'",
                 process.env.SUPABASE_URL ? `https://${process.env.SUPABASE_URL.replace(/^https?:\/\//, '')}` : '',
+                'https://api.stripe.com',    // Stripe API
+                'https://generativelanguage.googleapis.com', // Gemini API
             ].filter(Boolean),
-            frameSrc: ["'none'"],
+            frameSrc: ["'self'", 'https://js.stripe.com'], // Allow Stripe iframe
             objectSrc: ["'none'"],
             upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
         },
     },
+    hsts: {
+        maxAge: 31536000, // 1 year in seconds
+        includeSubDomains: true,
+        preload: true,
+    },
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    permissionsPolicy: {
+        geolocation: [],
+        microphone: [],
+        camera: [],
+        usb: [],
+    },
     crossOriginEmbedderPolicy: false,
     frameguard: { action: 'deny' }, // Prevent Clickjacking
+    noSniff: true, // X-Content-Type-Options: nosniff
+    xssFilter: true, // X-XSS-Protection
 }));
 
 // ============================================
