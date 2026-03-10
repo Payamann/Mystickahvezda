@@ -1,18 +1,18 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="cs">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description"
-        content="Objevte svÃ¡ silovÃ¡ mÃ­sta na Zemi. AstrokartografickÃ¡ mapa pro cestovÃ¡nÃ­ a relokaci.">
-    <meta name="keywords" content="astrokartografie, relokace, cestovÃ¡nÃ­, planetÃ¡rnÃ­ linie">
+        content="Objevte svá silová místa na Zemi. Astrokartografická mapa pro cestování a relokaci.">
+    <meta name="keywords" content="astrokartografie, relokace, cestování, planetární linie">
     <meta name="theme-color" content="#0a0a1a">
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Astrokartografie | MystickÃ¡ HvÄ›zda">
+    <meta property="og:title" content="Astrokartografie | Mystická Hvìzda">
     <meta property="og:description"
-        content="Objevte svÃ¡ silovÃ¡ mÃ­sta na Zemi. AstrokartografickÃ¡ mapa pro cestovÃ¡nÃ­ a relokaci.">
+        content="Objevte svá silová místa na Zemi. Astrokartografická mapa pro cestování a relokaci.">
     <meta property="og:image" content="https://mystickahvezda.cz/img/mystical-earth.webp">
     <meta property="og:locale" content="cs_CZ">
     <meta name="twitter:card" content="summary_large_image">
@@ -26,11 +26,11 @@
         "operatingSystem": "Web"
     }
     </script>
-    <title>Astrokartografie | MystickÃ¡ HvÄ›zda</title>
+    <title>Astrokartografie | Mystická Hvìzda</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ğŸŒ</text></svg>">
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
 
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
@@ -43,7 +43,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=4">
+    <link rel="stylesheet" href="css/style.v2.min.css?v=7">
     <style>
         /* Map Container */
         /* Map Container */
@@ -298,7 +298,7 @@
 </head>
 
 <body>
-    <a href="#main-content" class="skip-link">PÅ™eskoÄit na obsah</a>
+    <a href="#main-content" class="skip-link">Pøeskoèit na obsah</a>
     <div class="stars" aria-hidden="true"></div>
 
     <!-- HEADER (loaded dynamically) -->
@@ -311,8 +311,8 @@
                     <span class="text-gradient">Astrokartografie</span>
                 </h1>
                 <p class="hero__subtitle">
-                    Kde na svÄ›tÄ› na vÃ¡s ÄekÃ¡ Å¡tÄ›stÃ­? Zadejte svÃ© narozenÃ­ a objevte planetÃ¡rnÃ­ linie,
-                    kterÃ© ovlivÅˆujÃ­ vÃ¡Å¡ osud v rÅ¯znÃ½ch koutech svÄ›ta.
+                    Kde na svìtì na vás èeká štìstí? Zadejte své narození a objevte planetární linie,
+                    které ovlivòují váš osud v rùznıch koutech svìta.
                 </p>
             </div>
         </section>
@@ -325,53 +325,53 @@
                     <!-- Form Card -->
                     <div class="card" data-animate>
                         <div class="flex-between mb-lg">
-                            <h3 class="card__title" style="margin: 0;">Zadejte svÃ© Ãºdaje</h3>
+                            <h3 class="card__title" style="margin: 0;">Zadejte své údaje</h3>
                             <label class="checkbox-wrapper" id="profile-option-wrapper"
                                 style="font-size: 0.9rem; cursor: pointer; display: none; align-items: center; gap: 0.5rem;"
-                                title="PouÅ¾Ã­t Ãºdaje z mÃ©ho profilu">
+                                title="Pouít údaje z mého profilu">
                                 <input type="checkbox" id="use-profile-astro"
                                     style="accent-color: var(--color-mystic-gold);">
-                                <span style="opacity: 0.8;">MÅ¯j profil</span>
+                                <span style="opacity: 0.8;">Mùj profil</span>
                             </label>
                         </div>
 
                         <form id="astro-form" class="astro-form">
                             <div class="form-group full-width">
-                                <label for="astro-name" class="form-label">JmÃ©no</label>
-                                <input type="text" id="astro-name" class="form-input" placeholder="VaÅ¡e jmÃ©no">
+                                <label for="astro-name" class="form-label">Jméno</label>
+                                <input type="text" id="astro-name" class="form-input" placeholder="Vaše jméno">
                             </div>
 
                             <div class="form-group">
-                                <label for="astro-date" class="form-label">Datum narozenÃ­</label>
+                                <label for="astro-date" class="form-label">Datum narození</label>
                                 <input type="date" id="astro-date" class="form-input" required>
                             </div>
 
                             <div class="form-group">
-                                <label for="astro-time" class="form-label">ÄŒas narozenÃ­</label>
+                                <label for="astro-time" class="form-label">Èas narození</label>
                                 <input type="time" id="astro-time" class="form-input" required>
                             </div>
 
                             <div class="form-group">
-                                <label for="astro-place" class="form-label">MÃ­sto narozenÃ­</label>
-                                <input type="text" id="astro-place" class="form-input" placeholder="NapÅ™. Praha"
+                                <label for="astro-place" class="form-label">Místo narození</label>
+                                <input type="text" id="astro-place" class="form-input" placeholder="Napø. Praha"
                                     required>
                             </div>
 
                             <div class="form-group">
-                                <label for="astro-intention" class="form-label">ZÃ¡mÄ›r cesty (VolitelnÃ©)</label>
+                                <label for="astro-intention" class="form-label">Zámìr cesty (Volitelné)</label>
                                 <select id="astro-intention" class="form-input" style="cursor: pointer;">
-                                    <option value="obecny">ğŸŒ ObecnÃ½ pÅ™ehled</option>
-                                    <option value="kariera">ğŸ’¼ KariÃ©ra a ÃšspÄ›ch</option>
-                                    <option value="laska">â¤ï¸ LÃ¡ska a Vztahy</option>
-                                    <option value="zdravi">ğŸŒ¿ ZdravÃ­ a Relaxace</option>
-                                    <option value="duchovno">âœ¨ DuchovnÃ­ rÅ¯st</option>
-                                    <option value="rodina">ğŸ  Domov a Rodina</option>
+                                    <option value="obecny">?? Obecnı pøehled</option>
+                                    <option value="kariera">?? Kariéra a Úspìch</option>
+                                    <option value="laska">?? Láska a Vztahy</option>
+                                    <option value="zdravi">?? Zdraví a Relaxace</option>
+                                    <option value="duchovno">? Duchovní rùst</option>
+                                    <option value="rodina">?? Domov a Rodina</option>
                                 </select>
                             </div>
 
                             <div class="form-group full-width" style="margin-top: var(--space-md);">
                                 <button type="submit" class="btn btn--primary" style="width: 100%;">
-                                    ğŸ—ºï¸ Odhalit mou mapu Å¡tÄ›stÃ­
+                                    ??? Odhalit mou mapu štìstí
                                 </button>
                             </div>
                         </form>
@@ -379,7 +379,7 @@
 
                     <!-- Map Visualization -->
                     <div class="map-container" id="astro-map-container" data-animate>
-                        <img loading="lazy" src="img/world-map-flat.webp" class="map-bg" alt="AstrokartografickÃ¡ mapa svÄ›ta">
+                        <img loading="lazy" src="img/world-map-flat.webp" class="map-bg" alt="Astrokartografická mapa svìta">
                         <!-- Markers added by JS -->
                         <div id="map-tooltip" class="map-tooltip">
                             <p></p>
@@ -391,7 +391,7 @@
             <!-- Loading -->
             <div id="astro-loading">
                 <div class="loading-spinner"></div>
-                <span style="color: var(--color-mystic-gold);">Analyzuji vaÅ¡e planetÃ¡rnÃ­ linie...</span>
+                <span style="color: var(--color-mystic-gold);">Analyzuji vaše planetární linie...</span>
             </div>
 
             <!-- Results -->
@@ -408,8 +408,8 @@
                             style="width: 80px; height: 80px; border-radius: 50%;">
                         <h3 class="card__title">Co je Astrokartografie?</h3>
                         <p class="card__text">
-                            Metoda, kterÃ¡ promÃ­tÃ¡ vÃ¡Å¡ natÃ¡lnÃ­ horoskop na mapu svÄ›ta. Ukazuje, ve kterÃ½ch zemÃ­ch
-                            budou aktivovÃ¡ny konkrÃ©tnÃ­ planety ve vaÅ¡em horoskopu.
+                            Metoda, která promítá váš natální horoskop na mapu svìta. Ukazuje, ve kterıch zemích
+                            budou aktivovány konkrétní planety ve vašem horoskopu.
                         </p>
                     </div>
                     <div class="card card--service">
@@ -417,17 +417,17 @@
                             style="width: 80px; height: 80px; border-radius: 50%;">
                         <h3 class="card__title">Relokace</h3>
                         <p class="card__text">
-                            PÅ™emÃ½Å¡lÃ­te o stÄ›hovÃ¡nÃ­? ZjistÄ›te pÅ™edem, jakÃ¡ energie vÃ¡s v novÃ© destinaci ÄekÃ¡.
-                            NÄ›kterÃ¡ mÃ­sta podporujÃ­ kariÃ©ru, jinÃ¡ rodinnÃ½ Å¾ivot.
+                            Pøemıšlíte o stìhování? Zjistìte pøedem, jaká energie vás v nové destinaci èeká.
+                            Nìkterá místa podporují kariéru, jiná rodinnı ivot.
                         </p>
                     </div>
                     <div class="card card--service">
                         <img loading="lazy" src="img/icon-travel.webp" alt="" class="card__icon-img"
                             style="width: 80px; height: 80px; border-radius: 50%;">
-                        <h3 class="card__title">CestovÃ¡nÃ­</h3>
+                        <h3 class="card__title">Cestování</h3>
                         <p class="card__text">
-                            NaplÃ¡nujte si dovolenou podle hvÄ›zd. Vyberte si destinaci pod vlivem VenuÅ¡e pro romantiku
-                            nebo Slunce pro naÄerpÃ¡nÃ­ energie.
+                            Naplánujte si dovolenou podle hvìzd. Vyberte si destinaci pod vlivem Venuše pro romantiku
+                            nebo Slunce pro naèerpání energie.
                         </p>
                     </div>
                 </div>
@@ -439,63 +439,63 @@
     <!-- CROSS-LINKING SEKCE -->
     <section class="section" style="padding-top: 0; padding-bottom: 3rem;">
         <div class="container" style="max-width: 860px;">
-            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">PokraÄujte ve svÃ© duchovnÃ­ cestÄ›</h3>
+            <h3 style="font-family: var(--font-heading); color: var(--color-mystic-gold); text-align: center; font-size: 1.3rem; margin-bottom: 1.5rem; letter-spacing: 1px;">Pokraèujte ve své duchovní cestì</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
                 <a href="andelske-karty.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">ğŸ•Šï¸</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">AndÄ›lskÃ¡ Karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">PoselstvÃ­ na dneÅ¡nÃ­ den</div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">???</div>
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Andìlská Karta</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Poselství na dnešní den</div>
                 </a>
                 <a href="kristalova-koule.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">ğŸ”®</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">KÅ™iÅ¡Å¥Ã¡lovÃ¡ koule</div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Køišálová koule</div>
                     <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Zeptejte se na cokoli</div>
                 </a>
                 <a href="tarot.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">ğŸƒ</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">TarotovÃ½ vÃ½klad</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">HloubkovÃ½ vhled</div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Tarotovı vıklad</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Hloubkovı vhled</div>
                 </a>
                 <a href="horoskopy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">â­</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">DennÃ­ horoskop</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">VaÅ¡e znamenÃ­ dnes</div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">?</div>
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Denní horoskop</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Vaše znamení dnes</div>
                 </a>
                 <a href="mentor.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">ğŸŒŸ</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">HvÄ›zdnÃ½ PrÅ¯vodce</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovnÃ­ mentor</div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Hvìzdnı Prùvodce</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AI duchovní mentor</div>
                 </a>
                 <a href="natalni-karta.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">âš›ï¸</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">NatÃ¡lnÃ­ karta</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">VÃ¡Å¡ vesmÃ­rnÃ½ otisk</div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Natální karta</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Váš vesmírnı otisk</div>
                 </a>
                 <a href="partnerska-shoda.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">ğŸ’</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">PartnerskÃ¡ shoda</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahÅ¯</div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Partnerská shoda</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Synastrie vztahù</div>
                 </a>
                 <a href="numerologie.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">ğŸ”¢</div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
                     <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Numerologie</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor ÄÃ­sel</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Rozbor èísel</div>
                 </a>
                 
                 <a href="snar.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">ğŸŒ™</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snÅ¯</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">AnalÃ½za vaÅ¡eho snu</div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Lexikon snù</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Analıza vašeho snu</div>
                 </a>
                 <a href="biorytmy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">ã€°ï¸</div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
                     <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Biorytmy</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">DneÅ¡nÃ­ kÅ™ivky energie</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Dnešní køivky energie</div>
                 </a>
                 <a href="runy.html" class="card" style="text-decoration: none; padding: 1.5rem; text-align: center; border-radius: 16px; background: rgba(20,15,30,0.6); border: 1px solid rgba(235,192,102,0.2); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(235,192,102,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(235,192,102,0.2)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">ğŸª¨</div>
-                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">VÄ›Å¡tÄ›nÃ­ z Run</div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">SeverskÃ¡ moudrost</div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">??</div>
+                    <div style="color: #fff; font-weight: 500; font-size: 0.95rem;">Vìštìní z Run</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem;">Severská moudrost</div>
                 </a>
             </div>
         </div>
@@ -530,7 +530,7 @@
         <script src="js/nameday.js" defer></script>
     <script src="js/exit-intent.js" defer></script>
     <script src="js/components.js?v=5" defer></script>
-    <script type="module" src="js/main.js?v=5"></script>
+    <script type="module" src="js/main.js?v=7"></script>
 
 </body>
 

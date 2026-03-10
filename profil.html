@@ -1,26 +1,26 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="cs">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description"
-        content="VÃ¡Å¡ osobnÃ­ profil na MystickÃ© HvÄ›zdÄ›. Historie vÃ½kladÅ¯, nastavenÃ­ ÃºÄtu a pÅ™edplatnÃ©.">
-    <meta name="keywords" content="profil, ÃºÄet, historie, vÃ½klady, nastavenÃ­">
+        content="Váš osobní profil na Mystické Hvìzdì. Historie vıkladù, nastavení úètu a pøedplatné.">
+    <meta name="keywords" content="profil, úèet, historie, vıklady, nastavení">
     <meta name="theme-color" content="#0a0a1a">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="MÅ¯j Profil | MystickÃ¡ HvÄ›zda">
-    <meta property="og:description" content="VÃ¡Å¡ osobnÃ­ dashboard s historiÃ­ vÃ½kladÅ¯.">
+    <meta property="og:title" content="Mùj Profil | Mystická Hvìzda">
+    <meta property="og:description" content="Váš osobní dashboard s historií vıkladù.">
     <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
     <meta property="og:locale" content="cs_CZ">
 
-    <title>MÅ¯j Profil | MystickÃ¡ HvÄ›zda</title>
+    <title>Mùj Profil | Mystická Hvìzda</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ğŸ‘¤</text></svg>">
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
 
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
@@ -31,7 +31,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=4">
+    <link rel="stylesheet" href="css/style.v2.min.css?v=7">
 
 
 
@@ -56,7 +56,7 @@
 </head>
 
 <body>
-    <a href="#main-content" class="skip-link">PÅ™eskoÄit na obsah</a>
+    <a href="#main-content" class="skip-link">Pøeskoèit na obsah</a>
     <div class="stars" aria-hidden="true"></div>
 
     <!-- HEADER -->
@@ -66,8 +66,8 @@
         <!-- PROFILE HERO -->
         <section class="section hero hero--mini">
             <div class="container">
-                <h1 class="hero__title">MÅ¯j <span class="text-gradient">Profil</span></h1>
-                <p class="hero__subtitle" id="profile-greeting">NaÄÃ­tÃ¡nÃ­...</p>
+                <h1 class="hero__title">Mùj <span class="text-gradient">Profil</span></h1>
+                <p class="hero__subtitle" id="profile-greeting">Naèítání...</p>
             </div>
         </section>
 
@@ -76,9 +76,9 @@
             <div class="container">
                 <!-- Login Required Message -->
                 <div id="login-required" class="card glass-card text-center" style="display: none;">
-                    <h2>ğŸ” PÅ™ihlÃ¡Å¡enÃ­ vyÅ¾adovÃ¡no</h2>
-                    <p style="margin: 1rem 0;">Pro zobrazenÃ­ profilu se prosÃ­m pÅ™ihlaste.</p>
-                    <a href="#" id="profile-login-btn" class="btn btn--primary">PÅ™ihlÃ¡sit se</a>
+                    <h2>?? Pøihlášení vyadováno</h2>
+                    <p style="margin: 1rem 0;">Pro zobrazení profilu se prosím pøihlaste.</p>
+                    <a href="#" id="profile-login-btn" class="btn btn--primary">Pøihlásit se</a>
                 </div>
 
                 <!-- Profile Dashboard -->
@@ -87,42 +87,42 @@
                     <div class="card glass-card profile-user-card" style="margin-bottom: 2rem;">
                         <div class="profile-user-info">
                             <div class="profile-user-left">
-                                <button id="user-avatar" class="profile-avatar" aria-label="ZmÄ›nit avatar"
-                                    title="KliknÄ›te pro zmÄ›nu avataru">ğŸ‘¤</button>
+                                <button id="user-avatar" class="profile-avatar" aria-label="Zmìnit avatar"
+                                    title="Kliknìte pro zmìnu avataru">??</button>
                                 <div class="profile-user-details">
                                     <h2 class="profile-user-email"><span id="user-email">-</span></h2>
                                     <p class="profile-user-plan">
-                                        PÅ™edplatnÃ©: <span id="user-plan" class="badge">-</span>
+                                        Pøedplatné: <span id="user-plan" class="badge">-</span>
                                     </p>
                                     <p id="user-zodiac" class="profile-user-zodiac" style="display: none;"></p>
                                 </div>
                             </div>
                             <div class="profile-user-right">
-                                <button id="logout-btn" class="btn btn--secondary btn--sm">OdhlÃ¡sit</button>
+                                <button id="logout-btn" class="btn btn--secondary btn--sm">Odhlásit</button>
                             </div>
                         </div>
                         <!-- Avatar Picker (hidden by default) -->
                         <div id="avatar-picker" class="avatar-picker" style="display: none;">
                             <p class="avatar-picker__label">Vyberte si avatar:</p>
                             <div class="avatar-picker__grid">
-                                <button class="avatar-option" data-avatar="ğŸŒŸ">ğŸŒŸ</button>
-                                <button class="avatar-option" data-avatar="ğŸ”®">ğŸ”®</button>
-                                <button class="avatar-option" data-avatar="ğŸŒ™">ğŸŒ™</button>
-                                <button class="avatar-option" data-avatar="â­">â­</button>
-                                <button class="avatar-option" data-avatar="ğŸŒ•">ğŸŒ•</button>
-                                <button class="avatar-option" data-avatar="âœ¨">âœ¨</button>
-                                <button class="avatar-option" data-avatar="ğŸ¦‹">ğŸ¦‹</button>
-                                <button class="avatar-option" data-avatar="ğŸŒ¸">ğŸŒ¸</button>
-                                <button class="avatar-option" data-avatar="ğŸ‰">ğŸ‰</button>
-                                <button class="avatar-option" data-avatar="ğŸ¦„">ğŸ¦„</button>
-                                <button class="avatar-option" data-avatar="ğŸŒŠ">ğŸŒŠ</button>
-                                <button class="avatar-option" data-avatar="ğŸ”¥">ğŸ”¥</button>
-                                <button class="avatar-option" data-avatar="ğŸ’">ğŸ’</button>
-                                <button class="avatar-option" data-avatar="ğŸŒˆ">ğŸŒˆ</button>
-                                <button class="avatar-option" data-avatar="ğŸ¦…">ğŸ¦…</button>
-                                <button class="avatar-option" data-avatar="ğŸº">ğŸº</button>
-                                <button class="avatar-option" data-avatar="ğŸŒ¿">ğŸŒ¿</button>
-                                <button class="avatar-option" data-avatar="ğŸ‘¤">ğŸ‘¤</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="?">?</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="?">?</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
+                                <button class="avatar-option" data-avatar="??">??</button>
                             </div>
                         </div>
                     </div>
@@ -130,24 +130,24 @@
                     <!-- Stats Cards -->
                     <div class="stats-grid">
                         <div class="stat-card card glass-card">
-                            <div class="stat-icon">ğŸ“œ</div>
+                            <div class="stat-icon">??</div>
                             <div id="stat-total" class="stat-value">0</div>
-                            <div class="stat-label">Celkem vÃ½kladÅ¯</div>
+                            <div class="stat-label">Celkem vıkladù</div>
                         </div>
                         <div class="stat-card card glass-card">
-                            <div class="stat-icon">ğŸ“…</div>
+                            <div class="stat-icon">??</div>
                             <div id="stat-month" class="stat-value">0</div>
-                            <div class="stat-label">Tento mÄ›sÃ­c</div>
+                            <div class="stat-label">Tento mìsíc</div>
                         </div>
                         <div class="stat-card card glass-card">
-                            <div class="stat-icon">â­</div>
+                            <div class="stat-icon">?</div>
                             <div id="stat-favorites" class="stat-value">0</div>
-                            <div class="stat-label">OblÃ­benÃ©</div>
+                            <div class="stat-label">Oblíbené</div>
                         </div>
                         <div class="stat-card card glass-card">
-                            <div class="stat-icon">ğŸ”¥</div>
+                            <div class="stat-icon">??</div>
                             <div id="stat-streak" class="stat-value">0</div>
-                            <div class="stat-label">DennÃ­ sÃ©rie</div>
+                            <div class="stat-label">Denní série</div>
                         </div>
                     </div>
 
@@ -157,16 +157,16 @@
 
                         <!-- Manifestation Journal -->
                         <div class="card glass-card">
-                            <h3 class="card-title">ğŸ“– ManifestaÄnÃ­ DenÃ­k</h3>
+                            <h3 class="card-title">?? Manifestaèní Deník</h3>
                             <textarea id="journal-input" class="form-input" rows="3"
-                                placeholder="NapiÅ¡te svÃ© pÅ™Ã¡nÃ­ VesmÃ­ru... (napÅ™. CÃ­tÃ­m vdÄ›Änost za...)"></textarea>
-                            <button id="journal-submit" class="btn btn--primary journal-submit-btn">âœ¨ Vyslat
-                                pÅ™Ã¡nÃ­</button>
+                                placeholder="Napište své pøání Vesmíru... (napø. Cítím vdìènost za...)"></textarea>
+                            <button id="journal-submit" class="btn btn--primary journal-submit-btn">? Vyslat
+                                pøání</button>
 
                             <div class="journal-recent">
-                                <h4 class="journal-recent-title">PoslednÃ­ zÃ¡znamy</h4>
+                                <h4 class="journal-recent-title">Poslední záznamy</h4>
                                 <div id="journal-entries" class="journal-entries-list">
-                                    <p class="journal-empty">ZatÃ­m prÃ¡zdno...</p>
+                                    <p class="journal-empty">Zatím prázdno...</p>
                                 </div>
                             </div>
                         </div>
@@ -176,18 +176,18 @@
                     <div class="profile-tabs" role="tablist" aria-label="Sekce profilu">
                         <button class="profile-tab active" role="tab" id="tab-btn-history" data-tab="history"
                             aria-selected="true" aria-controls="tab-history">
-                            <span class="profile-tab-icon" aria-hidden="true">ğŸ“œ</span>
-                            <span class="profile-tab-label">Historie vÃ½kladÅ¯</span>
+                            <span class="profile-tab-icon" aria-hidden="true">??</span>
+                            <span class="profile-tab-label">Historie vıkladù</span>
                         </button>
                         <button class="profile-tab" role="tab" id="tab-btn-favorites" data-tab="favorites"
                             aria-selected="false" aria-controls="tab-favorites">
-                            <span class="profile-tab-icon" aria-hidden="true">â­</span>
-                            <span class="profile-tab-label">OblÃ­benÃ©</span>
+                            <span class="profile-tab-icon" aria-hidden="true">?</span>
+                            <span class="profile-tab-label">Oblíbené</span>
                         </button>
                         <button class="profile-tab" role="tab" id="tab-btn-settings" data-tab="settings"
                             aria-selected="false" aria-controls="tab-settings">
-                            <span class="profile-tab-icon" aria-hidden="true">âš™ï¸</span>
-                            <span class="profile-tab-label">NastavenÃ­</span>
+                            <span class="profile-tab-icon" aria-hidden="true">??</span>
+                            <span class="profile-tab-label">Nastavení</span>
                         </button>
                     </div>
 
@@ -195,23 +195,23 @@
                     <div class="tab-content active" id="tab-history" role="tabpanel" aria-labelledby="tab-btn-history">
                         <div class="card glass-card">
                             <div class="readings-header">
-                                <h3>VaÅ¡e poslednÃ­ vÃ½klady</h3>
+                                <h3>Vaše poslední vıklady</h3>
                                 <select id="readings-filter" class="form-input readings-filter"
                                     aria-label="Filtrovat podle typu">
-                                    <option value="all">VÅ¡e</option>
-                                    <option value="tarot">ğŸƒ Tarot</option>
-                                    <option value="horoscope">â™ˆ Horoskop</option>
-                                    <option value="crystal">ğŸ”® KÅ™iÅ¡Å¥Ã¡lovÃ¡ koule</option>
-                                    <option value="natal">ğŸŒŒ NatÃ¡lnÃ­ karta</option>
-                                    <option value="numerology">ğŸ”¢ Numerologie</option>
-                                    <option value="synastry">ğŸ’• PartnerskÃ¡ shoda</option>
+                                    <option value="all">Vše</option>
+                                    <option value="tarot">?? Tarot</option>
+                                    <option value="horoscope">? Horoskop</option>
+                                    <option value="crystal">?? Køišálová koule</option>
+                                    <option value="natal">?? Natální karta</option>
+                                    <option value="numerology">?? Numerologie</option>
+                                    <option value="synastry">?? Partnerská shoda</option>
                                 </select>
                             </div>
                             <div id="readings-list" class="readings-list">
-                                <p class="text-center" style="opacity: 0.6;">NaÄÃ­tÃ¡nÃ­ historie...</p>
+                                <p class="text-center" style="opacity: 0.6;">Naèítání historie...</p>
                             </div>
                             <div id="readings-pagination" class="readings-pagination" style="display: none;">
-                                <button id="readings-load-more" class="btn btn--glass btn--sm">NaÄÃ­st dalÅ¡Ã­</button>
+                                <button id="readings-load-more" class="btn btn--glass btn--sm">Naèíst další</button>
                             </div>
                         </div>
                     </div>
@@ -220,12 +220,12 @@
                     <div class="tab-content" id="tab-favorites" style="display: none;" role="tabpanel"
                         aria-labelledby="tab-btn-favorites">
                         <div class="card glass-card">
-                            <h3>UloÅ¾enÃ© vÃ½klady</h3>
+                            <h3>Uloené vıklady</h3>
                             <div id="favorites-list">
                                 <div class="empty-state">
-                                    <div class="empty-state__icon">â­</div>
-                                    <h4 class="empty-state__title">Å½Ã¡dnÃ© oblÃ­benÃ© vÃ½klady</h4>
-                                    <p class="empty-state__text">KliknÄ›te na â˜† u vÃ½kladu pro pÅ™idÃ¡nÃ­ do oblÃ­benÃ½ch</p>
+                                    <div class="empty-state__icon">?</div>
+                                    <h4 class="empty-state__title">ádné oblíbené vıklady</h4>
+                                    <p class="empty-state__text">Kliknìte na ? u vıkladu pro pøidání do oblíbenıch</p>
                                 </div>
                             </div>
                         </div>
@@ -235,54 +235,54 @@
                     <div class="tab-content" id="tab-settings" style="display: none;" role="tabpanel"
                         aria-labelledby="tab-btn-settings">
                         <div class="card glass-card">
-                            <h3>NastavenÃ­ ÃºÄtu</h3>
+                            <h3>Nastavení úètu</h3>
                             <div class="settings-form">
-                                <h4 class="settings-section-title">OsobnÃ­ Ãºdaje</h4>
+                                <h4 class="settings-section-title">Osobní údaje</h4>
                                 <div>
-                                    <label class="form-label" for="settings-name">JmÃ©no / PÅ™ezdÃ­vka</label>
-                                    <input type="text" id="settings-name" class="form-input" placeholder="VaÅ¡e jmÃ©no">
+                                    <label class="form-label" for="settings-name">Jméno / Pøezdívka</label>
+                                    <input type="text" id="settings-name" class="form-input" placeholder="Vaše jméno">
                                 </div>
                                 <div>
-                                    <label class="form-label" for="settings-birthdate">Datum narozenÃ­</label>
+                                    <label class="form-label" for="settings-birthdate">Datum narození</label>
                                     <input type="date" id="settings-birthdate" class="form-input" max="">
                                 </div>
                                 <div class="settings-row">
                                     <div>
-                                        <label class="form-label" for="settings-birthtime">ÄŒas narozenÃ­</label>
+                                        <label class="form-label" for="settings-birthtime">Èas narození</label>
                                         <input type="time" id="settings-birthtime" class="form-input">
                                     </div>
                                     <div>
-                                        <label class="form-label" for="settings-birthplace">MÃ­sto narozenÃ­</label>
+                                        <label class="form-label" for="settings-birthplace">Místo narození</label>
                                         <input type="text" id="settings-birthplace" class="form-input"
-                                            placeholder="NapÅ™. Praha">
+                                            placeholder="Napø. Praha">
                                     </div>
                                 </div>
 
-                                <h4 class="settings-section-title">ÃšÄet</h4>
+                                <h4 class="settings-section-title">Úèet</h4>
                                 <div>
                                     <label class="form-label" for="settings-email">Email</label>
                                     <input type="email" id="settings-email" class="form-input" disabled
-                                        title="Email nelze zmÄ›nit">
+                                        title="Email nelze zmìnit">
                                 </div>
                                 <div>
-                                    <label class="form-label" for="settings-current-password">AktuÃ¡lnÃ­ heslo</label>
+                                    <label class="form-label" for="settings-current-password">Aktuální heslo</label>
                                     <input type="password" id="settings-current-password" class="form-input"
-                                        placeholder="VyÅ¾adovÃ¡no pro zmÄ›nu hesla" autocomplete="current-password">
+                                        placeholder="Vyadováno pro zmìnu hesla" autocomplete="current-password">
                                 </div>
                                 <div>
-                                    <label class="form-label" for="settings-password">NovÃ© heslo</label>
+                                    <label class="form-label" for="settings-password">Nové heslo</label>
                                     <input type="password" id="settings-password" class="form-input"
-                                        placeholder="Min. 8 znakÅ¯" minlength="8" autocomplete="new-password">
+                                        placeholder="Min. 8 znakù" minlength="8" autocomplete="new-password">
                                 </div>
-                                <button id="save-settings-btn" class="btn btn--primary">UloÅ¾it zmÄ›ny</button>
+                                <button id="save-settings-btn" class="btn btn--primary">Uloit zmìny</button>
                             </div>
                         </div>
 
                         <!-- Subscription Management Card -->
                         <div class="card glass-card subscription-card" style="margin-top: 2rem;" id="subscription-card">
-                            <h3>ğŸ’³ SprÃ¡va pÅ™edplatnÃ©ho</h3>
+                            <h3>?? Správa pøedplatného</h3>
                             <div id="subscription-details" class="subscription-details">
-                                <p style="opacity: 0.6;">NaÄÃ­tÃ¡nÃ­...</p>
+                                <p style="opacity: 0.6;">Naèítání...</p>
                             </div>
                         </div>
                     </div>
@@ -292,17 +292,17 @@
     </main>
 
     <!-- Reading Detail Modal -->
-    <div id="reading-modal" class="modal reading-modal" role="dialog" aria-modal="true" aria-label="Detail vÃ½kladu"
+    <div id="reading-modal" class="modal reading-modal" role="dialog" aria-modal="true" aria-label="Detail vıkladu"
         style="display: none;">
         <div class="modal__content reading-modal__content">
-            <button id="reading-modal-close" class="modal__close" aria-label="ZavÅ™Ã­t">âœ•</button>
+            <button id="reading-modal-close" class="modal__close" aria-label="Zavøít">?</button>
             <div id="reading-modal-content">
-                <p style="text-align: center; opacity: 0.6;">NaÄÃ­tÃ¡nÃ­...</p>
+                <p style="text-align: center; opacity: 0.6;">Naèítání...</p>
             </div>
             <div class="reading-modal__actions">
-                <button id="modal-favorite-btn" class="btn btn--secondary btn--sm" aria-label="PÅ™idat do oblÃ­benÃ½ch">â­
-                    PÅ™idat do oblÃ­benÃ½ch</button>
-                <button id="modal-delete-btn" class="btn btn--sm btn--danger" aria-label="Smazat vÃ½klad">ğŸ—‘ï¸
+                <button id="modal-favorite-btn" class="btn btn--secondary btn--sm" aria-label="Pøidat do oblíbenıch">?
+                    Pøidat do oblíbenıch</button>
+                <button id="modal-delete-btn" class="btn btn--sm btn--danger" aria-label="Smazat vıklad">???
                     Smazat</button>
             </div>
         </div>
@@ -329,7 +329,7 @@
     <script src="js/components.js?v=5" defer></script>
     <script src="js/retention.js?v=5" defer></script>
     <script src="js/personalization.js?v=5" defer></script>
-    <script type="module" src="js/main.js?v=5"></script>
+    <script type="module" src="js/main.js?v=7"></script>
 
 </body>
 

@@ -1,4 +1,4 @@
-﻿/* ============================================
+/* ============================================
    MYSTICKĂ HVÄšZDA - HOROSKOPY & TAROT
    Design System & Stylesheet
    
@@ -124,31 +124,49 @@ textarea {
 
 html {
   font-size: 16px;
-  background-color: var(--color-deep-space);
-  overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+  overscroll-behavior-y: none;
+  /* Prevents scroll elasticity / rubberbanding bounding on Chromium/Edge */
+}
+
+/* Global Fixed Background (solves scroll jank from background-attachment: fixed on body) */
+html::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -100;
+  background-color: var(--color-deep-space);
+  background-image: url('../img/bg-cosmic-hd.webp');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  /* Specific fix for mobile Safari to ensure it fills viewport and doesn't stretch with content */
+  height: 100%;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  html::before {
+    background-image: url('../img/bg-cosmic-mobile.webp');
+  }
 }
 
 body {
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: 1.6;
-  /* Reverted to safer value */
   color: var(--color-starlight);
   min-height: 100vh;
-  overflow-x: hidden;
-  /* Keep x hidden */
-  background-color: var(--color-deep-space);
-  /* Ensure background color is set */
-  /* Use new high-quality background */
-  background-image: url('../img/bg-cosmic-hd.webp');
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
+  background-color: transparent;
   position: relative;
   letter-spacing: normal;
-  /* Reset letter spacing */
+  overflow-x: clip;
+  /* Modern performant alternative to hidden that doesn't break scroll anchoring */
 }
 
 /* Disable fixed background on mobile - causes severe scroll jank on iOS/Android */
@@ -175,6 +193,17 @@ body::after {
   animation: aurora-pulse 15s ease-in-out infinite alternate;
 }
 
+@media (max-width: 768px) {
+  body::before,
+  body::after {
+    width: 150vw;
+    height: 150vh;
+    opacity: 0.6;
+    /* Soften for mobile display */
+    background: radial-gradient(circle at center, rgba(157, 78, 221, 0.08), transparent 60%);
+  }
+}
+
 body::after {
   background: radial-gradient(circle at center, rgba(76, 201, 240, 0.08), transparent 60%);
   animation-delay: -5s;
@@ -189,6 +218,28 @@ body::after {
   100% {
     opacity: 0.7;
     transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+/* Prefers-reduced-motion: disable non-essential animations */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  body::before,
+  body::after {
+    animation: none;
+  }
+
+  .floating-anim,
+  .hero__image {
+    animation: none !important;
   }
 }
 
@@ -733,7 +784,7 @@ body.page-mentor .header {
     overflow: hidden;
     opacity: 0;
     visibility: hidden;
-    transition: all var(--transition-base);
+    transition: transform var(--transition-base), box-shadow var(--transition-base), opacity var(--transition-base);
     /* Remove list styles for mobile accordion */
     list-style: none;
     padding-left: 0;
@@ -1704,6 +1755,28 @@ body.page-mentor .header {
 .zodiac-card__dates {
   font-size: var(--text-xs);
   color: var(--color-silver-mist);
+}
+
+/* User's selected zodiac card highlighting */
+.zodiac-card--highlighted {
+  border-color: rgba(235, 192, 102, 0.7);
+  box-shadow: 0 0 20px rgba(235, 192, 102, 0.2);
+  position: relative;
+}
+
+.zodiac-card__badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-mystic-gold);
+  color: var(--color-deep-space);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
 }
 
 /* ============================================
@@ -4915,4 +4988,584 @@ body.page-mentor .header {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ============================================
+   ADDITIONS: Carousel pagination dots
+   ============================================ */
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+}
+
+.carousel-dot.active {
+  background: var(--color-mystic-gold);
+  transform: scale(1.3);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+}
+
+/* ============================================
+   ADDITIONS: Steps visual connector
+   ============================================ */
+.steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-xl);
+  position: relative;
+}
+
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 2rem;
+  left: calc(16.667% + 1.5rem);
+  right: calc(16.667% + 1.5rem);
+  height: 2px;
+  background: linear-gradient(to right, var(--color-mystic-gold), var(--color-ethereal-violet), var(--color-mystic-gold));
+  opacity: 0.3;
+  z-index: 0;
+}
+
+@media (max-width: 768px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .steps::before {
+    display: none;
+  }
+}
+
+/* ============================================
+   ADDITIONS: Cookie banner wider for GDPR checkboxes
+   ============================================ */
+.cookie-banner {
+  max-width: 700px !important;
+}
+
+.cookie-banner__actions {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+/* ============================================
+   ADDITIONS: Auth Modal forgot password transition
+   ============================================ */
+#password-field-wrapper,
+#reset-password-fields,
+#forgot-password-link {
+  transition: opacity var(--transition-base);
+}
+
+/* ============================================
+   PERSONALIZED GREETING - Main page hero
+   ============================================ */
+#personalized-greeting {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  font-size: var(--text-lg);
+  color: var(--color-mystic-gold-light);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+#personalized-greeting:hover {
+  color: var(--color-mystic-gold);
+  transform: translateX(4px);
+}
+
+#personalized-greeting.personalized-greeting--visible {
+  display: inline-flex;
+}
+
+/* ============================================
+   STREAK BADGE - Retention Gamification
+   ============================================ */
+#mh-streak-badge {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #ff6b35, #ffd700);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: var(--text-base);
+  z-index: 1000;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+  opacity: 1;
+  transition: opacity var(--transition-base);
+}
+
+#mh-streak-badge--milestone {
+  background: linear-gradient(135deg, #ffd700, #9d4edd);
+  box-shadow: 0 4px 20px rgba(157, 78, 221, 0.4);
+}
+
+@keyframes mh-streak-bounce {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   RETENTION: Cancellation Modal & Pause Flow
+   ============================================ */
+.retention-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(5, 5, 16, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: retention-modal-fade-in 0.3s ease-out;
+}
+
+@keyframes retention-modal-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes retention-modal-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.retention-modal {
+  background: linear-gradient(135deg, #1a0a2e 0%, #0f0520 100%);
+  border: 1px solid rgba(235, 192, 102, 0.2);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.retention-modal__close {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--text-2xl);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.retention-modal__close:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.retention-modal__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-md);
+  color: var(--color-mystic-gold);
+}
+
+.retention-modal__subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--text-base);
+  margin-bottom: var(--space-lg);
+}
+
+/* Form options */
+.retention-form__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.retention-form__option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid rgba(235, 192, 102, 0.15);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.retention-form__option:hover {
+  background: rgba(235, 192, 102, 0.05);
+  border-color: rgba(235, 192, 102, 0.3);
+}
+
+.retention-form__option input[type="radio"] {
+  margin-top: 4px;
+  cursor: pointer;
+  accent-color: var(--color-mystic-gold);
+}
+
+.retention-form__option input[type="radio"]:checked + .retention-form__label {
+  color: var(--color-mystic-gold);
+  font-weight: 600;
+}
+
+.retention-form__label {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.retention-form__hint {
+  display: block;
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+
+.retention-form__textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(235, 192, 102, 0.15);
+  border-radius: var(--radius-lg);
+  color: rgba(255, 255, 255, 0.9);
+  padding: var(--space-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-lg);
+  resize: none;
+}
+
+.retention-form__textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.retention-form__actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-direction: column;
+}
+
+.retention-form__actions .btn {
+  width: 100%;
+}
+
+/* Offers */
+.retention-offer {
+  background: rgba(235, 192, 102, 0.1);
+  border: 1px solid rgba(235, 192, 102, 0.3);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-top: var(--space-lg);
+  text-align: center;
+}
+
+.retention-offer h3 {
+  color: var(--color-mystic-gold);
+  margin-bottom: var(--space-md);
+}
+
+.retention-offer p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: var(--space-md);
+  font-size: var(--text-sm);
+}
+
+.retention-offer__code {
+  font-family: 'Courier New', monospace;
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  display: inline-block;
+  margin: var(--space-md) 0;
+}
+
+.retention-offer__code code {
+  color: var(--color-mystic-gold-light);
+  font-weight: bold;
+}
+
+.retention-offer .btn {
+  width: 100%;
+  margin-top: var(--space-md);
+}
+
+/* Toast notifications */
+.retention-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(76, 201, 240, 0.9);
+  color: white;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
+  z-index: 2001;
+  animation: retention-toast-fade-in 0.3s ease-out;
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+.retention-toast--success {
+  background: rgba(76, 175, 80, 0.9);
+}
+
+.retention-toast--error {
+  background: rgba(244, 67, 54, 0.9);
+}
+
+.retention-toast--info {
+  background: rgba(33, 150, 243, 0.9);
+}
+
+@keyframes retention-toast-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes retention-toast-fade-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+/* RESPONSIVE: Retention Modal on Mobile */
+@media (max-width: 768px) {
+  .retention-modal-overlay {
+    padding: var(--space-md);
+  }
+
+  .retention-modal {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+  }
+
+  .retention-modal__title {
+    font-size: var(--text-xl);
+  }
+
+  .retention-form__option {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .retention-form__textarea {
+    font-size: var(--text-sm);
+  }
+
+  .retention-offer {
+    padding: var(--space-md);
+  }
+
+  .retention-toast {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    max-width: none;
+    width: auto;
+  }
+}
+
+/* RESPONSIVE: Retention Modal on Small Phones */
+@media (max-width: 480px) {
+  .retention-modal {
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+  }
+
+  .retention-modal__title {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-sm);
+  }
+
+  .retention-modal__subtitle {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .retention-form__option {
+    padding: var(--space-xs) var(--space-sm);
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .retention-form__label {
+    font-size: var(--text-sm);
+  }
+
+  .retention-form__hint {
+    font-size: var(--text-xs);
+    margin-top: 2px;
+  }
+
+  .retention-form__textarea {
+    padding: var(--space-sm);
+    font-size: var(--text-xs);
+  }
+
+  .retention-form__actions {
+    gap: var(--space-sm);
+  }
+
+  .retention-offer h3 {
+    font-size: var(--text-base);
+  }
+
+  .retention-offer p {
+    font-size: var(--text-xs);
+  }
+
+  .retention-toast {
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+    max-width: none;
+    font-size: var(--text-sm);
+    padding: var(--space-sm) var(--space-md);
+  }
+}
+
+/* ============================================
+   SIGN PICKER WIDGET - Personalization
+   ============================================ */
+.sign-picker {
+  background: rgba(10, 10, 26, 0.6);
+  border: 1px solid rgba(235, 192, 102, 0.15);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.sign-picker__header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-md);
+  gap: var(--space-md);
+}
+
+.sign-picker__label {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--text-sm);
+}
+
+.sign-picker__button {
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-mystic-gold);
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--color-mystic-gold);
+  cursor: pointer;
+  font-size: var(--text-base);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.sign-picker__button:hover {
+  background: rgba(212, 175, 55, 0.25);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.sign-picker__change-btn {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: var(--text-xs);
+  transition: all var(--transition-fast);
+}
+
+.sign-picker__change-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.sign-picker__expanded {
+  display: none;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-md);
+  border-top: 1px solid rgba(235, 192, 102, 0.15);
+}
+
+.sign-picker__expanded.active {
+  display: flex;
+}
+
+.sign-picker__sign-btn {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: var(--text-xs);
+  transition: all var(--transition-fast);
+}
+
+.sign-picker__sign-btn:hover {
+  border-color: rgba(235, 192, 102, 0.3);
+  color: rgba(235, 192, 102, 0.7);
+}
+
+.sign-picker__sign-btn.active {
+  border-color: var(--color-mystic-gold);
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--color-mystic-gold);
 }

@@ -1,4 +1,4 @@
-﻿/* ============================================
+/* ============================================
    MYSTICKĂ HVÄšZDA - HOROSKOPY & TAROT
    Design System & Stylesheet
    
@@ -145,6 +145,15 @@ html::before {
   background-position: center center;
   background-repeat: no-repeat;
   pointer-events: none;
+  /* Specific fix for mobile Safari to ensure it fills viewport and doesn't stretch with content */
+  height: 100%;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  html::before {
+    background-image: url('../img/bg-cosmic-mobile.webp');
+  }
 }
 
 body {
@@ -182,6 +191,17 @@ body::after {
   z-index: -2;
   pointer-events: none;
   animation: aurora-pulse 15s ease-in-out infinite alternate;
+}
+
+@media (max-width: 768px) {
+  body::before,
+  body::after {
+    width: 150vw;
+    height: 150vh;
+    opacity: 0.6;
+    /* Soften for mobile display */
+    background: radial-gradient(circle at center, rgba(157, 78, 221, 0.08), transparent 60%);
+  }
 }
 
 body::after {

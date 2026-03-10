@@ -1,18 +1,18 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="cs">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Blog | MystickÃ¡ HvÄ›zda</title>
-    <meta name="description" content="PÅ™eÄtÄ›te si nejnovÄ›jÅ¡Ã­ ÄlÃ¡nky ze svÄ›ta astrologie, tarotu a spirituality.">
+    <title>Blog | Mystická Hvìzda</title>
+    <meta name="description" content="Pøeètìte si nejnovìjší èlánky ze svìta astrologie, tarotu a spirituality.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=4">
+    <link rel="stylesheet" href="css/style.v2.min.css?v=7">
 
     <style>
         /* Featured Post Layout */
@@ -34,7 +34,7 @@
         }
 
         .featured-post::after {
-            content: 'NEJNOVÄšJÅ Ã';
+            content: 'NEJNOVÌJŠÍ';
             position: absolute;
             top: 2rem;
             right: -3rem;
@@ -295,11 +295,11 @@
         <section class="hero" style="padding-top: 8rem; padding-bottom: 2rem; min-height: unset;">
             <div class="container" style="text-align: center;">
                 <span class="section__badge"
-                    style="background: rgba(212, 175, 55, 0.1); border-color: var(--color-mystic-gold); color: var(--color-mystic-gold);">ÄŒerstvÃ©
+                    style="background: rgba(212, 175, 55, 0.1); border-color: var(--color-mystic-gold); color: var(--color-mystic-gold);">Èerstvé
                     vhledy</span>
-                <h1 class="hero__title">MystickÃ½ <span class="text-gradient">Blog</span></h1>
-                <p class="hero__subtitle" style="max-width: 600px; margin: 0 auto;">PonoÅ™te se do hlubin tajnÃ½ch nauk.
-                    ÄŒlÃ¡nky, nÃ¡vody a postÅ™ehy ze svÄ›ta hvÄ›zd a karet.</p>
+                <h1 class="hero__title">Mystickı <span class="text-gradient">Blog</span></h1>
+                <p class="hero__subtitle" style="max-width: 600px; margin: 0 auto;">Ponoøte se do hlubin tajnıch nauk.
+                    Èlánky, návody a postøehy ze svìta hvìzd a karet.</p>
             </div>
         </section>
 
@@ -307,20 +307,20 @@
             <div class="container">
 
                 <div class="category-filter" id="categoryFilter">
-                    <button class="category-btn active" data-category="all">VÅ¡echny ÄlÃ¡nky</button>
-                    <!-- KategoriÃ¡lnÃ­ tlaÄÃ­tka budou do-generovÃ¡na dynamicky podle dat -->
+                    <button class="category-btn active" data-category="all">Všechny èlánky</button>
+                    <!-- Kategoriální tlaèítka budou do-generována dynamicky podle dat -->
                 </div>
 
                 <div id="featuredContainer">
-                    <!-- Featured post bude vloÅ¾en sem JavaScriptem -->
+                    <!-- Featured post bude vloen sem JavaScriptem -->
                 </div>
 
                 <h3 style="font-family: 'Cinzel', serif; font-size: 1.8rem; margin-bottom: 2rem; color: #fff;"
-                    id="gridTitle">NejnovÄ›jÅ¡Ã­ ÄlÃ¡nky</h3>
+                    id="gridTitle">Nejnovìjší èlánky</h3>
                 <div class="blog-grid" id="blogContainer">
                     <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
                         <div class="loader" style="margin: 0 auto 1rem;"></div>
-                        <p style="color: var(--color-text-mutated);">NaÄÃ­tÃ¡m zajÃ­mavosti...</p>
+                        <p style="color: var(--color-text-mutated);">Naèítám zajímavosti...</p>
                     </div>
                 </div>
 
@@ -350,11 +350,11 @@
                 if (!response.ok) throw new Error('Data index nebyl nalezen');
                 allPosts = await response.json();
 
-                // Pokud mÃ¡me data, skryjeme loader
+                // Pokud máme data, skryjeme loader
                 container.innerHTML = '';
 
                 if (allPosts.length === 0) {
-                    throw new Error("Å½Ã¡dnÃ© ÄlÃ¡nky");
+                    throw new Error("ádné èlánky");
                 }
 
                 // Extract unique categories
@@ -369,12 +369,12 @@
                     filterContainer.appendChild(btn);
                 });
 
-                // VyrendrovÃ¡nÃ­ vÅ¡eho pro poÄÃ¡teÄnÃ­ stav
+                // Vyrendrování všeho pro poèáteèní stav
                 renderAll(allPosts);
 
             } catch (err) {
                 console.error(err);
-                container.innerHTML = '<div class="no-results">ZatÃ­m nebyly publikovÃ¡ny Å¾Ã¡dnÃ© ÄlÃ¡nky.</div>';
+                container.innerHTML = '<div class="no-results">Zatím nebyly publikovány ádné èlánky.</div>';
                 featuredContainer.style.display = 'none';
                 gridTitle.style.display = 'none';
             }
@@ -390,8 +390,8 @@
                         renderAll(allPosts);
                     } else {
                         const filtered = allPosts.filter(p => p.category === cat);
-                        // Pokud filtrujeme specifickou kategorii, neukazujeme Hero blok oddÄ›lenÄ›,
-                        // jenom grid vÅ¡ech spÅ™Ã­znÄ›nÃ½ch ÄlÃ¡nkÅ¯.
+                        // Pokud filtrujeme specifickou kategorii, neukazujeme Hero blok oddìlenì,
+                        // jenom grid všech spøíznìnıch èlánkù.
                         renderFilteredGrid(filtered, cat);
                     }
                 }
@@ -402,9 +402,9 @@
 
                 gridTitle.style.display = 'block';
                 featuredContainer.style.display = 'block';
-                gridTitle.textContent = "NejnovÄ›jÅ¡Ã­ ÄlÃ¡nky";
+                gridTitle.textContent = "Nejnovìjší èlánky";
 
-                // ÃšplnÄ› prvnÃ­ ÄlÃ¡nek je Featured Hero
+                // Úplnì první èlánek je Featured Hero
                 const featured = posts[0];
                 const rest = posts.slice(1);
 
@@ -415,7 +415,7 @@
             function renderFilteredGrid(posts, categoryStr) {
                 featuredContainer.style.display = 'none';
                 gridTitle.style.display = 'block';
-                gridTitle.textContent = `ÄŒlÃ¡nky v kategorii: ${categoryStr}`;
+                gridTitle.textContent = `Èlánky v kategorii: ${categoryStr}`;
                 renderPostsGrid(posts);
             }
 
@@ -424,7 +424,7 @@
                     year: 'numeric', month: 'long', day: 'numeric'
                 });
                 const imageSrc = post.featured_image || 'img/hero-3d.webp';
-                const readTime = post.readTime ? `${post.readTime} min.` : 'ZajÃ­mavost';
+                const readTime = post.readTime ? `${post.readTime} min.` : 'Zajímavost';
 
                 featuredContainer.innerHTML = `
                     <a href="blog/${post.slug}.html" class="featured-post">
@@ -434,15 +434,15 @@
                         </div>
                         <div class="featured-post__content">
                             <div class="featured-post__meta">
-                                <span>${post.category || 'ÄŒlÃ¡nek'}</span>
-                                <span>â€¢</span>
+                                <span>${post.category || 'Èlánek'}</span>
+                                <span>•</span>
                                 <span>${date}</span>
                             </div>
                             <h2 class="featured-post__title">${post.title}</h2>
                             <p class="featured-post__desc">${post.short_description || ''}</p>
                             <div class="featured-post__meta" style="margin-bottom:0; justify-content:space-between; align-items:center;">
-                                <span class="btn-read-more">ÄŒÃ­st ÄlÃ¡nek <span>â†’</span></span>
-                                <span>â± ${readTime}</span>
+                                <span class="btn-read-more">Èíst èlánek <span>›</span></span>
+                                <span>? ${readTime}</span>
                             </div>
                         </div>
                     </a>
@@ -452,7 +452,7 @@
             function renderPostsGrid(posts) {
                 container.innerHTML = '';
                 if (posts.length === 0) {
-                    container.innerHTML = '<div class="no-results">Å½Ã¡dnÃ© dalÅ¡Ã­ ÄlÃ¡nky k zobrazenÃ­.</div>';
+                    container.innerHTML = '<div class="no-results">ádné další èlánky k zobrazení.</div>';
                     return;
                 }
 
@@ -474,13 +474,13 @@
                         </div>
                         <div class="blog-card-content">
                             <div class="blog-meta-small">
-                                ${post.category || 'ÄŒlÃ¡nek'}
+                                ${post.category || 'Èlánek'}
                             </div>
                             <div class="blog-title">${post.title}</div>
                             <div class="blog-desc">${post.short_description || ''}</div>
                             <div class="blog-footer">
-                                <span>ğŸ“… ${date}</span>
-                                <span>â± ${readTime}</span>
+                                <span>?? ${date}</span>
+                                <span>? ${readTime}</span>
                             </div>
                         </div>
                     `;

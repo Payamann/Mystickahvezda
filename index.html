@@ -43,7 +43,7 @@
     rel="stylesheet">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.v2.min.css?v=4">
+  <link rel="stylesheet" href="css/style.v2.min.css?v=7">
 
   <!-- Critical Inline Fixes -->
   <style>
@@ -119,21 +119,11 @@
     }
 
     /* =============================================
-       MOBILNÍ FIXY (Astroláb, Aurora bug, Zrušení pozadí)
+       MOBILNÍ FIXY (Astroláb)
        ============================================= */
     @media (max-width: 768px) {
 
-      /* Re-enable and optimize Aurora effects for mobile */
-      body::before,
-      body::after {
-        display: block !important;
-        opacity: 0.4 !important; /* Slightly softer on mobile */
-        visibility: visible !important;
-        width: 150vw !important; /* Wider coverage for mobile rotation */
-        height: 150vh !important;
-      }
-
-      /* Fix alignment of hero grid on mobile */
+      /* Fix zarovnání astrolábu na mobilu */
       .hero__grid {
         display: flex !important;
         flex-direction: column !important;
@@ -151,13 +141,6 @@
         justify-content: center !important;
         align-items: center !important;
         width: 100% !important;
-      }
-
-      /* Re-enable hero glow for depth */
-      .hero__glow-effect {
-        display: block !important;
-        opacity: 0.5;
-        transform: scale(0.8);
       }
 
       .hero__image {
@@ -1209,7 +1192,7 @@
     });
   </script>
 
-  <script type="module" src="js/main.js?v=5"></script>
+  <script type="module" src="js/main.js?v=7"></script>
 
   <!-- Mobile Bottom Navigation -->
   <nav class="mobile-bottom-nav">
