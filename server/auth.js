@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import { supabase } from './db-supabase.js';
 import { JWT_SECRET } from './config/jwt.js';
+import { validateEmail, validatePassword, validateName, validateBirthDate } from './utils/validation.js';
 
 const router = express.Router();
 
@@ -33,28 +34,35 @@ router.post('/activate-premium', (req, res) => {
 router.post('/register', authLimiter, async (req, res) => {
     const { email, password, first_name, birth_date, birth_time, birth_place } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
-    }
+    try {
+        // Validate input using centralized validators
+        const validatedEmail = validateEmail(email);
+        const validatedPassword = validatePassword(password);
+        const validatedFirstName = first_name ? validateName(first_name) : 'User';
 
-    if (password.length < 8) {
-        return res.status(400).json({ error: 'Heslo musí mít alespoň 8 znaků.' });
+        // Birth date is optional, but validate if provided
+        let validatedBirthDate = null;
+        if (birth_date) {
+            validatedBirthDate = validateBirthDate(birth_date);
+        }
+    } catch (validationError) {
+        return res.status(400).json({ error: validationError.message });
     }
 
     try {
         // 1. Sign Up via Supabase Auth
         // This triggers the confirmation email automatically.
         const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
+            email: validatedEmail,
+            password: validatedPassword,
             options: {
                 // Use APP_URL from environment for production flexibility
                 emailRedirectTo: APP_URL,
                 data: {
-                    first_name,
-                    birth_date,
-                    birth_time,
-                    birth_place
+                    first_name: validatedFirstName,
+                    birth_date: validatedBirthDate,
+                    birth_time: birth_time ? birth_time.substring(0, 5) : null, // HH:MM format
+                    birth_place: birth_place ? birth_place.substring(0, 100) : null
                 }
             }
         });
@@ -93,10 +101,14 @@ router.post('/login', authLimiter, async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        // Validate input
+        const validatedEmail = validateEmail(email);
+        const validatedPassword = validatePassword(password);
+
         // 1. Sign In via Supabase Auth
         const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
+            email: validatedEmail,
+            password: validatedPassword,
         });
 
         if (authError) {
@@ -216,12 +228,11 @@ router.post('/login', authLimiter, async (req, res) => {
 router.post('/forgot-password', authLimiter, async (req, res) => {
     const { email } = req.body;
 
-    if (!email) {
-        return res.status(400).json({ error: 'Email je povinný.' });
-    }
-
     try {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        // Validate email
+        const validatedEmail = validateEmail(email);
+
+        const { error } = await supabase.auth.resetPasswordForEmail(validatedEmail, {
             redirectTo: `${APP_URL}/prihlaseni.html?reset=true`
         });
 
@@ -253,14 +264,13 @@ router.post('/reset-password', async (req, res) => {
         return res.status(401).json({ error: 'Chybí autorizační token.' });
     }
 
-    if (!password || password.length < 8) {
-        return res.status(400).json({ error: 'Heslo musí mít alespoň 8 znaků.' });
-    }
-
     try {
+        // Validate password
+        const validatedPassword = validatePassword(password);
+
         // Update password using Supabase Auth
         const { data, error } = await supabase.auth.updateUser(
-            { password },
+            { password: validatedPassword },
             { accessToken: token }
         );
 
@@ -335,16 +345,35 @@ router.put('/profile', async (req, res) => {
 
         const { first_name, birth_date, birth_time, birth_place, avatar } = req.body;
 
-        const updateData = {
-            first_name: first_name || null,
-            birth_date: birth_date || null,
-            birth_time: birth_time || null,
-            birth_place: birth_place || null
-        };
+        // Validate optional fields if provided
+        const updateData = {};
 
-        // Only update avatar if explicitly provided
-        if (avatar !== undefined) {
-            updateData.avatar = avatar || null;
+        if (first_name !== undefined && first_name !== null) {
+            updateData.first_name = validateName(first_name);
+        }
+
+        if (birth_date !== undefined && birth_date !== null) {
+            updateData.birth_date = validateBirthDate(birth_date);
+        }
+
+        if (birth_time !== undefined && birth_time !== null) {
+            // Basic format check for HH:MM
+            if (!/^\d{2}:\d{2}$/.test(birth_time)) {
+                throw new Error('Birth time must be in HH:MM format');
+            }
+            updateData.birth_time = birth_time;
+        }
+
+        if (birth_place !== undefined && birth_place !== null) {
+            updateData.birth_place = birth_place.substring(0, 100);
+        }
+
+        // Only update avatar if explicitly provided (basic length check)
+        if (avatar !== undefined && avatar !== null) {
+            if (avatar.length > 50000) { // 50KB limit for avatar URL
+                throw new Error('Avatar is too large');
+            }
+            updateData.avatar = avatar;
         }
 
         const { data, error } = await supabase
@@ -361,6 +390,10 @@ router.put('/profile', async (req, res) => {
     } catch (e) {
         if (e.name === 'JsonWebTokenError' || e.name === 'TokenExpiredError') {
             return res.sendStatus(403);
+        }
+        // Check if it's a validation error (thrown by our validators)
+        if (e.message && e.message.includes('must') || e.message.includes('Invalid') || e.message.includes('too')) {
+            return res.status(400).json({ error: e.message });
         }
         console.error('Update Profile Error:', e);
         res.status(500).json({ error: 'Failed to update profile' });
