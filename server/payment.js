@@ -963,7 +963,8 @@ router.post('/email/send', authenticateToken, async (req, res) => {
                 to: userData.email
             });
         } catch (sendErr) {
-            return res.status(500).json({ error: `Failed to send email: ${sendErr.message}` });
+            console.error('[EMAIL] Error sending email:', sendErr);
+            return res.status(500).json({ error: 'Failed to send email' });
         }
     } catch (err) {
         console.error('[EMAIL] Error in send endpoint:', err);

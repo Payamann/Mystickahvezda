@@ -8,7 +8,7 @@ import express from 'express';
 import { authenticateToken } from '../middleware.js';
 import { supabase } from '../db-supabase.js';
 import rateLimit from 'express-rate-limit';
-import { validatePassword } from '../utils/validation.js';
+import { validatePassword, validateString } from '../utils/validation.js';
 
 export const router = express.Router();
 
@@ -68,9 +68,21 @@ router.post('/readings', authenticateToken, async (req, res) => {
             return res.status(400).json({ error: 'Type and data are required.' });
         }
 
+        // Validate type against allowlist
+        const validTypes = ['tarot', 'oracle', 'numerology', 'horoscope', 'angel'];
+        if (!validTypes.includes(type)) {
+            return res.status(400).json({ error: 'Invalid reading type.' });
+        }
+
+        // Validate reading data
+        const validatedData = validateString(readingData, 0, 50000, 'Reading data');
+        if (!validatedData.isValid) {
+            return res.status(400).json({ error: validatedData.error });
+        }
+
         const { data, error } = await supabase
             .from('readings')
-            .insert({ user_id: req.user.id, type, data: readingData })
+            .insert({ user_id: req.user.id, type, data: validatedData.value })
             .select()
             .single();
 

@@ -17,12 +17,6 @@ import contactRoutes from './contact.js';
 import paymentRoutes, { handleStripeWebhook } from './payment.js';
 import mentorRoutes from './mentor.js';
 import adminRoutes from './admin.js';
-import { authenticateToken, requirePremium, requirePremiumSoft, optionalPremiumCheck } from './middleware.js';
-import { SYSTEM_PROMPTS } from './config/prompts.js';
-import { calculateMoonPhase, getHoroscopeCacheKey, getCachedHoroscope, saveCachedHoroscope } from './services/astrology.js';
-import { callGemini } from './services/gemini.js';
-import { isPremiumUser } from './payment.js';
-import { supabase } from './db-supabase.js';
 import crypto from 'crypto';
 import { initializeEmailQueueJob } from './jobs/email-queue.js';
 
@@ -31,7 +25,6 @@ import oracleRoutes from './routes/oracle.js';
 import horoscopeRoutes from './routes/horoscope.js';
 import numerologyRoutes from './routes/numerology.js';
 import userRoutes from './routes/user.js';
-import pushRoutes from './routes/push.js';
 import angelPostRoutes from './routes/angel-post.js';
 
 const __filename = fileURLToPath(import.meta.url);

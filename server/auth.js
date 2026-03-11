@@ -168,7 +168,7 @@ router.post('/login', authLimiter, async (req, res) => {
             // Fetch subs separately to be safe
             const { data: sub } = await supabase
                 .from('subscriptions')
-                .select('plan_type, status, credits')
+                .select('plan_type, status, credits, current_period_end')
                 .eq('user_id', user.id)
                 .single();
             if (sub) user.subscriptions = sub;
