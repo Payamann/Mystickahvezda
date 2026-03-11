@@ -322,6 +322,196 @@ Changes: added clear definition, 2 stats with sources, structured list, DMA/Emar
 
 > **Reference**: See the GEO Readiness Checklist in [references/geo-optimization-techniques.md](./references/geo-optimization-techniques.md) for the full checklist covering definitions, quotable content, authority, structure, and technical elements.
 
+## GEO Optimization Frameworks
+
+### The "QUOTE Protocol" — Making Content AI-Quotable
+
+AI systems cite content that provides:
+- **Quotable**: Stands alone without context
+- **Unique**: Not general knowledge
+- **Original**: First-party data or exclusive insight
+- **Traceable**: Source and attribution are clear
+- **Explicit**: Direct answer, no ambiguity
+
+**Example NOT quotable**:
+"Email marketing is important for businesses because it helps reach customers and build relationships."
+→ Generic, not specific, no data
+
+**Example QUOTABLE**:
+"Email marketing delivers a 4,200% ROI according to the Data & Marketing Association, meaning for every $1 spent, marketers get $42 in return."
+→ Specific statistic, named source, clear number
+
+---
+
+### The "Definition Sandwich" Framework
+
+AI systems prioritize content that defines terms clearly. Use this 3-part structure:
+
+```
+TERM: [The term you're defining]
+
+SIMPLE DEFINITION (25-35 words):
+Clear, jargon-free definition that a 10-year-old could understand.
+
+TECHNICAL DEFINITION (40-60 words):
+Industry-specific definition with relevant context and distinctions.
+
+EXAMPLE (30-50 words):
+Real-world example showing the term in practice.
+```
+
+**Real Example**:
+
+```
+TERM: Cumulative Layout Shift (CLS)
+
+SIMPLE DEFINITION:
+When a webpage's elements move around unexpectedly while you're reading or clicking.
+Example: A button shifts down just as you're about to click it.
+
+TECHNICAL DEFINITION:
+CLS is a Core Web Vital measuring unexpected visual instability caused by asynchronously
+loaded content, unannounced ads, or dynamic content. Measured on a 0-1 scale (ideal <0.1).
+Caused by missing image dimensions, animations, font-loading, or DOM manipulation.
+
+EXAMPLE:
+You're reading a blog post when suddenly an ad loads, pushing your current paragraph down
+3 inches. You lose your place. CLS score: 0.15 (failing). Fixed by reserving space for ads
+in CSS. CLS score: 0.05 (passing).
+```
+
+---
+
+### AI Engine Preference Framework
+
+Different AI systems prefer different content structures:
+
+| AI Engine | Prefers | Structure | Example |
+|-----------|---------|-----------|---------|
+| **Google AI Overview** | Definitions + tables | Direct answer, data in tables | "What is project management?" |
+| **ChatGPT Browse** | Original data + expert quotes | First-party research, attributed sources | Industry studies, original research |
+| **Perplexity AI** | Comprehensive + recent | Updated stats, multiple viewpoints | "Latest trends in [topic]" |
+| **Claude** | Reasoning transparency | Methodology explanation, caveats | "How does X work?" |
+| **Gemini** | Structured data + schema | JSON-LD, FAQ schema, tables | Blog posts with schema |
+
+**Optimization strategy**:
+- Add definitions (AI Overview loves these)
+- Include original statistics (ChatGPT, Perplexity cite first-party data)
+- Explain your methodology (Claude respects transparent reasoning)
+- Structure with tables and lists (Gemini prefers structured formats)
+- Add FAQ schema (All prefer Q&A format)
+
+---
+
+## GEO Optimization Real Examples
+
+### Example 1: Blog Post Optimization for Google AI Overviews
+
+**Original paragraph** (NOT optimized for GEO):
+"Project management is important for teams because it helps with organization and communication. Teams that use project management tools tend to perform better and meet deadlines more easily."
+
+**Problems**:
+- Vague ("important," "tend to")
+- No data points
+- No quoted statistic
+- Generic, could describe anything
+
+**GEO-Optimized version**:
+
+```markdown
+**Project Management** is a structured approach to organizing team work through planning,
+scheduling, resource allocation, and communication protocols. According to the Project
+Management Institute, 75% of organizations that adopt formal project management achieve
+above-average project success rates, defined as projects completing on time and within budget.
+
+### Key metrics for project success:
+
+- **On-time delivery**: 75% of organizations with project management finish on schedule
+  (vs. 35% of organizations without formal PM)
+- **Budget adherence**: Projects stay within budget 71% of the time with PM processes
+  (vs. 42% without)
+- **Team efficiency**: Teams using PM tools report 45% fewer meeting hours through
+  async status updates and centralized communication
+
+> **Direct quote from PMI study**: "Organizations that enforce discipline around project
+> management practices have project success rates that are 2.5x higher than organizations
+> that do not."
+```
+
+**What changed**:
+- ✅ Added clear definition (first sentence)
+- ✅ Added specific statistic with source (75%, PMI)
+- ✅ Compared with/without scenarios
+- ✅ Structured data as bullet points (AI loves this)
+- ✅ Added direct quote from authoritative source
+- ✅ Provided 3 quantifiable metrics
+
+**Expected AI Citation**: HIGH probability of being cited in Google AI Overview for "what is project management"
+
+---
+
+### Example 2: Service Page Optimization for GEO
+
+**Original** (Website homepage, not GEO-optimized):
+"We offer the best project management software for teams. Our tool is easy to use and helps teams collaborate better. Trusted by thousands of companies."
+
+**Problems**:
+- Marketing language ("best," "trusted by thousands")
+- No facts, only claims
+- Not written for AI extraction
+- Can't be directly quoted
+
+**GEO-Optimized version**:
+
+```markdown
+## What is [ProductName] Project Management Software?
+
+[ProductName] is a web-based project management platform that enables teams to track
+tasks, collaborate in real-time, and manage project timelines through a visual kanban
+board interface, built-in team chat, and automated status reporting. The platform integrates
+with 50+ business tools including Slack, Google Workspace, and Zapier.
+
+### Key features:
+
+| Feature | Description | Use Case |
+|---------|-------------|----------|
+| **Kanban Board** | Visual task organization with drag-and-drop | Real-time sprint management |
+| **Timeline View** | Gantt chart showing project dependencies | Long-term project planning |
+| **Team Chat** | Integrated messaging and comment threads | Reduce context-switching to Slack |
+| **Automations** | Custom workflows (status change → Slack notification) | 8+ hours/week time savings per user |
+
+### Customer results:
+
+- **Zapier**: Reduced project delays from 2.5 weeks to 3 days (Zapier case study, 2024)
+- **Buffer**: Decreased project meeting time by 40% (case study, 2023)
+- **GitLab**: 50% faster project kickoffs with [ProductName] (internal data)
+
+> **Customer testimonial**: "Before [ProductName], we had status updates across 6 different
+> tools. Now everything is in one place. We've cut administrative overhead by 6 hours/week."
+> — Sarah Chen, Zapier Project Manager
+
+## How it compares to alternatives
+
+| Feature | [ProductName] | Monday.com | Asana | Jira |
+|---------|---------------|-----------|-------|------|
+| Ease of Setup | <1 hour | 2 hours | 1.5 hours | 4+ hours |
+| Free Plan | Yes, unlimited users | Yes, 3 users max | Yes, 15 users max | Yes |
+| Learning Curve | Low | Medium | Medium | High |
+| Best For | Small-medium teams | Custom workflows | Enterprise | Engineering teams |
+```
+
+**What changed**:
+- ✅ Clear definition with specific details (kanban board, integrations)
+- ✅ 3 customer results with metrics
+- ✅ Comparison table (AI loves these)
+- ✅ Direct customer quote with name/title
+- ✅ Each claim backed by evidence
+- ✅ Specific numbers (50+ integrations, 40% reduction, etc.)
+
+**Expected AI Citation**: HIGH probability in "best project management tools" queries
+
+---
+
 ## Tips for Success
 
 1. **Answer the question first** - Put the answer in the first sentence
@@ -330,6 +520,10 @@ Changes: added clear definition, 2 stats with sources, structured list, DMA/Emar
 4. **Stay current** - Update statistics and facts regularly
 5. **Match query format** - Questions deserve direct answers
 6. **Build authority** - Expert credentials increase citation likelihood
+7. **Use tables and lists** - Structured data gets cited more often
+8. **Include comparisons** - AI systems cite comparison tables frequently
+9. **Attribute quotes** - Always credit the person/organization providing data
+10. **Add FAQ schema** - Helps all AI systems understand your content
 
 ## Reference Materials
 

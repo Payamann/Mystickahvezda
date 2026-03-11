@@ -359,6 +359,153 @@ Visual or structured representation of how content interconnects.
 
 ---
 
+## Content Strategy Examples
+
+### Example 1: SaaS (Project Management Software)
+
+**Content Pillars**:
+1. **Product Knowledge** (Awareness stage)
+   - What is project management
+   - PM frameworks (Agile, Scrum, Waterfall, Kanban)
+   - PM best practices
+   - Industry-specific PM approaches
+
+2. **Implementation & Use Cases** (Consideration stage)
+   - PM for [specific team type]: designers, engineers, marketing, sales
+   - PM for [project type]: product launches, website redesigns
+   - PM for [challenge]: remote teams, distributed teams, time zone challenges
+
+3. **Thought Leadership** (Authority building)
+   - Original research on PM trends
+   - PM challenges in 2024
+   - Case studies from customer successes
+   - Expert interviews with known PM leaders
+
+4. **Product Education** (Decision stage)
+   - How to [use feature]
+   - [Feature] best practices
+   - Comparison: [Our tool] vs alternatives
+   - Pricing and ROI calculators
+
+**Content Calendar (Next 3 months)**:
+- Month 1: Launch 3 pillar pages (What is PM, PM for remote teams, PM frameworks)
+- Month 2: Publish 2 thought leadership pieces (original research, expert interview)
+- Month 3: Product education series (5 how-to articles)
+- Ongoing: 2 blog posts/week on targeted keywords
+
+**Success Metrics**:
+- Reach 5,000 organic visitors/month within 6 months
+- Rank for 20+ target keywords
+- 2% conversion rate on educational content → demo request
+
+---
+
+### Example 2: E-commerce (Pet Grooming)
+
+**Content Pillars**:
+1. **Pet Grooming Education** (Awareness)
+   - How to groom [breed]
+   - Grooming for [coat type]
+   - Grooming for [problem]: matting, shedding, odor
+   - Grooming tools explained
+
+2. **Product Guides** (Consideration)
+   - Best clippers for [coat type]
+   - Brush types compared
+   - [Product] reviews and comparisons
+   - Buying guide: How to choose clippers
+
+3. **Use Cases & Scenarios** (Conversion)
+   - DIY grooming at home
+   - Professional grooming tips
+   - Grooming for show dogs
+   - Quick grooming routines for busy owners
+
+**Content Map**:
+
+```
+Pillar: How to Groom Your Dog at Home (2,500 words)
+├─ Cluster: How to Groom a [Breed 1] (800 words)
+├─ Cluster: How to Groom a [Breed 2] (800 words)
+├─ Cluster: Best Clippers for Thick Coats (1,500 words)
+│  └─ Reviews: [5 specific products]
+├─ Cluster: Grooming for Matted Fur (800 words)
+└─ Cluster: DIY Grooming Tools You Need (600 words)
+```
+
+**Content Calendar**:
+- Launch pillar page first (comprehensive, links to all clusters)
+- Release 1 cluster per week (staggered for sustained traffic)
+- Intersperse product reviews throughout
+
+**Success Metrics**:
+- Rank top 5 for "how to groom [breed]" keywords
+- 5,000+ visitors to pillar from all clusters
+- 3% affiliate link click-through from product reviews
+
+---
+
+### Example 3: Local Service (Dental Practice)
+
+**Content Strategy**: Local Authority Building
+
+**Content Pillars**:
+1. **Service Education** (Awareness)
+   - What is [procedure]
+   - [Procedure] cost and pricing
+   - [Procedure] recovery and aftercare
+   - Is [procedure] right for you?
+
+2. **Local Authority** (Trust building)
+   - Best dentist in [neighborhood]
+   - [Procedure] near me
+   - Local dental tips (water quality, fluoride levels)
+   - Local patient stories
+
+3. **FAQ Content** (Conversion)
+   - How long does [procedure] take?
+   - Is [procedure] painful?
+   - How long do results last?
+   - What to expect before/after
+
+**Content Examples**:
+- Blog post: "Root Canal Procedure Steps Explained" (targets "root canal near me" intent)
+- Service page: "Teeth Whitening in Austin" (geo + service)
+- FAQ page: "Common cosmetic dentistry questions" (targets feature snippets)
+- Location page: "Best Dentist in Downtown Austin" (local authority)
+
+**Content Calendar**:
+- Publish 2-3 blog posts/month (FAQ style, local intent)
+- Update service pages with before/after photos quarterly
+- Publish patient testimonial video monthly (builds trust)
+
+**Success Metrics**:
+- Rank top 3 for "[procedure] near me" queries
+- Top local pack position for primary service areas
+- 20+ patient phone calls from organic search/month
+
+---
+
+## Content Strategy Development Matrix
+
+Use this to prioritize topic ideas:
+
+| Topic | Searchable (Y/N) | Shareable (Y/N) | Effort (Low/Med/High) | Impact (Low/Med/High) | Priority |
+|-------|------------------|-----------------|----------------------|----------------------|----------|
+| "How to X" | Y | Y | Low | High | 🔴 Start now |
+| Listicle "Best X" | Y | Y | Medium | High | 🔴 Start now |
+| Original research | N | Y | High | High | 🟡 Plan for Q2 |
+| Competitor comparison | Y | N | Low | High | 🔴 Start now |
+| Expert interview | N | Y | Medium | Medium | 🟡 Plan for Q3 |
+| Industry trend analysis | Y | Y | Medium | Medium | 🟡 Plan for Q2 |
+| Case study | N | Y | Medium | High | 🔴 Plan for month 2 |
+| Product tutorial | Y | N | Low | Medium | 🟡 Ongoing |
+| News/trending topic | Y | Y | Low | Low | 🟢 Maybe |
+
+**Action**: Focus on 🔴 items first (high impact, achievable), then 🟡, save 🟢 for when you have extra capacity.
+
+---
+
 ## Task-Specific Questions
 
 1. What patterns emerge from your last 10 customer conversations?
