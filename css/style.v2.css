@@ -612,6 +612,28 @@ body::after {
 
 
 
+/* Placeholder height to prevent CLS before components.js loads */
+
+#header-placeholder {
+
+  min-height: 85px;
+
+}
+
+
+
+@media (max-width: 768px) {
+
+  #header-placeholder {
+
+    min-height: 70px; /* Approximate mobile header height */
+
+  }
+
+}
+
+
+
 /* ============================================
 
    3. TYPOGRAPHY (DIVI: Text Module Styles)
