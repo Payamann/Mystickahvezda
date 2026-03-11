@@ -152,6 +152,36 @@
     // Init: show prompt on 2nd+ visit after 5s
     window.addEventListener('DOMContentLoaded', () => {
         const count = incrementVisit();
+        
+        // Handle manual button if exists
+        const subBtn = document.getElementById('subscribe-push-btn');
+        if (subBtn) {
+            // Check status for button text
+            const status = localStorage.getItem(SUB_KEY);
+            if (status === 'active') {
+                subBtn.innerHTML = '🔕 Zrušit odběr horoskopu';
+                subBtn.classList.add('btn--active');
+            }
+            
+            subBtn.addEventListener('click', async () => {
+                const currentStatus = localStorage.getItem(SUB_KEY);
+                if (currentStatus === 'active') {
+                    // Unsubscribe logic (simplified: clear local storage for this demo)
+                    localStorage.removeItem(SUB_KEY);
+                    subBtn.innerHTML = '🔔 Odebírat denní horoskop';
+                    subBtn.classList.remove('btn--active');
+                    if (window.Auth?.showToast) window.Auth.showToast('Info', 'Odběr horoskopu byl zrušen.', 'info');
+                } else {
+                    const ok = await subscribeToPush();
+                    if (ok) {
+                        subBtn.innerHTML = '🔕 Zrušit odběr horoskopu';
+                        subBtn.classList.add('btn--active');
+                        if (window.Auth?.showToast) window.Auth.showToast('Úspěch', 'Odběr horoskopu byl aktivován.', 'success');
+                    }
+                }
+            });
+        }
+
         if (count >= 2) {
             setTimeout(showNotificationPrompt, 5000);
         }

@@ -148,5 +148,79 @@ function initStandaloneHeader() {
         }
     });
 
+    initLanguageSwitcher();
+
     console.log('[components.js] Standalone header initialized');
+}
+
+/**
+ * Language switcher logic
+ */
+function initLanguageSwitcher() {
+    const switcher = document.querySelector('.lang-switcher');
+    if (!switcher) return;
+
+    const btn = switcher.querySelector('.lang-switcher__btn');
+    const links = switcher.querySelectorAll('.lang-switcher__link');
+    const currentText = switcher.querySelector('.lang-switcher__current');
+
+    // Detect current language from URL
+    const path = window.location.pathname;
+    let currentLang = 'cs';
+    if (path.includes('/sk/')) currentLang = 'sk';
+    else if (path.includes('/pl/')) currentLang = 'pl';
+
+    // Update UI initial state
+    const langMap = { 'cs': 'CZ', 'sk': 'SK', 'pl': 'PL' };
+    if (currentText) currentText.textContent = langMap[currentLang];
+
+    links.forEach(link => {
+        if (link.dataset.lang === currentLang) link.classList.add('active');
+        else link.classList.remove('active');
+    });
+
+    // Toggle dropdown
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        switcher.classList.toggle('open');
+    });
+
+    // Close on click outside
+    document.addEventListener('click', () => switcher.classList.remove('open'));
+
+    // Handle language change
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetLang = link.dataset.lang;
+            if (targetLang === currentLang) return;
+
+            localStorage.setItem('mh_lang_pref', targetLang);
+            
+            // Generate target URL
+            let newPath = window.location.pathname;
+            const fileName = newPath.split('/').pop() || 'index.html';
+            
+            // Remove existing lang prefix
+            newPath = newPath.replace(/\/(sk|pl)\//, '/');
+            
+            if (targetLang === 'cs') {
+                // To root or CZ version (already handled by replace)
+                window.location.href = newPath;
+            } else {
+                // To subdirectory
+                // Handle local file protocol vs server
+                if (window.location.protocol === 'file:') {
+                    const baseMatch = newPath.match(/(.*\/MystickaHvezda\/)/);
+                    if (baseMatch) {
+                        window.location.href = baseMatch[1] + targetLang + '/' + fileName;
+                    } else {
+                        window.location.href = './' + targetLang + '/' + fileName;
+                    }
+                } else {
+                    window.location.href = '/' + targetLang + '/' + fileName;
+                }
+            }
+        });
+    });
 }

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Mystická Hvězda - Natal Chart Visualization (AI-Powered)
  * Uses Gemini AI for personalized life narrative generation
  */
@@ -45,6 +45,11 @@ function initNatalChart() {
 
     // Render Zodiac Ring
     renderZodiacRing(zodiacGroup);
+
+    // Initialize 3D Chart
+    if (window.Natal3D) {
+        window.Natal3DInstance = new window.Natal3D('natal-3d-container');
+    }
 
     // Render demo planets on load (random positions)
     generatePlanets(planetsGroup, 42); // Demo seed for initial display
@@ -373,6 +378,14 @@ async function generateNatalChart(planetsGroup) {
         // Generate pseudo-positions for visual
         const seed = name.length + birthDate.length;
         generatePlanets(planetsGroup, seed);
+
+        // Update 3D Chart
+        if (window.Natal3DInstance) {
+            const container = document.getElementById('natal-3d-container');
+            container.style.display = 'block';
+            window.Natal3DInstance.onWindowResize(); // Force resize since it was hidden
+            window.Natal3DInstance.updatePlanets(seed);
+        }
 
         // Calculate sign positions for display
         // Calculate REAL zodiac sign based on date

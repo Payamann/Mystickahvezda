@@ -52,7 +52,29 @@
 
         "applicationCategory": "LifestyleApplication",
 
-        "operatingSystem": "Web"
+        "operatingSystem": "Web",
+
+        "speakable": {
+
+            "@type": "SpeakableSpecification",
+
+            "cssSelector": ["#main-content h1", ".hero__subtitle"]
+
+        },
+
+        "aggregateRating": {
+
+            "@type": "AggregateRating",
+
+            "ratingValue": "4.9",
+
+            "reviewCount": "2450",
+
+            "bestRating": "5",
+
+            "worstRating": "1"
+
+        }
 
     }
 
@@ -123,6 +145,8 @@
     <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/horoskopy.html">
 
     <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/horoskopy.html">
+
+    <link rel="alternate" hreflang="pl" href="https://mystickahvezda.cz/pl/horoskopy.html">
 
     <link rel="alternate" hreflang="x-default" href="https://mystickahvezda.cz/horoskopy.html"></head>
 
@@ -225,10 +249,13 @@
                     </h1>
 
                     <p class="hero__subtitle">
-
                         Energie planet se mění každý den. Zjistěte, jak je dnes využít pro svůj prospěch a vnitřní klid.
-
                     </p>
+                    <div class="hero__actions" style="margin-top: 1.5rem;">
+                        <button id="subscribe-push-btn" class="btn btn--glass" style="min-width: 250px;">
+                            🔔 Odebírat denní horoskop
+                        </button>
+                    </div>
 
                 </div>
 

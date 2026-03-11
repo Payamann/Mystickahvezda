@@ -1,103 +1,117 @@
-<!-- HEADER COMPONENT -->
-<header class="header">
-    <div class="container">
-        <div class="header__inner">
-            <a href="index.html" class="logo">
-                <img src="img/logo-3d.webp?v=4" alt="Mystická Hvězda Logo" class="logo__image" loading="lazy">
-                <span class="logo__text">Mystická<span class="text-gradient">Hvězda</span></span>
-            </a>
-
-            <!-- Hamburger OUTSIDE of nav so it's visible on mobile -->
-            <button class="nav__toggle" aria-label="Menu" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-
-            <nav class="nav">
-                <ul class="nav__list">
-                    <li class="nav__item"><a href="index.html" class="nav__link">Domů</a></li>
-
-                    <li class="nav__item nav__item--has-dropdown">
-                        <a href="#" class="nav__link nav__link--dropdown-toggle">Astrologie <span
-                                class="dropdown-icon">▾</span></a>
-                        <ul class="nav__dropdown">
-                            <li><a href="horoskopy.html" class="nav__dropdown-link">Horoskopy</a></li>
-                            <li><a href="natalni-karta.html" class="nav__dropdown-link">Natální Karta</a></li>
-                            <li><a href="lunace.html" class="nav__dropdown-link">Lunární Fáze</a></li>
-                            <li><a href="astro-mapa.html" class="nav__dropdown-link">Astro Mapa</a></li>
-                            <li><a href="partnerska-shoda.html" class="nav__dropdown-link">Partnerská Shoda</a></li>
-                            <li><a href="cinsky-horoskop.html" class="nav__dropdown-link">Čínský Horoskop</a></li>
-                            <li
-                                style="border-top: 1px solid rgba(255,255,255,0.07); margin-top: 0.4rem; padding-top: 0.4rem;">
-                                <a href="horoskop/beran.html" class="nav__dropdown-link"
-                                    style="font-size:0.85rem; opacity:0.8;">Znamení zvěrokruhu →</a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="nav__item nav__item--has-dropdown">
-                        <a href="#" class="nav__link nav__link--dropdown-toggle">Věštění & Tarot <span
-                                class="dropdown-icon">▾</span></a>
-                        <ul class="nav__dropdown">
-                            <li><a href="tarot.html" class="nav__dropdown-link">Tarot</a></li>
-                            <li><a href="tarot-ano-ne.html" class="nav__dropdown-link">Tarot ANO nebo NE</a></li>
-                            <li><a href="andelske-karty.html" class="nav__dropdown-link">Andělské Karty</a></li>
-                            <li><a href="andelska-posta.html" class="nav__dropdown-link">Andělská Pošta</a></li>
-                            <li><a href="runy.html" class="nav__dropdown-link">Věštění z Run</a></li>
-                            <li><a href="kristalova-koule.html" class="nav__dropdown-link">Křišťálová Koule</a></li>
-                            <li><a href="snar.html" class="nav__dropdown-link">Lexikon Snů (Snář)</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav__item nav__item--has-dropdown">
-                        <a href="#" class="nav__link nav__link--dropdown-toggle">Čísla & Energie <span
-                                class="dropdown-icon">▾</span></a>
-                        <ul class="nav__dropdown">
-                            <li><a href="numerologie.html" class="nav__dropdown-link">Numerologie</a></li>
-                            <li><a href="aura.html" class="nav__dropdown-link">Aura Kalkulačka</a></li>
-                            <li><a href="afirmace.html" class="nav__dropdown-link">Denní Afirmace</a></li>
-                            <li><a href="jmena/" class="nav__dropdown-link">Databáze Jmen</a></li>
-                            <li><a href="biorytmy.html" class="nav__dropdown-link">Biorytmy</a></li>
-                            <li><a href="slovnik.html" class="nav__dropdown-link">Ezoterický Slovník</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav__item nav__item--has-dropdown">
-                        <a href="#" class="nav__link nav__link--dropdown-toggle">Poznání <span
-                                class="dropdown-icon">▾</span></a>
-                        <ul class="nav__dropdown">
-                            <li><a href="blog.html" class="nav__dropdown-link">Mystický Blog</a></li>
-                            <li><a href="faq.html" class="nav__dropdown-link">Časté otázky</a></li>
-                            <li><a href="o-nas.html" class="nav__dropdown-link">O nás</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav__item nav__item--has-dropdown">
-                        <a href="#" class="nav__link nav__link--dropdown-toggle">Premium <span
-                                class="dropdown-icon">▾</span></a>
-                        <ul class="nav__dropdown">
-                            <li><a href="mentor.html" class="nav__dropdown-link" data-premium="true">Průvodce</a></li>
-                            <li><a href="cenik.html" class="nav__dropdown-link">Ceník</a></li>
-                        </ul>
-                    </li>
-
-                    <!-- Mobile-only auth buttons (shown inside hamburger menu) -->
-                    <li class="nav__item mobile-auth-buttons">
-                        <a href="profil.html" id="mobile-profile-link" class="btn btn--glass btn--sm"
-                            style="display: none;">👤 Profil</a>
-                        <a href="#" id="mobile-auth-register-btn" class="btn btn--secondary">Registrace</a>
-                        <a href="#" id="mobile-auth-btn" class="btn btn--primary">Přihlásit se</a>
-                    </li>
-                </ul>
-            </nav>
-
-            <div class="auth-buttons">
-                <a href="profil.html" id="profile-link" class="btn btn--glass btn--sm" style="display: none;">👤
-                    Profil</a>
-                <a href="#" id="auth-register-btn" class="btn btn--secondary">Registrace</a>
-                <a href="#" id="auth-btn" class="btn btn--primary">Přihlásit</a>
-            </div>
-        </div>
-    </div>
+<!-- HEADER COMPONENT -->
+<header class="header">
+    <div class="container">
+        <div class="header__inner">
+            <a href="index.html" class="logo">
+                <img src="img/logo-3d.webp?v=4" alt="Mystická Hvězda Logo" class="logo__image" loading="lazy">
+                <span class="logo__text">Mystická<span class="text-gradient">Hvězda</span></span>
+            </a>
+
+            <!-- Hamburger OUTSIDE of nav so it's visible on mobile -->
+            <button class="nav__toggle" aria-label="Menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="nav">
+                <ul class="nav__list">
+                    <li class="nav__item"><a href="index.html" class="nav__link">Domů</a></li>
+
+                    <li class="nav__item nav__item--has-dropdown">
+                        <a href="#" class="nav__link nav__link--dropdown-toggle">Astrologie <span
+                                class="dropdown-icon">▾</span></a>
+                        <ul class="nav__dropdown">
+                            <li><a href="horoskopy.html" class="nav__dropdown-link">Horoskopy</a></li>
+                            <li><a href="natalni-karta.html" class="nav__dropdown-link">Natální Karta</a></li>
+                            <li><a href="lunace.html" class="nav__dropdown-link">Lunární Fáze</a></li>
+                            <li><a href="astro-mapa.html" class="nav__dropdown-link">Astro Mapa</a></li>
+                            <li><a href="partnerska-shoda.html" class="nav__dropdown-link">Partnerská Shoda</a></li>
+                            <li><a href="cinsky-horoskop.html" class="nav__dropdown-link">Čínský Horoskop</a></li>
+                            <li
+                                style="border-top: 1px solid rgba(255,255,255,0.07); margin-top: 0.4rem; padding-top: 0.4rem;">
+                                <a href="horoskop/beran.html" class="nav__dropdown-link"
+                                    style="font-size:0.85rem; opacity:0.8;">Znamení zvěrokruhu →</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav__item nav__item--has-dropdown">
+                        <a href="#" class="nav__link nav__link--dropdown-toggle">Věštění & Tarot <span
+                                class="dropdown-icon">▾</span></a>
+                        <ul class="nav__dropdown">
+                            <li><a href="tarot.html" class="nav__dropdown-link">Tarot</a></li>
+                            <li><a href="tarot-ano-ne.html" class="nav__dropdown-link">Tarot ANO nebo NE</a></li>
+                            <li><a href="andelske-karty.html" class="nav__dropdown-link">Andělské Karty</a></li>
+                            <li><a href="andelska-posta.html" class="nav__dropdown-link">Andělská Pošta</a></li>
+                            <li><a href="runy.html" class="nav__dropdown-link">Věštění z Run</a></li>
+                            <li><a href="kristalova-koule.html" class="nav__dropdown-link">Křišťálová Koule</a></li>
+                            <li><a href="snar.html" class="nav__dropdown-link">Lexikon Snů (Snář)</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav__item nav__item--has-dropdown">
+                        <a href="#" class="nav__link nav__link--dropdown-toggle">Čísla & Energie <span
+                                class="dropdown-icon">▾</span></a>
+                        <ul class="nav__dropdown">
+                            <li><a href="numerologie.html" class="nav__dropdown-link">Numerologie</a></li>
+                            <li><a href="aura.html" class="nav__dropdown-link">Aura Kalkulačka</a></li>
+                            <li><a href="afirmace.html" class="nav__dropdown-link">Denní Afirmace</a></li>
+                            <li><a href="jmena/" class="nav__dropdown-link">Databáze Jmen</a></li>
+                            <li><a href="biorytmy.html" class="nav__dropdown-link">Biorytmy</a></li>
+                            <li><a href="slovnik.html" class="nav__dropdown-link">Ezoterický Slovník</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav__item nav__item--has-dropdown">
+                        <a href="#" class="nav__link nav__link--dropdown-toggle">Poznání <span
+                                class="dropdown-icon">▾</span></a>
+                        <ul class="nav__dropdown">
+                            <li><a href="blog.html" class="nav__dropdown-link">Mystický Blog</a></li>
+                            <li><a href="faq.html" class="nav__dropdown-link">Časté otázky</a></li>
+                            <li><a href="o-nas.html" class="nav__dropdown-link">O nás</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav__item nav__item--has-dropdown">
+                        <a href="#" class="nav__link nav__link--dropdown-toggle">Premium <span
+                                class="dropdown-icon">▾</span></a>
+                        <ul class="nav__dropdown">
+                            <li><a href="mentor.html" class="nav__dropdown-link" data-premium="true">Průvodce</a></li>
+                            <li><a href="cenik.html" class="nav__dropdown-link">Ceník</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Mobile-only auth buttons (shown inside hamburger menu) -->
+                    <li class="nav__item mobile-auth-buttons">
+                        <a href="profil.html" id="mobile-profile-link" class="btn btn--glass btn--sm"
+                            style="display: none;">👤 Profil</a>
+                        <a href="#" id="mobile-auth-register-btn" class="btn btn--secondary">Registrace</a>
+                        <a href="#" id="mobile-auth-btn" class="btn btn--primary">Přihlásit se</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="header__actions">
+                <div class="lang-switcher">
+                    <button class="lang-switcher__btn" aria-label="Změnit jazyk">
+                        <span class="lang-switcher__current">CZ</span>
+                        <span class="dropdown-icon">▾</span>
+                    </button>
+                    <ul class="lang-switcher__dropdown">
+                        <li><a href="#" data-lang="cs" class="lang-switcher__link active">Čeština (CZ)</a></li>
+                        <li><a href="#" data-lang="sk" class="lang-switcher__link">Slovenčina (SK)</a></li>
+                        <li><a href="#" data-lang="pl" class="lang-switcher__link">Polski (PL)</a></li>
+                    </ul>
+                </div>
+
+                <div class="auth-buttons">
+                    <a href="profil.html" id="profile-link" class="btn btn--glass btn--sm" style="display: none;">👤
+                        Profil</a>
+                    <a href="#" id="auth-register-btn" class="btn btn--secondary">Registrace</a>
+                    <a href="#" id="auth-btn" class="btn btn--primary">Přihlásit</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </header>

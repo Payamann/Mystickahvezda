@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Stwórz swój osobisty kosmogram i odkryj pozycje planet w momencie Twoich narodzin.">
+    <meta name="keywords" content="kosmogram, horoskop urodzeniowy, planety, astrologia">
+    <meta name="theme-color" content="#0a0a1a">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Kosmogram | Mistyczna Gwiazda">
+    <meta property="og:description" content="Stwórz swój osobisty kosmogram i odkryj pozycje planet w momencie Twoich narodzin.">
+    <meta property="og:image" content="../img/icon-natal.webp">
+    <meta property="og:locale" content="pl_PL">
+    
+    <title>Kosmogram | Mistyczna Gwiazda</title>
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+    <link rel="manifest" href="../manifest.json">
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=9">
+    
+    <link rel="canonical" href="https://mystickahvezda.cz/pl/natalni-karta.html">
+    <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/natalni-karta.html">
+    <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/natalni-karta.html">
+    <link rel="alternate" hreflang="pl" href="https://mystickahvezda.cz/pl/natalni-karta.html">
+</head>
+
+<body>
+    <div class="stars" aria-hidden="true"></div>
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <section class="section section--hero" style="min-height: 50vh; display: flex; align-items: center; padding-top: 120px;">
+            <div class="container text-center">
+                <h1 class="hero__title mb-xl">
+                    <span class="text-gradient">Odkryj Swój Kod Kosmiczny</span>
+                </h1>
+                <p class="hero__subtitle">Twój kosmogram to mapa nieba w momencie Twoich narodzin. Odkryj swój ukryty potencjał.</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div class="grid grid-2" style="align-items: flex-start; gap: 4rem;">
+                    <div class="card">
+                        <h2 class="section__title mb-lg">Dane Urodzenia</h2>
+                        <div id="natal-form" class="email-form">
+                            <div class="form-group">
+                                <label for="birth-date">Data urodzenia</label>
+                                <input type="date" id="birth-date" class="email-form__input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="birth-time">Godzina urodzenia (jeśli znasz)</label>
+                                <input type="time" id="birth-time" class="email-form__input">
+                            </div>
+                            <div class="form-group">
+                                <label for="birth-place">Miejsce urodzenia</label>
+                                <input type="text" id="birth-place" class="email-form__input" placeholder="Wpisz miasto..." required>
+                            </div>
+                            <button id="calculate-natal" class="btn btn--primary btn--full mt-lg">Oblicz Kosmogram</button>
+                        </div>
+                    </div>
+                    <div id="natal-result" class="text-center">
+                        <div class="natal-chart-container">
+                            <img src="../img/icon-natal.webp" alt="Kosmogram" style="width: 100%; opacity: 0.2; filter: grayscale(1);">
+                            <p style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--color-silver-mist);">Wprowadź dane, aby wygenerować wykres</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+    <script src="../js/api-config.js" defer></script>
+    <script src="../js/templates.js" defer></script>
+    <script src="../js/components.js" defer></script>
+    <script type="module" src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Vytvorte si svoju osobnú natálnu kartu a objavte pozície planét v okamihu vášho narodenia.">
+    <meta name="keywords" content="natálna karta, horoskop narodenia, planéty, astrológia">
+    <meta name="theme-color" content="#0a0a1a">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Natálna Karta | Mystická Hviezda">
+    <meta property="og:description" content="Vytvorte si svoju osobnú natálnu kartu a objavte pozície planét v okamihu vášho narodenia.">
+    <meta property="og:image" content="../img/icon-natal.webp">
+    <meta property="og:locale" content="sk_SK">
+    
+    <title>Natálna Karta | Mystická Hviezda</title>
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+    <link rel="manifest" href="../manifest.json">
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=9">
+    
+    <link rel="canonical" href="https://mystickahvezda.cz/sk/natalni-karta.html">
+    <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/natalni-karta.html">
+    <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/natalni-karta.html">
+    <link rel="alternate" hreflang="pl" href="https://mystickahvezda.cz/pl/natalni-karta.html">
+</head>
+
+<body>
+    <div class="stars" aria-hidden="true"></div>
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <section class="section section--hero" style="min-height: 50vh; display: flex; align-items: center; padding-top: 120px;">
+            <div class="container text-center">
+                <h1 class="hero__title mb-xl">
+                    <span class="text-gradient">Objavte Svoj Vesmírny Kód</span>
+                </h1>
+                <p class="hero__subtitle">Vaša natálna karta je mapa oblohy v okamihu vášho narodenia. Objavte svoj skrytý potenciál.</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div class="grid grid-2" style="align-items: flex-start; gap: 4rem;">
+                    <div class="card">
+                        <h2 class="section__title mb-lg">Údaje Narodenia</h2>
+                        <div id="natal-form" class="email-form">
+                            <div class="form-group">
+                                <label for="birth-date">Dátum narodenia</label>
+                                <input type="date" id="birth-date" class="email-form__input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="birth-time">Čas narodenia (ak poznáte)</label>
+                                <input type="time" id="birth-time" class="email-form__input">
+                            </div>
+                            <div class="form-group">
+                                <label for="birth-place">Miesto narodenia</label>
+                                <input type="text" id="birth-place" class="email-form__input" placeholder="Zadajte mesto..." required>
+                            </div>
+                            <button id="calculate-natal" class="btn btn--primary btn--full mt-lg">Vypočítať Natálnu Kartu</button>
+                        </div>
+                    </div>
+                    <div id="natal-result" class="text-center">
+                        <div class="natal-chart-container">
+                            <img src="../img/icon-natal.webp" alt="Natálna karta" style="width: 100%; opacity: 0.2; filter: grayscale(1);">
+                            <p style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--color-silver-mist);">Zadajte údaje pre vygenerovanie mapy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+    <script src="../js/api-config.js" defer></script>
+    <script src="../js/templates.js" defer></script>
+    <script src="../js/components.js" defer></script>
+    <script type="module" src="../js/main.js"></script>
+</body>
+</html>

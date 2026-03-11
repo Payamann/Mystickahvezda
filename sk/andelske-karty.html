@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Vytiahnite si svoju Anjelskú kartu pre dnešný deň. Jemná anjelská podpora a posolstvo svetla pre vašu dušu.">
+    <meta name="keywords" content="anjelské karty, karta dňa, anjeli, veštenie, duchovná podpora">
+    <meta name="theme-color" content="#0a0a1a">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Anjelská Karta Dňa | Mystická Hviezda">
+    <meta property="og:description" content="Zastavte sa a nechajte sa viesť. Vytiahnite si anjelskú kartu s láskavým posolstvom.">
+    <meta property="og:image" content="../img/og-angel-card.webp">
+    <meta property="og:locale" content="sk_SK">
+    
+    <title>Anjelská Karta Dňa | Mystická Hviezda</title>
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👼</text></svg>">
+    <link rel="manifest" href="../manifest.json">
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=9">
+    
+    <link rel="canonical" href="https://mystickahvezda.cz/sk/andelske-karty.html">
+    <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/andelske-karty.html">
+    <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/andelske-karty.html">
+    <link rel="alternate" hreflang="pl" href="https://mystickahvezda.cz/pl/andelske-karty.html">
+</head>
+
+<body>
+    <div class="stars" aria-hidden="true"></div>
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <section class="section section--hero angel-hero" style="min-height: 80vh; display: flex; align-items: center; padding-top: 100px;">
+            <div class="container text-center">
+                <h1 class="hero__title mb-xl">
+                    <span class="text-gradient">Anjelská Karta Dňa</span>
+                </h1>
+                <p class="hero__subtitle">Posolstvo lásky a nádeje nebeských sprievodcov.</p>
+
+                <div class="angel-card-container mb-xl" id="angel-card-draw">
+                    <div class="angel-card-inner">
+                        <div class="angel-card-front">
+                            <img src="../img/angel-card-back.webp" alt="Rub karty">
+                        </div>
+                        <div class="angel-card-back" id="angel-result-card">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="angel-interpretation" class="card mt-xl" style="display: none; max-width: 600px; margin: 0 auto; text-align: left;">
+                    <h3 id="card-name" style="color: var(--color-mystic-gold);">---</h3>
+                    <p id="card-message" style="font-size: 1.1rem; line-height: 1.6;"></p>
+                </div>
+
+                <div class="mt-xl">
+                    <button class="btn btn--primary btn--lg" id="draw-btn">Vylosovať Kartu</button>
+                    <button class="btn btn--secondary btn--lg" id="next-btn" style="display: none;">Zobraziť ďalšiu kartu</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+    <script src="../js/api-config.js" defer></script>
+    <script src="../js/templates.js" defer></script>
+    <script src="../js/components.js" defer></script>
+    <script src="../js/angel-cards.js" defer></script>
+    <script type="module" src="../js/main.js"></script>
+</body>
+</html>

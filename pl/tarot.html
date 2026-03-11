@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Online tarot z interpretacją AI. Wybierz spośród 22 kart Wielkich Arkanów i otrzymaj spersonalizowany odczyt.">
+    <meta name="keywords" content="tarot, karty tarota, wróżby, wielkie arkana">
+    <meta name="theme-color" content="#0a0a1a">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Rozkłady Tarota Online | Mistyczna Gwiazda">
+    <meta property="og:description" content="Online tarot z interpretacją AI. Wybierz spośród 22 kart Wielkich Arkanów i otrzymaj spersonalizowany odczyt.">
+    <meta property="og:image" content="../img/tarot-back.webp">
+    <meta property="og:locale" content="pl_PL">
+    <title>Rozkłady Tarota Online | Mistyczna Gwiazda</title>
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>">
+    <link rel="manifest" href="../manifest.json">
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=9">
+    <link rel="canonical" href="https://mystickahvezda.cz/pl/tarot.html">
+    <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/tarot.html">
+    <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/tarot.html">
+    <link rel="alternate" hreflang="pl" href="https://mystickahvezda.cz/pl/tarot.html">
+</head>
+
+<body>
+    <div class="stars" aria-hidden="true"></div>
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <section class="section section--hero" style="min-height: 80vh; padding-top: 140px;">
+            <div class="container">
+                <div class="hero__content">
+                    <h1 class="hero__title">
+                        <span class="text-gradient">Lustro Duszy</span>
+                    </h1>
+                    <p class="hero__subtitle mb-xl">
+                        Karty nie powiedzą Ci, co musisz zrobić. Pokażą Ci drogę, którą Twoje serce już zna, ale rozum może jej nie dostrzegać.
+                    </p>
+
+                    <div class="t-spread-grid">
+                        <div class="t-spread-card">
+                            <h3 class="t-spread-title">Jedna Karta</h3>
+                            <p class="t-spread-desc">Szybka odpowiedź na proste pytanie. Idealne dla dziennej inspiracji.</p>
+                            <button class="btn btn--glass btn--full spread-trigger" data-spread-type="Jedna karta">Rozłóż kartę</button>
+                        </div>
+                        <div class="t-spread-card featured">
+                            <h3 class="t-spread-title">Trzy Karty</h3>
+                            <p class="t-spread-desc">Klasyczny rozkład Przeszłość - Teraźniejszość - Przyszłość. Zrozumienie powiązań.</p>
+                            <button class="btn btn--primary btn--full spread-trigger" data-spread-type="Trzy karty">Rozłóż karty</button>
+                        </div>
+                        <div class="t-spread-card">
+                            <h3 class="t-spread-title">Krzyż Celtycki</h3>
+                            <p class="t-spread-desc">Najbardziej kompleksowy rozkład 10 kart. Głęboka analiza sytuacji i wpływów.</p>
+                            <button class="btn btn--glass btn--full spread-trigger" data-spread-type="Celtic Cross">Rozłóż karty</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container text-center">
+                <p class="mb-xl">Kliknij na kartę, aby przetasować talię</p>
+                <div class="tarot-deck">
+                    <div class="tarot-card"><img src="../img/tarot-back.webp" alt="Tarot Card"></div>
+                    <div class="tarot-card"><img src="../img/tarot-back.webp" alt="Tarot Card"></div>
+                    <div class="tarot-card"><img src="../img/tarot-back.webp" alt="Tarot Card"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+    <script src="../js/api-config.js" defer></script>
+    <script src="../js/templates.js" defer></script>
+    <script src="../js/components.js" defer></script>
+    <script type="module" src="../js/main.js"></script>
+</body>
+</html>

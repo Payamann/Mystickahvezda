@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Zapytaj kryształową kulę o cokolwiek. Wyrocznia AI dla Twojego osobistego pytania.">
+    <meta name="keywords" content="kryształowa kula, wróżby, wyrocznia, przepowiednia">
+    <meta name="theme-color" content="#0a0a1a">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Kryształowa Kula | Mistyczna Gwiazda">
+    <meta property="og:description" content="Zapytaj kryształową kulę o cokolwiek. Wyrocznia AI dla Twojego osobistego pytania.">
+    <meta property="og:image" content="../img/crystal-ball-3d.webp">
+    <meta property="og:locale" content="pl_PL">
+    
+    <title>Kryształowa Kula | Mistyczna Gwiazda</title>
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
+    <link rel="manifest" href="../manifest.json">
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=9">
+    
+    <link rel="canonical" href="https://mystickahvezda.cz/pl/kristalova-koule.html">
+    <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/kristalova-koule.html">
+    <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/kristalova-koule.html">
+    <link rel="alternate" hreflang="pl" href="https://mystickahvezda.cz/pl/kristalova-koule.html">
+</head>
+
+<body>
+    <div class="stars" aria-hidden="true"></div>
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <section class="section section--hero" style="min-height: 80vh; display: flex; align-items: center;">
+            <div class="container text-center">
+                <h1 class="hero__title mb-xl">
+                    <span class="text-gradient">Głos Intuicji</span>
+                </h1>
+
+                <div id="crystal-ball" class="ball-container">
+                    <img src="../img/crystal-ball-3d.webp" alt="Magiczna Kryształowa Kula" class="ball-image">
+                    <div class="ball-glow"></div>
+                </div>
+
+                <div id="answer-container" class="answer-box">
+                    <p id="answer-text">Odpowiedź pojawi się tutaj...</p>
+                </div>
+
+                <div class="question-form" style="max-width: 500px; margin: var(--space-xl) auto;">
+                    <input type="text" id="question-input" class="email-form__input" placeholder="Napisz swoje pytanie..." style="width: 100%; text-align: center;">
+                </div>
+
+                <p class="instruction-text mb-lg">
+                    Weź głęboki oddech, uspokój umysł i zadaj pytanie. Pozwól przemówić symbolom.
+                </p>
+
+                <div>
+                    <button class="btn btn--primary" id="ask-btn">Zapytaj kulę</button>
+                    <button class="btn btn--ghost" id="reset-btn" style="opacity: 0; pointer-events: none; margin-left: var(--space-md);">Nowe pytanie</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+    <script src="../js/api-config.js" defer></script>
+    <script src="../js/templates.js" defer></script>
+    <script src="../js/components.js" defer></script>
+    <script src="../js/crystal-ball.js" defer></script>
+    <script type="module" src="../js/main.js"></script>
+</body>
+</html>
