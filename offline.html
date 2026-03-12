@@ -1,43 +1,87 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jste offline | Mystická Hvězda</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&display=swap&subset=latin,latin-ext" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0a0a1a; font-family: 'Inter', sans-serif; color: white; text-align: center; overflow: hidden; }
-        .stars { position: fixed; inset: 0; pointer-events: none; }
-        .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--d, 3s) ease-in-out infinite; }
-        @keyframes twinkle { 0%,100%{opacity:.2} 50%{opacity:1} }
-        .container { position: relative; z-index: 1; padding: 2rem; max-width: 500px; }
-        .icon { font-size: 5rem; margin-bottom: 1.5rem; display: block; animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
-        h1 { font-family: 'Cinzel', serif; font-size: 2rem; margin-bottom: 1rem; background: linear-gradient(135deg, #d4af37, #f5d17f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        p { color: rgba(255,255,255,0.6); line-height: 1.7; margin-bottom: 2rem; }
-        .btn { display: inline-block; padding: 0.9rem 2rem; background: linear-gradient(135deg, #9b59b6, #6c3483); border: none; border-radius: 50px; color: white; text-decoration: none; font-size: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(155,89,182,0.4); }
-    </style>
-</head>
-<body>
-    <div class="stars" id="stars"></div>
-    <div class="container">
-        <span class="icon">??</span>
-        <h1>Jste offline</h1>
-        <p>Zdá se, že jste ztratili připojení k internetu. Hvězdy na vás počkají — vraťte se, až budete zpět online.</p>
-        <a href="/" class="btn" onclick="window.location.reload()">?? Zkusit znovu</a>
-    </div>
-    <script>
-        const s = document.getElementById('stars');
-        for (let i = 0; i < 80; i++) {
-            const el = document.createElement('div');
-            el.className = 'star';
-            const size = Math.random() * 3 + 1;
-            el.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s;opacity:${Math.random()*.8}`;
-            s.appendChild(el);
-        }
-    </script>
-</body>
-</html>
+<!DOCTYPE html>
+
+<html lang="cs">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jste offline | Mystická Hvězda</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&display=swap&subset=latin,latin-ext" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
+
+    <style>
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0a0a1a; font-family: 'Inter', sans-serif; color: white; text-align: center; overflow: hidden; }
+
+        .stars { position: fixed; inset: 0; pointer-events: none; }
+
+        .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--d, 3s) ease-in-out infinite; }
+
+        @keyframes twinkle { 0%,100%{opacity:.2} 50%{opacity:1} }
+
+        .container { position: relative; z-index: 1; padding: 2rem; max-width: 500px; }
+
+        .icon { font-size: 5rem; margin-bottom: 1.5rem; display: block; animation: float 3s ease-in-out infinite; }
+
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
+
+        h1 { font-family: 'Cinzel', serif; font-size: 2rem; margin-bottom: 1rem; background: linear-gradient(135deg, #d4af37, #f5d17f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        p { color: rgba(255,255,255,0.6); line-height: 1.7; margin-bottom: 2rem; }
+
+        .btn { display: inline-block; padding: 0.9rem 2rem; background: linear-gradient(135deg, #9b59b6, #6c3483); border: none; border-radius: 50px; color: white; text-decoration: none; font-size: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(155,89,182,0.4); }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+
+        <span class="icon">??</span>
+
+        <h1>Jste offline</h1>
+
+        <p>Zdá se, že jste ztratili připojení k internetu. Hvězdy na vás počkají — vraťte se, až budete zpět online.</p>
+
+        <a href="/" class="btn" onclick="window.location.reload()">?? Zkusit znovu</a>
+
+    </div>
+
+    <script>
+
+        const s = document.getElementById('stars');
+
+        for (let i = 0; i < 80; i++) {
+
+            const el = document.createElement('div');
+
+            el.className = 'star';
+
+            const size = Math.random() * 3 + 1;
+
+            el.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s;opacity:${Math.random()*.8}`;
+
+            s.appendChild(el);
+
+        }
+
+    </script>
+
+</body>
+
+</html>
+

@@ -392,7 +392,21 @@ const rootDir = path.resolve(__dirname, '../');
 console.log(`đź“‚ Serving static files from: ${rootDir}`);
 
 const staticOptions = process.env.NODE_ENV === 'production'
-    ? { maxAge: '1y', immutable: true }
+    ? {
+        maxAge: '1y',
+        immutable: true,
+        setHeaders: (res, filePath) => {
+            // HTML pages and service worker must not be cached immutably
+            // so deployments are reflected immediately
+            if (filePath.endsWith('.html') || filePath.endsWith('service-worker.js')) {
+                res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            } else if (filePath.endsWith('manifest.json')) {
+                res.setHeader('Cache-Control', 'public, max-age=86400');
+            }
+            // Tell caches that responses vary by encoding (gzip/br)
+            res.setHeader('Vary', 'Accept-Encoding');
+        }
+    }
     : {};
 
 app.use(express.static(rootDir, staticOptions));
