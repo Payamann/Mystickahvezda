@@ -287,6 +287,29 @@ class Templates {
   </div>`;
     }
 
+    static renderAuthorBox(author) {
+        if (!author) return '';
+        
+        return `
+            <div class="author-box" style="margin-top: var(--space-2xl); padding: var(--space-xl); background: rgba(255,255,255,0.03); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 16px; display: flex; gap: var(--space-lg); align-items: center;">
+                <div class="author-box__avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--color-mystic-gold); flex-shrink: 0; overflow: hidden; background: #1a0a2e;">
+                    <img src="${author.image}" alt="${author.name}" width="80" height="80" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="author-box__content">
+                    <h4 style="margin: 0 0 0.2rem 0; color: var(--color-mystic-gold); font-size: 1.1rem;">${author.name}</h4>
+                    <p style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: var(--color-starlight); opacity: 0.8; font-weight: 600; text-transform: uppercase;">${author.role}</p>
+                    <p style="margin: 0; font-size: 0.9rem; color: var(--color-silver-mist); line-height: 1.5;">${author.bio}</p>
+                    ${author.links ? `
+                        <div style="margin-top: 0.8rem; display: flex; gap: 1rem;">
+                            ${author.links.instagram ? `<a href="${author.links.instagram}" target="_blank" style="color: rgba(255,255,255,0.4); font-size: 0.8rem; text-decoration: none;">Instagram ↗</a>` : ''}
+                            ${author.links.facebook ? `<a href="${author.links.facebook}" target="_blank" style="color: rgba(255,255,255,0.4); font-size: 0.8rem; text-decoration: none;">Facebook ↗</a>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }
+
     static escapeHtml(text) {
         if (!text) return '';
         return text

@@ -2,6 +2,8 @@
     const API_URL = window.API_CONFIG?.BASE_URL || 'http://localhost:3001/api';
 
     const Auth = {
+        // Note: For future security hardening, move tokens to HttpOnly cookies.
+        // This client will then use document.cookie for presence check or rely on server headers.
         token: localStorage.getItem('auth_token'),
         user: JSON.parse(localStorage.getItem('auth_user')),
 
