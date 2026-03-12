@@ -191,7 +191,7 @@ window.Premium = {
 
         // Add upgrade CTA to header (for free users)
         if (!isPremium && document.getElementById('header-placeholder')) {
-            setTimeout(() => {
+            const addUpgradeCTA = () => {
                 const header = document.querySelector('header nav');
                 if (header && !document.getElementById('upgrade-cta')) {
                     const upgradeCTA = document.createElement('a');
@@ -201,7 +201,13 @@ window.Premium = {
                     upgradeCTA.innerHTML = '✨ Vyzkoušet Premium';
                     header.appendChild(upgradeCTA);
                 }
-            }, 500);
+            };
+            
+            if (document.querySelector('header nav')) {
+                addUpgradeCTA();
+            } else {
+                document.addEventListener('components:loaded', addUpgradeCTA);
+            }
         }
     }
 };

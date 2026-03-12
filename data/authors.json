@@ -1,0 +1,23 @@
+{
+    "astrologer_elena": {
+        "name": "Elena Hvězdná",
+        "role": "Hlavní astroložka & vizionářka",
+        "bio": "Elena se věnuje studiu západní astrologie přes 15 let. Specializuje se na karmickou astrologii a partnerskou synastrii. Jejím posláním je překládat jazyk hvězd do srozumitelných rad pro každodenní život.",
+        "specialization": ["Karmická astrologie", "Synastrie", "Tranzity"],
+        "image": "img/authors/elena.webp",
+        "links": {
+            "instagram": "https://instagram.com/elena_astro",
+            "web": "https://mystickahvezda.cz"
+        }
+    },
+    "tarot_master_jan": {
+        "name": "Jan Mystik",
+        "role": "Mistr tarotu & rituální magie",
+        "bio": "Jan je strážcem starodávných tarotových tradic. Jeho výklady propojují klasickou symboliku Rider-Waite-Smith s moderní psychologií. Pomohl již tisícům lidí najít odpovědi v nejtěžších životních chvílích.",
+        "specialization": ["Keltský kříž", "Archetypální psychologie", "Numerologie"],
+        "image": "img/authors/jan.webp",
+        "links": {
+            "facebook": "https://facebook.com/jan_tarot"
+        }
+    }
+}

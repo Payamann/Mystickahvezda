@@ -275,28 +275,8 @@ class Templates {
                 <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5;">Zadejte svůj email a pošleme vám odkaz pro obnovení hesla.</p>
             </div>
 
-            <!-- Optional Register Fields -->
-            <div id="register-fields" style="display: none; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; margin-bottom: 1rem;">
-                <p style="text-align: center; color: var(--color-mystic-gold); font-size: 0.9rem; margin-bottom: 1rem;">Doplňující údaje (nepovinné)</p>
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem;">Jméno</label>
-                    <input type="text" name="first_name" autocomplete="given-name" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-size: 16px; min-height: 48px;">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
-                    <div>
-                        <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem; font-size: 0.8rem;">Datum narození</label>
-                        <input type="date" name="birth_date" style="width: 100%; padding: 12px 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-size: 16px; min-height: 48px;">
-                    </div>
-                     <div>
-                        <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem; font-size: 0.8rem;">Čas narození</label>
-                        <input type="time" name="birth_time" style="width: 100%; padding: 12px 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-size: 16px; min-height: 48px;">
-                    </div>
-                </div>
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem;">Místo narození</label>
-                    <input type="text" name="birth_place" placeholder="Např. Praha" autocomplete="address-level2" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-size: 16px; min-height: 48px;">
-                </div>
-            </div>
+            <!-- Optional Register Fields (Moved to onboarding) -->
+            <div id="register-fields" style="display: none;"></div>
 
             <button type="submit" id="auth-submit" class="btn btn--primary" style="width: 100%; min-height: 48px;">Přihlásit se</button>
             <p style="text-align: center; margin-top: 1rem;">
@@ -305,6 +285,29 @@ class Templates {
         </form>
     </div>
   </div>`;
+    }
+
+    static renderAuthorBox(author) {
+        if (!author) return '';
+        
+        return `
+            <div class="author-box" style="margin-top: var(--space-2xl); padding: var(--space-xl); background: rgba(255,255,255,0.03); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 16px; display: flex; gap: var(--space-lg); align-items: center;">
+                <div class="author-box__avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--color-mystic-gold); flex-shrink: 0; overflow: hidden; background: #1a0a2e;">
+                    <img src="${author.image}" alt="${author.name}" width="80" height="80" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="author-box__content">
+                    <h4 style="margin: 0 0 0.2rem 0; color: var(--color-mystic-gold); font-size: 1.1rem;">${author.name}</h4>
+                    <p style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: var(--color-starlight); opacity: 0.8; font-weight: 600; text-transform: uppercase;">${author.role}</p>
+                    <p style="margin: 0; font-size: 0.9rem; color: var(--color-silver-mist); line-height: 1.5;">${author.bio}</p>
+                    ${author.links ? `
+                        <div style="margin-top: 0.8rem; display: flex; gap: 1rem;">
+                            ${author.links.instagram ? `<a href="${author.links.instagram}" target="_blank" style="color: rgba(255,255,255,0.4); font-size: 0.8rem; text-decoration: none;">Instagram ↗</a>` : ''}
+                            ${author.links.facebook ? `<a href="${author.links.facebook}" target="_blank" style="color: rgba(255,255,255,0.4); font-size: 0.8rem; text-decoration: none;">Facebook ↗</a>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
     }
 
     static escapeHtml(text) {

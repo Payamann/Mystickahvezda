@@ -71,8 +71,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const card = document.createElement('article');
             card.className = 'dict-card';
             card.id = 'symbol-' + item.id;
-            const emojiHtml = item.emoji ? `<span style="margin-right:6px;font-size:1.1rem">${item.emoji}</span>` : '';
-            card.innerHTML = `<h3 class="dict-keyword">${emojiHtml}${item.keyword}</h3><p class="dict-desc">${item.description}</p>`;
+            card.innerHTML = `<h3 class="dict-keyword">${emojiHtml}${item.keyword}</h3>
+                              <p class="dict-desc">${item.description}</p>
+                              <a href="#" onclick="document.querySelector('.ai-dream-section').scrollIntoView({behavior: 'smooth'}); document.getElementById('ai-dream-input').focus(); return false;" style="display:inline-block; margin-top:12px; font-size:0.85rem; color: var(--color-mystic-gold); text-decoration: none; border: 1px solid rgba(212, 175, 55, 0.3); padding: 5px 10px; border-radius: 20px; transition: background 0.2s;">✨ Hluboký osobní výklad (Premium)</a>`;
             dictGrid.appendChild(card);
         });
     }

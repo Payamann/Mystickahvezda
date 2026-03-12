@@ -2,6 +2,8 @@
     const API_URL = window.API_CONFIG?.BASE_URL || 'http://localhost:3001/api';
 
     const Auth = {
+        // Note: For future security hardening, move tokens to HttpOnly cookies.
+        // This client will then use document.cookie for presence check or rely on server headers.
         token: localStorage.getItem('auth_token'),
         user: JSON.parse(localStorage.getItem('auth_user')),
 
@@ -346,13 +348,7 @@
                     const isRegister = btn && btn.textContent === 'Zaregistrovat';
 
                     if (isRegister) {
-                        const additionalData = {
-                            first_name: form.first_name?.value,
-                            birth_date: form.birth_date?.value,
-                            birth_time: form.birth_time?.value,
-                            birth_place: form.birth_place?.value
-                        };
-                        const res = await this.register(email, password, additionalData);
+                        const res = await this.register(email, password, {});
                         if (!res.success) this.showToast('Chyba registrace', res.error, 'error');
                     } else {
                         const res = await this.login(email, password);
