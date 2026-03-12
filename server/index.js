@@ -23,6 +23,7 @@ import { initializeEmailQueueJob } from './jobs/email-queue.js';
 // Route modules
 import oracleRoutes from './routes/oracle.js';
 import horoscopeRoutes from './routes/horoscope.js';
+import horoscopePagesRoutes from './routes/horoscope-pages.js';
 import numerologyRoutes from './routes/numerology.js';
 import userRoutes from './routes/user.js';
 import angelPostRoutes from './routes/angel-post.js';
@@ -381,6 +382,10 @@ if (process.env.NODE_ENV !== 'production') {
         next();
     });
 }
+
+// Programmatic SEO pages — must be before static middleware
+// Handles /horoskop/:sign/:date and /sitemap-horoscopes.xml
+app.use('/horoskop', horoscopePagesRoutes);
 
 // Serve static files from the parent directory (MystickaHvezda root)
 const rootDir = path.resolve(__dirname, '../');
