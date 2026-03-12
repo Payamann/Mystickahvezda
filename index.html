@@ -130,7 +130,7 @@
     h1, h2, h3 { font-family: var(--font-heading); margin-bottom: 0.5em; }
     img { max-width: 100%; height: auto; display: block; }
     .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--space-xl); }
-    .header { position: fixed; top: 0; left: 0; right: 0; z-index: 999; padding: 0.75rem 0; background: rgba(10, 10, 26, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .header { position: fixed; top: 0; left: 0; right: 0; z-index: 999; padding: 0.75rem 0; background: rgba(10, 10, 26, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(12px); }
     .header__inner { display: flex; align-items: center; justify-content: space-between; position: relative; width: 100%; }
     .logo { font-family: var(--font-heading); font-size: var(--text-2xl); font-weight: 700; color: #fff; display: flex; align-items: center; gap: var(--space-sm); text-decoration: none; }
     .logo__image { height: 60px; width: auto; mix-blend-mode: screen; filter: drop-shadow(0 0 10px rgba(157, 78, 221, 0.5)); }
@@ -142,7 +142,6 @@
     .text-gradient { background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .text-glow { text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); }
     .hero__image { width: 100%; max-width: 500px; margin: 0 auto; filter: drop-shadow(0 0 30px rgba(155,89,182,0.3)); }
-    
     .mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: rgba(10, 5, 25, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(155, 89, 182, 0.2); padding: 0.5rem 0 env(safe-area-inset-bottom, 0.5rem); }
     @media (max-width: 768px) {
       .mobile-bottom-nav { display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; }
@@ -152,13 +151,9 @@
       .hero__subtitle { font-size: 1.1rem; }
       body { padding-bottom: 65px; }
     }
-    .mobile-bottom-nav .nav-item { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 3px; padding: 0.4rem 0.2rem; text-decoration: none; color: rgba(255, 255, 255, 0.45); font-size: 0.6rem; transition: color 0.2s ease; }
-    .mobile-bottom-nav .nav-item.active { color: #d4af37; }
-    .mobile-bottom-nav .nav-icon { font-size: 1.3rem; display: block !important; }
   </style>
 
-  <link rel="stylesheet" href="css/style.v2.min.css?v=10" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="css/style.v2.min.css?v=10"></noscript>
+  <link rel="stylesheet" href="css/style.v2.min.css?v=11">
 
 
 
