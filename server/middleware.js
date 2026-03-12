@@ -5,7 +5,7 @@ import { JWT_SECRET } from './config/jwt.js';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 // Centralized premium plan type list - used by both hard and soft gates
-const PREMIUM_PLAN_TYPES = ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip_majestrat', 'vip'];
+import { PREMIUM_PLAN_TYPES } from './config/constants.js';
 
 /**
  * Standard JWT authentication middleware
@@ -135,17 +135,13 @@ export const optionalPremiumCheck = (req, res, next) => {
  */
 export const trackPaywallHit = async (userId, feature) => {
     try {
-        // TODO: Send to analytics (Mixpanel, Amplitude, etc.)
-        console.log(`[ANALYTICS] Paywall hit: user=${userId}, feature=${feature}`);
-
-        // Optionally store in database for internal analytics
-        // await supabase.from('analytics_events').insert({
-        //     user_id: userId,
-        //     event_type: 'paywall_hit',
-        //     feature: feature,
-        //     timestamp: new Date()
-        // });
+        await supabase.from('analytics_events').insert({
+            user_id: userId || null,
+            event_type: 'paywall_hit',
+            feature: feature,
+        });
     } catch (error) {
+        // Non-critical — don't let analytics errors block user requests
         console.error('Track paywall error:', error);
     }
 };

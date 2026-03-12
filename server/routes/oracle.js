@@ -3,12 +3,12 @@
  * Groups smaller AI-powered features that don't warrant individual files
  */
 import express from 'express';
-import { authenticateToken, requirePremium, optionalPremiumCheck } from '../middleware.js';
+import { authenticateToken, requirePremium, requirePremiumSoft, optionalPremiumCheck } from '../middleware.js';
 import { callGemini } from '../services/gemini.js';
 import { SYSTEM_PROMPTS } from '../config/prompts.js';
 import { calculateMoonPhase } from '../services/astrology.js';
-import { isPremiumUser } from '../payment.js';
 import { supabase } from '../db-supabase.js';
+import { trackPaywallHit } from '../middleware.js';
 
 export const router = express.Router();
 
@@ -81,18 +81,16 @@ router.post('/crystal-ball', optionalPremiumCheck, async (req, res) => {
 
 // ─── Lexikon Snů ──────────────────────────────────────────────────────────────
 
-router.post('/dream', authenticateToken, async (req, res) => {
+router.post('/dream', authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { dream } = req.body;
-        const userId = req.user.id;
 
         if (!dream || typeof dream !== 'string' || dream.length > 3000) {
             return res.status(400).json({ success: false, error: 'Popis snu je vyžadován (max 3000 znaků).' });
         }
 
-        const userIsPremium = await isPremiumUser(userId);
-
-        if (!userIsPremium) {
+        if (!req.isPremium) {
+            trackPaywallHit(req.user?.id, 'dream_analysis').catch(() => {});
             return res.status(403).json({
                 success: false,
                 error: 'Komplexní noční vhledy jsou dostupné pouze pro Hvězdné Průvodce (Premium).',
@@ -112,15 +110,13 @@ router.post('/dream', authenticateToken, async (req, res) => {
 
 // ─── Tarot ────────────────────────────────────────────────────────────────────
 
-router.post('/tarot', authenticateToken, async (req, res) => {
+router.post('/tarot', authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { question, cards, spreadType = 'tříkartový' } = req.body;
-        const userId = req.user.id;
-
-        const userIsPremium = await isPremiumUser(userId);
 
         // Free users can only do 1-card spreads
-        if (!userIsPremium && cards.length > 1) {
+        if (!req.isPremium && cards.length > 1) {
+            trackPaywallHit(req.user?.id, 'tarot_advanced').catch(() => {});
             // SOFT WALL: Show upgrade offer
             return res.status(402).json({
                 success: false,
@@ -209,19 +205,17 @@ router.post('/natal-chart', optionalPremiumCheck, async (req, res) => {
 
 // ─── Synastry ─────────────────────────────────────────────────────────────────
 
-router.post('/synastry', authenticateToken, async (req, res) => {
+router.post('/synastry', authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { person1, person2 } = req.body;
-        const userId = req.user.id;
 
         const safeName1 = String(person1?.name || '').substring(0, 100);
         const safeDate1 = String(person1?.birthDate || '').substring(0, 30);
         const safeName2 = String(person2?.name || '').substring(0, 100);
         const safeDate2 = String(person2?.birthDate || '').substring(0, 30);
 
-        const userIsPremium = await isPremiumUser(userId);
-
-        if (!userIsPremium) {
+        if (!req.isPremium) {
+            trackPaywallHit(req.user?.id, 'synastry').catch(() => {});
             return res.json({ success: true, isTeaser: true, response: null });
         }
 

@@ -56,6 +56,9 @@ async function callAPI(endpoint, data) {
         const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
+        const csrfToken = await getCSRFToken();
+        if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
+
         const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
             method: 'POST',
             headers,
@@ -83,6 +86,28 @@ async function callAPI(endpoint, data) {
 window.API_CONFIG = API_CONFIG;
 window.callAPI = callAPI;
 window.initConfig = initConfig;
+
+
+// CSRF Token - in-memory only, never stored in localStorage
+let _csrfToken = null;
+let _csrfFetchPromise = null;
+
+async function getCSRFToken() {
+    if (_csrfToken) return _csrfToken;
+    if (_csrfFetchPromise) return _csrfFetchPromise;
+    _csrfFetchPromise = fetch(API_CONFIG.BASE_URL + '/csrf-token')
+        .then(r => r.json())
+        .then(data => {
+            _csrfToken = data.csrfToken;
+            _csrfFetchPromise = null;
+            setTimeout(() => { _csrfToken = null; }, 2 * 60 * 60 * 1000);
+            return _csrfToken;
+        })
+        .catch(() => { _csrfFetchPromise = null; return null; });
+    return _csrfFetchPromise;
+}
+
+window.getCSRFToken = getCSRFToken;
 
 // Auto-initialize config on load
 initConfig();

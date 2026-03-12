@@ -1,6 +1,7 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { validateEmail, validateName, validateString } from './utils/validation.js';
+import { sendEmail } from './email-service.js';
 
 const router = express.Router();
 
@@ -35,8 +36,14 @@ router.post('/contact', contactLimiter, async (req, res) => {
             timestamp: new Date().toISOString()
         });
 
-        // TODO: Send email notification to admin
-        // For now, just return success
+        // Send notification to admin (fire-and-forget)
+        const adminEmail = process.env.ADMIN_EMAIL || process.env.FROM_EMAIL || 'support@mystickahvezda.cz';
+        sendEmail({
+            to: adminEmail,
+            template: 'admin_contact_notification',
+            data: { name: validatedName, email: validatedEmail, subject: validatedSubject, message: validatedMessage }
+        }).catch(err => console.error('[Contact] Admin notification failed:', err.message));
+
         res.status(200).json({
             success: true,
             message: 'Děkujeme za vaši zprávu! Ozveme se vám co nejdříve.'

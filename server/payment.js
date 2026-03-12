@@ -17,7 +17,7 @@ const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
 const router = express.Router();
 
-const PREMIUM_PLAN_TYPES = ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip_majestrat', 'vip'];
+import { PREMIUM_PLAN_TYPES } from './config/constants.js';
 
 // Plan definitions (consistent with cenik.html)
 const PLANS = {

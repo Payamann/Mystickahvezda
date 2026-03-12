@@ -62,16 +62,16 @@ router.post('/chat', authenticateToken, requirePremiumSoft, async (req, res) => 
         let userContext = {};
         try {
             const { data: profile } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('user_id', userId)
+                .from('users')
+                .select('first_name, birth_date')
+                .eq('id', userId)
                 .single();
 
             if (profile) {
                 userContext = {
-                    name: profile.name,
+                    name: profile.first_name,
                     birthDate: profile.birth_date,
-                    zodiacSign: profile.zodiac_sign
+                    zodiacSign: null
                 };
             }
         } catch (e) {

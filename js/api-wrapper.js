@@ -1,4 +1,4 @@
-/**
+﻿/**
  * API Wrapper with Upsell Handling
  * Intercepts API responses and shows upgrade modal when needed
  */
@@ -13,13 +13,16 @@ import { showUpgradeModal } from './upgrade-modal.js';
  */
 export async function callAPI(endpoint, data = {}) {
     try {
-        const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem('auth_token');
+
+        const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
 
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token && { 'Authorization': `Bearer ${token}` })
+                ...(token && { 'Authorization': `Bearer ${token}` }),
+                ...(csrfToken && { 'X-CSRF-Token': csrfToken })
             },
             body: JSON.stringify(data)
         });
@@ -68,7 +71,7 @@ export async function askCrystalBall(question, history = []) {
  * @param {string} spreadType - Type of spread
  * @returns {Promise} Tarot interpretation
  */
-export async function getTarotReading(question, cards, spreadType = 'tříkartový') {
+export async function getTarotReading(question, cards, spreadType = 'tĹ™Ă­kartovĂ˝') {
     return callAPI('/api/oracle/tarot', {
         question,
         cards,
@@ -92,3 +95,4 @@ export async function getHoroscope(sign, period = 'daily', context = []) {
 }
 
 export default { callAPI, askCrystalBall, getTarotReading, getHoroscope };
+

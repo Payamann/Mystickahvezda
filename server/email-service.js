@@ -373,7 +373,40 @@ const EMAIL_TEMPLATES = {
         </body>
       </html>
     `
+  },
+  admin_contact_notification: {
+    subject: (data) => `[Kontakt] ${data.subject} — od ${data.name}`,
+    getHtml: (data) => `
+      <!DOCTYPE html><html><head><meta charset="utf-8"></head>
+      <body style="font-family:sans-serif;background:#f5f5f5;padding:20px;">
+        <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;padding:24px;">
+          <h2 style="color:#333;margin-top:0;">Nová zpráva z kontaktního formuláře</h2>
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="padding:8px;font-weight:bold;width:120px;color:#555;">Jméno:</td>
+              <td style="padding:8px;">${data.name}</td>
+            </tr>
+            <tr style="background:#f9f9f9;">
+              <td style="padding:8px;font-weight:bold;color:#555;">Email:</td>
+              <td style="padding:8px;"><a href="mailto:${data.email}">${data.email}</a></td>
+            </tr>
+            <tr>
+              <td style="padding:8px;font-weight:bold;color:#555;">Předmět:</td>
+              <td style="padding:8px;">${data.subject}</td>
+            </tr>
+            <tr style="background:#f9f9f9;">
+              <td style="padding:8px;font-weight:bold;vertical-align:top;color:#555;">Zpráva:</td>
+              <td style="padding:8px;white-space:pre-wrap;">${data.message}</td>
+            </tr>
+          </table>
+          <p style="margin-top:20px;color:#999;font-size:12px;">
+            Odesláno z mystickahvezda.cz
+          </p>
+        </div>
+      </body></html>
+    `
   }
+
 };
 
 /**
@@ -400,7 +433,7 @@ export async function sendEmail(emailConfig) {
     const response = await resendClient.emails.send({
       from: FROM_EMAIL,
       to,
-      subject: templateConfig.subject,
+      subject: typeof templateConfig.subject === 'function' ? templateConfig.subject(data) : templateConfig.subject,
       html
     });
 

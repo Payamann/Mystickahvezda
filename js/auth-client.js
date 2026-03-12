@@ -94,9 +94,13 @@
 
         async register(email, password, additionalData = {}) {
             try {
+                const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
                 const res = await fetch(`${API_URL}/auth/register`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+                    },
                     body: JSON.stringify({ email, password, ...additionalData })
                 });
                 const data = await res.json();
@@ -162,9 +166,13 @@
 
         async login(email, password) {
             try {
+                const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
                 const res = await fetch(`${API_URL}/auth/login`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+                    },
                     body: JSON.stringify({ email, password })
                 });
                 const data = await res.json();

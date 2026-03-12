@@ -5,6 +5,7 @@ import { supabase } from './db-supabase.js';
 import { JWT_SECRET } from './config/jwt.js';
 import { authenticateToken } from './middleware.js';
 import { validateEmail, validatePassword, validateName, validateBirthDate } from './utils/validation.js';
+import { PREMIUM_PLAN_TYPES } from './config/constants.js';
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ async function generateToken(userId) {
             .single();
 
         const status = sub?.plan_type;
-        const isPremium = status && ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip_majestrat', 'vip'].includes(status) &&
+        const isPremium = status && PREMIUM_PLAN_TYPES.includes(status) &&
                          sub.status === 'active' &&
                          new Date(sub.current_period_end) > new Date();
 
@@ -229,7 +230,7 @@ router.post('/login', authLimiter, async (req, res) => {
         const status = sub.plan_type || 'free';
 
         // Check if premium (and not expired)
-        const isPremium = status && ['premium_monthly', 'premium_yearly', 'premium_pro', 'exclusive_monthly', 'vip_majestrat', 'vip'].includes(status) &&
+        const isPremium = status && PREMIUM_PLAN_TYPES.includes(status) &&
                          sub.status === 'active' &&
                          new Date(sub.current_period_end) > new Date();
 
