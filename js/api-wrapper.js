@@ -1,4 +1,4 @@
-﻿/**
+/**
  * API Wrapper with Upsell Handling
  * Intercepts API responses and shows upgrade modal when needed
  */
@@ -71,7 +71,7 @@ export async function askCrystalBall(question, history = []) {
  * @param {string} spreadType - Type of spread
  * @returns {Promise} Tarot interpretation
  */
-export async function getTarotReading(question, cards, spreadType = 'tĹ™Ă­kartovĂ˝') {
+export async function getTarotReading(question, cards, spreadType = 'tříkartový') {
     return callAPI('/api/oracle/tarot', {
         question,
         cards,
