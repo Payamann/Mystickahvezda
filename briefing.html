@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hvězdný Denní Briefing | Mystická Hvězda</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        .briefing-container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .briefing-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .briefing-title {
+            font-family: 'Cinzel', serif;
+            color: var(--color-mystic-gold);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .briefing-subtitle {
+            font-family: 'Inter', sans-serif;
+            color: var(--color-silver-mist);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        .briefing-content {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.8;
+            color: white;
+            font-size: 1.1rem;
+            white-space: pre-line;
+        }
+        .briefing-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+        .star-loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(212, 175, 55, 0.1);
+            border-top: 3px solid var(--color-mystic-gold);
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .briefing-footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-share {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--color-mystic-gold);
+            border: 1px solid var(--color-mystic-gold);
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-share:hover {
+            background: var(--color-mystic-gold);
+            color: #0a0a1a;
+        }
+    </style>
+</head>
+<body class="bg-stars">
+    <div class="container">
+        <div class="briefing-container">
+            <div id="loader" class="briefing-loader">
+                <div class="star-loader"></div>
+                <p style="margin-top: 1.5rem; color: var(--color-silver-mist);">Hvězdy se sjednocují pro váš vzkaz...</p>
+            </div>
+
+            <div id="content" style="display: none;">
+                <div class="briefing-header">
+                    <h1 class="briefing-title">Hvězdný Briefing</h1>
+                    <div id="date" class="briefing-subtitle"></div>
+                </div>
+                
+                <div id="briefing-text" class="briefing-content"></div>
+
+                <div class="briefing-footer">
+                    <button class="btn-share" onclick="window.location.href='/'">Zpět na bránu</button>
+                    <div style="color: rgba(255,255,255,0.3); font-size: 0.8rem;">Vytvořeno s pomocí Vesmírné AI</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/error-boundary.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const dateEl = document.getElementById('date');
+            const contentEl = document.getElementById('content');
+            const loaderEl = document.getElementById('loader');
+            const textEl = document.getElementById('briefing-text');
+
+            dateEl.textContent = new Date().toLocaleDateString('cs-CZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+            try {
+                // Fetch required data from system status (simulated or real local storage)
+                const zodiacSign = localStorage.getItem('user_zodiac') || 'Lev'; // Fallback
+                const name = localStorage.getItem('user_name') || '';
+                const tarotCard = localStorage.getItem('last_tarot_card') || 'Kolo štěstí';
+
+                const response = await fetch('/api/briefing', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ zodiacSign, name, tarotCard })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error);
+
+                textEl.textContent = data.text;
+                loaderEl.style.display = 'none';
+                contentEl.style.display = 'block';
+
+            } catch (err) {
+                console.error(err);
+                loaderEl.innerHTML = '<p style="color: #ff4444;">Hvězdy jsou dnes v mlze. Zkuste to prosím později.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

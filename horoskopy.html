@@ -157,11 +157,9 @@
 
     <link rel="alternate" hreflang="x-default" href="https://mystickahvezda.cz/horoskopy.html">
     <style>
-    /* Critical Hero CSS */
-    .section--hero { min-height: 40vh !important; display: flex; align-items: center; justify-content: center; padding: 60px 0 20px !important; }
-    .hero__title { font-size: clamp(2rem, 7vw, 3.5rem); text-align: center; margin-bottom: 1rem; }
-    .zodiac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; margin-top: 20px; }
-    @media (max-width: 768px) { .zodiac-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; } }
+    /* Critical Hero CSS refined */
+    .section--hero { min-height: 45vh !important; display: flex; align-items: center; justify-content: center; padding: 100px 0 40px !important; }
+    .hero__title { font-size: clamp(2.5rem, 8vw, 4rem); text-align: center; margin-bottom: 1rem; }
     </style>
 </head>
 
@@ -300,7 +298,7 @@
 
                 <!-- ZODIAC GRID -->
 
-                <div id="mh-sign-picker" style="background:rgba(10,10,26,0.6);border:1px solid rgba(235,192,102,0.15);border-radius:16px;margin-bottom:1.5rem;"></div>
+                <div id="mh-sign-picker"></div>
 
 <div class="zodiac-grid" data-animate>
 
@@ -446,9 +444,8 @@
 
                         <h2 class="section__title" style="margin-bottom: var(--space-md);">
 
-                            <span id="detail-symbol" style="font-size: 3rem;">♈</span> <span
-
-                                id="detail-name">Beran</span>
+                            <span id="detail-symbol" style="font-size: 3rem;">✨</span> <span
+                                id="detail-name">Zvěrokruh</span>
 
                         </h2>
 
@@ -512,7 +509,7 @@
 
                     <div class="text-center mobile-hidden">
 
-                        <div style="font-size: 12rem; opacity: 0.1;" id="bg-symbol">♈</div>
+                        <div style="font-size: 12rem; opacity: 0.1;" id="bg-symbol">✨</div>
 
                     </div>
 
@@ -708,41 +705,22 @@
 
 
 
+    <script src="js/api-config.js?v=5" defer></script>
+    <script src="js/templates.js?v=10" defer></script>
+    <script src="js/auth-client.js?v=5" defer></script>
     <script src="js/moon-phase.js" defer></script>
-
     <script src="js/favorites-helper.js" defer></script>
-
     <script src="js/horoscope.js" defer></script>
 
-
-
-    <!-- Service Worker Registration -->
-
-    <script>
-
+    <script shadow>
         if ('serviceWorker' in navigator) {
-
             window.addEventListener('load', () => {
-
                 navigator.serviceWorker.register('/service-worker.js')
-
                     .then(reg => console.log('✨ Service Worker registered'))
-
                     .catch(err => console.log('SW registration failed:', err));
-
             });
-
         }
-
     </script>
-
-
-
-    <script src="js/api-config.js?v=5" defer></script>
-
-    <script src="js/templates.js?v=10" defer></script>
-
-    <script src="js/auth-client.js?v=5" defer></script>
 
         <script src="js/share-result.js" defer></script>
 

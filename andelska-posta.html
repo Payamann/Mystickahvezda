@@ -576,13 +576,18 @@
 
 
             // Try API pro permanentní vzestup do databáze
-
             if (msg.id) {
-
-                fetch(`/api/angel-post/${localMessages[i].id}/like`, { method: 'POST' }).catch(() => { });
-
+                (async () => {
+                    const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+                    const baseUrl = window.API_CONFIG?.BASE_URL || '/api';
+                    fetch(`${baseUrl}/angel-post/${localMessages[i].id}/like`, { 
+                        method: 'POST',
+                        headers: {
+                            ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+                        }
+                    }).catch(() => { });
+                })();
             }
-
         };
 
 
@@ -642,17 +647,16 @@
 
 
             // Try API first
-
             try {
-
-                const res = await fetch('/api/angel-post', {
-
+                const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+                const baseUrl = window.API_CONFIG?.BASE_URL || '/api';
+                const res = await fetch(`${baseUrl}/angel-post`, {
                     method: 'POST',
-
-                    headers: { 'Content-Type': 'application/json' },
-
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+                    },
                     body: JSON.stringify({ nickname, message: text, category })
-
                 });
 
 
@@ -740,11 +744,9 @@
         // Load real messages from API
 
         async function loadMessages() {
-
             try {
-
-                const res = await fetch('/api/angel-post?limit=20');
-
+                const baseUrl = window.API_CONFIG?.BASE_URL || '/api';
+                const res = await fetch(`${baseUrl}/angel-post?limit=20`);
                 if (res.ok) {
 
                     const data = await res.json();

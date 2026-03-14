@@ -1,244 +1,504 @@
 <!DOCTYPE html>
-
 <html lang="cs">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Databáze jmen — Původ, Význam, Numerologie | Mystická Hvězda</title>
-
     <meta name="description" content="Zjistěte původ a duchovní význam vašeho jména. Databáze českých jmen — numerologie, barva aury, živel a osobnostní profil.">
-
     <link rel="canonical" href="https://mystickahvezda.cz/jmena/">
-
     <meta property="og:title" content="Databáze jmen — Původ a duchovní výklad | Mystická Hvězda">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext" rel="stylesheet">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Databáze jmen — Mystická Hvězda",
+      "description": "Komplexní databáze českých jmen s duchovním a numerologickým výkladem. Zjistěte původ, význam, barvu aury a živel svého jména.",
+      "url": "https://mystickahvezda.cz/jmena/",
+      "applicationCategory": "LifeStyle",
+      "inLanguage": "cs",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Mystická Hvězda",
+        "url": "https://mystickahvezda.cz"
+      }
+    }
+    </script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext" rel="stylesheet"  >
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
-
-    <link rel="stylesheet" href="../css/style.v2.min.css?v=4">
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=11">
 
     <style>
+        :root {
+            --gold-glow: 0 0 15px rgba(212, 175, 55, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
 
-        .name-search { max-width:500px; margin:2rem auto; display:flex; gap:0.75rem; }
+        .name-search-container { 
+            position: relative;
+            max-width: 600px; 
+            margin: 2rem auto; 
+        }
 
-        .name-input { flex:1; padding:0.9rem 1.25rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:12px; color:white; font-family:inherit; font-size:1rem; outline:none; }
+        .name-search { 
+            display: flex; 
+            gap: 0.75rem; 
+            background: var(--glass-bg);
+            padding: 0.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--gold-glow);
+        }
 
-        .name-input:focus { border-color:rgba(212,175,55,0.5); }
+        .name-input { 
+            flex: 1; 
+            padding: 1rem 1.5rem; 
+            background: transparent;
+            border: none;
+            color: white; 
+            font-family: inherit; 
+            font-size: 1.1rem; 
+            outline: none; 
+        }
 
-        .names-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:0.75rem; max-width:900px; margin:2rem auto; }
+        /* Autocomplete / Našeptávač */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(15, 10, 35, 0.95);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            margin-top: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(20px);
+        }
 
-        .name-btn { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:0.85rem; cursor:pointer; text-align:center; color:rgba(255,255,255,0.8); font-size:0.9rem; font-family:inherit; transition:all 0.2s; }
+        .autocomplete-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        .name-btn:hover { background:rgba(212,175,55,0.1); border-color:rgba(212,175,55,0.3); color:white; }
+        .autocomplete-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--color-mystic-gold);
+        }
 
-        .result { max-width:650px; margin:2rem auto; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:2rem; display:none; animation:fadeIn 0.4s ease; }
+        .autocomplete-item .meta {
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
 
-        .result.show { display:block; }
+        /* Alphabet Bar */
+        .alphabet-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.4rem;
+            max-width: 900px;
+            margin: 1rem auto 2.5rem;
+            padding: 0.5rem;
+        }
 
-        @keyframes fadeIn { from{opacity:0;transform:translateY(15px)} to{opacity:1;transform:translateY(0)} }
+        .alpha-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: rgba(255,255,255,0.6);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
 
-        .detail-row { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem; }
+        .alpha-btn:hover, .alpha-btn.active {
+            background: var(--color-mystic-gold);
+            color: #0a0a1a;
+            border-color: var(--color-mystic-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+        }
 
-        .detail-item { background:rgba(255,255,255,0.03); border-radius:10px; padding:0.85rem; font-size:0.88rem; }
+        .names-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            gap: 1rem; 
+            max-width: 1000px; 
+            margin: 2rem auto; 
+        }
 
-        .detail-item strong { display:block; color:#d4af37; font-size:0.75rem; margin-bottom:0.3rem; text-transform:uppercase; letter-spacing:0.5px; }
+        .name-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
 
+        .name-card:hover {
+            background: rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .name-card .name-label {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: white;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .name-card .name-meta {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            perspective: 1000px;
+        }
+
+        .result { 
+            background: linear-gradient(145deg, rgba(25, 15, 45, 0.9), rgba(10, 5, 20, 0.95));
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            border-radius: 24px; 
+            padding: 3rem; 
+            display: none; 
+            animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .result.show { display: block; }
+
+        @keyframes slideUp { 
+            from { opacity: 0; transform: translateY(40px) scale(0.98); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
+
+        .detail-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 1.25rem; 
+            margin-top: 2rem; 
+        }
+
+        .detail-item { 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px; 
+            padding: 1.25rem; 
+            transition: transform 0.2s;
+        }
+
+        .detail-item:hover { transform: scale(1.02); background: rgba(255,255,255,0.05); }
+
+        .detail-item strong { 
+            display: block; 
+            color: #d4af37; 
+            font-size: 0.75rem; 
+            margin-bottom: 0.5rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+        }
+
+        .detail-item span { font-size: 1rem; color: #fff; }
+
+        .text-reveal {
+            animation: colorReveal 1s ease forwards;
+        }
+
+        @keyframes colorReveal {
+            from { color: transparent; }
+            to { color: inherit; }
+        }
+
+        /* Group Headers */
+        .letter-header {
+            grid-column: 1 / -1;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--color-mystic-gold);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .letter-header::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, rgba(212,175,55,0.2), transparent);
+        }
+
+        @media (max-width: 600px) {
+            .detail-grid { grid-template-columns: 1fr; }
+            .name-search { flex-direction: column; }
+        }
     </style>
-
 </head>
-
 <body>
-
     <div class="stars" aria-hidden="true"></div>
-
     <div id="header-placeholder"></div>
 
     <main>
-
-        <section class="section" style="padding-top:5rem;text-align:center;">
-
+        <section class="section" style="padding-top:6rem;">
             <div class="container">
-
-                <div data-animate>
-
-                    <span class="section__badge">Duchovní výklad</span>
-
+                <div style="text-align:center;" data-animate>
+                    <span class="section__badge">Lexikon Duší</span>
                     <h1 class="section__title">Databáze <span class="text-gradient">Jmen</span></h1>
-
-                    <p class="section__text">Zjistěte původ, duchovní význam a numerologický profil svého jména.</p>
-
+                    <p class="section__text" style="max-width:600px; margin: 0 auto 2rem;">
+                        V každém jménu je ukryt kód osudu. Objevte hluboký spirituální význam a numerologické vibrace, které vás provázejí celým životem.
+                    </p>
                 </div>
 
-                <div class="name-search" data-animate>
+                <div class="name-search-container" data-animate>
+                    <div class="name-search">
+                        <input type="text" id="name-search" class="name-input" placeholder="Hledejte své jméno..." autocomplete="off">
+                        <button id="btn-search-name" class="btn btn--primary" style="border-radius:12px; padding:0 2rem;">Hledat</button>
+                    </div>
+                    <div id="autocomplete-results" class="autocomplete-dropdown"></div>
+                </div>
 
-                    <input type="text" id="name-search" class="name-input" placeholder="Zadejte jméno..." aria-label="Hledejte jméno">
+                <div class="alphabet-bar" id="alphabet-bar" data-animate>
+                    <!-- Generated A-Z -->
+                </div>
 
-                    <button id="btn-search-name" class="btn btn--primary">Hledat</button>
+                <div class="result-container">
+                    <div class="result" id="name-result">
+                        <div style="text-align:center; margin-bottom: 2rem;">
+                            <h2 id="res-name" style="font-family:'Cinzel',serif; font-size:3rem; color:var(--color-mystic-gold); margin-bottom:0.5rem; text-shadow: 0 0 20px rgba(212,175,55,0.4);"></h2>
+                            <p id="res-meaning" style="color:rgba(255,255,255,0.6); font-size:1.1rem; font-style:italic;"></p>
+                        </div>
+                        
+                        <p id="res-personality" style="font-size:1.1rem; line-height:1.8; color:rgba(255,255,255,0.9); margin-bottom:2rem; padding: 1.5rem; background: rgba(255,255,255,0.02); border-radius:16px; border: 1px solid rgba(255,255,255,0.05);"></p>
 
+                        <div class="detail-grid">
+                            <div class="detail-item"><strong>📅 Jmeniny</strong><span id="res-nameday"></span></div>
+                            <div class="detail-item"><strong>🔢 Numerologie</strong><span id="res-numerology">Osobní číslo <span id="res-num" style="color:var(--color-mystic-gold); font-weight:700;"></span></span></div>
+                            <div class="detail-item"><strong>🌈 Barva Aury</strong><span id="res-aura"></span></div>
+                            <div class="detail-item"><strong>🌿 Element</strong><span id="res-element"></span></div>
+                        </div>
+
+                        <div style="margin-top:1.25rem; display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+                            <div class="detail-item"><strong>❤️ Energie v lásce</strong><p id="res-love" style="font-size:0.95rem; color:rgba(255,255,255,0.7); line-height:1.6; margin:0.5rem 0 0;"></p></div>
+                            <div class="detail-item"><strong>💼 Životní cesta</strong><p id="res-career" style="font-size:0.95rem; color:rgba(255,255,255,0.7); line-height:1.6; margin:0.5rem 0 0;"></p></div>
+                        </div>
+
+                        <div style="display:flex; gap:1rem; justify-content:center; margin-top:3rem; flex-wrap:wrap;">
+                            <a href="../numerologie.html" class="btn btn--ghost" style="font-size:0.9rem;">Analýza osudového čísla</a>
+                            <a href="../aura.html" class="btn btn--ghost" style="font-size:0.9rem;">Test barevné aury</a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="names-grid" id="names-grid" data-animate></div>
-
-                <div class="result" id="name-result">
-
-                    <h2 id="res-name" style="font-family:'Cinzel',serif;font-size:2rem;margin-bottom:0.25rem;color:#d4af37;"></h2>
-
-                    <p id="res-meaning" style="color:rgba(255,255,255,0.55);margin-bottom:1rem;font-size:0.9rem;font-style:italic;"></p>
-
-                    <p id="res-personality" style="color:rgba(255,255,255,0.8);line-height:1.8;"></p>
-
-                    <div class="detail-row">
-
-                        <div class="detail-item"><strong>📅 Svátek</strong><span id="res-nameday"></span></div>
-
-                        <div class="detail-item"><strong>🔢 Numerologie</strong><span id="res-numerology">číslo <span id="res-num"></span></span></div>
-
-                        <div class="detail-item"><strong>🌈 Aura</strong><span id="res-aura"></span></div>
-
-                        <div class="detail-item"><strong>🌿 Živel</strong><span id="res-element"></span></div>
-
-                    </div>
-
-                    <div style="margin-top:0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
-
-                        <div class="detail-item"><strong>❤️ V lásce</strong><span id="res-love" style="font-size:0.83rem;color:rgba(255,255,255,0.65);line-height:1.5;"></span></div>
-
-                        <div class="detail-item"><strong>💼 Kariéra</strong><span id="res-career" style="font-size:0.83rem;color:rgba(255,255,255,0.65);line-height:1.5;"></span></div>
-
-                    </div>
-
-                    <div style="display:flex;gap:0.75rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;">
-
-                        <a href="../numerologie.html" class="btn btn--ghost" style="font-size:0.88rem;">🔢 Numerologie</a>
-
-                        <a href="../aura.html" class="btn btn--ghost" style="font-size:0.88rem;">🌈 Aura kalkulačka</a>
-
-                    </div>
-
-                </div>
-
             </div>
-
         </section>
-
     </main>
 
     <div id="footer-placeholder"></div>
 
     <script src="../js/api-config.js?v=5" defer></script>
-
     <script src="../js/auth-client.js?v=5" defer></script>
-
-    <script src="../js/components.js?v=10" defer></script>
-
-    <script src="../js/nameday.js" defer></script>
-
+    <script src="../js/components.js?v=11" defer></script>
     <script src="../js/exit-intent.js" defer></script>
-
-    <script type="module" src="../js/main.js?v=10"></script>
+    <script type="module" src="../js/main.js?v=11"></script>
 
     <script>
-
     let allNames = {};
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZŠČŘŽ".split('').sort((a,b) => a.localeCompare(b, 'cs'));
+    const alphabetBar = document.getElementById('alphabet-bar');
+    const searchInput = document.getElementById('name-search');
+    const autocompleteDropdown = document.getElementById('autocomplete-results');
 
+    // 1. Initialize
     fetch('../data/jmena.json').then(r=>r.json()).then(data=>{
-
         allNames = data;
-
-        renderGrid(Object.keys(data));
-
+        initAlphabet();
+        renderGridByLetter('A');
     });
 
-
-
-    function renderGrid(names) {
-
-        const grid = document.getElementById('names-grid');
-
-        grid.innerHTML = names.slice(0,40).map(n=>`<button class="name-btn" data-name="${n}">${n}</button>`).join('');
-
+    // 2. Alphabet Bar
+    function initAlphabet() {
+        alphabetBar.innerHTML = alphabet.map(l => `<button class="alpha-btn" onclick="selectLetter('${l}')">${l}</button>`).join('');
     }
 
+    window.selectLetter = function(letter) {
+        document.querySelectorAll('.alpha-btn').forEach(b => b.classList.toggle('active', b.textContent === letter));
+        renderGridByLetter(letter);
+        document.getElementById('names-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
+    function renderGridByLetter(letter) {
+        const grid = document.getElementById('names-grid');
+        const filtered = Object.keys(allNames).filter(n => n.startsWith(letter)).sort();
+        
+        if (filtered.length === 0) {
+            grid.innerHTML = '<p style="color:rgba(255,255,255,0.4); grid-column:1/-1; text-align:center;">Žádná jména od tohoto písmene nemáme v databázi.</p>';
+            return;
+        }
 
+        grid.innerHTML = `<h3 class="letter-header">${letter}</h3>` + 
+            filtered.map(n => `
+                <div class="name-card" onclick="showName('${n}')">
+                    <span class="name-label">${n}</span>
+                    <span class="name-meta">${allNames[n].origin}</span>
+                </div>
+            `).join('');
+    }
+
+    // 3. Autocomplete / Našeptávač
+    searchInput.addEventListener('input', (e) => {
+        const val = e.target.value.trim().toLowerCase();
+        if (val.length < 1) {
+            autocompleteDropdown.style.display = 'none';
+            return;
+        }
+
+        const matches = Object.keys(allNames)
+            .filter(n => n.toLowerCase().includes(val))
+            .sort((a, b) => {
+                // Prioritize names starting with search term
+                const aStarts = a.toLowerCase().startsWith(val);
+                const bStarts = b.toLowerCase().startsWith(val);
+                if (aStarts && !bStarts) return -1;
+                if (!aStarts && bStarts) return 1;
+                return a.localeCompare(b);
+            })
+            .slice(0, 8);
+
+        if (matches.length > 0) {
+            autocompleteDropdown.innerHTML = matches.map(n => `
+                <div class="autocomplete-item" onclick="selectAutocomplete('${n}')">
+                    <span>${n}</span>
+                    <span class="meta">${allNames[n].nameday} | ${allNames[n].origin}</span>
+                </div>
+            `).join('');
+            autocompleteDropdown.style.display = 'block';
+        } else {
+            autocompleteDropdown.style.display = 'none';
+        }
+    });
+
+    window.selectAutocomplete = function(name) {
+        searchInput.value = name;
+        autocompleteDropdown.style.display = 'none';
+        showName(name);
+    }
+
+    // Close autocomplete on click outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.name-search-container')) {
+            autocompleteDropdown.style.display = 'none';
+        }
+    });
+
+    // 4. Searching & Showing
     window.searchName = function() {
-
-        const q = document.getElementById('name-search').value.trim();
-
+        const q = searchInput.value.trim();
         if (!q) return;
-
-        const found = Object.keys(allNames).filter(n=>n.toLowerCase().startsWith(q.toLowerCase()));
-
-        if (found.length === 1) { showName(found[0]); return; }
-
-        if (found.length > 1) { renderGrid(found); return; }
-
-        // Try exact match case-insensitive
-
-        const exact = Object.keys(allNames).find(n=>n.toLowerCase()===q.toLowerCase());
-
-        if (exact) showName(exact);
-
-        else { renderGrid([]); document.getElementById('names-grid').innerHTML = '<p style="color:rgba(255,255,255,0.4);grid-column:1/-1;">Jméno nenalezeno.</p>'; }
-
+        
+        const exact = Object.keys(allNames).find(n => n.toLowerCase() === q.toLowerCase());
+        if (exact) {
+            showName(exact);
+            autocompleteDropdown.style.display = 'none';
+        } else {
+            // If no exact match, show grid filtered by query
+            const filtered = Object.keys(allNames).filter(n => n.toLowerCase().includes(q.toLowerCase()));
+            const grid = document.getElementById('names-grid');
+            if (filtered.length > 0) {
+                grid.innerHTML = `<h3 class="letter-header">Výsledky hledání: "${q}"</h3>` + 
+                    filtered.map(n => `
+                        <div class="name-card" onclick="showName('${n}')">
+                            <span class="name-label">${n}</span>
+                            <span class="name-meta">${allNames[n].origin}</span>
+                        </div>
+                    `).join('');
+            } else {
+                grid.innerHTML = '<p style="color:rgba(255,255,255,0.4); grid-column:1/-1;">Jméno nenalezeno.</p>';
+            }
+        }
     };
 
-
-
     window.showName = function(name) {
-
         const d = allNames[name];
-
         if (!d) return;
 
         document.getElementById('res-name').textContent = name;
-
         document.getElementById('res-meaning').textContent = `Původ: ${d.origin} | Význam: "${d.meaning}"`;
-
         document.getElementById('res-personality').textContent = d.personality;
-
         document.getElementById('res-nameday').textContent = d.nameday;
-
         document.getElementById('res-num').textContent = d.numerology;
-
         document.getElementById('res-aura').textContent = d.aura;
-
         document.getElementById('res-element').textContent = d.element;
-
         document.getElementById('res-love').textContent = d.love;
-
         document.getElementById('res-career').textContent = d.career;
 
         const r = document.getElementById('name-result');
-
         r.classList.add('show');
+        r.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-        r.scrollIntoView({behavior:'smooth',block:'nearest'});
-
+        // SEO: Dynamic meta update
+        const title = `Jméno ${name} — Původ, Význam a Numerologie | Mystická Hvězda`;
+        const description = `${name}: ${d.personality.substring(0, 150)}... Duchovní výklad, barva aury a živel pro jméno ${name}.`;
+        document.title = title;
+        document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+        
+        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?jmeno=' + encodeURIComponent(name);
+        window.history.pushState({path:newUrl},'',newUrl);
     };
 
-
-
     document.getElementById('btn-search-name').addEventListener('click', searchName);
+    searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') searchName(); });
 
-    document.getElementById('name-search').addEventListener('keydown',e=>{ if(e.key==='Enter') searchName(); });
-
-    document.getElementById('names-grid').addEventListener('click', e => {
-
-        const btn = e.target.closest('.name-btn[data-name]');
-
-        if (btn) showName(btn.dataset.name);
-
+    // 5. Deep link support
+    window.addEventListener('load', () => {
+        const params = new URLSearchParams(window.location.search);
+        const jmeno = params.get('jmeno');
+        if (jmeno) {
+            const checkData = setInterval(() => {
+                if (Object.keys(allNames).length > 0) {
+                    const exact = Object.keys(allNames).find(n => n.toLowerCase() === jmeno.toLowerCase());
+                    if (exact) showName(exact);
+                    clearInterval(checkData);
+                }
+            }, 100);
+            setTimeout(() => clearInterval(checkData), 3000);
+        }
     });
 
     </script>
-
 </body>
-
 </html>

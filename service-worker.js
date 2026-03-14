@@ -1,9 +1,9 @@
-﻿/**
+/**
  * Mystická Hvězda - Service Worker
  * Provides offline caching with stale-while-revalidate strategy
  */
 
-const CACHE_NAME = 'mysticka-hvezda-v14';
+const CACHE_NAME = 'mysticka-hvezda-v17';
 const MAX_RUNTIME_CACHE_SIZE = 80;
 const STATIC_ASSETS = [
     '/',

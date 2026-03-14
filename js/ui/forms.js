@@ -34,9 +34,14 @@ export function initEmailForms() {
             input.disabled = true;
 
             try {
-                const response = await fetch('/api/newsletter/subscribe', {
+                const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+                const baseUrl = window.API_CONFIG?.BASE_URL || '/api';
+                const response = await fetch(`${baseUrl}/newsletter/subscribe`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+                    },
                     body: JSON.stringify({ email })
                 });
 

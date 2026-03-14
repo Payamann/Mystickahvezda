@@ -457,29 +457,84 @@ async function generateNatalChart(planetsGroup) {
         // Call AI for interpretation
         btn.innerHTML = '<span class="loading-spinner"></span> Navazuji spojení s hvězdami...';
 
-        // Call API
-        const authToken = localStorage.getItem('auth_token') || window.Auth?.token;
-        const response = await fetch(`${window.API_CONFIG?.BASE_URL || 'http://localhost:3001/api'}/natal-chart`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
-            },
-            body: JSON.stringify({
-                birthDate,
-                birthTime,
-                birthPlace,
-                name
-            })
+        // Calculate Sun Sign locally for prompt accuracy
+        const birthDateObj = new Date(birthDate);
+        const localSunSign = getZodiacSign(birthDateObj)?.name || '';
+
+        // Call API via centralized helper
+        const data = await window.callAPI('/natal-chart', {
+            birthDate,
+            birthTime,
+            birthPlace,
+            name,
+            sunSign: localSunSign // Send to AI for consistency
         });
 
-        const data = await response.json();
-
-        if (data.success) {
-            // Display AI interpretation with typewriter effect
+        if (data.success || data.response) {
+            // Display AI interpretation
             aiResultsDiv.style.display = 'block';
             const contentDiv = aiResultsDiv.querySelector('.ai-content');
-            await typewriterEffect(contentDiv, data.response);
+            
+            // Clean and format the response
+            const responseText = data.response || data.message || '';
+            
+            // Safer cleaning: remove <html>, <body>, <head>, <script>, <style> only
+            let cleanContent = responseText.replace(/<\/?(html|body|head|script|style)[^>]*>/gi, '');
+
+            // Ensure our specific structure is preserved and enhanced
+            let formattedContent = cleanContent
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/__(.*?)__/g, '<strong>$1</strong>')
+                // If it doesn't already have H4/P tags, wrap it (handle mixed content)
+                .split('\n\n').map(para => {
+                    if (para.trim().startsWith('<h4')) return para;
+                    return `<p>${para.replace(/\n/g, '<br>')}</p>`;
+                }).join('');
+
+            contentDiv.innerHTML = formattedContent;
+            
+            // --- STRUCTURED DATA EXTRACTION ---
+            // Look for "DATA: Slunce=..., Měsíc=..., Ascendent=..."
+            const dataMatch = responseText.match(/DATA:\s*Slunce=([^,]+),\s*Měsíc=([^,]+),\s*Ascendent=([^|\n\r]+)/i);
+            
+            if (dataMatch) {
+                // We have clean data from AI
+                const moonSignAI = dataMatch[2].trim();
+                const ascSignAI = dataMatch[3].trim();
+                
+                document.getElementById('res-moon').textContent = moonSignAI;
+                document.getElementById('res-asc').textContent = ascSignAI;
+                
+                // Remove the DATA block from visible content
+                contentDiv.innerHTML = contentDiv.innerHTML.replace(/DATA:\s*Slunce=[^<]+/i, '').replace(/<p><\/p>/g, '');
+            } else {
+                // Fallback to strict sign names search in text if DATA block is missing
+                const signNames = ZODIAC_SIGNS.map(s => s.name).join('|');
+                const moonRegex = new RegExp(`(?:Měsíc|Luna)\\s+(?:ve|v)\\s+(?:znamení\\s+)?(${signNames})`, 'i');
+                const moonMatch = textToSearch.match(moonRegex);
+                if (moonMatch && moonMatch[1]) {
+                    document.getElementById('res-moon').textContent = moonMatch[1];
+                }
+
+                const ascRegex = new RegExp(`(?:Ascendent|Vycházející\\s+znamení)\\s+(?:je|v)\\s+(${signNames})`, 'i');
+                const ascMatch = textToSearch.match(ascRegex);
+                if (ascMatch && ascMatch[1]) {
+                    document.getElementById('res-asc').textContent = ascMatch[1];
+                }
+            }
+            
+            // Handle Teaser for non-premium
+            if (data.isTeaser) {
+                const teaserMsg = document.createElement('div');
+                teaserMsg.className = 'teaser-overlay';
+                teaserMsg.innerHTML = `
+                    <div class="teaser-content">
+                        <p>✨ Chcete odemknout svůj úplný osud?</p>
+                        <a href="/cenik" class="btn btn--premium">Získat Premium</a>
+                    </div>
+                `;
+                contentDiv.appendChild(teaserMsg);
+            }
 
             // Save to history if logged in and add favorite button
             if (window.Auth && window.Auth.saveReading) {

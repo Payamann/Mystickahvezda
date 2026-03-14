@@ -253,36 +253,76 @@
 
 
 
-        .year-input {
-
-            padding: 0.85rem 1.25rem;
-
-            background: rgba(255, 255, 255, 0.06);
-
+        .year-input-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.12);
-
             border-radius: 12px;
-
-            color: white;
-
-            font-size: 1rem;
-
-            font-family: 'Inter', sans-serif;
-
-            outline: none;
-
-            width: 140px;
-
-            text-align: center;
-
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            height: 48px;
         }
 
+        .year-input-wrapper:focus-within {
+            border-color: rgba(212, 175, 55, 0.6);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+        }
 
+        .year-input {
+            padding: 0 0.5rem;
+            background: transparent !important;
+            border: none !important;
+            color: white;
+            font-size: 1.1rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            width: 80px;
+            text-align: center;
+            margin: 0;
+            height: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            -moz-appearance: textfield;
+        }
 
-        .year-input:focus {
+        .year-input::-webkit-outer-spin-button,
+        .year-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
 
-            border-color: rgba(212, 175, 55, 0.5);
+        .ctrl-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            width: 40px;
+            height: 100%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            user-select: none;
+        }
 
+        .ctrl-btn:hover {
+            color: #d4af37;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .ctrl-btn:active {
+            transform: scale(0.9);
+        }
+
+        .ctrl-btn.minus {
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .ctrl-btn.plus {
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
         }
 
     </style>
@@ -323,9 +363,12 @@
 
                     data-animate>
 
-                    <input type="number" id="birth-year" class="year-input" placeholder="Rok nar." min="1900" max="2100"
-
-                        aria-label="Rok narození">
+                    <div class="year-input-wrapper">
+                        <button class="ctrl-btn minus" type="button" onclick="this.parentNode.querySelector('input').stepDown(); this.parentNode.querySelector('input').dispatchEvent(new Event('change'));">−</button>
+                        <input type="number" id="birth-year" class="year-input" placeholder="Rok nar." min="1900" max="2100"
+                            aria-label="Rok narození">
+                        <button class="ctrl-btn plus" type="button" onclick="this.parentNode.querySelector('input').stepUp(); this.parentNode.querySelector('input').dispatchEvent(new Event('change'));">+</button>
+                    </div>
 
                     <button id="btn-calculate" class="btn btn--primary">🐉 Zjistit mé znamení</button>
 
@@ -491,9 +534,12 @@
 
                                 rok narození</label>
 
-                            <input type="number" id="synastry-year1" class="year-input" placeholder="Např. 1986"
-
-                                min="1900" max="2100" style="width:100%;">
+                            <div class="year-input-wrapper" style="width:100%;">
+                                <button class="ctrl-btn minus" type="button" onclick="this.parentNode.querySelector('input').stepDown(); this.parentNode.querySelector('input').dispatchEvent(new Event('change'));">−</button>
+                                <input type="number" id="synastry-year1" class="year-input" placeholder="Např. 1986"
+                                    min="1900" max="2100" style="width:100%;">
+                                <button class="ctrl-btn plus" type="button" onclick="this.parentNode.querySelector('input').stepUp(); this.parentNode.querySelector('input').dispatchEvent(new Event('change'));">+</button>
+                            </div>
 
                         </div>
 
@@ -505,9 +551,12 @@
 
                                 partnera</label>
 
-                            <input type="number" id="synastry-year2" class="year-input" placeholder="Např. 1990"
-
-                                min="1900" max="2100" style="width:100%;">
+                            <div class="year-input-wrapper" style="width:100%;">
+                                <button class="ctrl-btn minus" type="button" onclick="this.parentNode.querySelector('input').stepDown(); this.parentNode.querySelector('input').dispatchEvent(new Event('change'));">−</button>
+                                <input type="number" id="synastry-year2" class="year-input" placeholder="Např. 1990"
+                                    min="1900" max="2100" style="width:100%;">
+                                <button class="ctrl-btn plus" type="button" onclick="this.parentNode.querySelector('input').stepUp(); this.parentNode.querySelector('input').dispatchEvent(new Event('change'));">+</button>
+                            </div>
 
                         </div>
 

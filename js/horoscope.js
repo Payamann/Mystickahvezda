@@ -192,19 +192,13 @@ function initHoroscope() {
                     console.warn('Failed to fetch journal context:', e);
                 }
 
-                // Call Gemini AI via server with period AND context AND lang
-                const response = await fetch(`${window.API_CONFIG?.BASE_URL || 'http://localhost:3001/api'}/horoscope`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        sign: signName,
-                        period: currentPeriod,
-                        context: context,
-                        lang: currentLang
-                    })
+                // Call Gemini AI via server with period AND context AND lang using centralized callAPI
+                const data = await window.callAPI('/horoscope', {
+                    sign: signName,
+                    period: currentPeriod,
+                    context: context,
+                    lang: currentLang
                 });
-
-                const data = await response.json();
 
                 const dateLocales = { 'cs': 'cs-CZ', 'sk': 'sk-SK', 'pl': 'pl-PL' };
                 const today = new Date().toLocaleDateString(dateLocales[currentLang] || 'cs-CZ', {
@@ -308,8 +302,21 @@ function initHoroscope() {
 
             } catch (error) {
                 console.error('Horoscope error:', error);
+                
                 if (detailText) {
-                    detailText.innerText = "Vesmír je momentálně tichý. Zkuste se ztišit i vy a přijďte prosím později.";
+                    if (error.status === 402 || error.code === 'PREMIUM_REQUIRED') {
+                        detailText.innerHTML = `
+                            <div class="text-center">
+                                <p style="color: var(--color-gold); font-weight: bold;">Tato funkce vyžaduje Premium</p>
+                                <p>Týdenní a měsíční horoskopy jsou hlubší analýzy dostupné našim Premium hvezdoplavcům.</p>
+                                <a href="cenik.html" class="btn btn--glass" style="margin-top: 15px;">Získat Premium</a>
+                            </div>
+                        `;
+                    } else if (error.status === 429) {
+                        detailText.innerText = "Dnes jste již vyčerpali své hvězdné limity. Vesmír potřebuje čas na regeneraci. Vraťte se prosím zítra nebo upgradujte na Premium.";
+                    } else {
+                        detailText.innerText = "Vesmír je momentálně tichý. Zkuste se ztišit i vy a přijďte prosím později (Chyba: " + (error.message || 'Neznámá') + ").";
+                    }
                 }
             } finally {
                 // Hide loading, show content
@@ -322,6 +329,41 @@ function initHoroscope() {
             }
         });
     });
+
+    // AUTO-SELECT LOGIC
+    const autoSelectSign = () => {
+        // 1. Try URL hash (#byk)
+        const hash = window.location.hash.substring(1);
+        if (hash) {
+            const card = Array.from(zodiacCards).find(c => {
+                const href = c.getAttribute('href');
+                return href && href.substring(1) === hash;
+            });
+            if (card) {
+                card.click();
+                return true;
+            }
+        }
+
+        // 2. Try User Personalization (window.MH_PERSONALIZATION)
+        if (window.MH_PERSONALIZATION) {
+            const userSign = window.MH_PERSONALIZATION.getSign();
+            if (userSign) {
+                const card = Array.from(zodiacCards).find(c => {
+                    const href = c.getAttribute('href');
+                    return href && href.substring(1) === userSign;
+                });
+                if (card) {
+                    card.click();
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    // Run auto-select after a short delay to ensure everything is ready
+    setTimeout(autoSelectSign, 100);
 }
 
 function generateLuckyNumbers() {

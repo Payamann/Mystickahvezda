@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rituální Průvodce | Mystická Hvězda</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        .ritual-container {
+            max-width: 900px;
+            margin: 80px auto;
+            padding: 3rem;
+            text-align: center;
+        }
+        .moon-display {
+            font-size: 8rem;
+            margin: 2rem 0;
+            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.4));
+            animation: pulse 4s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.05); } }
+        
+        .ritual-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 3rem;
+            border-radius: 40px;
+            margin-top: 2rem;
+        }
+        .ritual-title {
+            font-family: 'Cinzel', serif;
+            color: var(--color-mystic-gold);
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .btn-ritual {
+            display: inline-block;
+            margin-top: 2rem;
+            background: linear-gradient(135deg, var(--color-mystic-gold), #c9a227);
+            color: #0a0a1a;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+        .btn-ritual:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-stars">
+    <div class="container">
+        <div class="ritual-container">
+            <div id="moon-icon" class="moon-display">🌕</div>
+            <h2 id="moon-name" style="color: var(--color-silver-mist); letter-spacing: 4px; text-transform: uppercase;">Úplněk</h2>
+            
+            <div class="ritual-card">
+                <h1 class="ritual-title">Dnešní Rituál</h1>
+                <p id="ritual-desc" style="font-size: 1.2rem; line-height: 1.8; color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto;"></p>
+                <a href="session.html" class="btn-ritual">Vstoupit do seance</a>
+            </div>
+            
+            <a href="/" style="display: block; margin-top: 3rem; color: rgba(255,255,255,0.4); text-decoration: none;">Zpět na hlavní bránu</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getMoonPhase, getRitualDescription } from '../js/moon-phase.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const phase = getMoonPhase();
+            document.getElementById('moon-icon').textContent = phase.icon;
+            document.getElementById('moon-name').textContent = phase.name;
+            document.getElementById('ritual-desc').textContent = getRitualDescription(phase.slug);
+        });
+    </script>
+</body>
+</html>

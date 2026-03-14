@@ -4,13 +4,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const searchInput = document.getElementById('dream-search');
     const alphabetNav = document.getElementById('alphabet-nav');
     const dictGrid = document.getElementById('dict-grid');
-
-    const aiTextarea = document.getElementById('ai-dream-input');
-    const btnAnalyze = document.getElementById('btn-analyze-dream');
-    const aiLoading = document.getElementById('ai-loading');
-    const aiResult = document.getElementById('ai-result');
-
+    
+    // Constants for performance
+    const INITIAL_VISIBLE_COUNT = 24;
+    let currentlyVisibleCount = INITIAL_VISIBLE_COUNT;
     let dreamsData = [];
+    let filteredData = [];
 
     // --- DICTIONARY LOGIC ---
 
@@ -26,9 +25,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Expose globally so Symbol dne (inline script) can access the data
             window.globalDreamsData = dreamsData;
+            filteredData = dreamsData;
 
             initAlphabet();
-            renderDictionary(dreamsData);
+            renderDictionary(true); // Initial load with limit
         } catch (error) {
             console.error('Error loading dream data:', error);
             dictGrid.innerHTML = '<div class="no-results">Svazek snů se ztratil v mlze. Zkuste obnovit stránku.</div>';
@@ -49,8 +49,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         alphabetNav.appendChild(btnAll);
 
         letters.forEach(letter => {
-            // Only add button if there is at least one word starting with this letter (optional)
-            // Or just add all
             const btn = document.createElement('button');
             btn.className = 'alphabet-btn';
             btn.textContent = letter;
@@ -60,27 +58,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // 3. Render Grid
-    function renderDictionary(dataToShow) {
-        if (dataToShow.length === 0) {
-            dictGrid.innerHTML = '<div class="no-results">Tento symbol ve hvězdných spisech zatím nevidíme. Zkuste si nechat sen rozebrat Průvodcem nahoře!</div>';
+    function renderDictionary(useLimit = false) {
+        const dataToShow = filteredData;
+        const totalCount = dataToShow.length;
+        
+        if (totalCount === 0) {
+            dictGrid.innerHTML = '<div class="no-results">Tento symbol ve hvězdných spisech zatím nevidíme.</div>';
             return;
         }
 
+        const itemsToRender = useLimit ? dataToShow.slice(0, currentlyVisibleCount) : dataToShow;
+        
         dictGrid.innerHTML = '';
-        dataToShow.forEach(item => {
+        itemsToRender.forEach(item => {
             const card = document.createElement('article');
             card.className = 'dict-card';
             card.id = 'symbol-' + item.id;
-            card.innerHTML = `<h3 class="dict-keyword">${emojiHtml}${item.keyword}</h3>
-                              <p class="dict-desc">${item.description}</p>
-                              <a href="#" onclick="document.querySelector('.ai-dream-section').scrollIntoView({behavior: 'smooth'}); document.getElementById('ai-dream-input').focus(); return false;" style="display:inline-block; margin-top:12px; font-size:0.85rem; color: var(--color-mystic-gold); text-decoration: none; border: 1px solid rgba(212, 175, 55, 0.3); padding: 5px 10px; border-radius: 20px; transition: background 0.2s;">✨ Hluboký osobní výklad (Premium)</a>`;
+            const emojiStr = item.emoji ? `${item.emoji} ` : '';
+            card.innerHTML = `<h3 class="dict-keyword">${emojiStr}${item.keyword}</h3>
+                              <p class="dict-desc">${item.description}</p>`;
             dictGrid.appendChild(card);
         });
+
+        // Add "Load More" button if needed
+        if (useLimit && totalCount > currentlyVisibleCount) {
+            const loadMoreWrapper = document.createElement('div');
+            loadMoreWrapper.style.gridColumn = '1 / -1';
+            loadMoreWrapper.style.textAlign = 'center';
+            loadMoreWrapper.style.marginTop = '2rem';
+            
+            const loadMoreBtn = document.createElement('button');
+            loadMoreBtn.className = 'btn btn--secondary';
+            loadMoreBtn.textContent = 'Načíst další symboly';
+            loadMoreBtn.style.padding = '12px 30px';
+            loadMoreBtn.addEventListener('click', () => {
+                currentlyVisibleCount += 24;
+                renderDictionary(true);
+            });
+            
+            loadMoreWrapper.appendChild(loadMoreBtn);
+            dictGrid.appendChild(loadMoreWrapper);
+        }
     }
 
     // 4. Filtering
     function filterByLetter(letter, btnTarget = null) {
-        // Handle active classes
+        // Reset limit when changing filter
+        currentlyVisibleCount = INITIAL_VISIBLE_COUNT;
+
         document.querySelectorAll('.alphabet-btn').forEach(b => b.classList.remove('active'));
         if (btnTarget) {
             btnTarget.classList.add('active');
@@ -91,12 +116,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         searchInput.value = ''; // clear search if using letters
 
         if (!letter) {
-            renderDictionary(dreamsData);
+            filteredData = dreamsData;
+            renderDictionary(true); // Use limit for "All"
             return;
         }
 
-        const filtered = dreamsData.filter(d => d.keyword.toUpperCase().startsWith(letter));
-        renderDictionary(filtered);
+        filteredData = dreamsData.filter(d => d.keyword.toUpperCase().startsWith(letter));
+        renderDictionary(false); // Show all results for specific letter
     }
 
     let searchDebounceTimer = null;
@@ -104,99 +130,53 @@ document.addEventListener('DOMContentLoaded', async () => {
         clearTimeout(searchDebounceTimer);
         searchDebounceTimer = setTimeout(() => {
             const query = e.target.value.toLowerCase().trim();
+            currentlyVisibleCount = INITIAL_VISIBLE_COUNT;
 
-            // Remove active state from letters when searching manually
             document.querySelectorAll('.alphabet-btn').forEach(b => b.classList.remove('active'));
 
             if (!query) {
-                renderDictionary(dreamsData);
+                filteredData = dreamsData;
+                renderDictionary(true);
                 alphabetNav.firstChild.classList.add('active');
                 return;
             }
 
-            const filtered = dreamsData.filter(d =>
+            filteredData = dreamsData.filter(d =>
                 d.keyword.toLowerCase().includes(query) ||
                 d.description.toLowerCase().includes(query)
             );
-            renderDictionary(filtered);
+            renderDictionary(false); // Show all results for search
         }, 200);
     });
 
-    // --- PREMIUM DREAM ANALYSIS ---
+    // 5. Popular Cards Handling
+    function initPopularCards() {
+        document.querySelectorAll('.popular-card[data-search]').forEach(card => {
+            card.onclick = (e) => {
+                e.preventDefault();
+                const term = card.getAttribute('data-search');
+                if (term) {
+                    searchInput.value = term;
+                    // Reset letters
+                    document.querySelectorAll('.alphabet-btn').forEach(b => b.classList.remove('active'));
+                    
+                    // Filter and render
+                    const query = term.toLowerCase().trim();
+                    filteredData = dreamsData.filter(d => 
+                        d.keyword.toLowerCase().includes(query) || 
+                        d.description.toLowerCase().includes(query)
+                    );
+                    renderDictionary(false); // Show all results for the specific term
 
-    btnAnalyze.addEventListener('click', async () => {
-        const dreamText = aiTextarea.value.trim();
-
-        if (!dreamText) {
-            window.Auth?.showToast?.('Prosím napište svůj sen do pole výše.', '', 'error');
-            return;
-        }
-
-        if (dreamText.length < 20) {
-            window.Auth?.showToast?.('Sen je příliš krátký na podrobnou analýzu. Přidejte detaily.', '', 'error');
-            return;
-        }
-
-        // Check auth status
-        const isAuth = window.Auth && window.Auth.isLoggedIn();
-        if (!isAuth) {
-            window.Auth?.showToast?.('Pro hluboký osobní výklad snu musíte být přihlášeni.', '', 'error');
-            window.Auth?.openModal?.('login');
-            return;
-        }
-
-        // Show loading state
-        btnAnalyze.disabled = true;
-        aiResult.style.display = 'none';
-        aiLoading.style.display = 'block';
-
-        // Scroll to loading slightly
-        aiLoading.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-        try {
-            const token = localStorage.getItem('auth_token') || window.Auth?.token;
-            const baseUrl = window.API_CONFIG?.BASE_URL || 'http://localhost:3001/api';
-            const response = await fetch(`${baseUrl}/dream`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                },
-                body: JSON.stringify({ dream: dreamText })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                // Handle premium gate or other errors
-                if (data.code === 'PREMIUM_REQUIRED') {
-                    window.showPremiumModal('dream_analysis');
-                    throw new Error('Premium Required'); // To cleanly exit try block
+                    // Scroll to search area or grid
+                    const target = document.querySelector('.dream-search-wrapper') || dictGrid;
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
-                throw new Error(data.error || 'Neznámá chyba serveru');
-            }
-
-            // Success: Clean up markdown backticks before rendering
-            let cleanHtml = data.response;
-            if (cleanHtml.includes('```html')) {
-                cleanHtml = cleanHtml.replace(/```html/g, '').replace(/```/g, '').trim();
-            } else if (cleanHtml.includes('```')) {
-                cleanHtml = cleanHtml.replace(/```/g, '').trim();
-            }
-            aiResult.innerHTML = cleanHtml;
-            aiResult.style.display = 'block';
-
-        } catch (error) {
-            if (error.message !== 'Premium Required') {
-                console.error('Dream analysis error:', error);
-                window.Auth?.showToast?.(error.message, '', 'error');
-            }
-        } finally {
-            btnAnalyze.disabled = false;
-            aiLoading.style.display = 'none';
-        }
-    });
+            };
+        });
+    }
 
     // INITIALIZE
-    loadDreamData();
+    await loadDreamData();
+    initPopularCards();
 });

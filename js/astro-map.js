@@ -199,23 +199,13 @@ async function handleFormSubmit(e) {
     showLoading();
 
     try {
-        const authToken = localStorage.getItem('auth_token') || window.Auth?.token;
-        const response = await fetch(`${API_URL}/astrocartography`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
-            },
-            body: JSON.stringify({
-                name,
-                birthDate,
-                birthTime,
-                birthPlace,
-                intention: INTENTIONS[intention] || intention
-            })
+        const data = await window.callAPI('/astrocartography', {
+            name,
+            birthDate,
+            birthTime,
+            birthPlace,
+            intention: INTENTIONS[intention] || intention
         });
-
-        const data = await response.json();
 
         if (data.success) {
             displayResults(data.response);
@@ -225,7 +215,7 @@ async function handleFormSubmit(e) {
         }
     } catch (error) {
         console.error('Astrocartography Error:', error);
-        showError('Nepodařilo se spojit s hvězdným serverem. Zkuste to později.');
+        showError(error.message || 'Nepodařilo se spojit s hvězdným serverem. Zkuste to později.');
     }
 }
 
@@ -290,21 +280,34 @@ function displayResults(response) {
     */
 
     if (resultsContainer) {
-        // Sanitize AI response: escape HTML first, then apply safe markdown bold
-        let safeResponse = response
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
+        // Sanitize AI response:
+        // 1. Strip ALL HTML tags to avoid literal tags appearing in UI
+        let cleanText = response.replace(/<[^>]*>?/gm, '');
+
+        // 2. Format the clean text (Markdown-like)
+        let formattedContent = cleanText
+            // Bold (**text** or __text__)
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/__(.*?)__/g, '<strong>$1</strong>')
+            // Headers (e.g., Zóna... -> make it more prominent if it starts with emoji or looks like a header)
+            .replace(/^(..)?(Zóna .*?)$/gm, '<h4 class="result-section-title">$1 $2</h4>')
+            // Paragraphs and bullets
+            .replace(/\n\s*-\s*(.*?)/g, '<li>$1</li>')
+            .replace(/(<li>.*?<\/li>)+/g, '<ul>$&</ul>')
+            .replace(/\n\n/g, '</p><p>')
             .replace(/\n/g, '<br>');
+
+        // Wrap in initial paragraph if not already started with header
+        if (!formattedContent.startsWith('<h4')) {
+            formattedContent = '<p>' + formattedContent + '</p>';
+        }
 
         resultsContainer.innerHTML = `
             <div class="astro-result-card" data-animate>
                 <h3 class="result-title">🗺️ Vaše Astrokartografická Mapa</h3>
                 <div class="result-content">
-                    ${safeResponse}
+                    ${formattedContent}
                 </div>
-                ${tipHtml}
             </div>
         `;
         resultsContainer.style.display = 'block';

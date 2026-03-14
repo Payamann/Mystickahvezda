@@ -59,8 +59,8 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
         const langNames = { 'cs': 'česky', 'sk': 'slovensky', 'pl': 'polsky' };
         const langName = langNames[targetLang];
 
-        // PREMIUM GATE: Free users can only access daily horoscope
-        if (!req.isPremium && period !== 'daily') {
+        // PREMIUM GATE: Free users can only access daily horoscope (bypass in dev)
+        if (!req.isPremium && period !== 'daily' && process.env.NODE_ENV !== 'development') {
             const errorMsgs = {
                 'cs': 'Týdenní a měsíční horoskopy jsou dostupné pouze pro Premium uživatele.',
                 'sk': 'Týždenné a mesačné horoskopy sú dostupné iba pre Premium používateľov.',

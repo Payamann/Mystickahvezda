@@ -207,7 +207,7 @@ router.post('/natal-chart', optionalPremiumCheck, async (req, res) => {
             return res.status(400).json({ success: false, error: 'Datum narození je povinné.' });
         }
 
-        if (!req.isPremium) {
+        if (!req.isPremium && process.env.NODE_ENV !== 'development') {
             return res.json({
                 success: true,
                 isTeaser: true,
@@ -221,7 +221,8 @@ router.post('/natal-chart', optionalPremiumCheck, async (req, res) => {
         const targetLangName = langMap[lang] || langMap['cs'];
 
         const safeName = String(name || 'Tazatel').substring(0, 100);
-        const message = `Jméno: ${safeName}\\nDatum narození: ${String(birthDate).substring(0, 30)}\\nČas narození: ${String(birthTime || '').substring(0, 20)}\\nMísto narození: ${String(birthPlace || '').substring(0, 200)}`;
+        const sunSignInfo = req.body.sunSign ? `\\nSluneční znamení (vypočteno): ${req.body.sunSign}` : '';
+        const message = `Jméno: ${safeName}\\nDatum narození: ${String(birthDate).substring(0, 30)}\\nČas narození: ${String(birthTime || '').substring(0, 20)}\\nMísto narození: ${String(birthPlace || '').substring(0, 200)}${sunSignInfo}`;
 
         const systemPrompt = SYSTEM_PROMPTS.natalChart + `\n\nRespond in ${targetLangName}.`;
         const response = await callGemini(systemPrompt, message);

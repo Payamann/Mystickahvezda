@@ -19,6 +19,7 @@ import mentorRoutes from './mentor.js';
 import adminRoutes from './admin.js';
 import crypto from 'crypto';
 import { initializeEmailQueueJob } from './jobs/email-queue.js';
+import { globalLimiter, staticLimiter, aiLimiter, sensitiveLimiter } from './middleware.js';
 
 // Route modules
 import oracleRoutes from './routes/oracle.js';
@@ -27,10 +28,11 @@ import horoscopePagesRoutes from './routes/horoscope-pages.js';
 import numerologyRoutes from './routes/numerology.js';
 import userRoutes from './routes/user.js';
 import angelPostRoutes from './routes/angel-post.js';
+import briefingRoutes from './routes/briefing.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 // Enable trust proxy for Railway/Heroku/Vercel to correctly identify user IPs
@@ -126,73 +128,10 @@ app.use((req, res, next) => {
 
 // Security Headers with Content Security Policy
 
-// Global Rate Limiting (per IP/user)
-const globalLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 300, // 300 requests per 15 minutes (20 req/min average)
-    keyGenerator: (req, res) => {
-        // Use user ID if authenticated, otherwise use IP
-        return req.user?.id || req.ip;
-    },
-    skip: (req, res) => {
-        // Don't count static file requests (images, CSS, JS)
-        return req.path.match(/\.(js|css|jpg|jpeg|png|gif|ico|svg|ttf|webp|woff|woff2)$/);
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-    handler: (req, res) => {
-        res.status(429).json({
-            error: 'Příliš mnoho požadavků. Zkuste to prosím později.',
-            retryAfter: req.rateLimit.resetTime
-        });
-    }
-});
 app.use('/api/', globalLimiter);
-
-// Strict global rate limit for non-API routes (static files, etc.)
-const staticLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minute
-    max: 500, // 500 requests per minute per IP (relaxed to prevent asset blocking)
-    skip: (req, res) => {
-        // Skip for actual API routes (they have their own limiter)
-        return req.path.startsWith('/api/');
-    },
-    standardHeaders: true,
-    legacyHeaders: false
-});
 app.use(staticLimiter);
 
-// AI-generation endpoints - expensive, limit abuse
-const aiLimiter = rateLimit({
-    windowMs: 24 * 60 * 60 * 1000, // 24 hours
-    max: (req, res) => {
-        // Premium users get higher limits
-        if (req.user?.isPremium) {
-            return 100; // 100 AI requests per day for premium
-        }
-        return 10; // 10 AI requests per day for free users
-    },
-    keyGenerator: (req, res) => {
-        // Use user ID if authenticated, otherwise use IP
-        return req.user?.id || req.ip;
-    },
-    message: { error: 'Překročen denní limit pro AI generování. Upgradujte na premium pro neomezený přístup.' },
-    standardHeaders: true,
-    legacyHeaders: false,
-    skip: (req, res) => {
-        // Skip rate limiting for health checks
-        return req.path === '/api/health';
-    }
-});
-
-// Sensitive account operations - strict limit (Brute force protection)
-const sensitiveOpLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max: 10, // 10 attempts per hour
-    message: { error: 'Příliš mnoho pokusů. Zkuste to prosím později.' },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
+// Rate limiters are now handled in middleware.js and imported
 
 // Gzip Compression
 app.use(compression());
@@ -201,22 +140,24 @@ app.use(compression());
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
-            defaultSrc: ["'self'"],
+            defaultSrc: ["'self'", "https://cdnjs.cloudflare.com"],
             scriptSrc: [
                 "'self'",
                 "'unsafe-inline'",          // Needed for inline event handlers in current HTML
-                "'unsafe-eval'",             // Needed for some dynamic JS
                 'https://js.stripe.com',     // Stripe.js
                 'https://cdn.jsdelivr.net',  // CDN scripts
+                'https://cdnjs.cloudflare.com', // Added for Three.js
             ],
             styleSrc: [
                 "'self'",
                 "'unsafe-inline'",   // Needed for inline styles
                 'https://fonts.googleapis.com',
+                'https://cdnjs.cloudflare.com',
             ],
             fontSrc: [
                 "'self'",
                 'https://fonts.gstatic.com',
+                'https://cdnjs.cloudflare.com',
                 'data:',
             ],
             imgSrc: [
@@ -230,6 +171,9 @@ app.use(helmet({
                 process.env.SUPABASE_URL ? `https://${process.env.SUPABASE_URL.replace(/^https?:\/\//, '')}` : '',
                 'https://api.stripe.com',    // Stripe API
                 'https://generativelanguage.googleapis.com', // Gemini API
+                'https://cdnjs.cloudflare.com', // Added for Three.js fetches
+                'https://fonts.googleapis.com',
+                'https://fonts.gstatic.com',
             ].filter(Boolean),
             frameSrc: ["'self'", 'https://js.stripe.com'], // Allow Stripe iframe
             objectSrc: ["'none'"],
@@ -387,6 +331,14 @@ if (process.env.NODE_ENV !== 'production') {
 // Handles /horoskop/:sign/:date and /sitemap-horoscopes.xml
 app.use('/horoskop', horoscopePagesRoutes);
 
+// Support for /jmena/:name (redirects to /jmena/?jmeno=Name)
+app.get('/jmena/:name', (req, res) => {
+    const name = req.params.name;
+    // Capitalize first letter to match database
+    const capitalized = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    res.redirect(301, `/jmena/index.html?jmeno=${encodeURIComponent(capitalized)}`);
+});
+
 // Serve static files from the parent directory (MystickaHvezda root)
 const rootDir = path.resolve(__dirname, '../');
 console.log(`đź“‚ Serving static files from: ${rootDir}`);
@@ -422,7 +374,7 @@ app.use('/js', express.static(path.join(rootDir, 'js'), {
 
 
 // Apply sensitive operation limiter to password reset (stricter than authLimiter)
-app.use('/api/auth/reset-password', sensitiveOpLimiter);
+app.use('/api/auth/reset-password', sensitiveLimiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/contact', contactRoutes);
@@ -442,6 +394,7 @@ app.use('/api', aiLimiter, oracleRoutes);
 
 // Horoscope with DB caching
 app.use('/api/horoscope', aiLimiter, horoscopeRoutes);
+app.use('/api', aiLimiter, briefingRoutes);
 
 // Numerology with DB caching (Premium only)
 app.use('/api/numerology', aiLimiter, numerologyRoutes);

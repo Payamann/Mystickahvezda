@@ -43,7 +43,11 @@ Styl:
 - Používej formátování (b), (i) pro důraz.
 - Tón: Mystický, psychologicky hluboký, ale srozumitelný.
 - Délka: cca 4-5 odstavců.
-- Místo negativity hledej růstový potenciál.`,
+- Místo negativity hledej růstový potenciál.
+- Na ÚPLNÝ ZÁVĚR odpovědi přidej skrytý blok (pro systém), který nebude viditelný pro uživatele, ve formátu:
+DATA: Slunce=[Znamení], Měsíc=[Znamení], Ascendent=[Znamení]
+(Znamení piš v 1. pádě, např. Beran, Rak, Lev)
+Struktura musí být dodržena.`,
 
     synastry: `${ROLE_PREAMBLE}Jsi expert na partnerské vztahy a astrologii.
 Porovnáváš energie dvou lidí. Hledej karmické propojení.

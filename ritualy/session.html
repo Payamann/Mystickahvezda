@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ritual Seance | Mystická Hvězda</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body { overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; background: #05050dc7; }
+        .session-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, rgba(30, 20, 50, 0.4) 0%, #050505 100%);
+            z-index: 1;
+        }
+        .ritual-step {
+            position: relative; z-index: 10;
+            text-align: center; max-width: 700px; padding: 2rem;
+            color: white; font-family: 'Cinzel', serif;
+            opacity: 0; transform: translateY(20px);
+            transition: all 1.5s ease;
+        }
+        .ritual-step.active { opacity: 1; transform: translateY(0); }
+        .ritual-text { font-size: 2rem; color: var(--color-mystic-gold); line-height: 1.5; margin-bottom: 2rem; }
+        .ritual-subtext { font-family: 'Inter', sans-serif; opacity: 0.7; font-size: 1.1rem; }
+        .progress-bar {
+            position: fixed; bottom: 0; left: 0; height: 4px;
+            background: var(--color-mystic-gold); width: 0%;
+            transition: width 0.5s linear; z-index: 100;
+        }
+        .candle {
+            width: 4px; height: 40px; background: #ffaa00; border-radius: 50%;
+            box-shadow: 0 0 20px #ff6600, 0 0 40px #ffaa00;
+            margin: 20px auto; animation: flicker 0.1s infinite;
+        }
+        @keyframes flicker {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+    <div class="session-overlay"></div>
+    <div class="progress-bar" id="progress"></div>
+
+    <div id="step-1" class="ritual-step active">
+        <div class="candle"></div>
+        <p class="ritual-text">Najděte si klidné místo a vydechněte.</p>
+        <p class="ritual-subtext">Příprava posvátného prostoru...</p>
+    </div>
+
+    <div id="step-2" class="ritual-step">
+        <p class="ritual-text">Představte si stříbrné světlo měsíce, jak naplňuje vaše srdce.</p>
+        <p class="ritual-subtext">Vizualizace očistné energie...</p>
+    </div>
+
+    <div id="step-3" class="ritual-step">
+        <p class="ritual-text">Dnes je čas pustit vše, co vám již neslouží.</p>
+        <p class="ritual-subtext">Uvolnění a transformace...</p>
+    </div>
+
+    <div id="step-4" class="ritual-step">
+        <p class="ritual-text">Vaše duše je připravena na novou cestu.</p>
+        <a href="/" class="btn btn--primary" style="margin-top: 2rem;">Dokončit seanci</a>
+    </div>
+
+    <script>
+        const steps = document.querySelectorAll('.ritual-step');
+        const progress = document.getElementById('progress');
+        let currentStep = 0;
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                steps[currentStep].classList.remove('active');
+                currentStep++;
+                setTimeout(() => {
+                    steps[currentStep].classList.add('active');
+                    progress.style.width = ((currentStep + 1) / steps.length * 100) + '%';
+                }, 500);
+            }
+        }
+
+        setInterval(nextStep, 6000); // 6 seconds per step
+        progress.style.width = (1/steps.length * 100) + '%';
+    </script>
+</body>
+</html>
