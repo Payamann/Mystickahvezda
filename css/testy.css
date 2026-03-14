@@ -1,0 +1,197 @@
+/* 
+ * Mystická Hvězda - Testy & Sebepoznání 
+ * Core styles for interactive mystical diagnostic tools.
+ */
+
+:root {
+    --quiz-card-bg: rgba(255, 255, 255, 0.05);
+    --quiz-border: 1px solid rgba(255, 255, 255, 0.1);
+    --quiz-accent: var(--color-mystic-gold, #ffd700);
+}
+
+/* HUB LANDING */
+.test-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+    margin-top: var(--space-2xl);
+}
+
+.test-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--space-xl);
+    border: var(--quiz-border);
+    background: var(--quiz-card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    transition: var(--transition-base);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+}
+
+.test-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 4px;
+    background: var(--quiz-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.test-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 215, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.test-card:hover::before {
+    transform: scaleX(1);
+}
+
+.test-card__icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-md);
+    opacity: 0.8;
+}
+
+.test-card__title {
+    margin-bottom: var(--space-sm);
+    color: var(--quiz-accent);
+}
+
+.test-card__desc {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: var(--space-lg);
+}
+
+/* QUIZ INTERFACE */
+.quiz-container {
+    max-width: 800px;
+    margin: var(--space-xl) auto;
+    padding: var(--space-xl);
+    background: rgba(10, 5, 25, 0.6);
+    border: var(--quiz-border);
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+}
+
+.quiz-progress {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    margin-bottom: var(--space-xl);
+    overflow: hidden;
+}
+
+.quiz-progress__bar {
+    height: 100%;
+    background: var(--quiz-accent);
+    width: 0%;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px var(--quiz-accent);
+}
+
+.question-step {
+    display: none;
+    animation: fadeIn 0.8s ease;
+}
+
+.question-step.active {
+    display: block;
+}
+
+.options-list {
+    display: grid;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+}
+
+.option-btn {
+    appearance: none;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.25rem var(--space-lg);
+    border-radius: 12px;
+    color: #fff;
+    text-align: left;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.option-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--quiz-accent);
+    transform: translateX(5px);
+}
+
+.option-btn::before {
+    content: '';
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--quiz-accent);
+    flex-shrink: 0;
+}
+
+/* RESULTS CARD */
+.result-display {
+    text-align: center;
+    padding: var(--space-xl);
+    animation: stardust 1.5s ease;
+}
+
+.result-card {
+    width: 100%;
+    max-width: 350px;
+    aspect-ratio: 2/3.5;
+    margin: 0 auto;
+    background: linear-gradient(145deg, rgba(20, 10, 40, 0.9), rgba(10, 5, 20, 1));
+    border: 3px solid var(--quiz-accent);
+    border-radius: 20px;
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.result-card__title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--quiz-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.result-card__image {
+    font-size: 5rem;
+    margin: var(--space-xl) 0;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes stardust {
+    0% { filter: brightness(3); transform: scale(0.95); opacity: 0; }
+    100% { filter: brightness(1); transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 0 var(--space-md); }
+    .quiz-container { padding: var(--space-lg); }
+}

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Odhalte svůj duchovní archetyp skrze sílu tarotu. Interaktivní test, který vám ukáže, která karta Velké Arkány zrcadlí vaši duši.">
+    <title>Archetyp vaší duše | Mystická Hvězda</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=9">
+    <link rel="stylesheet" href="../css/testy.css?v=1">
+</head>
+<body>
+    <div class="stars" aria-hidden="true"></div>
+
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <section class="section section--hero">
+            <div class="container text-center">
+                <span class="section__badge">Tarotová Diagnostika</span>
+                <h1 class="hero__title">Archetyp vaší <span class="text-gradient">duše</span></h1>
+                <p class="hero__subtitle">
+                    Ponořte se do svého nitra. Odpovězte upřímně na 7 otázek a odhalte, 
+                    která karta Velké Arkány zrcadlí vaši skutečnou podstatu.
+                </p>
+            </div>
+        </section>
+
+        <section class="section" style="padding-top: 0;">
+            <div class="container">
+                <div class="quiz-container" id="quiz-box">
+                    <div class="quiz-progress">
+                        <div class="quiz-progress__bar" id="progress-bar"></div>
+                    </div>
+
+                    <!-- STEP 1 -->
+                    <div class="question-step active" data-step="1">
+                        <h3>Když čelíte neznámé situaci, co je vaší první reakcí?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="magician">Okamžitě hledám nástroje a řešení, jak situaci ovládnout.</button>
+                            <button class="option-btn" data-score="priestess">Zastavím se a čekám, co mi napoví moje intuice.</button>
+                            <button class="option-btn" data-score="empress">Snažím se situaci zklidnit a vnést do ní harmonii a péči.</button>
+                            <button class="option-btn" data-score="hermit">Stáhnu se do ústraní, abych o všem v klidu popřemýšlel/a.</button>
+                            <button class="option-btn" data-score="star">Důvěřuji vesmíru, že věci dopadnou tak, jak mají.</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2 -->
+                    <div class="question-step" data-step="2">
+                        <h3>Které prostředí vás nejvíce nabíjí energií?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="magician">Rušná dílna nebo místo plné inspirace a tvoření.</button>
+                            <button class="option-btn" data-score="priestess">Tiché, posvátné místo u vody nebo v šeru knihovny.</button>
+                            <button class="option-btn" data-score="empress">Rozkvetlá zahrada nebo hluboký, živý les.</button>
+                            <button class="option-btn" data-score="hermit">Osamělá horská chata pod jasnou noční oblohou.</button>
+                            <button class="option-btn" data-score="star">Místo s otevřeným obzorem, kde se nebe dotýká země.</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3 -->
+                    <div class="question-step" data-step="3">
+                        <h3>Co považujete za svou největší přednost?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="magician">Schopnost proměnit sny v realitu svou vůlí.</button>
+                            <button class="option-btn" data-score="priestess">Schopnost vnímat věci mezi řádky a hlubokou empatii.</button>
+                            <button class="option-btn" data-score="empress">Schopnost milovat, tvořit a dávat život novým věcem.</button>
+                            <button class="option-btn" data-score="hermit">Vnitřní klid a moudrost získanou zkušenostmi.</button>
+                            <button class="option-btn" data-score="star">Nezlomnou naději a víru v lepší zítřky.</button>
+                        </div>
+                    </div>
+
+                     <!-- STEP 4 -->
+                     <div class="question-step" data-step="4">
+                        <h3>Jak vnímáte samotu?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="magician">Jako čas na soustředěnou práci na mých projektech.</button>
+                            <button class="option-btn" data-score="priestess">Jako bránu k mým vnitřním tajemstvím a snům.</button>
+                            <button class="option-btn" data-score="empress">Moc ji nemusím, raději někoho opečovávám.</button>
+                            <button class="option-btn" data-score="hermit">Jako naprostou nezbytnost pro mou duši a nalezení pravdy.</button>
+                            <button class="option-btn" data-score="star">Jako prostor pro meditaci a napojení se na celek.</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5 -->
+                    <div class="question-step" data-step="5">
+                        <h3>Který z těchto symbolů k vám nejvíce promlouvá?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="magician">Zářící hůl nebo pero pro psaní osudu.</button>
+                            <button class="option-btn" data-score="priestess">Stříbrný půlměsíc a zamčená kniha.</button>
+                            <button class="option-btn" data-score="empress">Zlatý klas obilí a koruna z květů.</button>
+                            <button class="option-btn" data-score="hermit">Stará lucerna svítící v temnotě.</button>
+                            <button class="option-btn" data-score="star">Sedm zářících hvězd nad čistým pramenem.</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 6 -->
+                    <div class="question-step" data-step="6">
+                        <h3>Co je vaším hlavním životním cílem?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="magician">Využít svůj plný potenciál a zanechat po sobě stopu.</button>
+                            <button class="option-btn" data-score="priestess">Porozumět skrytým zákonům světa a své psychice.</button>
+                            <button class="option-btn" data-score="empress">Žít v hojnosti, lásce a v souladu s přírodou.</button>
+                            <button class="option-btn" data-score="hermit">Najít své vnitřní světlo a následovat svou vlastní pravdu.</button>
+                            <button class="option-btn" data-score="star">Inspirovat ostatní a přinášet světu naději.</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 7 -->
+                    <div class="question-step" data-step="7">
+                        <h3>Kdy se cítíte nejvíce "naživu"?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="magician">Když něco tvořím a vidím, jak mi to pod rukama roste.</button>
+                            <button class="option-btn" data-score="priestess">Když zažívám hluboké spirituální vhledy nebo silnou intuici.</button>
+                            <button class="option-btn" data-score="empress">Když jsem s rodinou, přáteli nebo v lůně přírody.</button>
+                            <button class="option-btn" data-score="hermit">Když se po dlouhém hledání věci v mé hlavě náhle spojí.</button>
+                            <button class="option-btn" data-score="star">Když se dívám na hvězdy a cítím se součástí něčeho většího.</button>
+                        </div>
+                    </div>
+
+                    <!-- LOADING INTERSTITIAL -->
+                    <div class="question-step" id="loading-step">
+                        <div class="text-center">
+                            <div class="loader-celestial"></div>
+                            <h3 class="mt-xl">Nahlížíme do vaší osudové knihy...</h3>
+                            <p class="color-silver-mist">Hvězdy se řadí do vaší konstelace.</p>
+                        </div>
+                    </div>
+
+                    <!-- RESULTS -->
+                    <div class="question-step" id="result-step">
+                        <div class="result-display" id="result-box">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="text-center mt-xl">
+                            <button class="btn btn--glass" onclick="location.reload()">Zkusit znovu ↺</button>
+                            <a href="index.html" class="btn btn--secondary ml-md">Zpět na přehled</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/api-config.js?v=5" defer></script>
+    <script src="../js/components.js?v=11" defer></script>
+    <script type="module" src="../js/main.js?v=11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const steps = document.querySelectorAll('.question-step[data-step]');
+            const progressBar = document.getElementById('progress-bar');
+            const scores = { magician: 0, priestess: 0, empress: 0, hermit: 0, star: 0 };
+            let currentStep = 1;
+            const totalSteps = steps.length;
+
+            const resultsData = {
+                magician: {
+                    title: "Máh",
+                    subtitle: "Tvůrce reality",
+                    icon: "🪄",
+                    desc: "Váš archetyp je postava plná potenciálu. Máte schopnost manifestovat své myšlenky do hmotné reality. Vaše vůle je vaším nejmocnějším nástrojem.",
+                    advice: "Nezapomeňte, že s velkou mocí přichází zodpovědnost. Zaměřte svou energii na to, co skutečně milujete."
+                },
+                priestess: {
+                    title: "Velekněžka",
+                    subtitle: "Strážkyně tajemství",
+                    icon: "🌒",
+                    desc: "Váš archetyp je ztělesněním hluboké intuice a vnitřního vědění. Rozumíte věcem, které zůstávají ostatním skryty, a pohybujete se s lehkostí v říši snů.",
+                    advice: "Důvěřujte svému vnitřnímu hlasu i tehdy, když mu logika okolního světa nerozumí. Vaše ticho je vaší silou."
+                },
+                empress: {
+                    title: "Císařovna",
+                    subtitle: "Matka hojnosti",
+                    icon: "🌿",
+                    desc: "Vaše duše promlouvá skrze tvořivost, lásku a spojení s přírodou. Jste zdrojem inspirace a péče pro všechny ve vašem okolí.",
+                    advice: "Dovolte si rozkvétat. Pečujte o sebe stejně tak, jako pečujete o svět kolem sebe. Hojnost je váš přirozený stav."
+                },
+                hermit: {
+                    title: "Poustevník",
+                    subtitle: "Hledač pravdy",
+                    icon: "💡",
+                    desc: "Váš archetyp dává přednost hloubce před povrchností. Hledáte odpovědi ve svém nitru a vaše osamělá cesta vás vede k nejvyšším vrcholům moudrosti.",
+                    advice: "Nebojte se své samoty. Je to prostor, kde se rodí vaše největší pravdy. Staňte se světlem pro ty, kteří ještě bloudí."
+                },
+                star: {
+                    title: "Hvězda",
+                    subtitle: "Maják naděje",
+                    icon: "✨",
+                    desc: "Vaše duše je plná světla, optimismu a duchovní čistoty. Přinášíte naději tam, kde je tma, a inspirujete ostatní k lepším zítřkům.",
+                    advice: "Zůstaňte napojeni na vesmírné proudy. Vaše vize jsou důležité. Důvěřujte procesu života a nechte své světlo zářit."
+                }
+            };
+
+            function updateProgress() {
+                const percent = (currentStep / totalSteps) * 100;
+                progressBar.style.width = percent + '%';
+            }
+
+            function showStep(stepNum) {
+                steps.forEach(s => s.classList.remove('active'));
+                const nextStep = document.querySelector(`.question-step[data-step="${stepNum}"]`);
+                if (nextStep) {
+                    nextStep.classList.add('active');
+                    updateProgress();
+                } else {
+                    showLoading();
+                }
+            }
+
+            function showLoading() {
+                steps.forEach(s => s.classList.remove('active'));
+                document.getElementById('loading-step').classList.add('active');
+                progressBar.style.width = '100%';
+                
+                setTimeout(showResult, 2500);
+            }
+
+            function showResult() {
+                const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+                const data = resultsData[winner];
+
+                const resultHtml = `
+                    <div class="result-card" style="border-color: var(--quiz-accent);">
+                        <div class="result-card__header">
+                            <h4 class="result-card__title">${data.title}</h4>
+                            <p style="color: rgba(255,215,0,0.6); font-size: 0.8rem;">Váš duchovní archetyp</p>
+                        </div>
+                        <div class="result-card__image animate-glow">${data.icon}</div>
+                        <div class="result-card__body">
+                            <h5 style="margin-bottom: 0.5rem; color: #fff;">${data.subtitle}</h5>
+                            <p style="font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.4;">${data.desc}</p>
+                        </div>
+                        <div class="result-card__footer" style="margin-top: 1rem; border-top: 1px solid rgba(255,215,0,0.2); padding-top: 1rem;">
+                            <p style="font-style: italic; font-size: 0.85rem; color: var(--quiz-accent);">"${data.advice}"</p>
+                        </div>
+                    </div>
+                    <div class="mt-xl">
+                        <h2 class="text-gradient">Vaše cesta je osvětlena</h2>
+                        <p>Tento archetyp vám ukazuje cestu v příštích měsících.</p>
+                    </div>
+                `;
+
+                document.getElementById('loading-step').classList.remove('active');
+                const resultStep = document.getElementById('result-step');
+                document.getElementById('result-box').innerHTML = resultHtml;
+                resultStep.classList.add('active');
+            }
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const scoreKey = btn.dataset.score;
+                    scores[scoreKey]++;
+                    currentStep++;
+                    showStep(currentStep);
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .loader-celestial {
+            width: 80px;
+            height: 80px;
+            border: 3px solid transparent;
+            border-top-color: var(--color-mystic-gold);
+            border-bottom-color: var(--color-ethereal-violet);
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 2s linear infinite;
+            position: relative;
+        }
+        .loader-celestial::after {
+            content: '✨';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            animation: pulse 1s ease-in-out infinite alternate;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { from { opacity: 0.5; transform: translate(-50%, -50%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } }
+        .animate-glow { animation: glowPulse 2s infinite alternate; }
+        @keyframes glowPulse { from { text-shadow: 0 0 10px rgba(255,215,0,0.3); } to { text-shadow: 0 0 30px rgba(255,215,0,0.8); transform: scale(1.05); } }
+    </style>
+</body>
+</html>

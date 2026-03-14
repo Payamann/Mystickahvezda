@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Poznejte sami sebe skrze hvězdy a tajemství tarotu. Vyzkoušejte naše interaktivní mystické testy a odhalte archetyp své duše nebo živlovou rovnováhu.">
+    <title>Mystická Sebepoznání | Mystická Hvězda</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=9">
+    <link rel="stylesheet" href="../css/testy.css?v=1">
+</head>
+<body>
+    <div class="stars" aria-hidden="true"></div>
+
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <section class="section section--hero">
+            <div class="container text-center">
+                <span class="section__badge">Sebepoznání & Diagnostika</span>
+                <h1 class="hero__title">Pohleďte do <span class="text-gradient">Hvězdných Zrcadel</span></h1>
+                <p class="hero__subtitle">
+                    Kdo skutečně jste? Naše interaktivní testy propojují astrologii, tarot a psychologii, 
+                    aby vám pomohly odhalit skryté pravdy o vaší duši.
+                </p>
+            </div>
+        </section>
+
+        <section class="section" style="padding-top: 0;">
+            <div class="container">
+                <div class="test-grid">
+                    <!-- TEST 1: TAROT ARCHETYPE -->
+                    <a href="archetyp-duse.html" class="test-card">
+                        <div class="test-card__content">
+                            <div class="test-card__icon">🃏</div>
+                            <h3 class="test-card__title">Archetyp vaší duše</h3>
+                            <p class="test-card__desc">Zjistěte, která karta Velké Arkány vládne vašemu osudu a jaké lekce vám přináší.</p>
+                        </div>
+                        <span class="btn btn--secondary btn--sm">Odhalit archetyp →</span>
+                    </a>
+
+                    <!-- TEST 2: ELEMENTS -->
+                    <a href="#" class="test-card" style="opacity: 0.7; pointer-events: none;">
+                        <div class="test-card__content">
+                            <div class="test-card__icon">🔥</div>
+                            <h3 class="test-card__title">Živlová rovnováha</h3>
+                            <p class="test-card__desc">Máte v sobě více ohně nebo vody? Zjistěte, který živel tvoří vaši podstatu. <br><strong>(Již brzy)</strong></p>
+                        </div>
+                        <span class="btn btn--glass btn--sm">Připravujeme...</span>
+                    </a>
+
+                    <!-- TEST 3: SHADOW WORK -->
+                    <a href="#" class="test-card" style="opacity: 0.7; pointer-events: none;">
+                        <div class="test-card__content">
+                            <div class="test-card__icon">🌘</div>
+                            <h3 class="test-card__title">Stín vašeho znamení</h3>
+                            <p class="test-card__desc">Ponořte se hlouběji. Odhalte skryté stránky svého znamení a jak je transformovat v sílu. <br><strong>(Již brzy)</strong></p>
+                        </div>
+                        <span class="btn btn--glass btn--sm">Připravujeme...</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/api-config.js?v=5" defer></script>
+    <script src="../js/components.js?v=11" defer></script>
+    <script type="module" src="../js/main.js?v=11"></script>
+</body>
+</html>
