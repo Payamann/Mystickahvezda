@@ -70,16 +70,16 @@
             top: 100%;
             left: 0;
             right: 0;
-            background: rgba(15, 10, 35, 0.95);
-            border: 1px solid var(--glass-border);
+            background: rgba(18, 12, 40, 0.98); /* Less transparent for contrast */
+            border: 1px solid var(--color-mystic-gold);
             border-radius: 12px;
             margin-top: 0.5rem;
-            max-height: 300px;
+            max-height: 400px; /* Taller */
             overflow-y: auto;
-            z-index: 100;
+            z-index: 1000; /* Higher z-index */
             display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            backdrop-filter: blur(20px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.1);
+            backdrop-filter: blur(25px);
         }
 
         .autocomplete-item {
@@ -109,8 +109,10 @@
             justify-content: center;
             gap: 0.4rem;
             max-width: 900px;
-            margin: 1rem auto 2.5rem;
+            margin: 3rem auto 2.5rem; /* More top margin to avoid overlap */
             padding: 0.5rem;
+            position: relative;
+            z-index: 10;
         }
 
         .alpha-btn {
@@ -131,10 +133,10 @@
 
         .alpha-btn:hover, .alpha-btn.active {
             background: var(--color-mystic-gold);
-            color: #0a0a1a;
+            color: #000; /* Deep dark for contrast */
             border-color: var(--color-mystic-gold);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.5);
         }
 
         .names-grid { 
@@ -352,13 +354,30 @@
 
     // 2. Alphabet Bar
     function initAlphabet() {
-        alphabetBar.innerHTML = alphabet.map(l => `<button class="alpha-btn" onclick="selectLetter('${l}')">${l}</button>`).join('');
+        alphabetBar.innerHTML = alphabet.map(l => `<button class="alpha-btn" data-letter="${l}">${l}</button>`).join('');
     }
 
+    // Event delegation for alphabet
+    alphabetBar.addEventListener('click', (e) => {
+        const btn = e.target.closest('.alpha-btn');
+        if (btn) {
+            selectLetter(btn.dataset.letter);
+        }
+    });
+
     window.selectLetter = function(letter) {
+        console.log(`[names] Selected letter: ${letter}`);
+        // Reset search field when using alphabet
+        searchInput.value = '';
+        autocompleteDropdown.style.display = 'none';
+        
         document.querySelectorAll('.alpha-btn').forEach(b => b.classList.toggle('active', b.textContent === letter));
         renderGridByLetter(letter);
-        document.getElementById('names-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        const grid = document.getElementById('names-grid');
+        if (grid) {
+            grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 
     function renderGridByLetter(letter) {
@@ -372,12 +391,20 @@
 
         grid.innerHTML = `<h3 class="letter-header">${letter}</h3>` + 
             filtered.map(n => `
-                <div class="name-card" onclick="showName('${n}')">
+                <div class="name-card" data-name="${n}">
                     <span class="name-label">${n}</span>
                     <span class="name-meta">${allNames[n].origin}</span>
                 </div>
             `).join('');
     }
+
+    // Event delegation for grid
+    document.getElementById('names-grid').addEventListener('click', (e) => {
+        const card = e.target.closest('.name-card');
+        if (card) {
+            showName(card.dataset.name);
+        }
+    });
 
     // 3. Autocomplete / Našeptávač
     searchInput.addEventListener('input', (e) => {
@@ -401,7 +428,7 @@
 
         if (matches.length > 0) {
             autocompleteDropdown.innerHTML = matches.map(n => `
-                <div class="autocomplete-item" onclick="selectAutocomplete('${n}')">
+                <div class="autocomplete-item" data-name="${n}">
                     <span>${n}</span>
                     <span class="meta">${allNames[n].nameday} | ${allNames[n].origin}</span>
                 </div>
@@ -409,6 +436,14 @@
             autocompleteDropdown.style.display = 'block';
         } else {
             autocompleteDropdown.style.display = 'none';
+        }
+    });
+
+    // Event delegation for autocomplete
+    autocompleteDropdown.addEventListener('click', (e) => {
+        const item = e.target.closest('.autocomplete-item');
+        if (item) {
+            selectAutocomplete(item.dataset.name);
         }
     });
 
@@ -441,7 +476,7 @@
             if (filtered.length > 0) {
                 grid.innerHTML = `<h3 class="letter-header">Výsledky hledání: "${q}"</h3>` + 
                     filtered.map(n => `
-                        <div class="name-card" onclick="showName('${n}')">
+                        <div class="name-card" data-name="${n}">
                             <span class="name-label">${n}</span>
                             <span class="name-meta">${allNames[n].origin}</span>
                         </div>
