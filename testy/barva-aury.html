@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Odhalte barvu své aury a co vypovídá o vaší energii. Interaktivní test pro pochopení vašeho duchovního vyzařování.">
+    <title>Barva vaší aury | Mystická Hvězda</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=9">
+    <link rel="stylesheet" href="../css/testy.css?v=2">
+
+    <!-- SEO & Open Graph -->
+    <link rel="canonical" href="https://mystickahvezda.cz/testy/barva-aury.html">
+    <meta property="og:title" content="Jakou barvu má vaše aura? | Mystická Hvězda">
+    <meta property="og:description" content="Zjistěte, jaká energie vás obklopuje v tomto interaktivním testu aury.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="https://mystickahvezda.cz/img/og-aura.webp">
+</head>
+<body>
+    <div class="stars" aria-hidden="true"></div>
+
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <section class="section section--hero">
+            <div class="container text-center">
+                <span class="section__badge">Energetická Diagnostika</span>
+                <h1 class="hero__title">Barva vaší <span class="text-gradient">aury</span></h1>
+                <p class="hero__subtitle">
+                    Každá duše září jiným světlem. Odpovězte na 7 otázek 
+                    a odhalte, jaká frekvence energie právě teď dominuje vašemu vyzařování.
+                </p>
+            </div>
+        </section>
+
+        <section class="section" style="padding-top: 0;">
+            <div class="container">
+                <div class="quiz-container" id="quiz-box">
+                    <div class="quiz-progress">
+                        <div class="quiz-progress__bar" id="progress-bar"></div>
+                    </div>
+
+                    <!-- STEP 1 -->
+                    <div class="question-step active" data-step="1">
+                        <h3>Jak se nejčastěji cítíte v neznámém davu lidí?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="indigo">Jako pozorovatel, který vnímá nevyslovené věci.</button>
+                            <button class="option-btn" data-score="gold">Klidně a vyrovnaně, lidé mě často sami oslovují.</button>
+                            <button class="option-btn" data-score="green">Snažím se vytvořit příjemnou atmosféru pro ostatní.</button>
+                            <button class="option-btn" data-score="red">Plný/á energie a připravený/á jednat a prosadit se.</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2 -->
+                    <div class="question-step" data-step="2">
+                        <h3>Která barva vás instinktivně nejvíce přitahuje, když potřebujete klid?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="indigo">Hluboká fialová nebo námořnická modř.</button>
+                            <button class="option-btn" data-score="gold">Třpytivá zlatá nebo světlo svíčky.</button>
+                            <button class="option-btn" data-score="green">Smaragdová zeleň lesa nebo jarní louky.</button>
+                            <button class="option-btn" data-score="red">Teplá vínová nebo barva zapadajícího slunce.</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3 -->
+                    <div class="question-step" data-step="3">
+                        <h3>Jak reagujete na silné emoce ostatních?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="indigo">Cítím je jako fyzické pocity ve svém těle.</button>
+                            <button class="option-btn" data-score="gold">Snažím se zachovat nadhled a přinést moudré řešení.</button>
+                            <button class="option-btn" data-score="green">Instinktivně chci druhého utěšit a zahojit jeho bolest.</button>
+                            <button class="option-btn" data-score="red">Reaguji akčně – chci věci vyřešit hned teď.</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4 -->
+                    <div class="question-step" data-step="4">
+                        <h3>Co pro vás znamená "duchovní růst"?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="indigo">Odhalování hlubších pravd a rozšiřování vědomí.</button>
+                            <button class="option-btn" data-score="gold">Nalezení vnitřního míru a spojení se zdrojem.</button>
+                            <button class="option-btn" data-score="green">Život v souladu s přírodou a pomoc všemu živému.</button>
+                            <button class="option-btn" data-score="red">Využití svého plného potenciálu k tvoření ve světě.</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5 -->
+                    <div class="question-step" data-step="5">
+                        <h3>Jak trávíte čas, když jste úplně sami?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="indigo">Meditací, psaním snů nebo hlubokým přemýšlením.</button>
+                            <button class="option-btn" data-score="gold">Četbou inspirativní literatury nebo tichou kontemplací.</button>
+                            <button class="option-btn" data-score="green">Prací s rostlinami, tvořením nebo péčí o domov.</button>
+                            <button class="option-btn" data-score="red">Plánováním nových projektů nebo fyzickou aktivitou.</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 6 -->
+                    <h3>Jaký typ hudby nebo zvuků preferujete?</h3>
+                    <div class="question-step" data-step="6">
+                        <div class="options-list">
+                            <button class="option-btn" data-score="indigo">Éterickou hudbu, solfeggio frekvence nebo ticho.</button>
+                            <button class="option-btn" data-score="gold">Harmonické klasické skladby nebo tibetské mísy.</button>
+                            <button class="option-btn" data-score="green">Zvuky přírody – déšť, šumění listí nebo ptactvo.</button>
+                            <button class="option-btn" data-score="red">Rytmickou, energickou hudbu, která mě rozpohybuje.</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 7 -->
+                    <div class="question-step" data-step="7">
+                        <h3>Čím byste chtěli být pro svět kolem vás?</h3>
+                        <div class="options-list">
+                            <button class="option-btn" data-score="indigo">Vizionářem, který vidí věci dříve než ostatní.</button>
+                            <button class="option-btn" data-score="gold">Majákem klidu a moudrosti v chaosu.</button>
+                            <button class="option-btn" data-score="green">Uzdravovatelem duší i těl.</button>
+                            <button class="option-btn" data-score="red">Motivátorem, který inspiruje k akci.</button>
+                        </div>
+                    </div>
+
+                    <!-- LOADING -->
+                    <div class="question-step" id="loading-step">
+                        <div class="text-center">
+                            <div class="loader-aura"></div>
+                            <h3 class="mt-xl">Snímáme barvy vaší duše...</h3>
+                            <p class="color-silver-mist">Vaše energetické pole se harmonizuje.</p>
+                        </div>
+                    </div>
+
+                    <!-- RESULTS -->
+                    <div class="question-step" id="result-step">
+                        <div class="result-display" id="result-box">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="text-center mt-xl">
+                            <button class="btn btn--primary" id="share-btn" onclick="shareResult()">Sdílet mé světlo 🔗</button>
+                            <button class="btn btn--glass ml-md" onclick="location.reload()">Zkusit znovu ↺</button>
+                            <a href="index.html" class="btn btn--secondary ml-md">Zpět na přehled</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/api-config.js?v=5" defer></script>
+    <script src="../js/components.js?v=11" defer></script>
+    <script type="module" src="../js/main.js?v=11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const steps = document.querySelectorAll('.question-step[data-step]');
+            const progressBar = document.getElementById('progress-bar');
+            const scores = { indigo: 0, gold: 0, green: 0, red: 0 };
+            let currentStep = 1;
+            const totalSteps = steps.length;
+
+            const resultsData = {
+                indigo: {
+                    title: "Indigo",
+                    subtitle: "Vizionář & Intuit",
+                    icon: "🔮",
+                    color: "#4b0082",
+                    desc: "Vaše aura září hlubokým odstínem indigo. Jste vysoce intuitivní bytost s velkým vhledem do budoucna. Vnímáte realitu za hranicí běžných smyslů.",
+                    advice: "Důvěřujte své neomylné intuici. Vaším úkolem je vnášet do světa pravdu, kterou ostatní zatím jen matně tuší."
+                },
+                gold: {
+                    title: "Zlatá",
+                    subtitle: "Osvícená duše",
+                    icon: "✨",
+                    color: "#ffd700",
+                    desc: "Zlatá aura značí vysokou úroveň vědomí a vnitřní moudrosti. Vyzařujete klid a lidé se ve vaší přítomnosti cítí přirozeně v bezpečí.",
+                    advice: "Udržujte si svůj vnitřní střed. Vaše světlo je nakažlivé a má schopnost čistit negativní energie v celém vašem okolí."
+                },
+                green: {
+                    title: "Zelená",
+                    subtitle: "Přírodní Léčitel",
+                    icon: "🌿",
+                    color: "#228b22",
+                    desc: "Zelené vyzařování je znakem harmonie a schopnosti léčit. Jste hluboce spojeni s přírodou a máte dar uklidnit jakýkoliv konflikt.",
+                    advice: "Nezapomínejte pečovat i o sebe. Jako léčitel vydáváte hodně energie, kterou musíte pravidelně doplňovat tichem v lese."
+                },
+                red: {
+                    title: "Červená",
+                    subtitle: "Tvůrce & Bojovník",
+                    icon: "🔥",
+                    color: "#cc0000",
+                    desc: "Vaše aura je nabitá vitalitou a vášní. Máte obrovskou schopnost dotahovat věci do konce a měnit svět kolem sebe skrze akci.",
+                    advice: "Směrujte svou vášeň konstruktivně. Vaše energie je jako silný oheň – může ohřát, ale i spálit, pokud ji neovládnete."
+                }
+            };
+
+            function updateProgress() {
+                const percent = (currentStep / totalSteps) * 100;
+                progressBar.style.width = percent + '%';
+            }
+
+            function showStep(stepNum) {
+                steps.forEach(s => s.classList.remove('active'));
+                const nextStep = document.querySelector(`.question-step[data-step="${stepNum}"]`);
+                if (nextStep) {
+                    nextStep.classList.add('active');
+                    updateProgress();
+                } else {
+                    showLoading();
+                }
+            }
+
+            function showLoading() {
+                steps.forEach(s => s.classList.remove('active'));
+                document.getElementById('loading-step').classList.add('active');
+                progressBar.style.width = '100%';
+                
+                setTimeout(showResult, 2500);
+            }
+
+            function showResult() {
+                const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+                const data = resultsData[winner];
+                
+                window.lastResult = data.title;
+
+                const resultHtml = `
+                    <div class="result-card" style="border-color: ${data.color};">
+                        <div class="result-card__header">
+                            <h4 class="result-card__title" style="color: ${data.color};">${data.title}</h4>
+                            <p style="color: rgba(255,255,255,0.6); font-size: 0.8rem;">Vaše dominantní záře</p>
+                        </div>
+                        <div class="result-card__image animate-aura" style="--aura-color: ${data.color};">${data.icon}</div>
+                        <div class="result-card__body">
+                            <h5 style="margin-bottom: 0.5rem; color: #fff;">${data.subtitle}</h5>
+                            <p style="font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.4;">${data.desc}</p>
+                        </div>
+                        <div class="result-card__footer" style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                            <p style="font-style: italic; font-size: 0.85rem; color: ${data.color};">"${data.advice}"</p>
+                        </div>
+                    </div>
+                    <div class="mt-xl">
+                        <h2 class="text-gradient">Vaše aura byla spatřena</h2>
+                        <p>Záříte barvou <strong>${data.title}</strong>, která ovlivňuje vaše okolí i osud.</p>
+                    </div>
+                `;
+
+                document.getElementById('loading-step').classList.remove('active');
+                const resultStep = document.getElementById('result-step');
+                document.getElementById('result-box').innerHTML = resultHtml;
+                resultStep.classList.add('active');
+            }
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const scoreKey = btn.dataset.score;
+                    scores[scoreKey]++;
+                    currentStep++;
+                    showStep(currentStep);
+                });
+            });
+
+            window.shareResult = () => {
+                const text = `Moje aura září barvou ${window.lastResult}! Odhal i ty svou energii na Mystické Hvězdě.`;
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Moje Aura',
+                        text: text,
+                        url: window.location.href
+                    }).catch(console.error);
+                } else {
+                    const dummy = document.createElement('input');
+                    document.body.appendChild(dummy);
+                    dummy.value = text + ' ' + window.location.href;
+                    dummy.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(dummy);
+                    alert('Výsledek zkopírován do schránky!');
+                }
+            };
+        });
+    </script>
+
+    <style>
+        .loader-aura {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+            background: linear-gradient(45deg, var(--color-mystic-gold), var(--color-ethereal-violet), var(--color-deep-space));
+            background-size: 200% 200%;
+            animation: auraMorph 3s ease infinite, spin 10s linear infinite;
+        }
+        .loader-aura::after {
+            content: '';
+            position: absolute;
+            top: -10px; left: -10px; right: -10px; bottom: -10px;
+            border: 2px solid rgba(255,215,0,0.3);
+            border-radius: 50%;
+            animation: auraPulse 2s infinite;
+        }
+        @keyframes auraMorph {
+            0%, 100% { border-radius: 50% 60% 50% 40%; }
+            50% { border-radius: 60% 40% 60% 50%; }
+        }
+        @keyframes auraPulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+        .animate-aura {
+            animation: resultAura 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px var(--aura-color));
+        }
+        @keyframes resultAura {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px var(--aura-color)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 30px var(--aura-color)); }
+        }
+    </style>
+</body>
+</html>
