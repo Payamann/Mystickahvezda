@@ -103,7 +103,7 @@ function renderSubscriptionCard(sub) {
         'premium_yearly': '💎 Osvícení (Roční)',
         'premium_pro': '🚀 Premium Pro',
         'exclusive_monthly': '✨ Exclusive',
-        'vip': '👑 VIP Privátní'
+        'vip': '👑 VIP Věštecký Majestát'
     };
 
     const statusLabels = {

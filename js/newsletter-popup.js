@@ -48,7 +48,7 @@
             });
             const data = await res.json();
             if (data.success) {
-                msg.textContent = '🌟 Skvělé! Brzy vám přijde eerste hvězdná zpráva.';
+                msg.textContent = '🌟 Skvělé! Brzy vám přijde první hvězdná zpráva.';
                 msg.style.color = '#4ade80';
                 setTimeout(dismiss, 2500);
             } else {

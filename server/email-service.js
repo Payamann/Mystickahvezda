@@ -48,6 +48,7 @@ const EMAIL_TEMPLATES = {
           </style>
         </head>
         <body>
+          <div style="display:none;max-height:0;overflow:hidden;">Tarot, horoskopy a AI mentor — vše je připraveno pro vás.</div>
           <div class="container">
             <div class="header">
               <h1>🌟 Vítej!</h1>
@@ -59,8 +60,8 @@ const EMAIL_TEMPLATES = {
                 <li>📖 Neomezeným tarotovým výkladům</li>
                 <li>⭐ Denním a měsíčním horoskopům</li>
                 <li>🤖 AI Mentorovi (neomezené otázky)</li>
-                <li>🗺️ Natalním kartám a astromatpě</li>
-                <li>🔢 Numerologickým rozborem</li>
+                <li>🗺️ Natalním kartám a astromapě</li>
+                <li>🔢 Numerologickému rozboru</li>
               </ul>
               <div class="cta">
                 <a href="${process.env.APP_URL}/horoskopy.html" class="btn">Začít s horoskopem →</a>
@@ -95,6 +96,7 @@ const EMAIL_TEMPLATES = {
           </style>
         </head>
         <body>
+          <div style="display:none;max-height:0;overflow:hidden;">Nové funkce čekají — AI mentor, tarot a natální karta.</div>
           <div class="container">
             <h1 style="color: #d4af37;">✨ Objevuj nové možnosti</h1>
             <p>Včera ses připojil, dnes máš přístup k funkcím, které změní tvoji cestu:</p>
@@ -109,7 +111,7 @@ const EMAIL_TEMPLATES = {
   },
 
   onboarding_nudge: {
-    subject: 'Byly jsi tu? Tvůj AI mentor čeká... 🤖',
+    subject: 'Byl/a jsi tu? Tvůj AI mentor čeká... 🤖',
     getHtml: (data) => `
       <!DOCTYPE html>
       <html>
@@ -123,6 +125,7 @@ const EMAIL_TEMPLATES = {
           </style>
         </head>
         <body>
+          <div style="display:none;max-height:0;overflow:hidden;">Váš AI mentor má pro vás osobní zprávu.</div>
           <div class="container">
             <h1 style="color: #9b59b6;">Psst... 🤫</h1>
             <div class="highlight">
@@ -161,6 +164,7 @@ const EMAIL_TEMPLATES = {
           </style>
         </head>
         <body>
+          <div style="display:none;max-height:0;overflow:hidden;">Předplatné pozastaveno na 30 dní — vraťte se kdykoliv.</div>
           <div class="container">
             <h1 style="color: #4cc9f0;">⏸️ Předplatné pozastaveno</h1>
             <div class="info">
@@ -198,6 +202,7 @@ const EMAIL_TEMPLATES = {
           </style>
         </head>
         <body>
+          <div style="display:none;max-height:0;overflow:hidden;">50% sleva na 3 měsíce — speciálně pro vás.</div>
           <div class="container">
             <h1 style="color: #d4af37; text-align: center;">💝 Máš speciální nabídku!</h1>
             <div class="offer">
@@ -212,7 +217,7 @@ const EMAIL_TEMPLATES = {
             <div style="text-align: center; margin-top: 30px;">
               <a href="${process.env.APP_URL}/profil.html" style="background: #d4af37; color: #000; padding: 12px 30px;
                  border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">
-                Věřit se svému předplatnému →
+                Pokračovat s Premium →
               </a>
             </div>
           </div>
@@ -238,6 +243,7 @@ const EMAIL_TEMPLATES = {
           </style>
         </head>
         <body>
+          <div style="display:none;max-height:0;overflow:hidden;">Hvězdy se ptají — co vám chybí nejvíc?</div>
           <div class="container">
             <h1 style="color: #9b59b6;">Vidím, co ti chybí... 👀</h1>
             <p>Používáš základní plán, ale tvoje otázky si zaslouží více...</p>
@@ -276,6 +282,7 @@ const EMAIL_TEMPLATES = {
           </style>
         </head>
         <body>
+          <div style="display:none;max-height:0;overflow:hidden;">Sleva 50% končí za 48 hodin — nečekejte.</div>
           <div class="container">
             <h1 style="color: #ff6b6b; text-align: center;">⏰ Poslední šance!</h1>
             <div class="offer">
@@ -314,6 +321,7 @@ const EMAIL_TEMPLATES = {
           </style>
         </head>
         <body>
+          <div style="display:none;max-height:0;overflow:hidden;">30% sleva vás čeká — vraťte se ke hvězdám.</div>
           <div class="container">
             <h1 style="color: #3498db; text-align: center;">💔 Chceme tě zpátky!</h1>
             <div class="msg">
@@ -353,6 +361,7 @@ const EMAIL_TEMPLATES = {
           </style>
         </head>
         <body>
+          <div style="display:none;max-height:0;overflow:hidden;">Právě jsme přidali novou funkci — podívejte se!</div>
           <div class="container">
             <h1 style="color: #d4af37;">✨ Objev novou funkci</h1>
             <div class="feature-box">
