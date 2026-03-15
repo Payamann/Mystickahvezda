@@ -191,6 +191,30 @@
                 }
             };
 
+            function updateProgress() {
+                const percent = (currentStep / totalSteps) * 100;
+                progressBar.style.width = percent + '%';
+            }
+
+            function showStep(stepNum) {
+                steps.forEach(s => s.classList.remove('active'));
+                const nextStep = document.querySelector(`.question-step[data-step="${stepNum}"]`);
+                if (nextStep) {
+                    nextStep.classList.add('active');
+                    updateProgress();
+                } else {
+                    showLoading();
+                }
+            }
+
+            function showLoading() {
+                steps.forEach(s => s.classList.remove('active'));
+                document.getElementById('loading-step').classList.add('active');
+                progressBar.style.width = '100%';
+                
+                setTimeout(showResult, 2500);
+            }
+
             function showResult() {
                 const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
                 const data = resultsData[winner];
