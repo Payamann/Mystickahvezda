@@ -3,8 +3,8 @@
  * Provides offline caching with stale-while-revalidate strategy
  */
 
-const CACHE_NAME = 'mysticka-hvezda-v17';
-const MAX_RUNTIME_CACHE_SIZE = 80;
+const CACHE_NAME = 'mysticka-hvezda-v18';
+const MAX_RUNTIME_CACHE_SIZE = 150;
 const STATIC_ASSETS = [
     '/',
     '/index.html',
@@ -15,9 +15,12 @@ const STATIC_ASSETS = [
     '/js/templates.js',
     '/js/auth-client.js',
     '/js/gemini-service.js',
+    '/js/mobile-nav.js',
+    '/js/page-extras.js',
     '/img/logo-3d.webp',
     '/img/hero-3d.webp',
     '/img/bg-cosmic-hd.webp',
+    '/img/bg-cosmic-mobile.webp',
     '/img/icon-192.webp',
     '/data/tarot-cards.json',
     '/data/runes.json',

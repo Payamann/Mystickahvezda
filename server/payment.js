@@ -398,15 +398,20 @@ async function handleCheckoutCompleted(session) {
 
     console.log(`[STRIPE] Checkout completed for user ${userId}, plan: ${planType}`);
 
-    // Fetch the subscription from Stripe to get period details
+    // Get period end from webhook payload (already calculated by Stripe)
+    // Fallback to REST API only if needed
     let currentPeriodEnd;
-    if (stripeSubscriptionId) {
+    if (session.subscription_details?.current_period_end) {
+        // Use data from webhook payload (most reliable)
+        currentPeriodEnd = new Date(session.subscription_details.current_period_end * 1000).toISOString();
+    } else if (stripeSubscriptionId) {
+        // Fallback: fetch from Stripe if not in webhook
         try {
             const stripeSub = await stripe.subscriptions.retrieve(stripeSubscriptionId);
             currentPeriodEnd = new Date(stripeSub.current_period_end * 1000).toISOString();
         } catch (e) {
             console.error('[STRIPE] Failed to retrieve subscription details:', e.message);
-            // Fallback to calculated expiry
+            // Calculate based on plan type
             const expiry = new Date();
             if (planType === 'premium_yearly') {
                 expiry.setFullYear(expiry.getFullYear() + 1);

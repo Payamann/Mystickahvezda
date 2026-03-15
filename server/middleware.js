@@ -84,8 +84,8 @@ export const optionalPremiumCheck = (req, res, next) => {
 
 export const requireAdmin = (req, res, next) => {
     if (!req.user || req.user.role !== 'admin') {
-        // Fallback for identified developers
-        const adminEmails = ['pavel@mystickahvezda.cz', 'admin@mystickahvezda.cz'];
+        // Fallback for identified developers from environment variable
+        const adminEmails = (process.env.ADMIN_EMAILS || 'pavel@mystickahvezda.cz,admin@mystickahvezda.cz').split(',').map(e => e.trim());
         if (req.user && adminEmails.includes(req.user.email)) {
             return next();
         }

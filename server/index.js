@@ -215,8 +215,8 @@ if (process.env.NODE_ENV === 'production') {
 
 // CSRF Protection Middleware (Simple implementation)
 if (process.env.NODE_ENV === 'production' && !process.env.CSRF_SECRET) {
-    console.warn('[SECURITY WARNING] CSRF_SECRET environment variable is missing in production!');
-    console.warn('[SECURITY WARNING] Using a temporary fallback secret. Please set CSRF_SECRET in your environment for better security.');
+    console.error('[SECURITY ERROR] CSRF_SECRET environment variable is required in production!');
+    process.exit(1);
 }
 const csrfSecret = process.env.CSRF_SECRET || 'dev-csrf-secret-fallback-2026';
 

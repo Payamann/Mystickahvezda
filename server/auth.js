@@ -53,6 +53,17 @@ const authLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
 });
+
+// Rate limiting for token refresh to prevent abuse
+const sensitiveLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 10, // 10 refresh attempts per hour per user
+    message: { error: 'Příliš mnoho pokusů o obnovení tokenu. Zkuste to za hodinu.' },
+    keyGenerator: (req) => req.user?.id || req.ip, // Limit per user ID when authenticated
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
 
@@ -263,7 +274,7 @@ router.post('/login', authLimiter, async (req, res) => {
 });
 
 // Refresh Token - Get new JWT token before expiration
-router.post('/refresh-token', authenticateToken, async (req, res) => {
+router.post('/refresh-token', authenticateToken, sensitiveLimiter, async (req, res) => {
     try {
         const userId = req.user?.id;
 
