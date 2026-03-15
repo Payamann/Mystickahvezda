@@ -276,7 +276,10 @@ class Templates {
             </div>
 
             <!-- Optional Register Fields (Moved to onboarding) -->
-            <div id="register-fields" style="display: none;"></div>
+            <div id="register-fields" style="display: none; margin-bottom: 1rem;">
+                <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem;">Potvrďte heslo</label>
+                <input type="password" name="confirm_password" autocomplete="new-password" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-size: 16px; min-height: 48px;">
+            </div>
 
             <button type="submit" id="auth-submit" class="btn btn--primary" style="width: 100%; min-height: 48px;">Přihlásit se</button>
             <p style="text-align: center; margin-top: 1rem;">

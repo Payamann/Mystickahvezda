@@ -236,13 +236,14 @@
                 <!-- Hidden Register Fields (Managed by auth-client.js toggleMode) -->
 
                 <div id="register-fields" style="display: none; text-align: left; margin-top: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="confirm-password-reg">Potvrďte heslo</label>
+                        <input type="password" id="confirm-password-reg" name="confirm_password" class="form-input" placeholder="••••••••" autocomplete="new-password">
+                    </div>
 
                     <div class="form-group">
-
                         <label class="form-label">Jméno</label>
-
                         <input type="text" name="first_name" class="form-input" placeholder="Vaše jméno">
-
                     </div>
 
                     <div class="form-group">

@@ -348,6 +348,11 @@
                     const isRegister = btn && btn.textContent === 'Zaregistrovat';
 
                     if (isRegister) {
+                        const confirmPassword = form.confirm_password?.value;
+                        if (password !== confirmPassword) {
+                            this.showToast('Chyba', 'Hesla se neshodují.', 'error');
+                            return;
+                        }
                         const res = await this.register(email, password, {});
                         if (!res.success) this.showToast('Chyba registrace', res.error, 'error');
                     } else {
