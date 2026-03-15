@@ -21,12 +21,12 @@ Day 0: 🌟 Welcome email
 Day 1: ✨ "Tvůj nový svět se otevírá"
        ├─ Feature highlights
        ├─ Tips & tricks
-       └─ CTA: Meet AI Mentor
+       └─ CTA: Meet your Guide
 
-Day 3: 🤖 "Psst... Tvůj mentor čeká"
-       ├─ Nudge to use mentor
+Day 3: ✨ "Psst... Tvůj Průvodce čeká"
+       ├─ Nudge to use Guide
        ├─ Example conversation
-       └─ CTA: Chat with mentor
+       └─ CTA: Chat with Guide
 ```
 
 **Expected:** 30-40% will take action

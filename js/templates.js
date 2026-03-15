@@ -77,7 +77,7 @@ class Templates {
                     </div>
                 </div>
                 <!-- AI Summary container -->
-                ${this.renderAiSummaryLoading()}
+                ${this.renderEtherealSummaryLoading()}
             </div>
         `;
     }
@@ -133,7 +133,7 @@ class Templates {
                 </div>
                 
                 <!-- AI Summary container -->
-                ${this.renderAiSummaryLoading()}
+                ${this.renderEtherealSummaryLoading()}
                 
                 <div class="celtic-footer">
                     <span>✧</span>
@@ -148,7 +148,7 @@ class Templates {
         return `
             <div class="interpretation-summary fade-in-up" style="animation-delay: ${drawnCards.length * 0.2}s;">
                 <h4>✨ Cesta vaší duše</h4>
-                <div id="ai-tarot-summary">
+                <div id="ethereal-tarot-summary">
                     <p class="text-center" style="font-style: italic; opacity: 0.7;">
                         <span class="loading-spinner"></span> Spojuji se s univerzem...
                     </p>
@@ -157,9 +157,9 @@ class Templates {
         `;
     }
 
-    static renderAiSummaryLoading() {
+    static renderEtherealSummaryLoading() {
         return `
-            <div class="summary-content" id="ai-tarot-summary">
+            <div class="summary-content" id="ethereal-tarot-summary">
                 <div class="summary-loading">
                     <div class="loading-crystal">
                         <span>💎</span>
@@ -176,16 +176,16 @@ class Templates {
      * @param {string[]} steps - Array of step labels
      * @param {string} containerId - ID to use for the container
      */
-    static renderAiProgress(steps = [], containerId = 'ai-progress') {
+    static renderEtherealProgress(steps = [], containerId = 'ethereal-progress') {
         const stepsHtml = steps.map((step, i) => `
-            <div class="ai-progress-step${i === 0 ? ' active' : ''}" data-step="${i}">
-                <div class="ai-progress-step__dot"></div>
-                <span class="ai-progress-step__label">${this.escapeHtml(step)}</span>
+            <div class="ethereal-progress-step${i === 0 ? ' active' : ''}" data-step="${i}">
+                <div class="ethereal-progress-step__dot"></div>
+                <span class="ethereal-progress-step__label">${this.escapeHtml(step)}</span>
             </div>
-        `).join('<div class="ai-progress-connector"></div>');
+        `).join('<div class="ethereal-progress-connector"></div>');
 
         return `
-            <div class="ai-progress" id="${containerId}" style="
+            <div class="ethereal-progress" id="${containerId}" style="
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -196,8 +196,8 @@ class Templates {
                 ${stepsHtml}
             </div>
             <style>
-            .ai-progress-step { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
-            .ai-progress-step__dot {
+            .ethereal-progress-step { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+            .ethereal-progress-step__dot {
                 width: 28px; height: 28px;
                 border-radius: 50%;
                 background: rgba(255,255,255,0.1);
@@ -205,18 +205,18 @@ class Templates {
                 transition: all 0.4s ease;
                 position: relative;
             }
-            .ai-progress-step.active .ai-progress-step__dot {
+            .ethereal-progress-step.active .ethereal-progress-step__dot {
                 background: var(--color-ethereal-violet);
                 border-color: var(--color-ethereal-violet);
                 box-shadow: 0 0 12px rgba(157,78,221,0.6);
                 animation: pulse-dot 1.2s ease-in-out infinite;
             }
-            .ai-progress-step.done .ai-progress-step__dot {
+            .ethereal-progress-step.done .ethereal-progress-step__dot {
                 background: var(--color-mystic-gold);
                 border-color: var(--color-mystic-gold);
                 box-shadow: 0 0 8px rgba(212,175,55,0.4);
             }
-            .ai-progress-step.done .ai-progress-step__dot::after {
+            .ethereal-progress-step.done .ethereal-progress-step__dot::after {
                 content: '✓';
                 position: absolute;
                 inset: 0;
@@ -227,10 +227,10 @@ class Templates {
                 color: #000;
                 font-weight: 700;
             }
-            .ai-progress-step__label { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-align: center; max-width: 80px; line-height: 1.3; }
-            .ai-progress-step.active .ai-progress-step__label { color: var(--color-starlight); }
-            .ai-progress-step.done .ai-progress-step__label { color: var(--color-mystic-gold); }
-            .ai-progress-connector { width: 40px; height: 2px; background: rgba(255,255,255,0.1); margin: 14px 0 0; }
+            .ethereal-progress-step__label { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-align: center; max-width: 80px; line-height: 1.3; }
+            .ethereal-progress-step.active .ethereal-progress-step__label { color: var(--color-starlight); }
+            .ethereal-progress-step.done .ethereal-progress-step__label { color: var(--color-mystic-gold); }
+            .ethereal-progress-connector { width: 40px; height: 2px; background: rgba(255,255,255,0.1); margin: 14px 0 0; }
             @keyframes pulse-dot { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
             </style>
         `;
@@ -241,10 +241,10 @@ class Templates {
      * @param {string} containerId 
      * @param {number} activeIndex 
      */
-    static updateAiProgress(containerId, activeIndex) {
+    static updateEtherealProgress(containerId, activeIndex) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        container.querySelectorAll('.ai-progress-step').forEach((step, i) => {
+        container.querySelectorAll('.ethereal-progress-step').forEach((step, i) => {
             step.classList.remove('active', 'done');
             if (i < activeIndex) step.classList.add('done');
             else if (i === activeIndex) step.classList.add('active');

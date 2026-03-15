@@ -241,7 +241,7 @@ router.get('/:sign/:date', async (req, res, next) => {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.v2.min.css?v=9">
+  <link rel="stylesheet" href="/css/style.v2.min.css?v=11">
 </head>
 <body>
   <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
@@ -323,10 +323,10 @@ router.get('/:sign/:date', async (req, res, next) => {
   <div id="footer-placeholder"></div>
 
   <script src="/js/api-config.js?v=5" defer></script>
-  <script src="/js/templates.js?v=10" defer></script>
+  <script src="/js/templates.js?v=11" defer></script>
   <script src="/js/auth-client.js?v=5" defer></script>
-  <script src="/js/components.js?v=10" defer></script>
-  <script type="module" src="/js/main.js?v=10"></script>
+  <script src="/js/components.js?v=11" defer></script>
+  <script type="module" src="/js/main.js?v=11"></script>
 </body>
 </html>`;
 

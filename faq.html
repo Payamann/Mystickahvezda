@@ -101,10 +101,76 @@
         rel="stylesheet"  >
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
 
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
+    <link rel="stylesheet" href="css/style.v2.min.css?v=12">
+    <script src="https://cdn.jsdelivr.net/npm/lucide/dist/umd/lucide.js"></script>
 
-    <link rel="canonical" href="https://mystickahvezda.cz/faq.html">
-
+    <style>
+        .faq-category {
+            margin-bottom: var(--space-2xl);
+        }
+        .faq-category__header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-xs);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .faq-category__title {
+            font-family: var(--font-display);
+            font-size: var(--text-2xl);
+            color: var(--color-mystic-gold);
+            margin: 0;
+        }
+        .faq-category__icon {
+            color: var(--color-mystic-gold);
+            opacity: 0.8;
+        }
+        .card--faq {
+            margin-bottom: var(--space-md);
+            padding: 0 !important;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .card--faq:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .faq-summary {
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        .faq-summary::-webkit-details-marker {
+            display: none;
+        }
+        .faq-summary .faq-icon-chevron {
+            color: var(--color-mystic-gold);
+            transition: transform 0.3s ease;
+        }
+        details[open] .faq-summary .faq-icon-chevron {
+            transform: rotate(180deg);
+        }
+        .faq-content {
+            padding: 0 1.5rem 1.25rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        @media (max-width: 768px) {
+            .faq-category__title { font-size: 1.5rem; }
+            .faq-summary { padding: 1rem 1.25rem; font-size: 1rem; }
+            .faq-content { padding: 0 1.25rem 1.1rem; font-size: 0.9rem; }
+        }
+    </style>
 </head>
 
 
@@ -155,124 +221,105 @@
 
         </section>
 
-
-
-        <!-- FAQ LIST -->
-
+        <!-- FAQ CATEGORIES -->
         <section class="section">
+            <div class="container" style="max-width: 900px;">
+                
+                <!-- Category 1: Astrologické Služby -->
+                <div class="faq-category" data-animate>
+                    <div class="faq-category__header">
+                        <i data-lucide="sparkles" class="faq-category__icon"></i>
+                        <h2 class="faq-category__title">Astrologické Služby</h2>
+                    </div>
+                    
+                    <details class="card card--faq">
+                        <summary class="faq-summary">
+                            Jak fungují online horoskopy?
+                            <i data-lucide="chevron-down" class="faq-icon-chevron"></i>
+                        </summary>
+                        <div class="faq-content">
+                            Naše horoskopy jsou generovány na základě přesných astronomických dat (efemerid). Každý výklad kombinuje tradiční astrologické principy s přesným výpočtem planetárních pozic, který bere v úvahu vaše přesné datum, čas a místo narození.
+                        </div>
+                    </details>
 
-            <div class="container" style="max-width: 800px;">
+                    <details class="card card--faq">
+                        <summary class="faq-summary">
+                            Jak přesná je natální karta?
+                            <i data-lucide="chevron-down" class="faq-icon-chevron"></i>
+                        </summary>
+                        <div class="faq-content">
+                            Natální karta je snímek oblohy v momentě vašeho narození. Její přesnost závisí na přesnosti zadaného času. Pokud znáte čas na minuty, získáte velmi detailní a přesný rozbor vaší osobnosti.
+                        </div>
+                    </details>
 
-                <details class="card mb-md" data-animate style="cursor:pointer;">
+                    <details class="card card--faq">
+                        <summary class="faq-summary">
+                            Co když neznám svůj čas narození?
+                            <i data-lucide="chevron-down" class="faq-icon-chevron"></i>
+                        </summary>
+                        <div class="faq-content">
+                            I bez přesného času lze sestavit horoskop, ale nebude obsahovat informace o ascendentu a domovém rozložení. Stále však získáte cenné informace o postavení planet ve znameních.
+                        </div>
+                    </details>
+                </div>
 
-                    <summary style="padding: 1.2rem 1.5rem; font-size: 1.1rem; font-weight: 600; color: var(--color-mystic-gold); list-style: none; display: flex; justify-content: space-between; align-items: center;">
+                <!-- Category 2: Můj Účet & Soukromí -->
+                <div class="faq-category" data-animate>
+                    <div class="faq-category__header">
+                        <i data-lucide="shield-check" class="faq-category__icon"></i>
+                        <h2 class="faq-category__title">Můj Účet & Soukromí</h2>
+                    </div>
 
-                        Jak fungují online horoskopy?
+                    <details class="card card--faq">
+                        <summary class="faq-summary">
+                            Je registrace zdarma?
+                            <i data-lucide="chevron-down" class="faq-icon-chevron"></i>
+                        </summary>
+                        <div class="faq-content">
+                            Ano, registrace a základní denní horoskopy jsou zcela zdarma. Nabízíme také plán Hvězdný Průvodce pro hlubší analýzu (neomezený tarot, partnerská shoda, natální karta).
+                        </div>
+                    </details>
 
-                        <span style="font-size: 1.5rem; transition: transform 0.3s; margin-left: 1rem;">+</span>
+                    <details class="card card--faq">
+                        <summary class="faq-summary">
+                            Jsou mé údaje v bezpečí?
+                            <i data-lucide="chevron-down" class="faq-icon-chevron"></i>
+                        </summary>
+                        <div class="faq-content">
+                            Absolutně. Vaše osobní údaje používáme pouze pro výpočet horoskopů. Nikdy je nesdílíme s třetími stranami a dodržujeme přísné zásady ochrany soukromí.
+                        </div>
+                    </details>
+                </div>
 
-                    </summary>
+                <!-- Category 3: Předplatné & Podpora -->
+                <div class="faq-category" data-animate>
+                    <div class="faq-category__header">
+                        <i data-lucide="credit-card" class="faq-category__icon"></i>
+                        <h2 class="faq-category__title">Předplatné & Podpora</h2>
+                    </div>
 
-                    <p style="padding: 0 1.5rem 1.2rem; color: rgba(255,255,255,0.8); line-height: 1.7; margin: 0;">
+                    <details class="card card--faq">
+                        <summary class="faq-summary">
+                            Jak mohu zrušit předplatné?
+                            <i data-lucide="chevron-down" class="faq-icon-chevron"></i>
+                        </summary>
+                        <div class="faq-content">
+                            Předplatné můžete kdykoli zrušit v nastavení vašeho účtu nebo nás kontaktujte na info@mystickahvezda.cz. Zrušení je okamžité a nebude vám účtován další měsíc.
+                        </div>
+                    </details>
 
-                        Naše horoskopy jsou generovány na základě přesných astronomických dat (efemerid). Každý výklad kombinuje tradiční astrologické principy s přesným výpočtem planetárních pozic, který bere v úvahu vaše přesné datum, čas a místo narození.
+                    <details class="card card--faq">
+                        <summary class="faq-summary">
+                            Jaké platební metody přijímáte?
+                            <i data-lucide="chevron-down" class="faq-icon-chevron"></i>
+                        </summary>
+                        <div class="faq-content">
+                            Přijímáme všechny běžné platební karty (Visa, Mastercard) a platby přes Apple Pay / Google Pay prostřednictvím zabezpečené brány Stripe.
+                        </div>
+                    </details>
+                </div>
 
-                    </p>
-
-                </details>
-
-                <details class="card mb-md" data-animate style="cursor:pointer;">
-
-                    <summary style="padding: 1.2rem 1.5rem; font-size: 1.1rem; font-weight: 600; color: var(--color-mystic-gold); list-style: none; display: flex; justify-content: space-between; align-items: center;">
-
-                        Je registrace zdarma?
-
-                        <span style="font-size: 1.5rem; transition: transform 0.3s; margin-left: 1rem;">+</span>
-
-                    </summary>
-
-                    <p style="padding: 0 1.5rem 1.2rem; color: rgba(255,255,255,0.8); line-height: 1.7; margin: 0;">
-
-                        Ano, registrace a základní denní horoskopy jsou zcela zdarma. Nabízíme také plán Hvězdný Průvodce pro hlubší analýzu (neomezený tarot, partnerská shoda, natální karta).
-
-                    </p>
-
-                </details>
-
-                <details class="card mb-md" data-animate style="cursor:pointer;">
-
-                    <summary style="padding: 1.2rem 1.5rem; font-size: 1.1rem; font-weight: 600; color: var(--color-mystic-gold); list-style: none; display: flex; justify-content: space-between; align-items: center;">
-
-                        Jak přesná je natální karta?
-
-                        <span style="font-size: 1.5rem; transition: transform 0.3s; margin-left: 1rem;">+</span>
-
-                    </summary>
-
-                    <p style="padding: 0 1.5rem 1.2rem; color: rgba(255,255,255,0.8); line-height: 1.7; margin: 0;">
-
-                        Natální karta je snímek oblohy v momentě vašeho narození. Její přesnost závisí na přesnosti zadaného času. Pokud znáte čas na minuty, získáte velmi detailní a přesný rozbor vaší osobnosti.
-
-                    </p>
-
-                </details>
-
-                <details class="card mb-md" data-animate style="cursor:pointer;">
-
-                    <summary style="padding: 1.2rem 1.5rem; font-size: 1.1rem; font-weight: 600; color: var(--color-mystic-gold); list-style: none; display: flex; justify-content: space-between; align-items: center;">
-
-                        Co když neznám svůj čas narození?
-
-                        <span style="font-size: 1.5rem; transition: transform 0.3s; margin-left: 1rem;">+</span>
-
-                    </summary>
-
-                    <p style="padding: 0 1.5rem 1.2rem; color: rgba(255,255,255,0.8); line-height: 1.7; margin: 0;">
-
-                        I bez přesného času lze sestavit horoskop, ale nebude obsahovat informace o ascendentu a domovém rozložení. Stále však získáte cenné informace o postavení planet ve znameních.
-
-                    </p>
-
-                </details>
-
-                <details class="card mb-md" data-animate style="cursor:pointer;">
-
-                    <summary style="padding: 1.2rem 1.5rem; font-size: 1.1rem; font-weight: 600; color: var(--color-mystic-gold); list-style: none; display: flex; justify-content: space-between; align-items: center;">
-
-                        Jsou mé údaje v bezpečí?
-
-                        <span style="font-size: 1.5rem; transition: transform 0.3s; margin-left: 1rem;">+</span>
-
-                    </summary>
-
-                    <p style="padding: 0 1.5rem 1.2rem; color: rgba(255,255,255,0.8); line-height: 1.7; margin: 0;">
-
-                        Absolutně. Vaše osobní údaje používáme pouze pro výpočet horoskopů. Nikdy je nesdílíme s třetími stranami a dodržujeme přísné zásady ochrany soukromí.
-
-                    </p>
-
-                </details>
-
-                <details class="card mb-md" data-animate style="cursor:pointer;">
-
-                    <summary style="padding: 1.2rem 1.5rem; font-size: 1.1rem; font-weight: 600; color: var(--color-mystic-gold); list-style: none; display: flex; justify-content: space-between; align-items: center;">
-
-                        Jak mohu zrušit předplatné?
-
-                        <span style="font-size: 1.5rem; transition: transform 0.3s; margin-left: 1rem;">+</span>
-
-                    </summary>
-
-                    <p style="padding: 0 1.5rem 1.2rem; color: rgba(255,255,255,0.8); line-height: 1.7; margin: 0;">
-
-                        Předplatné můžete kdykoli zrušit v nastavení vašeho účtu nebo nás kontaktujte na info@mystickahvezda.cz. Zrušení je okamžité a nebude vám účtován další měsíc.
-
-                    </p>
-
-                </details>
-
-</div>
-
+            </div>
         </section>
 
 
@@ -361,6 +408,13 @@
 
 
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
 </body>
 
 

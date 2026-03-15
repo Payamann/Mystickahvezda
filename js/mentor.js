@@ -145,7 +145,7 @@ async function sendMessage() {
     // 0. Auth Check
     const token = localStorage.getItem('auth_token');
     if (!token || !window.Auth.isLoggedIn()) {
-        window.Auth?.showToast?.('Přihlášení vyžadováno', 'Pro konverzaci s Mentorem se prosím přihlaste.', 'info');
+        window.Auth?.showToast?.('Přihlášení vyžadováno', 'Pro konverzaci s Průvodcem se prosím přihlaste.', 'info');
         window.Auth?.openModal?.('login');
 
         // Reload on login to initialize chat

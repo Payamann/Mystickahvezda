@@ -481,9 +481,9 @@ const DICTIONARY_TERMS = [
 
         <div style="margin-top:2rem; padding: 1.5rem; background: rgba(155,89,182,0.08); border-left: 3px solid var(--color-primary); border-radius:0 12px 12px 0;">
         <p style="margin:0; font-size:1.1rem; color:var(--color-mystic-gold); font-family: 'Cinzel', serif;">🌙 <strong>Zdálo se vám něco zvláštního?</strong></p>
-        <p style="margin:0.5rem 0 0 0; font-size:0.9rem; color:var(--color-text-mutated);">Pokud jste zažili živý nebo děsivý sen po probuzení z paralýzy, vložte ho do našeho AI Snáře. Magická inteligence odhalí podvědomou symboliku vašich vizí.</p>
+        <p style="margin:0.5rem 0 0 0; font-size:0.9rem; color:var(--color-text-mutated);">Pokud jste zažili živý nebo děsivý sen po probuzení z paralýzy, vložte ho do našeho Digitálního Snáře. Naše analýza odhalí podvědomou symboliku vašich vizí.</p>
         <div style="margin-top: 1rem;">
-            <a href="../snar.html" class="btn btn--primary" style="font-size:0.9rem; padding: 0.5rem 1rem;">Vyložit si sen přes AI Snář →</a>
+            <a href="../snar.html" class="btn btn--primary" style="font-size:0.9rem; padding: 0.5rem 1rem;">Vyložit si sen přes Digitální Snář →</a>
         </div>
     </div>`,
         related_slugs: ['lucidni-sen', 'akasicke-zaznamy'],

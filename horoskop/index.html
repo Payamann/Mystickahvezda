@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Znamení zvěrokruhu – Vlastnosti, živly a vládci | Mystická Hvězda</title>
+    <meta name="description" content="Kompletní přehled 12 znamení zvěrokruhu. Zjistěte vše o povaze, silných stránkách, živlech a vládnoucích planetách každého znamení.">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Znamení zvěrokruhu – Velký přehled | Mystická Hvězda">
+    <meta property="og:description" content="Podrobný průvodce všemi 12 znameními. Vlastnosti, živly a osud napsaný ve hvězdách.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="../img/hero-bg-2.png">
+
+    <!-- Fonts & Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.v2.min.css?v=4">
+
+    <style>
+        .hub-hero { padding: 6rem 0 3rem; text-align: center; }
+        .hub-title { font-family: 'Cinzel', serif; font-size: 3rem; margin-bottom: 1rem; }
+        .hub-subtitle { color: var(--color-mystic-gold); font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin-inline: auto; }
+
+        .signs-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 2rem; 
+            margin-top: 3rem;
+        }
+
+        .sign-card {
+            background: rgba(10, 10, 26, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sign-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: var(--color-mystic-gold);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sign-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(212, 175, 55, 0.3);
+            background: rgba(20, 20, 45, 0.8);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .sign-card:hover::before {
+            opacity: 1;
+        }
+
+        .sign-card__emoji {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .sign-card__name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .sign-card__dates {
+            color: var(--color-mystic-gold);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .sign-card__meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1.5rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .meta-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-text-mutated);
+        }
+
+        .meta-value {
+            font-size: 0.9rem;
+            color: var(--color-starlight);
+        }
+
+        .sign-card__btn {
+            margin-top: auto;
+            font-size: 0.9rem;
+            padding: 0.8rem 1.5rem;
+            width: 100%;
+        }
+
+        .bread { font-size: 0.9rem; color: var(--color-text-mutated); margin-bottom: 1rem; }
+        .bread a { color: var(--color-mystic-gold); text-decoration: none; }
+
+        @media (max-width: 600px) {
+            .hub-title { font-size: 2.2rem; }
+            .signs-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" aria-hidden="true"></div>
+    <div id="header-placeholder"></div>
+
+    <main class="container">
+        <section class="hub-hero">
+            <div class="bread"><a href="../index.html">Domů</a> &raquo; Znamení zvěrokruhu</div>
+            <h1 class="hub-title">Znamení <span class="text-gradient">Zvěrokruhu</span></h1>
+            <p class="hub-subtitle">Objevte hlubokou moudrost skrytou ve vašem znamení. Každé z dvanácti archetypů nese jedinečné dary, výzvy a životní poslání.</p>
+        </section>
+
+        <section class="section" style="padding-top: 0;">
+            <div class="signs-grid">
+                <!-- Beran -->
+                <a href="beran.html" class="sign-card">
+                    <span class="sign-card__emoji">♈</span>
+                    <h2 class="sign-card__name">Beran</h2>
+                    <span class="sign-card__dates">21. 3. – 19. 4.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Oheň</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Mars</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+
+                <!-- Býk -->
+                <a href="byk.html" class="sign-card">
+                    <span class="sign-card__emoji">♉</span>
+                    <h2 class="sign-card__name">Býk</h2>
+                    <span class="sign-card__dates">20. 4. – 20. 5.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Země</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Venuše</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+
+                <!-- Blíženci -->
+                <a href="blizenci.html" class="sign-card">
+                    <span class="sign-card__emoji">♊</span>
+                    <h2 class="sign-card__name">Blíženci</h2>
+                    <span class="sign-card__dates">21. 5. – 20. 6.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Vzduch</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Merkur</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+
+                <!-- Rak -->
+                <a href="rak.html" class="sign-card">
+                    <span class="sign-card__emoji">♋</span>
+                    <h2 class="sign-card__name">Rak</h2>
+                    <span class="sign-card__dates">21. 6. – 22. 7.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Voda</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Měsíc</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+
+                <!-- Lev -->
+                <a href="lev.html" class="sign-card">
+                    <span class="sign-card__emoji">♌</span>
+                    <h2 class="sign-card__name">Lev</h2>
+                    <span class="sign-card__dates">23. 7. – 22. 8.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Oheň</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Slunce</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+
+                <!-- Panna -->
+                <a href="panna.html" class="sign-card">
+                    <span class="sign-card__emoji">♍</span>
+                    <h2 class="sign-card__name">Panna</h2>
+                    <span class="sign-card__dates">23. 8. – 22. 9.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Země</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Merkur</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+
+                <!-- Váhy -->
+                <a href="vahy.html" class="sign-card">
+                    <span class="sign-card__emoji">♎</span>
+                    <h2 class="sign-card__name">Váhy</h2>
+                    <span class="sign-card__dates">23. 9. – 22. 10.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Vzduch</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Venuše</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+
+                <!-- Štír -->
+                <a href="stir.html" class="sign-card">
+                    <span class="sign-card__emoji">♏</span>
+                    <h2 class="sign-card__name">Štír</h2>
+                    <span class="sign-card__dates">23. 10. – 21. 11.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Voda</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Pluto</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+
+                <!-- Střelec -->
+                <a href="strelec.html" class="sign-card">
+                    <span class="sign-card__emoji">♐</span>
+                    <h2 class="sign-card__name">Střelec</h2>
+                    <span class="sign-card__dates">22. 11. – 21. 12.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Oheň</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Jupiter</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+
+                <!-- Kozoroh -->
+                <a href="kozoroh.html" class="sign-card">
+                    <span class="sign-card__emoji">♑</span>
+                    <h2 class="sign-card__name">Kozoroh</h2>
+                    <span class="sign-card__dates">22. 12. – 19. 1.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Země</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Saturn</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+
+                <!-- Vodnář -->
+                <a href="vodnar.html" class="sign-card">
+                    <span class="sign-card__emoji">♒</span>
+                    <h2 class="sign-card__name">Vodnář</h2>
+                    <span class="sign-card__dates">20. 1. – 18. 2.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Vzduch</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Uran</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+
+                <!-- Ryby -->
+                <a href="ryby.html" class="sign-card">
+                    <span class="sign-card__emoji">♓</span>
+                    <h2 class="sign-card__name">Ryby</h2>
+                    <span class="sign-card__dates">19. 2. – 20. 3.</span>
+                    <div class="sign-card__meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Živel</span>
+                            <span class="meta-value">Voda</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Vládce</span>
+                            <span class="meta-value">Neptun</span>
+                        </div>
+                    </div>
+                    <div class="btn btn--glass sign-card__btn">Vše o znamení →</div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/api-config.js" defer></script>
+    <script src="../js/auth-client.js" defer></script>
+    <script src="../js/components.js" defer></script>
+    <script type="module" src="../js/main.js"></script>
+</body>
+</html>

@@ -87,7 +87,7 @@ function initTarot() {
 
             if (spreadType !== 'Jedna karta') {
                 if (!window.Auth || !window.Auth.isLoggedIn()) {
-                    window.Auth?.showToast('Přihlášení vyžadováno', 'Pro tento výklad se musíte přihlásit.', 'info');
+                    window.Auth?.showToast('Přihlášení vyžadováno', 'Pro vstup do Hvězdného Průvodce se prosím přihlaste.', 'info');
                     window.Auth?.openModal('login');
                     return;
                 }
@@ -205,7 +205,12 @@ async function startReading(spreadType, isSoftGated = false) {
                                 ${isLocked ? `
                                     <div class="premium-lock-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
                                         <div class="lock-icon" style="font-size: 2rem;">🔒</div>
-                                        <p style="color: var(--color-mystic-gold); font-size: 0.8rem; margin: 0.5rem 0;">Premium</p>
+                                        <h2 style="font-family: 'Cinzel', serif; color: var(--color-mystic-gold); margin-bottom: 1rem;">Pouze pro Premium</h2>
+                                        <p style="margin-bottom: 2rem; color: var(--color-silver-mist);">
+                                            Hvězdný Průvodce je exkluzivní zdroj moudrosti pro naše předplatitele.<br>
+                                            Odemkněte plný potenciál a získejte přístup ke všem výkladům.
+                                        </p>
+                                        <a href="cenik.html" class="btn btn--primary">Získat Premium</a>
                                     </div>
                                     <img src="img/tarot-back.webp" style="filter: blur(5px); opacity: 0.5;" alt="Locked">
                                 ` : (card.image ? `
@@ -291,9 +296,9 @@ async function startReading(spreadType, isSoftGated = false) {
     // IMPORTANT: Set innerHTML FIRST, then trigger async AI summary
     interpretationsContainer.innerHTML = interpretationsHtml;
 
-    // Trigger AI summary after DOM is updated
+    // Trigger spiritual summary after DOM is updated
     if (numCards > 1 && !isSoftGated) {
-        setTimeout(() => generateAiSummary(drawnCards, spreadType), 500);
+        setTimeout(() => generateEtherealSummary(drawnCards, spreadType), 500);
     } else {
         // For single-card readings OR gated readings (Card 1 only), save
         // Actually, for gated reading we might not want to save to DB as a "reading" or maybe yes but with incomplete data?
@@ -336,12 +341,12 @@ async function startReading(spreadType, isSoftGated = false) {
 }
 
 /**
- * Generates an AI summary for the tarot reading
+ * Generates an ethereal summary for the tarot reading
  * @param {Array} cards - Array of drawn card objects
  * @param {String} spreadType - Type of spread used
  */
-async function generateAiSummary(cards, spreadType) {
-    const summaryContainer = document.getElementById('ai-tarot-summary');
+async function generateEtherealSummary(cards, spreadType) {
+    const summaryContainer = document.getElementById('ethereal-tarot-summary');
     if (!summaryContainer) return;
 
     try {

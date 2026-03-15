@@ -47,7 +47,7 @@ const PLANS = {
         price: 99900, // 999 Kč in haléře
         type: 'vip_majestrat',
         interval: 'month',
-        description: 'VIP přístup - Priority 24/7 podpora, Personalizovaný daily horoscope, Neomezené konzultace s AI Mentorem'
+        description: 'VIP přístup - Priority 24/7 podpora, Personalizovaný daily horoscope, Neomezené konzultace s Hvězdným Průvodcem'
     }
 };
 
@@ -515,7 +515,7 @@ function getFeaturesByPlan(planType) {
         'premium_monthly': [
             'Unlimited tarot readings',
             'Weekly & monthly horoscopes',
-            'AI Mentor chat (unlimited)',
+            'Hvězdný Průvodce (chat)',
             'Nativity chart interpretation',
             'Numerology readings'
         ],
@@ -530,7 +530,7 @@ function getFeaturesByPlan(planType) {
             'Everything in Exclusive, plus:',
             'Priority 24/7 support (do 2h)',
             'Personalizovaný Daily Horoscope',
-            'Neomezené AI Mentor konzultace',
+            'Neomezené konzultace s Průvodcem',
             'Exkluzivní měsíční Tarot (3x)',
             'Astrokartografické mapy (4x/rok)',
             'VIP komunita & diskuse'

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Jak to funguje | Mystická Hvězda</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style.v2.min.css?v=12">
+    <script src="https://cdn.jsdelivr.net/npm/lucide/dist/umd/lucide.min.js"></script>
+
+    <style>
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+        
+        .process-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .process-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .process-card__number {
+            position: absolute;
+            top: -1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3rem;
+            height: 3rem;
+            background: var(--gradient-gold);
+            color: var(--color-deep-space);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        .process-card__icon {
+            margin-bottom: 1.5rem;
+            color: var(--color-mystic-gold);
+            opacity: 0.9;
+        }
+        
+        .process-card__title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-mystic-gold);
+        }
+        
+        .process-card__text {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .tech-section {
+            margin-top: 6rem;
+            padding: 4rem;
+            background: rgba(157, 78, 221, 0.05);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(157, 78, 221, 0.1);
+            text-align: center;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            margin-top: 3rem;
+            text-align: left;
+        }
+
+        .tech-item {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .tech-item i {
+            color: var(--color-ethereal-violet);
+            flex-shrink: 0;
+            margin-top: 0.2rem;
+        }
+
+        .tech-item h4 {
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-family: var(--font-display);
+        }
+
+        @media (max-width: 992px) {
+            .process-grid { grid-template-columns: 1fr; gap: 3rem; }
+            .tech-grid { grid-template-columns: 1fr; }
+            .tech-section { padding: 2rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stars" aria-hidden="true"></div>
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+        <!-- HERO -->
+        <section class="section section--hero" style="min-height: 60vh; padding-top: 140px;">
+            <div class="container">
+                <div class="hero__content text-center">
+                    <span class="hero__badge">Transparentní cesta</span>
+                    <h1 class="hero__title">
+                        <span class="text-gradient">Jak to funguje</span>
+                    </h1>
+                    <p class="hero__subtitle mb-xl">
+                        Objevte, jak propojujeme prastarou astrologickou moudrost s hloubkovou analýzou symbolů pro váš osobní vhled.
+                    </p>
+                </div>
+
+                <!-- PROCESS STEPS -->
+                <div class="process-grid">
+                    <!-- Step 1 -->
+                    <div class="process-card" data-animate>
+                        <div class="process-card__number">1</div>
+                        <i data-lucide="sparkles" class="process-card__icon" size="48"></i>
+                        <h3 class="process-card__title">Zadání údajů</h3>
+                        <p class="process-card__text">
+                            Vše začíná u vás. Vaše přesné datum, čas a místo narození vytvoří unikátní otisk vesmíru v momentě vašeho příchodu na svět.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="process-card" data-animate style="animation-delay: 0.2s;">
+                        <div class="process-card__number">2</div>
+                        <i data-lucide="moon-star" class="process-card__icon" size="48"></i>
+                        <h3 class="process-card__title">Vesmírná Syntéza</h3>
+                        <p class="process-card__text">
+                            Náš systém vypočítá přesné pozice planet pomocí astronomických efemerid a propojí je s archetypální moudrostí našich expertů.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="process-card" data-animate style="animation-delay: 0.4s;">
+                        <div class="process-card__number">3</div>
+                        <i data-lucide="scroll-text" class="process-card__icon" size="48"></i>
+                        <h3 class="process-card__title">Váš Průvodce</h3>
+                        <p class="process-card__text">
+                            Získáte detailní, srozumitelný a personalizovaný výklad, který vám pomůže lépe porozumět energiím ve vašem životě.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- TECHNOLOGY SECTION -->
+                <div class="tech-section" data-animate>
+                    <h2 class="section__title">Náš Přístup</h2>
+                    <p class="section__text">Proč jsou naše výklady tak přesné?</p>
+                    
+                    <div class="tech-grid">
+                        <div class="tech-item">
+                            <i data-lucide="database" size="32"></i>
+                            <div>
+                                <h4>Astronomická Přesnost</h4>
+                                <p class="process-card__text">Využíváme přesná data o pohybu nebeských těles používaná vědeckými institucemi po celém světě.</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <i data-lucide="brain-circuit" size="32"></i>
+                            <div>
+                                <h4>Komplexní Interpretace</h4>
+                                <p class="process-card__text">Kombinujeme pravidla klasické astrologie s hlubokým kontextem kolektivního nevědomí.</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <i data-lucide="shield-check" size="32"></i>
+                            <div>
+                                <h4>Ochrana Soukromí</h4>
+                                <p class="process-card__text">Vaše údaje jsou šifrovány a slouží výhradně pro výpočet vašich osobních výkladů.</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <i data-lucide="heart" size="32"></i>
+                            <div>
+                                <h4>Etický Přístup</h4>
+                                <p class="process-card__text">Naším cílem je povzbuzení a vhled, nikoliv vyvolávání strachu z budoucnosti.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="text-center mt-3xl" data-animate>
+                    <a href="prihlaseni.html" class="btn btn--primary btn--lg">Začít svou cestu zdarma</a>
+                    <p class="mt-md" style="opacity: 0.5; font-size: 0.85rem;">Registrace trvá méně než 1 minutu.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/main.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Lucide icons
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+
+            // Load header and footer (match index.html pattern)
+            const loadComponent = (id, path) => {
+                fetch(path)
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById(id).innerHTML = data;
+                        if (window.lucide) window.lucide.createIcons();
+                    });
+            };
+
+            loadComponent('header-placeholder', 'components/header.html');
+            loadComponent('footer-placeholder', 'components/footer.html');
+        });
+    </script>
+</body>
+</html>

@@ -1,466 +1,263 @@
 <!DOCTYPE html>
-
 <html lang="cs">
-
-
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-    <meta name="description" content="Seznamte se s týmem Mystické Hvězdy. Náš příběh a mise.">
-
-    <meta name="keywords" content="o nás, tým, mise, astrologie">
-
+    <meta name="description" content="Poznejte příběh a poslání Mystické Hvězdy. Seznamte se s našimi experty na astrologii a tarot, kteří vás provázejí na cestě k sebepoznání.">
+    <meta name="keywords" content="o nás, tým, vize, mise, astrologie, tarot, Elena Hvězdná, Jan Mystik, Mystická Hvězda">
     <meta name="theme-color" content="#0a0a1a">
     <link rel="canonical" href="https://mystickahvezda.cz/o-nas.html">
 
-
-
     <!-- Open Graph -->
-
     <meta property="og:type" content="website">
-
-    <meta property="og:title" content="O Nás | Mystická Hvězda">
-
-    <meta property="og:description" content="Seznamte se s týmem Mystické Hvězdy. Náš příběh a mise.">
-
+    <meta property="og:title" content="O Nás | Příběh a mise Mystické Hvězdy">
+    <meta property="og:description" content="Zjistěte, kdo stojí za Mystickou Hvězdou. Spojujeme tisíciletou moudrost hvězd s moderní empatií.">
     <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
-
     <meta property="og:locale" content="cs_CZ">
-
     <meta name="twitter:card" content="summary_large_image">
 
-
-
     <!-- JSON-LD Structured Data -->
-
     <script type="application/ld+json">
-
     {
-
         "@context": "https://schema.org",
-
         "@type": "AboutPage",
-
-        "name": "O Nás",
-
-        "description": "Seznamte se s týmem Mystické Hvězdy"
-
+        "mainEntity": {
+            "@type": "Organization",
+            "name": "Mystická Hvězda",
+            "description": "Profesionální astrologická platforma nabízející personalizované horoskopy, tarotové výklady a numerologické analýzy.",
+            "url": "https://mystickahvezda.cz",
+            "logo": "https://mystickahvezda.cz/img/logo-3d.webp"
+        }
     }
-
     </script>
-
-
 
     <title>O Nás | Mystická Hvězda</title>
 
-
-
     <!-- Favicon -->
-
-    <link rel="icon" type="image/svg+xml"
-
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>?</text></svg>">
-
-
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
 
     <!-- PWA -->
-
     <link rel="manifest" href="manifest.json">
-
     <link rel="apple-touch-icon" href="img/icon-192.webp">
-
     <meta name="apple-mobile-web-app-capable" content="yes">
-
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
 
-    <link
-
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-
-        rel="stylesheet"  >
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
-
-    <link rel="stylesheet" href="css/style.v2.min.css?v=9">
-
+    <link rel="stylesheet" href="css/style.v2.min.css?v=11">
+    <script src="https://cdn.jsdelivr.net/npm/lucide/dist/umd/lucide.js"></script>
 </head>
 
-
-
 <body>
-
-    <!-- Skip to main content -->
-
     <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
-
-
-
     <div class="stars" aria-hidden="true"></div>
-
-
-
-    <!-- HEADER (loaded dynamically) -->
-
     <div id="header-placeholder"></div>
 
-
-
     <main id="main-content">
-
         <!-- HERO -->
-
-        <section class="section section--hero" style="min-height: 60vh;">
-
+        <section class="section section--hero" style="min-height: 70vh; display: flex; align-items: center; background: radial-gradient(circle at 70% 30%, rgba(157, 78, 221, 0.15), transparent 70%);">
             <div class="container">
-
-                <div class="grid grid-2" style="align-items: center;" data-animate>
-
+                <div class="grid grid-2" style="align-items: center; gap: var(--space-xl);" data-animate>
                     <div class="hero__content text-left">
-
-                        <h1 class="hero__title">
-
-                            Vaše útočiště pro <span class="text-gradient">klid duše</span>
-
+                        <span class="section__badge">O nás</span>
+                        <h1 class="hero__title" style="font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1.1; margin-bottom: 1.5rem;">
+                            Vaše útočiště pro <br><span class="text-gradient text-glow">klid duše</span>
                         </h1>
-
-                        <p class="hero__subtitle" style="margin-left: 0;">
-
-                            Mystická Hvězda je víc než vesmírná předpověď. Je to bezpečný přístav, kde najdete pochopení
-
-                            a směr, když se cítíte ztraceni ve vlnách života.
-
+                        <p class="hero__subtitle" style="margin-left: 0; font-size: 1.25rem; opacity: 0.9; line-height: 1.7;">
+                            Mystická Hvězda je víc než vesmírná předpověď. Je to bezpečný přístav v digitálním světě, kde najdete hlubší pochopení, naději a směr, když se cítíte ztraceni.
                         </p>
-
+                        <div class="hero__actions" style="margin-top: 2rem;">
+                            <a href="#expert-team" class="btn btn--primary">Poznat tým</a>
+                            <a href="kontakt.html" class="btn btn--ghost" style="margin-left: 1rem;">Napište nám</a>
+                        </div>
                     </div>
-
-                    <!-- Abstract Visual Representation -->
-
-                    <div class="flex-center">
-
-                        <img src="img/icon-sanctuary.webp" alt="Mystická svatyně" class="animate-float"
-
-                            style="max-width: 400px; width: 100%; height: auto; border-radius: 24px; filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.3));"
-
-                            fetchpriority="high">
-
+                    <div class="hero__visual flex-center">
+                        <div style="position: relative;">
+                            <div class="hero__glow-effect" style="width: 300px; height: 300px; transform: scale(1.5);"></div>
+                            <img src="img/hero-3d.webp" alt="Mystická Hvězda" class="animate-float"
+                                style="max-width: 450px; width: 100%; height: auto; filter: drop-shadow(0 0 50px rgba(212, 175, 55, 0.2)); position: relative; z-index: 2;">
+                        </div>
                     </div>
-
                 </div>
-
             </div>
-
         </section>
-
-
 
         <!-- MISSION & VALUES -->
-
         <section class="section section--alt">
-
             <div class="container">
-
                 <div class="grid grid-3" data-animate>
-
-                    <div class="card card--service">
-
-                        <span class="card__icon">??</span>
-
+                    <div class="card card--service" style="padding: 2.5rem; text-align: center;">
+                        <div class="card__icon-wrapper" style="margin-bottom: 1.5rem;">
+                            <img src="img/icon-zodiac.webp" alt="Mise" style="width: 80px; height: 80px; margin: 0 auto;">
+                        </div>
                         <h3 class="card__title">Naše mise</h3>
-
-                        <p class="card__text">
-
-                            Pomáhat vám objevit vlastní sílu. Věříme, že hvězdy nejsou rozsudek, ale nástroj k tomu,
-
-                            abyste se stali autory svého příběhu.
-
+                        <p class="card__text" style="font-size: 0.95rem; line-height: 1.6;">
+                            Pomáhat vám objevit vlastní vnitřní sílu. Věříme, že hvězdy nejsou rozsudek, ale kompas, který vám pomůže stát se vědomým tvůrcem svého vlastního osudu.
                         </p>
-
                     </div>
 
-                    <div class="card card--service">
-
-                        <span class="card__icon">??</span>
-
+                    <div class="card card--service" style="padding: 2.5rem; text-align: center;">
+                        <div class="card__icon-wrapper" style="margin-bottom: 1.5rem;">
+                            <img src="img/icon-tarot.webp" alt="Přístup" style="width: 80px; height: 80px; margin: 0 auto;">
+                        </div>
                         <h3 class="card__title">Osobní přístup</h3>
-
-                        <p class="card__text">
-
-                            Každý výklad je unikátní. Nepoužíváme generické šablony, ale přistupujeme
-
-                            ke každému klientovi s maximální pečlivostí a empatií.
-
+                        <p class="card__text" style="font-size: 0.95rem; line-height: 1.6;">
+                            Za každým datem narození vidíme živý příběh. Nepoužíváme strojové šablony, ale ke každému vhledu přistupujeme s maximální citlivostí, empatií a odbornou péčí.
                         </p>
-
                     </div>
 
-                    <div class="card card--service">
-
-                        <span class="card__icon">??</span>
-
-                        <h3 class="card__title">Důvěra a diskrétnost</h3>
-
-                        <p class="card__text">
-
-                            Vaše soukromí je pro nás posvátné. Všechny konzultace a data jsou
-
-                            přísně chráněna a zůstávají pouze mezi vámi a vaším astrologem.
-
+                    <div class="card card--service" style="padding: 2.5rem; text-align: center;">
+                        <div class="card__icon-wrapper" style="margin-bottom: 1.5rem;">
+                            <img src="img/icon-crystal.webp" alt="Důvěra" style="width: 80px; height: 80px; margin: 0 auto;">
+                        </div>
+                        <h3 class="card__title">Absolutní důvěra</h3>
+                        <p class="card__text" style="font-size: 0.95rem; line-height: 1.6;">
+                            Vaše tajemství a soukromí jsou pro nás posvátné. Veškerá data a výklady podléhají nejpřísnější ochraně, aby Mystická Hvězda zůstala vaším bezpečným prostorem.
                         </p>
-
                     </div>
-
                 </div>
-
             </div>
-
         </section>
-
-
 
         <!-- STATISTICS -->
-
         <section class="section">
-
             <div class="container">
-
                 <div class="grid grid-4 text-center" data-animate>
-
-                    <div>
-
-                        <div class="text-gradient"
-
-                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">5K+</div>
-
-                        <p style="color: var(--color-silver-mist);">Výkladů měsíčně</p>
-
+                    <div class="stat-item">
+                        <div class="stat-icon" style="margin-bottom: 1rem; color: var(--color-mystic-gold); opacity: 0.7;"><i data-lucide="users" style="width: 32px; height: 32px;"></i></div>
+                        <div class="text-gradient text-glow" style="font-size: 3.5rem; font-weight: 700; font-family: var(--font-heading); margin-bottom: 0.5rem;">5K+</div>
+                        <p style="color: var(--color-silver-mist); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">Výkladů měsíčně</p>
                     </div>
-
-                    <div>
-
-                        <div class="text-gradient"
-
-                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">4.8?</div>
-
-                        <p style="color: var(--color-silver-mist);">Průměrné hodnocení</p>
-
+                    <div class="stat-item">
+                        <div class="stat-icon" style="margin-bottom: 1rem; color: var(--color-mystic-gold); opacity: 0.7;"><i data-lucide="star" style="width: 32px; height: 32px;"></i></div>
+                        <div class="text-gradient text-glow" style="font-size: 3.5rem; font-weight: 700; font-family: var(--font-heading); margin-bottom: 0.5rem;">4.9</div>
+                        <p style="color: var(--color-silver-mist); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">Hvězdné hodnocení</p>
                     </div>
-
-                    <div>
-
-                        <div class="text-gradient"
-
-                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">100%</div>
-
-                        <p style="color: var(--color-silver-mist);">Diskrétnost</p>
-
+                    <div class="stat-item">
+                        <div class="stat-icon" style="margin-bottom: 1rem; color: var(--color-mystic-gold); opacity: 0.7;"><i data-lucide="heart" style="width: 32px; height: 32px;"></i></div>
+                        <div class="text-gradient text-glow" style="font-size: 3.5rem; font-weight: 700; font-family: var(--font-heading); margin-bottom: 0.5rem;">12K+</div>
+                        <p style="color: var(--color-silver-mist); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">Spokojených duší</p>
                     </div>
-
-                    <div>
-
-                        <div class="text-gradient"
-
-                            style="font-size: 3rem; font-weight: 700; font-family: var(--font-heading);">24/7</div>
-
-                        <p style="color: var(--color-silver-mist);">Podpora</p>
-
+                    <div class="stat-item">
+                        <div class="stat-icon" style="margin-bottom: 1rem; color: var(--color-mystic-gold); opacity: 0.7;"><i data-lucide="message-circle" style="width: 32px; height: 32px;"></i></div>
+                        <div class="text-gradient text-glow" style="font-size: 3.5rem; font-weight: 700; font-family: var(--font-heading); margin-bottom: 0.5rem;">24/7</div>
+                        <p style="color: var(--color-silver-mist); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">Duchovní podpora</p>
                     </div>
-
                 </div>
-
             </div>
-
         </section>
-
-
 
         <!-- TEAM / EXPERTS -->
-        <section class="section section--alt">
+        <section class="section section--alt" id="expert-team">
             <div class="container">
                 <div class="section__header text-center" data-animate>
-                    <span class="section__badge">Náš expertní tým</span>
-                    <h2 class="section__title">Průvodci na vaší cestě</h2>
-                    <p class="section__subtitle">Představujeme vám naše klíčové odborníky, jejichž znalosti a empatie tvoří srdce Mystické Hvězdy.</p>
+                    <span class="section__badge">Naši průvodci</span>
+                    <h2 class="section__title">Srdce Mystické Hvězdy</h2>
+                    <p class="section__subtitle" style="max-width: 700px; margin-left: auto; margin-right: auto;">
+                        Naši odborníci nejsou jen teoretici, ale lidé s hlubokou empatií a letitou praxí, kteří zasvětili svůj život pomoci druhým.
+                    </p>
                 </div>
 
-                <div class="grid grid-2" style="gap: var(--space-3xl); margin-top: var(--space-2xl);" data-animate>
-                    <!-- EXPERT 1 -->
-                    <div class="card card--expert" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: var(--space-xl); background: rgba(255,255,255,0.03); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 24px;">
-                        <div class="expert-avatar" style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid var(--color-mystic-gold); margin-bottom: var(--space-lg); overflow: hidden; background: #1a0a2e;">
-                            <img src="img/authors/elena.webp" alt="Elena Hvězdná" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="grid grid-2" style="gap: var(--space-xl); margin-top: var(--space-2xl);" data-animate>
+                    <div class="card card--expert" style="padding: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,215,0,0.1); backdrop-filter: blur(10px); border-radius: 24px; text-align: center;">
+                        <div class="expert-avatar" style="width: 140px; height: 140px; margin: 0 auto 2rem; border-radius: 50%; overflow: hidden; border: 4px solid var(--color-mystic-gold); box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);">
+                            <img src="img/authors/elena.png" alt="Elena Hvězdná" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
-                        <h3 class="card__title" style="margin-bottom: 0.5rem; color: var(--color-mystic-gold);">Elena Hvězdná</h3>
-                        <p class="card__badge" style="background: rgba(155, 89, 182, 0.2); color: var(--color-starlight); padding: 4px 12px; border-radius: 50px; font-size: 0.8rem; margin-bottom: 1rem;">Hlavní astroložka & vizionářka</p>
-                        <p class="card__text">
-                            Elena se věnuje studiu západní astrologie přes 15 let. Specializuje se na karmickou astrologii a partnerskou synastrii. Jejím posláním je překládat jazyk hvězd do srozumitelných rad pro každodenní život.
+                        <h3 class="card__title" style="color: var(--color-mystic-gold);">Elena Hvězdná</h3>
+                        <div class="expert-labels" style="margin-bottom: 1.5rem; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                            <span class="badge" style="background: rgba(157, 78, 221, 0.2); font-size: 0.75rem; padding: 6px 14px; border-radius: 50px; display: inline-flex; align-items: center; gap: 6px;">
+                                <i data-lucide="crown" style="width: 14px; height: 14px;"></i> Zakladatelka
+                            </span>
+                            <span class="badge" style="background: rgba(157, 78, 221, 0.2); font-size: 0.75rem; padding: 6px 14px; border-radius: 50px; display: inline-flex; align-items: center; gap: 6px;">
+                                <i data-lucide="infinity" style="width: 14px; height: 14px;"></i> Karmická astrologie
+                            </span>
+                        </div>
+                        <p class="card__text" style="font-style: italic; color: var(--color-silver-mist);">
+                            "Astrologie pro mě není o určování osudu, ale o pochopení nástrojů, které nám byly dány do vínku, abychom mohli žít šťastně."
                         </p>
-                        <div class="expert-specialization" style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
-                            <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">Karmická astrologie</span>
-                            <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">Synastrie</span>
-                            <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">Tranzity</span>
-                        </div>
                     </div>
 
-                    <!-- EXPERT 2 -->
-                    <div class="card card--expert" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: var(--space-xl); background: rgba(255,255,255,0.03); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 24px;">
-                        <div class="expert-avatar" style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid var(--color-mystic-gold); margin-bottom: var(--space-lg); overflow: hidden; background: #1a0a2e;">
-                            <img src="img/authors/jan.webp" alt="Jan Mystik" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div class="card card--expert" style="padding: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,215,0,0.1); backdrop-filter: blur(10px); border-radius: 24px; text-align: center;">
+                        <div class="expert-avatar" style="width: 140px; height: 140px; margin: 0 auto 2rem; border-radius: 50%; overflow: hidden; border: 4px solid var(--color-mystic-gold); box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);">
+                            <img src="img/authors/jan.png" alt="Jan Mystik" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
-                        <h3 class="card__title" style="margin-bottom: 0.5rem; color: var(--color-mystic-gold);">Jan Mystik</h3>
-                        <p class="card__badge" style="background: rgba(155, 89, 182, 0.2); color: var(--color-starlight); padding: 4px 12px; border-radius: 50px; font-size: 0.8rem; margin-bottom: 1rem;">Mistr tarotu & rituální magie</p>
-                        <p class="card__text">
-                            Jan je strážcem starodávných tarotových tradic. Jeho výklady propojují klasickou symboliku Rider-Waite-Smith s moderní psychologií. Pomohl již tisícům lidí najít odpovědi v nejtěžších životních chvílích.
+                        <h3 class="card__title" style="color: var(--color-mystic-gold);">Jan Mystik</h3>
+                        <div class="expert-labels" style="margin-bottom: 1.5rem; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                            <span class="badge" style="background: rgba(157, 78, 221, 0.2); font-size: 0.75rem; padding: 6px 14px; border-radius: 50px; display: inline-flex; align-items: center; gap: 6px;">
+                                <i data-lucide="layers" style="width: 14px; height: 14px;"></i> Mistr Tarotu
+                            </span>
+                            <span class="badge" style="background: rgba(157, 78, 221, 0.2); font-size: 0.75rem; padding: 6px 14px; border-radius: 50px; display: inline-flex; align-items: center; gap: 6px;">
+                                <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> Symbolika & Rituály
+                            </span>
+                        </div>
+                        <p class="card__text" style="font-style: italic; color: var(--color-silver-mist);">
+                            "Karty jsou zrcadlem našeho podvědomí. Mým úkolem je pomoci vám přečíst obraz, který se v nich odráží."
                         </p>
-                        <div class="expert-specialization" style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
-                            <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">Keltský kříž</span>
-                            <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">Archetypální psychologie</span>
-                            <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">Numerologie</span>
-                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- METHODOLOGY -->
-        <section class="section">
+        <!-- OUR STORY -->
+        <section class="section" style="background: linear-gradient(to top, rgba(10, 10, 26, 0.8), transparent);">
             <div class="container">
-                <div class="grid grid-2" style="align-items: center; gap: var(--space-4xl);" data-animate>
-                    <div>
-                        <div class="flex-center">
-                            <img src="img/icon-ancient-scroll.webp" alt="Starodávný svitek" class="animate-float"
-                                style="max-width: 300px; width: 100%; height: auto; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"
-                                loading="lazy">
+                <div class="grid grid-2" style="align-items: center; gap: var(--space-3xl);" data-animate>
+                    <div class="story-image">
+                        <div style="position: relative;">
+                            <img src="img/icon-ancient-scroll.webp" alt="Náš příběh" class="animate-float"
+                                style="max-width: 350px; width: 100%; height: auto; border-radius: 20px; filter: drop-shadow(0 0 40px rgba(157, 78, 221, 0.3));">
+                            <div class="floating-badge" style="position: absolute; bottom: -20px; right: 20px; background: var(--color-mystic-gold); color: #000; padding: 1rem; border-radius: 12px; font-weight: 700; transform: rotate(5deg);">
+                                Od roku 2018
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <span class="section__badge">Naše metody</span>
-                        <h2 class="section__title">Spojení starověké moudrosti a moderní praxe</h2>
-
-                        <p class="mb-lg">
-
-                            Využíváme ověřené astrologické systémy (Placidus, Koch) v kombinaci s tarotovou symbolikou.
-
-                            Každý výklad je pečlivě sestaven podle tradičních astrologických pravidel a interpretován s
-
-                            ohledem na vaši jedinečnou životní situaci.
-
+                        <span class="section__badge">Náš příběh</span>
+                        <h2 class="section__title">Z vášně pro hvězdy <br><span class="text-gradient">až k digitální svatyni</span></h2>
+                        <p class="mb-lg" style="font-size: 1.1rem; line-height: 1.8; opacity: 0.9;">
+                            Na začátku byla jednoduchá myšlenka: zpřístupnit hlubokou moudrost astrologie a tarotu každému, kdo hledá odpovědi. To, co začalo jako malý projekt skupiny nadšenců, se rozrostlo v nejmodernější českou platformu pro digitální spiritualitu.
                         </p>
-
-                        <p class="mb-xl">
-
-                            Naše služba spojuje přesné astronomické výpočty s hlubokým porozuměním symbolice a významu
-
-                            planetárních pozic. Důraz klademe na relevanci a praktickou použitelnost každého výkladu.
-
+                        <p class="mb-xl" style="font-size: 1.1rem; line-height: 1.8; opacity: 0.9;">
+                            Spojujeme tradiční hermetické vědy s moderními technologiemi a psychologií. Naše výpočty jsou astronomicky přesné, ale náš projev zůstává lidský, laskavý a empatický.
                         </p>
-
-                        <a href="cenik.html" class="btn btn--primary">Stát se klientem</a>
-
+                        <a href="cenik.html" class="btn btn--primary btn--lg">Vstoupit do Premium světa</a>
                     </div>
-
                 </div>
-
             </div>
-
         </section>
-
-
 
         <!-- CTA -->
-
         <section class="section">
-
             <div class="container">
-
                 <div class="cta-banner" data-animate>
-
                     <div class="cta-banner__content">
-
                         <h2 class="cta-banner__title">Máte otázky?</h2>
-
                         <p class="cta-banner__text">
-
-                            Náš tým podpory je vám k dispozici. Napište nám a my vám rádi pomůžeme
-
-                            vybrat tu správnou službu pro vás.
-
+                            Náš tým podpory je vám k dispozici. Napište nám a my vám rádi pomůžeme vybrat tu správnou službu pro vás.
                         </p>
-
                         <a href="kontakt.html" class="btn btn--secondary btn--lg">Kontaktovat podporu</a>
-
                     </div>
-
                 </div>
-
             </div>
-
         </section>
-
     </main>
-
-
-
-    <!-- FOOTER (loaded dynamically) -->
 
     <div id="footer-placeholder"></div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- Service Worker Registration -->
-
-    <script>
-
-        if ('serviceWorker' in navigator) {
-
-            window.addEventListener('load', () => {
-
-                navigator.serviceWorker.register('/service-worker.js')
-
-                    .then(reg => console.log('? Service Worker registered'))
-
-                    .catch(err => console.log('SW registration failed:', err));
-
-            });
-
-        }
-
-    </script>
-
-
-
     <script src="js/api-config.js?v=5" defer></script>
-
-    <script src="js/templates.js?v=10" defer></script>
-
+    <script src="js/templates.js?v=11" defer></script>
     <script src="js/auth-client.js?v=5" defer></script>
-
-    <script src="js/components.js?v=10" defer></script>
-
-    <script type="module" src="js/main.js?v=10"></script>
-
-
-
+    <script src="js/components.js?v=11" defer></script>
+    <script type="module" src="js/main.js?v=11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
 </body>
-
-
-
 </html>
-

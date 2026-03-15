@@ -60,7 +60,7 @@ router.post('/crystal-ball', optionalPremiumCheck, async (req, res) => {
                             upgradeUrl: '/cenik?selected=pruvodce&utm_source=crystal_ball_upsell',
                             features: [
                                 '✓ Neomezené otázky',
-                                '✓ Hlubší AI výklady',
+                                '✓ Hlubší vhledy',
                                 '✓ Uložit historii'
                             ]
                         }
@@ -147,7 +147,7 @@ router.post('/tarot', authenticateToken, requirePremiumSoft, async (req, res) =>
                     features: [
                         '✓ Všechny tarotové výklady',
                         '✓ Synastry & Natalní karty',
-                        '✓ AI interpretace'
+                        '✓ Detailní interpretace'
                     ]
                 }
             });
@@ -300,7 +300,7 @@ router.post('/angel-card', optionalPremiumCheck, async (req, res) => {
 
         // If the user is unauthenticated or Free tier and just wants the static card, we could theoretically
         // just return the static message, but the frontend will probably handle that.
-        // This endpoint will be called when the user actually clicks "Získat hluboký AI výklad"
+        // This endpoint will be called when the user actually clicks "Získat hluboký výklad"
 
         // PREMIUM GATE: We decided Angel Card deep interpretation is for Premium only, 
         // to drive subscriptions, while the static pull is Free.
@@ -309,7 +309,7 @@ router.post('/angel-card', optionalPremiumCheck, async (req, res) => {
                 success: true,
                 isTeaser: true,
                 response: null,
-                message: 'Hluboká AI interpretace Andělské karty je dostupná pouze pro Premium uživatele.'
+                message: 'Hluboká interpretace Andělské karty je dostupná pouze pro Premium uživatele.'
             });
         }
 

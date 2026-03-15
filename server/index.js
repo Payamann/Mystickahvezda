@@ -147,12 +147,14 @@ app.use(helmet({
                 'https://js.stripe.com',     // Stripe.js
                 'https://cdn.jsdelivr.net',  // CDN scripts
                 'https://cdnjs.cloudflare.com', // Added for Three.js
+                'https://unpkg.com',         // Added for Lucide
             ],
             styleSrc: [
                 "'self'",
                 "'unsafe-inline'",   // Needed for inline styles
                 'https://fonts.googleapis.com',
                 'https://cdnjs.cloudflare.com',
+                'https://cdn.jsdelivr.net',
             ],
             fontSrc: [
                 "'self'",
@@ -165,6 +167,7 @@ app.use(helmet({
                 'data:',             // Base64 images (natal chart canvas)
                 'blob:',
                 'https:',            // Allow HTTPS images
+                'https://cdn.jsdelivr.net',
             ],
             connectSrc: [
                 "'self'",
@@ -174,6 +177,8 @@ app.use(helmet({
                 'https://cdnjs.cloudflare.com', // Added for Three.js fetches
                 'https://fonts.googleapis.com',
                 'https://fonts.gstatic.com',
+                'https://cdn.jsdelivr.net',
+                'https://unpkg.com',
             ].filter(Boolean),
             frameSrc: ["'self'", 'https://js.stripe.com'], // Allow Stripe iframe
             objectSrc: ["'none'"],
@@ -341,7 +346,7 @@ app.get('/jmena/:name', (req, res) => {
 
 // Serve static files from the parent directory (MystickaHvezda root)
 const rootDir = path.resolve(__dirname, '../');
-console.log(`đź“‚ Serving static files from: ${rootDir}`);
+console.log(`📂 Serving static files from: ${rootDir}`);
 
 const staticOptions = process.env.NODE_ENV === 'production'
     ? {
@@ -382,7 +387,7 @@ app.use('/api/mentor', mentorRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Public config endpoint â€” safely exposes only client-safe env vars
+// Public config endpoint — safely exposes only client-safe env vars
 app.get('/api/config', (req, res) => {
     res.json({
         stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || null,
@@ -466,4 +471,3 @@ if (isMain || process.env.NODE_ENV === 'production') {
 }
 
 export default app;
-

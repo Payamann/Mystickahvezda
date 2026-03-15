@@ -143,7 +143,7 @@ export const aiLimiter = rateLimit({
         if (process.env.NODE_ENV === 'development') return 1000;
         return req.user?.isPremium ? 100 : 10;
     },
-    message: { error: 'Překročen denní limit pro AI generování. Upgradujte na premium pro neomezený přístup.' },
+    message: { error: 'Překročen denní limit pro generování výkladů. Upgradujte na premium pro neomezený přístup.' },
     standardHeaders: true,
     legacyHeaders: false,
     validate: { xForwardedForHeader: false },
