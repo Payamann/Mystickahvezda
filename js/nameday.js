@@ -265,13 +265,22 @@
         const updateWidgetContent = (wisdom) => {
             const isMobile = window.innerWidth < 1024;
             
-            if (!isMobile) {
-                // Single line for desktop
+                // --- STYLING TOKENS ---
+                const gold = 'rgba(212, 175, 55, 0.95)';
+                const labelStyle = `color: ${gold}; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; font-size: 0.68rem; margin-right: 4px;`;
+                const separator = `<span style="color: ${gold}; opacity: 0.4; margin: 0 15px; font-size: 1.1rem; line-height: 0;">·</span>`;
+                const glow = `text-shadow: 0 0 10px rgba(212, 175, 55, 0.3), 0 0 20px rgba(212, 175, 55, 0.1);`;
+
                 container.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:20px; opacity:0; transition:opacity 0.6s ease-in; width:100%; justify-content:center;">
-                        <div style="white-space:nowrap">✨ Dnes: <strong>${todayNames}</strong> | Zítra: ${tomorrowNames}</div>
-                        <div style="width:1px; height:12px; background:rgba(212,175,55,0.2)"></div>
-                        <div style="white-space:nowrap; font-style:italic">🔮 Moudro dne: <span id="wisdom-content">${wisdom}</span></div>
+                    <div style="display:flex; align-items:center; opacity:0; transition:opacity 0.6s ease-in; width:100%; justify-content:center;">
+                        <div style="white-space:nowrap">
+                            <span style="${labelStyle}">Dnes:</span> <strong>${todayNames}</strong> 
+                            <span style="opacity:0.6; margin-left:8px">Zítra: ${tomorrowNames}</span>
+                        </div>
+                        ${separator}
+                        <div style="white-space:nowrap; font-style:italic">
+                            <span style="${labelStyle}">Moudro dne:</span> <span id="wisdom-content" style="${glow}">${wisdom}</span>
+                        </div>
                     </div>
                 `;
                 setTimeout(() => {
@@ -295,8 +304,12 @@
                 return slide;
             };
 
-            const slide1 = createSlide(`✨ <strong>${todayNames}</strong> (zítra ${tomorrowNames})`);
-            const slide2 = createSlide(`🔮 <span id="wisdom-label" style="font-weight:600; font-size:0.7rem; opacity:0.6; text-transform:uppercase; margin-right:5px">Moudro dne:</span> <span style="font-style:italic">${wisdom}</span>`);
+            const gold = 'rgba(212, 175, 55, 0.95)';
+            const labelStyle = `color: ${gold}; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; font-size: 0.65rem; display: block; margin-bottom: 2px;`;
+            const glow = `text-shadow: 0 0 8px rgba(212, 175, 55, 0.25);`;
+
+            const slide1 = createSlide(`<div><span style="${labelStyle}">Dnes slaví</span><strong>${todayNames}</strong></div>`);
+            const slide2 = createSlide(`<div><span style="${labelStyle}">Moudro dne</span><span style="font-style:italic; ${glow}">${wisdom}</span></div>`);
             container.appendChild(slide1);
             container.appendChild(slide2);
 
