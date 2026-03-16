@@ -14,13 +14,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log(`[components.js] Base path detected: "${basePath}"`);
 
     // Load header and footer in parallel for faster initial paint
+    // Use high priority for header as it affects LCP/CLS
     await Promise.all([
-        loadComponent('header-placeholder', `${basePath}components/header.html?v=2`, basePath),
-        loadComponent('footer-placeholder', `${basePath}components/footer.html?v=11`, basePath)
+        loadComponent('header-placeholder', `${basePath}components/header.html?v=2`, basePath, true),
+        loadComponent('footer-placeholder', `${basePath}components/footer.html?v=11`, basePath, false)
     ]);
 
     // Dispatch event to signal that UI shells are ready
-    // This allows main.js to attach event listeners to the newly injected elements
     document.dispatchEvent(new Event('components:loaded'));
 
     // STANDALONE: Init hamburger menu + header scroll (no module dependency)
@@ -28,12 +28,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     initStandaloneHeader();
 });
 
-async function loadComponent(elementId, path, basePath = '') {
+async function loadComponent(elementId, path, basePath = '', highPriority = false) {
     const element = document.getElementById(elementId);
     if (!element) return;
 
     try {
-        const response = await fetch(path);
+        const response = await fetch(path, highPriority ? { priority: 'high' } : {});
         if (!response.ok) throw new Error(`Failed to load ${path}`);
 
         let html = await response.text();
