@@ -177,11 +177,12 @@ app.use(helmet({
             defaultSrc: ["'self'", "https://cdnjs.cloudflare.com"],
             scriptSrc: [
                 "'self'",
-                "'unsafe-inline'",          // Required: ~80 HTML files have inline <script> blocks (SW registration, analytics, event delegation). To remove: implement nonce-based CSP or externalize all inline scripts.
-                'https://js.stripe.com',     // Stripe.js
-                'https://cdn.jsdelivr.net',  // CDN scripts
-                'https://cdnjs.cloudflare.com', // Added for Three.js
-                'https://unpkg.com',         // Added for Lucide
+                'https://js.stripe.com',
+                'https://cdn.jsdelivr.net',
+                'https://cdnjs.cloudflare.com',
+                'https://unpkg.com',
+                'https://browser.sentry-cdn.com',
+                'https://www.googletagmanager.com',
             ],
             styleSrc: [
                 "'self'",
@@ -206,13 +207,16 @@ app.use(helmet({
             connectSrc: [
                 "'self'",
                 process.env.SUPABASE_URL ? `https://${process.env.SUPABASE_URL.replace(/^https?:\/\//, '')}` : '',
-                'https://api.stripe.com',    // Stripe API
-                'https://generativelanguage.googleapis.com', // Gemini API
-                'https://cdnjs.cloudflare.com', // Added for Three.js fetches
+                'https://api.stripe.com',
+                'https://generativelanguage.googleapis.com',
+                'https://cdnjs.cloudflare.com',
                 'https://fonts.googleapis.com',
                 'https://fonts.gstatic.com',
                 'https://cdn.jsdelivr.net',
                 'https://unpkg.com',
+                '*.sentry.io',
+                'https://www.google-analytics.com',
+                'https://stats.g.doubleclick.net',
             ].filter(Boolean),
             frameSrc: ["'self'", 'https://js.stripe.com'], // Allow Stripe iframe
             objectSrc: ["'none'"],

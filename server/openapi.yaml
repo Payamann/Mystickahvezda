@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  title: Mystická Hvězda API
+  description: API pro ezoterické služby, horoskopy a tarotové výklady.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001/api
+    description: Lokální vývojový server
+  - url: https://mystickahvezda.cz/api
+    description: Produkční server
+
+paths:
+  /crystal-ball:
+    post:
+      summary: Dotaz na křišťálovou kouli
+      description: AI generovaná odpověď na konkrétní životní otázku.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  maxLength: 1000
+                history:
+                  type: array
+                  items:
+                    type: string
+                lang:
+                  type: string
+                  enum: [cs, sk, pl]
+      responses:
+        '200':
+          description: Úspěšná odpověď
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  response:
+                    type: string
+        '400':
+          description: Neplatný požadavek (např. chybějící otázka)
+        '402':
+          description: Limit vyčerpán (vyžaduje Premium)
+
+  /dream:
+    post:
+      summary: Výklad snu (Lexikon snů)
+      description: Výklad snu na základě popisu uživatele. Vyžaduje Premium.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dream:
+                  type: string
+                  maxLength: 3000
+      responses:
+        '200':
+          description: Úspěšný výklad
+        '401':
+          description: Neautorizováno
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
