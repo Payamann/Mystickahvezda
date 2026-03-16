@@ -135,31 +135,231 @@
         '12-30': ['David'], '12-31': ['Silvestra'],
     };
 
+    // --- Astrological Wisdom Data ---
+    const wisdoms = {
+        general: [
+            "Hvězdy sice naklánějí, ale nikoho nenutí. Vaše vůle je silnější než osud.",
+            "Vesmír mluví skrze ticho. Naslouchejte své intuici.",
+            "Každý pohyb planet je příležitostí k růstu a hlubšímu sebepoznání.",
+            "Retrográdní pohyb není překážka, ale čas pro reflexi a dokončení starého.",
+            "Jak nahoře, tak dole. Váš vnitřní svět zrcadlí vesmírný řád.",
+            "Trpělivost je klíčem k pochopení vesmírných cyklů.",
+            "Důvěřujte procesu. Vše ve vesmíru se děje v pravý čas.",
+            "Vaše energie je vaším nejcennějším darem vesmíru.",
+            "Hledání pravdy začíná uvnitř vás, ne v hvězdných mapách.",
+            "Každý den je novou šancí alignovat se se svou duší."
+        ],
+        moon: {
+            'new-moon': "Novoluní je časem pro setí nových záměrů. Co si dnes přejete zasadit?",
+            'full-moon': "Úplněk osvětluje to, co má být propuštěno. Odevzdejte vesmíru své břemeno.",
+            'waxing': "Měsíc dorůstá a s ním i vaše síla. Je čas na akci a budování.",
+            'waning': "Měsíc ubývá. Čas pro očistu, odpočinek a vnitřní reflexi."
+        }
+    };
+
+    function getMoonPhase() {
+        const known_new_moon = new Date('2026-02-17T12:01:00Z').getTime();
+        const lp = 2551442877; 
+        let diff = Date.now() - known_new_moon;
+        let phase = (diff % lp) / lp;
+        if (phase < 0) phase += 1;
+        if (phase < 0.05 || phase > 0.95) return 'new-moon';
+        if (phase > 0.45 && phase < 0.55) return 'full-moon';
+        if (phase >= 0.05 && phase <= 0.45) return 'waxing';
+        return 'waning';
+    }
+
+    function hashCode(str) {
+        let h = 0;
+        for (let i = 0; i < str.length; i++) {
+            h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+        }
+        return Math.abs(h);
+    }
+
     function getNameDay(date) {
         const key = `${date.getMonth() + 1}-${date.getDate()}`;
         return nameDays[key] || ['—'];
     }
 
     function initNameDayWidget() {
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-
-        const todayNames = getNameDay(today).join(', ');
-        const tomorrowNames = getNameDay(tomorrow).join(', ');
+        if (document.getElementById('nameday-widget')) return;
 
         const widget = document.createElement('div');
         widget.id = 'nameday-widget';
         widget.style.cssText = `
-            text-align: center; font-size: 0.78rem; color: rgba(255,255,255,0.5);
-            padding: 0.35rem 1rem; background: rgba(212,175,55,0.06);
+            text-align: center; 
+            font-size: 0.74rem; 
+            color: rgba(255,255,255,0.5);
+            padding: 0.45rem 1rem; 
+            background: rgba(10, 10, 26, 0.98);
             border-bottom: 1px solid rgba(212,175,55,0.12);
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
+            width: 100%;
+            position: relative;
+            z-index: 1001;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         `;
-        widget.innerHTML = `✨ Dnes slaví: <strong style="color:rgba(212,175,55,0.9)">${todayNames}</strong> &nbsp;·&nbsp; Zítra: <span style="color:rgba(255,255,255,0.6)">${tomorrowNames}</span>`;
 
-        // Vlož na začátek <body> před vším ostatním
-        document.body.insertBefore(widget, document.body.firstChild);
+        // Content Preparing
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        const todayNames = getNameDay(today).join(', ');
+        const tomorrowNames = getNameDay(tomorrow).join(', ');
+
+        const moon = getMoonPhase();
+        const todayStr = new Date().toLocaleDateString('cs-CZ');
+        const userSign = window.MH_PERSONALIZATION?.getSign() || '';
+        
+        // --- AI Wisdom Fetching & Caching ---
+        const CACHE_KEY = `mh_ai_wisdom_v3_${todayStr}_${userSign}`;
+        
+        const getFallbackWisdom = () => {
+             const key = today.toDateString();
+             return (hashCode(key) % 10 < 3 && wisdoms.moon[moon]) 
+                ? wisdoms.moon[moon] 
+                : wisdoms.general[hashCode(key) % wisdoms.general.length];
+        };
+
+        const container = document.createElement('div');
+        container.style.cssText = `
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        `;
+        widget.appendChild(container);
+
+        const createSlide = (html) => {
+            const slide = document.createElement('div');
+            slide.style.cssText = `
+                position: absolute;
+                width: 100%;
+                opacity: 0;
+                transition: opacity 1s ease-in-out, transform 1s ease-out;
+                transform: translateY(5px);
+                pointer-events: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap;
+            `;
+            slide.innerHTML = html;
+            return slide;
+        };
+
+        const slide1 = createSlide(`✨ Dnes slaví: <strong style="color:rgba(212,175,55,0.95); margin-left:5px">${todayNames}</strong> &nbsp;·&nbsp; <span style="opacity:0.7">Zítra: ${tomorrowNames}</span>`);
+        
+        // Initial wisdom fallback
+        let initialWisdom = localStorage.getItem(CACHE_KEY) || getFallbackWisdom();
+        
+        const updateWidgetContent = (wisdom) => {
+            const isMobile = window.innerWidth < 1024;
+            
+            if (!isMobile) {
+                // Single line for desktop
+                container.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:20px; opacity:0; transition:opacity 0.6s ease-in; width:100%; justify-content:center;">
+                        <div style="white-space:nowrap">✨ Dnes: <strong>${todayNames}</strong> | Zítra: ${tomorrowNames}</div>
+                        <div style="width:1px; height:12px; background:rgba(212,175,55,0.2)"></div>
+                        <div style="white-space:nowrap; font-style:italic">🔮 Moudro: <span id="wisdom-content">${wisdom}</span></div>
+                    </div>
+                `;
+                setTimeout(() => {
+                    const el = container.firstElementChild;
+                    if (el) el.style.opacity = '1';
+                }, 50);
+                return;
+            }
+
+            // Ticker for mobile
+            container.innerHTML = '';
+            const createSlide = (html) => {
+                const slide = document.createElement('div');
+                slide.style.cssText = `
+                    position: absolute; width: 100%; opacity: 0;
+                    transition: opacity 0.8s ease-in-out, transform 0.8s ease-out;
+                    transform: translateY(5px); pointer-events: none;
+                    display: flex; align-items: center; justify-content: center; text-align: center;
+                `;
+                slide.innerHTML = html;
+                return slide;
+            };
+
+            const slide1 = createSlide(`✨ <strong>${todayNames}</strong> (zítra ${tomorrowNames})`);
+            const slide2 = createSlide(`🔮 <span style="font-style:italic">${wisdom}</span>`);
+            container.appendChild(slide1);
+            container.appendChild(slide2);
+
+            let current = 0;
+            const slides = [slide1, slide2];
+            const showSlide = (index) => {
+                slides.forEach((s, i) => {
+                    const isActive = i === index;
+                    s.style.opacity = isActive ? '1' : '0';
+                    s.style.transform = isActive ? 'translateY(0)' : 'translateY(-5px)';
+                    s.style.pointerEvents = isActive ? 'auto' : 'none';
+                });
+            };
+
+            showSlide(0);
+            if (window.namedayTickerInterval) clearInterval(window.namedayTickerInterval);
+            window.namedayTickerInterval = setInterval(() => {
+                current = (current + 1) % slides.length;
+                showSlide(current);
+            }, 5000); // Faster ticker (5s)
+        };
+
+        // Initial render
+        updateWidgetContent(initialWisdom);
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+             const wisdom = localStorage.getItem(CACHE_KEY) || initialWisdom;
+             updateWidgetContent(wisdom);
+        });
+
+        // Fetch AI Wisdom asynchronously if not cached (with retry if service not yet loaded)
+        const fetchWithRetry = (retries = 5) => {
+            if (localStorage.getItem(CACHE_KEY)) return;
+            
+            if (window.GeminiService) {
+                window.GeminiService.getDailyWisdom(userSign, moon)
+                    .then(aiWisdom => {
+                        if (aiWisdom && aiWisdom.length > 5) {
+                            localStorage.setItem(CACHE_KEY, aiWisdom);
+                            updateWidgetContent(aiWisdom);
+                        }
+                    })
+                    .catch(err => console.warn('AI Wisdom fetch failed.', err));
+            } else if (retries > 0) {
+                setTimeout(() => fetchWithRetry(retries - 1), 1000);
+            }
+        };
+
+        fetchWithRetry();
+
+        const mount = () => {
+            const header = document.querySelector('.header');
+            if (header) {
+                if (!header.contains(widget)) header.prepend(widget);
+            } else {
+                if (!document.body.contains(widget)) document.body.insertBefore(widget, document.body.firstChild);
+            }
+        };
+
+        mount();
+        document.addEventListener('components:loaded', mount);
+        setTimeout(mount, 1000);
     }
 
     if (document.readyState === 'loading') {

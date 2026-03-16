@@ -361,4 +361,26 @@ router.post('/runes', optionalPremiumCheck, async (req, res) => {
     }
 });
 
+// ─── Daily Wisdom (AI Powered) ────────────────────────────────────────────────
+router.post('/daily-wisdom', optionalPremiumCheck, async (req, res) => {
+    try {
+        const { sign, moonPhase, lang = 'cs' } = req.body;
+        
+        const langMap = { 'cs': 'češtině (CZ)', 'sk': 'slovenčine (SK)', 'pl': 'poľštine (PL)' };
+        const targetLangName = langMap[lang] || langMap['cs'];
+
+        const signText = sign ? `pro znamení ${sign}` : 'pro všechny hledající';
+        const moonText = moonPhase ? `při fázi měsíce: ${moonPhase}` : '';
+        const message = `Generuj hluboké moudro ${signText} ${moonText} v jazyce: ${lang || 'cs'}.`;
+        
+        const systemPrompt = SYSTEM_PROMPTS.dailyWisdom + `\n\nRespond in ${targetLangName}.`;
+        
+        const response = await callGemini(systemPrompt, message);
+        res.json({ success: true, response });
+    } catch (error) {
+        console.error('Daily Wisdom AI Error:', error);
+        res.status(500).json({ success: false, error: 'Hvězdy dnes mlčí...' });
+    }
+});
+
 export default router;

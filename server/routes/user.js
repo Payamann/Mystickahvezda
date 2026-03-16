@@ -6,11 +6,11 @@
  */
 import express from 'express';
 import { authenticateToken } from '../middleware.js';
-import { blacklistToken, generateToken } from '../auth.js';
+import { generateToken } from '../auth.js';
 import { supabase } from '../db-supabase.js';
 import rateLimit from 'express-rate-limit';
 import { validatePassword, validateString } from '../utils/validation.js';
-import { blacklistAllUserTokens } from '../utils/token-blacklist.js';
+import { blacklistToken, blacklistAllUserTokens } from '../utils/token-blacklist.js';
 
 export const router = express.Router();
 

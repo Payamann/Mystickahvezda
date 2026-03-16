@@ -127,6 +127,11 @@ if (typeof window !== 'undefined') {
         analyzeNatalChart,
         analyzeSynastry,
         getDailyHoroscope,
-        generateMeditation
+        generateMeditation,
+        getDailyWisdom: (sign, moonPhase, lang) => callAPI('/daily-wisdom', { sign, moonPhase, lang })
     };
+}
+
+export async function getDailyWisdom(sign, moonPhase, lang) {
+    return callAPI('/daily-wisdom', { sign, moonPhase, lang });
 }

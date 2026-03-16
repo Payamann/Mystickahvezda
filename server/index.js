@@ -124,11 +124,7 @@ app.use(express.urlencoded({
     parameterLimit: 100 // Limit number of form parameters
 }));
 
-<<<<<<< HEAD
 // Parse cookies (HttpOnly auth_token + CSRF token)
-=======
-// Cookie parser for HttpOnly JWT cookies
->>>>>>> claude/vigorous-taussig
 app.use(cookieParser());
 
 // Middleware: Validate request size and content-type
