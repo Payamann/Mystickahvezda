@@ -77,10 +77,8 @@
   <link rel="preload" href="/fonts/local-fonts.css" as="style">
   <link rel="stylesheet" href="/fonts/local-fonts.css">
 
-  <!-- Critical CSS - Load asynchronously to prevent render blocking -->
-  <link rel="preload" href="/css/style.v2.min.css?v=11" as="style">
-  <link rel="stylesheet" href="/css/style.v2.min.css?v=11" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="/css/style.v2.min.css?v=11"></noscript>
+  <!-- Main CSS - Local fonts are loaded first, then apply styles -->
+  <link rel="stylesheet" href="/css/style.v2.min.css?v=11">
 
   <!-- Preload Critical Assets -->
   <link rel="preload" as="image" href="img/hero-3d.webp" fetchpriority="high">
@@ -153,14 +151,7 @@
 
 
   <!-- Deferred Scripts -->
-
-
-
-
-
-
-
-
+  <script type="module" src="js/moon-phase.js?v=2" defer></script>
 
 
 
