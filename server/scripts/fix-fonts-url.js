@@ -54,7 +54,7 @@ function fixFile(filename) {
 
         // Common words
         ['Mystick\ufffd', 'Mystická'],
-        ['Hv\uffzda', 'Hvězda'],
+        ['Hv\ufffd', 'Hvězda'],
         ['\ufffd', ''], // Remove replacement character completely only as last resort
     ];
 
