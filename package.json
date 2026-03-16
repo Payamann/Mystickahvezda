@@ -1,6 +1,6 @@
 {
   "name": "mysticka-hvezda",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Mystická Hvězda — astrology web application",
   "main": "server/index.js",
   "type": "module",
