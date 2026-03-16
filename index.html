@@ -88,8 +88,8 @@
   <link rel="preload" href="/fonts/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
   <link rel="preload" href="/fonts/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
 
-  <!-- Main CSS - Load with media trick for async loading (prevents render blocking) -->
-  <link rel="stylesheet" media="print" onload="this.media='all'" href="/css/style.v2.min.css?v=11">
+  <!-- Main CSS - Load asynchronously without blocking render -->
+  <link rel="preload" href="/css/style.v2.min.css?v=11" as="style" onload="this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="/css/style.v2.min.css?v=11"></noscript>
 
   <!-- Preload Critical Assets -->
