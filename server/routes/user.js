@@ -6,6 +6,7 @@
  */
 import express from 'express';
 import { authenticateToken } from '../middleware.js';
+import { blacklistToken, generateToken } from '../auth.js';
 import { supabase } from '../db-supabase.js';
 import rateLimit from 'express-rate-limit';
 import { validatePassword, validateString } from '../utils/validation.js';
@@ -190,7 +191,12 @@ router.put('/password', sensitiveOpLimiter, authenticateToken, async (req, res) 
         const { error } = await supabase.auth.admin.updateUserById(req.user.id, { password: validatedPassword });
         if (error) throw error;
 
-        res.json({ success: true, message: 'Heslo bylo úspěšně změněno.' });
+        // Blacklist old token and issue a new one
+        const oldToken = req.headers['authorization']?.split(' ')[1];
+        if (oldToken) blacklistToken(oldToken);
+        const newToken = await generateToken(req.user.id);
+
+        res.json({ success: true, message: 'Heslo bylo úspěšně změněno.', token: newToken });
     } catch (error) {
         console.error('Password Change Error:', error);
         res.status(500).json({ success: false, error: 'Nepodařilo se změnit heslo.' });

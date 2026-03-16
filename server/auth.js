@@ -2,7 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import { supabase } from './db-supabase.js';
-import { JWT_SECRET } from './config/jwt.js';
+import { JWT_SECRET, JWT_EXPIRY, COOKIE_OPTIONS, INDICATOR_COOKIE_OPTIONS } from './config/jwt.js';
 import { authenticateToken } from './middleware.js';
 import { validateEmail, validatePassword, validateName, validateBirthDate } from './utils/validation.js';
 import { PREMIUM_PLAN_TYPES } from './config/constants.js';
@@ -12,7 +12,7 @@ const router = express.Router();
 // ============================================
 // Helper: Generate JWT Token
 // ============================================
-async function generateToken(userId) {
+export async function generateToken(userId) {
     try {
         // Fetch latest subscription info
         const { data: sub } = await supabase
@@ -36,7 +36,7 @@ async function generateToken(userId) {
             subscription_status: status,
             isPremium: isPremium,
             premiumExpires: sub?.current_period_end || null
-        }, JWT_SECRET, { expiresIn: '30d' });
+        }, JWT_SECRET, { expiresIn: JWT_EXPIRY });
 
         return token;
     } catch (err) {
@@ -67,6 +67,82 @@ const sensitiveLimiter = rateLimit({
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
 
+// ============================================
+// Account Lockout - Progressive delay after failed attempts
+// ============================================
+const loginAttempts = new Map(); // key: email, value: { count, lastAttempt, lockedUntil }
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATIONS = [0, 0, 0, 0, 0, 60, 300, 900, 3600]; // seconds: 1min, 5min, 15min, 1hr
+
+function checkAccountLockout(email) {
+    const record = loginAttempts.get(email);
+    if (!record) return { locked: false };
+
+    if (record.lockedUntil && record.lockedUntil > Date.now()) {
+        const remainingSec = Math.ceil((record.lockedUntil - Date.now()) / 1000);
+        return { locked: true, remainingSec };
+    }
+
+    return { locked: false };
+}
+
+function recordFailedAttempt(email) {
+    const record = loginAttempts.get(email) || { count: 0, lastAttempt: 0, lockedUntil: null };
+    record.count += 1;
+    record.lastAttempt = Date.now();
+
+    if (record.count >= MAX_ATTEMPTS) {
+        const durationIndex = Math.min(record.count, LOCKOUT_DURATIONS.length - 1);
+        record.lockedUntil = Date.now() + (LOCKOUT_DURATIONS[durationIndex] * 1000);
+    }
+
+    loginAttempts.set(email, record);
+}
+
+function clearLoginAttempts(email) {
+    loginAttempts.delete(email);
+}
+
+// Cleanup old lockout records every hour
+setInterval(() => {
+    const oneHourAgo = Date.now() - 3600000;
+    for (const [email, record] of loginAttempts.entries()) {
+        if (record.lastAttempt < oneHourAgo) {
+            loginAttempts.delete(email);
+        }
+    }
+}, 3600000);
+
+// ============================================
+// Token Blacklist - Invalidate tokens on logout/password change
+// ============================================
+const tokenBlacklist = new Set();
+
+function blacklistToken(token) {
+    if (!token) return;
+    tokenBlacklist.add(token);
+}
+
+function isTokenBlacklisted(token) {
+    return tokenBlacklist.has(token);
+}
+
+// Cleanup expired tokens from blacklist every hour
+setInterval(() => {
+    for (const token of tokenBlacklist) {
+        try {
+            const decoded = jwt.decode(token);
+            if (decoded && decoded.exp && decoded.exp * 1000 < Date.now()) {
+                tokenBlacklist.delete(token);
+            }
+        } catch {
+            tokenBlacklist.delete(token);
+        }
+    }
+}, 3600000);
+
+export { isTokenBlacklisted, blacklistToken };
+
 const logDebug = (msg) => {
     if (IS_PRODUCTION) return; // Skip debug logging in production
     // fs.appendFileSync('debug.log', `[${time}] ${msg}\n`); // Removed to prevent lock issues
@@ -81,12 +157,18 @@ router.post('/activate-premium', (req, res) => {
 
 // Register (Supabase Auth)
 router.post('/register', authLimiter, async (req, res) => {
-    const { email, password, first_name, birth_date, birth_time, birth_place } = req.body;
+    const { email, password, confirm_password, first_name, birth_date, birth_time, birth_place } = req.body;
 
     try {
         // Validate input using centralized validators
         const validatedEmail = validateEmail(email);
         const validatedPassword = validatePassword(password);
+
+        // Server-side password confirmation check
+        if (confirm_password !== undefined && password !== confirm_password) {
+            return res.status(400).json({ error: 'Hesla se neshodují.' });
+        }
+
         const validatedFirstName = first_name ? validateName(first_name) : 'User';
 
         // Birth date is optional, but validate if provided
@@ -154,6 +236,15 @@ router.post('/login', authLimiter, async (req, res) => {
         const validatedEmail = validateEmail(email);
         const validatedPassword = validatePassword(password);
 
+        // Check account lockout before attempting login
+        const lockoutStatus = checkAccountLockout(validatedEmail);
+        if (lockoutStatus.locked) {
+            const minutes = Math.ceil(lockoutStatus.remainingSec / 60);
+            return res.status(429).json({
+                error: `Účet je dočasně zablokován. Zkuste to za ${minutes} min.`
+            });
+        }
+
         // 1. Sign In via Supabase Auth
         const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
             email: validatedEmail,
@@ -162,8 +253,12 @@ router.post('/login', authLimiter, async (req, res) => {
 
         if (authError) {
             console.error('Auth Error:', authError);
+            recordFailedAttempt(validatedEmail);
             return res.status(400).json({ error: 'Nesprávné přihlášení nebo neověřený email.' });
         }
+
+        // Successful login - clear lockout
+        clearLoginAttempts(validatedEmail);
 
         const authUser = authData.user;
         logDebug(`Login attempt for: ${authUser.email} (ID: ${authUser.id})`);
@@ -251,7 +346,11 @@ router.post('/login', authLimiter, async (req, res) => {
             subscription_status: status,
             isPremium: isPremium,
             premiumExpires: sub.current_period_end || null
-        }, JWT_SECRET, { expiresIn: '30d' });
+        }, JWT_SECRET, { expiresIn: JWT_EXPIRY });
+
+        // Set HttpOnly cookie with JWT
+        res.cookie('auth_token', token, COOKIE_OPTIONS);
+        res.cookie('logged_in', '1', INDICATOR_COOKIE_OPTIONS);
 
         res.json({
             token,
@@ -295,6 +394,10 @@ router.post('/refresh-token', authenticateToken, sensitiveLimiter, async (req, r
             .eq('id', userId)
             .single();
 
+        // Set refreshed cookies
+        res.cookie('auth_token', newToken, COOKIE_OPTIONS);
+        res.cookie('logged_in', '1', INDICATOR_COOKIE_OPTIONS);
+
         res.json({
             token: newToken,
             user: {
@@ -312,6 +415,16 @@ router.post('/refresh-token', authenticateToken, sensitiveLimiter, async (req, r
         console.error('Token Refresh Error:', e);
         res.status(500).json({ error: 'Failed to refresh token' });
     }
+});
+
+// Logout - Blacklist current token and clear cookies
+router.post('/logout', authenticateToken, (req, res) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1] || req.cookies?.auth_token;
+    blacklistToken(token);
+    res.clearCookie('auth_token', { path: '/' });
+    res.clearCookie('logged_in', { path: '/' });
+    res.json({ success: true, message: 'Odhlášení úspěšné.' });
 });
 
 // Forgot Password - sends reset email via Supabase

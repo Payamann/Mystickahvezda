@@ -28,6 +28,7 @@ export async function loadReadings() {
 
     try {
         const response = await fetch(`${apiUrl()}/user/readings`, {
+            credentials: 'include',
             headers: authHeaders()
         });
 

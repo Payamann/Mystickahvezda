@@ -25,6 +25,7 @@ export async function viewReading(id) {
 
     try {
         const response = await fetch(`${apiUrl()}/user/readings/${id}`, {
+            credentials: 'include',
             headers: authHeaders()
         });
 
@@ -62,6 +63,7 @@ export async function toggleFavorite(id, buttonEl = null) {
     try {
         const response = await fetch(`${apiUrl()}/user/readings/${id}/favorite`, {
             method: 'PATCH',
+            credentials: 'include',
             headers: authHeaders()
         });
 

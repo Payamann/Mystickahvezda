@@ -431,7 +431,7 @@
 
                 <p class="step-subtitle">Za chvíli přizpůsobíme zkušenost přesně vám.<br>Jen 2 rychlé otázky.</p>
 
-                <button class="btn btn--primary btn-full" onclick="goStep(2)">Začít nastavení →</button>
+                <button class="btn btn--primary btn-full" data-action="goStep" data-step="2">Začít nastavení →</button>
 
                 <p style="text-align:center;margin-top:1.5rem;font-size:0.78rem;"><a href="index.html" style="color:rgba(255,255,255,0.2);text-decoration:none;">přeskočit</a></p>
 
@@ -444,7 +444,7 @@
 
             <div class="step-view" id="step-2">
 
-                <button class="step-back" onclick="goStep(1)">← Zpět</button>
+                <button class="step-back" data-action="goStep" data-step="1">← Zpět</button>
 
                 <span class="step-icon">♈️</span>
 
@@ -454,41 +454,41 @@
 
                 <div class="zodiac-grid" id="zodiac-grid">
 
-                    <button class="zodiac-btn" data-sign="beran" onclick="selectSign(this)"><span>♈</span>Beran</button>
+                    <button class="zodiac-btn" data-sign="beran" data-action="selectSign"><span>♈</span>Beran</button>
 
-                    <button class="zodiac-btn" data-sign="byk" onclick="selectSign(this)"><span>♉</span>Byk</button>
+                    <button class="zodiac-btn" data-sign="byk" data-action="selectSign"><span>♉</span>Byk</button>
 
                     <button class="zodiac-btn" data-sign="blizenci"
 
-                        onclick="selectSign(this)"><span>♊</span>Blíženci</button>
+                        data-action="selectSign"><span>♊</span>Blíženci</button>
 
-                    <button class="zodiac-btn" data-sign="rak" onclick="selectSign(this)"><span>♋</span>Rak</button>
+                    <button class="zodiac-btn" data-sign="rak" data-action="selectSign"><span>♋</span>Rak</button>
 
-                    <button class="zodiac-btn" data-sign="lev" onclick="selectSign(this)"><span>♌</span>Lev</button>
+                    <button class="zodiac-btn" data-sign="lev" data-action="selectSign"><span>♌</span>Lev</button>
 
-                    <button class="zodiac-btn" data-sign="panna" onclick="selectSign(this)"><span>♍</span>Panna</button>
+                    <button class="zodiac-btn" data-sign="panna" data-action="selectSign"><span>♍</span>Panna</button>
 
-                    <button class="zodiac-btn" data-sign="vahy" onclick="selectSign(this)"><span>♎</span>Váhy</button>
+                    <button class="zodiac-btn" data-sign="vahy" data-action="selectSign"><span>♎</span>Váhy</button>
 
-                    <button class="zodiac-btn" data-sign="stir" onclick="selectSign(this)"><span>♏</span>Štír</button>
+                    <button class="zodiac-btn" data-sign="stir" data-action="selectSign"><span>♏</span>Štír</button>
 
                     <button class="zodiac-btn" data-sign="strelec"
 
-                        onclick="selectSign(this)"><span>♐</span>Střelec</button>
+                        data-action="selectSign"><span>♐</span>Střelec</button>
 
                     <button class="zodiac-btn" data-sign="kozoroh"
 
-                        onclick="selectSign(this)"><span>♑</span>Kozoroh</button>
+                        data-action="selectSign"><span>♑</span>Kozoroh</button>
 
                     <button class="zodiac-btn" data-sign="vodnar"
 
-                        onclick="selectSign(this)"><span>♒</span>Vodnář</button>
+                        data-action="selectSign"><span>♒</span>Vodnář</button>
 
-                    <button class="zodiac-btn" data-sign="ryby" onclick="selectSign(this)"><span>♓</span>Ryby</button>
+                    <button class="zodiac-btn" data-sign="ryby" data-action="selectSign"><span>♓</span>Ryby</button>
 
                 </div>
 
-                <button class="btn btn--primary btn-full" id="btn-step2" onclick="goStep(3)" disabled
+                <button class="btn btn--primary btn-full" id="btn-step2" data-action="goStep" data-step="3" disabled
 
                     style="opacity:.4;cursor:not-allowed;">Pokračovat →</button>
 
@@ -500,7 +500,7 @@
 
             <div class="step-view" id="step-3">
 
-                <button class="step-back" onclick="goStep(2)">← Zpět</button>
+                <button class="step-back" data-action="goStep" data-step="2">← Zpět</button>
 
                 <span class="step-icon">🌟</span>
 
@@ -510,29 +510,29 @@
 
                 <div class="interest-grid">
 
-                    <button class="interest-chip" onclick="toggleInterest(this)">🌌 Horoskopy</button>
+                    <button class="interest-chip" data-action="toggleInterest">🌌 Horoskopy</button>
 
-                    <button class="interest-chip" onclick="toggleInterest(this)">🃏 Tarot</button>
+                    <button class="interest-chip" data-action="toggleInterest">🃏 Tarot</button>
 
-                    <button class="interest-chip" onclick="toggleInterest(this)">🔢 Numerologie</button>
+                    <button class="interest-chip" data-action="toggleInterest">🔢 Numerologie</button>
 
-                    <button class="interest-chip" onclick="toggleInterest(this)">❤️ Vztahy</button>
+                    <button class="interest-chip" data-action="toggleInterest">❤️ Vztahy</button>
 
-                    <button class="interest-chip" onclick="toggleInterest(this)">⭐ Natální karta</button>
+                    <button class="interest-chip" data-action="toggleInterest">⭐ Natální karta</button>
 
-                    <button class="interest-chip" onclick="toggleInterest(this)">🌙 Sny</button>
+                    <button class="interest-chip" data-action="toggleInterest">🌙 Sny</button>
 
-                    <button class="interest-chip" onclick="toggleInterest(this)">💫 Spiritualita</button>
+                    <button class="interest-chip" data-action="toggleInterest">💫 Spiritualita</button>
 
-                    <button class="interest-chip" onclick="toggleInterest(this)">🔮 Věštění</button>
+                    <button class="interest-chip" data-action="toggleInterest">🔮 Věštění</button>
 
-                    <button class="interest-chip" onclick="toggleInterest(this)">💼 Kariéra</button>
+                    <button class="interest-chip" data-action="toggleInterest">💼 Kariéra</button>
 
-                    <button class="interest-chip" onclick="toggleInterest(this)">🌍 Astrokartografie</button>
+                    <button class="interest-chip" data-action="toggleInterest">🌍 Astrokartografie</button>
 
                 </div>
 
-                <button class="btn btn--primary btn-full" onclick="finishOnboarding()">Hotovo, vstoupit do aplikace
+                <button class="btn btn--primary btn-full" data-action="finishOnboarding">Hotovo, vstoupit do aplikace
 
                     ✨</button>
 
@@ -604,10 +604,9 @@
 
 
 
-        function finishOnboarding() {
+        async function finishOnboarding() {
 
             // Save to localStorage
-
             const interests = [...document.querySelectorAll('.interest-chip.selected')].map(c => c.textContent.trim());
 
             if (selectedSign) localStorage.setItem('mh_zodiac', selectedSign);
@@ -616,9 +615,51 @@
 
             localStorage.setItem('mh_onboarded', '1');
 
+            // Also persist to server if logged in
+            const token = localStorage.getItem('auth_token');
+            if (token && selectedSign) {
+                try {
+                    const API_URL = window.API_CONFIG?.BASE_URL || '/api';
+                    await fetch(`${API_URL}/auth/profile`, {
+                        method: 'PUT',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(token && { 'Authorization': `Bearer ${token}` })
+                        },
+                        body: JSON.stringify({
+                            zodiac_sign: selectedSign,
+                            interests: interests
+                        })
+                    });
+                } catch (e) {
+                    // Non-critical, continue to app
+                    console.warn('Failed to save onboarding data to server:', e);
+                }
+            }
+
             window.location.href = 'index.html';
 
         }
+
+        // Event delegation - CSP compliance (remove unsafe-inline)
+        document.addEventListener('click', function(e) {
+            const action = e.target.closest('[data-action]');
+            if (!action) return;
+
+            const actionType = action.dataset.action;
+
+            if (actionType === 'goStep') {
+                const step = parseInt(action.dataset.step);
+                goStep(step);
+            } else if (actionType === 'selectSign') {
+                selectSign(action);
+            } else if (actionType === 'toggleInterest') {
+                toggleInterest(action);
+            } else if (actionType === 'finishOnboarding') {
+                finishOnboarding();
+            }
+        });
 
     </script>
 

@@ -410,11 +410,16 @@
 
                 try {
 
+                    const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+
                     const response = await fetch('/api/auth/forgot-password', {
 
                         method: 'POST',
 
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+                        },
 
                         body: JSON.stringify({ email })
 
@@ -530,6 +535,8 @@
 
 
 
+                    const csrfToken2 = window.getCSRFToken ? await window.getCSRFToken() : null;
+
                     const response = await fetch('/api/auth/reset-password', {
 
                         method: 'POST',
@@ -538,7 +545,9 @@
 
                             'Content-Type': 'application/json',
 
-                            'Authorization': `Bearer ${accessToken}`
+                            'Authorization': `Bearer ${accessToken}`,
+
+                            ...(csrfToken2 && { 'X-CSRF-Token': csrfToken2 })
 
                         },
 
@@ -606,7 +615,8 @@
 
                     const redirect = urlParams.get('redirect');
 
-                    if (redirect) {
+                    // Only allow relative redirects to prevent open redirect attacks
+                    if (redirect && redirect.startsWith('/') && !redirect.startsWith('//')) {
 
                         window.location.href = redirect;
 
@@ -632,11 +642,16 @@
 
                 const urlParams = new URLSearchParams(window.location.search);
 
-                const redirect = urlParams.get('redirect') || '/profil.html';
+                let redirect = urlParams.get('redirect') || '/profil.html';
+
+                // Only allow relative redirects to prevent open redirect attacks
+                if (!redirect.startsWith('/') || redirect.startsWith('//')) {
+                    redirect = '/profil.html';
+                }
 
                 // prevent infinite loop if redirect points to self
 
-                if (!redirect.includes('login.html')) {
+                if (!redirect.includes('prihlaseni')) {
 
                     window.location.href = redirect;
 

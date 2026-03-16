@@ -1,9 +1,17 @@
 (() => {
     const API_URL = window.API_CONFIG?.BASE_URL || 'http://localhost:3001/api';
 
+    // Decode JWT payload without library (base64url decode)
+    function decodeJwtPayload(token) {
+        try {
+            const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+            return JSON.parse(atob(base64));
+        } catch { return null; }
+    }
+
     const Auth = {
-        // Note: For future security hardening, move tokens to HttpOnly cookies.
-        // This client will then use document.cookie for presence check or rely on server headers.
+        // Token stored in HttpOnly cookie (not accessible via JS).
+        // localStorage token kept as fallback during migration.
         token: localStorage.getItem('auth_token'),
         user: JSON.parse(localStorage.getItem('auth_user')),
 
@@ -13,11 +21,24 @@
             this.setupListeners();
             this.handleRedirect();
             this.refreshSession(); // Auto-sync profile on load
+            // Auto-refresh token every hour
+            setInterval(() => this.refreshSession(), 3600000);
         },
 
         async refreshSession() {
             if (!this.isLoggedIn()) return;
             try {
+                // Check if token needs refresh (less than 24 hours remaining)
+                if (this.token) {
+                    const payload = decodeJwtPayload(this.token);
+                    if (payload && payload.exp) {
+                        const hoursRemaining = (payload.exp * 1000 - Date.now()) / 3600000;
+                        if (hoursRemaining < 24) {
+                            await this._refreshToken();
+                        }
+                    }
+                }
+
                 const oldStatus = this.user?.subscription_status;
                 const user = await this.getProfile();
 
@@ -28,12 +49,39 @@
 
                     // Only emit if status changed to avoid infinite reload loops
                     if (oldStatus !== user.subscription_status) {
-                        console.log(`🔄 Status changed (${oldStatus} -> ${user.subscription_status}), triggering refresh...`);
                         document.dispatchEvent(new Event('auth:refreshed'));
                     }
                 }
             } catch (e) {
                 console.warn('Session refresh failed:', e);
+            }
+        },
+
+        async _refreshToken() {
+            try {
+                const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+                const res = await fetch(`${API_URL}/auth/refresh-token`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+                        ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+                    }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    this.token = data.token;
+                    this.user = data.user;
+                    localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('auth_user', JSON.stringify(data.user));
+                } else if (res.status === 401 || res.status === 403) {
+                    // Token invalid/expired, force logout
+                    this.logout();
+                }
+            } catch (e) {
+                // Network error, retry on next interval
+                console.warn('Token refresh failed:', e);
             }
         },
 
@@ -79,7 +127,8 @@
         },
 
         isLoggedIn() {
-            return !!this.token;
+            // Check indicator cookie (set by server) or localStorage fallback
+            return document.cookie.includes('logged_in=1') || !!this.token;
         },
 
         isPremium() {
@@ -99,6 +148,7 @@
                 const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
                 const res = await fetch(`${API_URL}/auth/register`, {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                         ...(csrfToken && { 'X-CSRF-Token': csrfToken })
@@ -171,6 +221,7 @@
                 const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
                 const res = await fetch(`${API_URL}/auth/login`, {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                         ...(csrfToken && { 'X-CSRF-Token': csrfToken })
@@ -197,6 +248,15 @@
         },
 
         logout() {
+            // Notify server to blacklist token and clear cookies
+            fetch(`${API_URL}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(this.token && { 'Authorization': `Bearer ${this.token}` })
+                }
+            }).catch(() => {}); // Fire and forget
             this.token = null;
             this.user = null;
             localStorage.removeItem('auth_token');
@@ -353,7 +413,13 @@
                             this.showToast('Chyba', 'Hesla se neshodují.', 'error');
                             return;
                         }
-                        const res = await this.register(email, password, {});
+                        const additionalData = {
+                            confirm_password: confirmPassword,
+                            first_name: form.first_name?.value || undefined,
+                            birth_date: form.birth_date?.value || undefined,
+                            birth_place: form.birth_place?.value || undefined
+                        };
+                        const res = await this.register(email, password, additionalData);
                         if (!res.success) this.showToast('Chyba registrace', res.error, 'error');
                     } else {
                         const res = await this.login(email, password);
@@ -399,13 +465,17 @@
 
         async resetPassword(email) {
             try {
-                const res = await fetch(`${API_URL}/auth/reset-password`, {
+                const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+                const res = await fetch(`${API_URL}/auth/forgot-password`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+                    },
                     body: JSON.stringify({ email })
                 });
                 if (res.ok) {
-                    this.showToast('Email odeslán ✉️', 'Zkontrolujte svou schránku – odkaz pro obnovení hesla byl odeslán.', 'success');
+                    this.showToast('Email odeslán', 'Zkontrolujte svou schránku pro odkaz na obnovení hesla.', 'success');
                     this.closeModal();
                 } else {
                     this.showToast('Chyba', 'Nepodařilo se odeslat email. Zkuste to prosím znovu.', 'error');
@@ -503,9 +573,10 @@
 
             const res = await fetch(`${API_URL}/${endpoint}`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.token}`
+                    ...(this.token && { 'Authorization': `Bearer ${this.token}` })
                 },
                 body: JSON.stringify(body)
             });
@@ -530,9 +601,10 @@
                 console.log(`💾 Saving reading (${type})...`);
                 const res = await fetch(`${API_URL}/user/readings`, {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${this.token}`
+                        ...(this.token && { 'Authorization': `Bearer ${this.token}` })
                     },
                     body: JSON.stringify({ type, data })
                 });
@@ -556,7 +628,10 @@
             if (!this.token) return null;
             try {
                 const res = await fetch(`${API_URL}/auth/profile`, {
-                    headers: { 'Authorization': `Bearer ${this.token}` }
+                    credentials: 'include',
+                    headers: {
+                        ...(this.token && { 'Authorization': `Bearer ${this.token}` })
+                    }
                 });
                 const data = await res.json();
                 if (data.success) return data.user;

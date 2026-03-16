@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser'; // Security: HttpOnly cookie support
 import rateLimit from 'express-rate-limit'; // Security: Rate Limiting
 import helmet from 'helmet'; // Security: HTTP Headers
 import xss from 'xss-clean'; // Security: Input Sanitization
@@ -42,8 +43,18 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware - Restrict CORS to same-origin by default
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',')
+    ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(Boolean)
     : ['http://localhost:3001', 'http://localhost:3000'];
+
+// Security: Strip localhost origins in production
+if (process.env.NODE_ENV === 'production') {
+    const localhostPattern = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+    for (let i = ALLOWED_ORIGINS.length - 1; i >= 0; i--) {
+        if (localhostPattern.test(ALLOWED_ORIGINS[i])) {
+            ALLOWED_ORIGINS.splice(i, 1);
+        }
+    }
+}
 
 // Always allow APP_URL in production (even if ALLOWED_ORIGINS is misconfigured)
 if (process.env.APP_URL && !ALLOWED_ORIGINS.includes(process.env.APP_URL)) {
@@ -113,6 +124,9 @@ app.use(express.urlencoded({
     parameterLimit: 100 // Limit number of form parameters
 }));
 
+// Cookie parser for HttpOnly JWT cookies
+app.use(cookieParser());
+
 // Middleware: Validate request size and content-type
 app.use((req, res, next) => {
     // Check content-length header
@@ -143,7 +157,7 @@ app.use(helmet({
             defaultSrc: ["'self'", "https://cdnjs.cloudflare.com"],
             scriptSrc: [
                 "'self'",
-                "'unsafe-inline'",          // Needed for inline event handlers in current HTML
+                // 'unsafe-inline' REMOVED - using event delegation and CSP compliant scripts
                 'https://js.stripe.com',     // Stripe.js
                 'https://cdn.jsdelivr.net',  // CDN scripts
                 'https://cdnjs.cloudflare.com', // Added for Three.js

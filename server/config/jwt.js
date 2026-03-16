@@ -20,4 +20,25 @@ if (!JWT_SECRET) {
     JWT_SECRET = 'dev-insecure-secret-placeholder';
 }
 
-export { JWT_SECRET };
+// JWT expiry - configurable via environment variable (default: 7 days)
+const JWT_EXPIRY = process.env.JWT_EXPIRY || '7d';
+
+// Cookie options for HttpOnly JWT storage
+const COOKIE_OPTIONS = {
+    httpOnly: true,
+    secure: IS_PRODUCTION,
+    sameSite: 'Strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
+    path: '/'
+};
+
+// Non-HttpOnly indicator cookie (readable by JS for isLoggedIn check)
+const INDICATOR_COOKIE_OPTIONS = {
+    httpOnly: false,
+    secure: IS_PRODUCTION,
+    sameSite: 'Strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/'
+};
+
+export { JWT_SECRET, JWT_EXPIRY, COOKIE_OPTIONS, INDICATOR_COOKIE_OPTIONS };

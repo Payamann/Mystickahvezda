@@ -22,12 +22,33 @@ const createLimiter = (max, windowMin = 15, message = 'Příliš mnoho požadavk
 // ============================================
 // AUTHENTICATION MIDDLEWARE
 // ============================================
-export const authenticateToken = (req, res, next) => {
+// Lazy-loaded blacklist check to avoid circular imports
+let _isTokenBlacklisted = null;
+async function getBlacklistChecker() {
+    if (!_isTokenBlacklisted) {
+        const authModule = await import('./auth.js');
+        _isTokenBlacklisted = authModule.isTokenBlacklisted;
+    }
+    return _isTokenBlacklisted;
+}
+
+export const authenticateToken = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    // Read token from HttpOnly cookie first, fall back to Authorization header
+    const token = req.cookies?.auth_token || (authHeader && authHeader.split(' ')[1]);
 
     if (!token) {
         return res.status(401).json({ error: 'Chybí přístupový token.' });
+    }
+
+    // Check token blacklist
+    try {
+        const checkBlacklist = await getBlacklistChecker();
+        if (checkBlacklist && checkBlacklist(token)) {
+            return res.status(401).json({ error: 'Token byl zneplatněn. Přihlaste se znovu.' });
+        }
+    } catch {
+        // If blacklist check fails, continue with normal verification
     }
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
@@ -67,7 +88,7 @@ export const requirePremiumSoft = (req, res, next) => {
 export const optionalPremiumCheck = (req, res, next) => {
     // Just ensures req.user is populated if token exists, but doesn't block
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = req.cookies?.auth_token || (authHeader && authHeader.split(' ')[1]);
 
     if (token) {
         jwt.verify(token, JWT_SECRET, (err, user) => {
