@@ -138,16 +138,16 @@
     // --- Astrological Wisdom Data ---
     const wisdoms = {
         general: [
-            "Hvězdy sice naklánějí, ale nikoho nenutí. Vaše vůle je silnější než osud.",
-            "Vesmír mluví skrze ticho. Naslouchejte své intuici.",
-            "Každý pohyb planet je příležitostí k růstu a hlubšímu sebepoznání.",
-            "Retrográdní pohyb není překážka, ale čas pro reflexi a dokončení starého.",
-            "Jak nahoře, tak dole. Váš vnitřní svět zrcadlí vesmírný řád.",
-            "Trpělivost je klíčem k pochopení vesmírných cyklů.",
-            "Důvěřujte procesu. Vše ve vesmíru se děje v pravý čas.",
-            "Vaše energie je vaším nejcennějším darem vesmíru.",
-            "Hledání pravdy začíná uvnitř vás, ne v hvězdných mapách.",
-            "Každý den je novou šancí alignovat se se svou duší."
+            "Ve stínech tvých včerejších obav dnes klíčí světlo nové cesty. Naslouchej mu.",
+            "Vesmír nevykřikuje, on šeptá skrze ticho mezi tvými myšlenkami.",
+            "Každá planeta ve tvém horoskopu je strunou v symfonii tvého osudu.",
+            "Retrográdní čas není zpoždění, ale posvátná pauza pro tvůj vnitřní dech.",
+            "Jak nahoře v klenbě hvězd, tak hluboko v tepu tvého srdce.",
+            "Trpělivost je mostem, po kterém kráčejí hvězdy k tvému prahu.",
+            "Důvěřuj tanci atomů; vše se děje v rytmu, který tvá duše zná.",
+            "Tvá energie je tkání, ze které vesmír spřádá zítřejší úsvit.",
+            "Pravda není v mapách, ale v odvaze podívat se do zrcadla věčnosti.",
+            "Každý nádech je šancí se znovu narodit do záře vlastní existence."
         ],
         moon: {
             'new-moon': "Novoluní je časem pro setí nových záměrů. Co si dnes přejete zasadit?",
@@ -219,7 +219,7 @@
         const userSign = window.MH_PERSONALIZATION?.getSign() || '';
         
         // --- AI Wisdom Fetching & Caching ---
-        const CACHE_KEY = `mh_ai_wisdom_v3_${todayStr}_${userSign}`;
+        const CACHE_KEY = `mh_ai_wisdom_v4_${todayStr}_${userSign}`;
         
         const getFallbackWisdom = () => {
              const key = today.toDateString();
@@ -271,7 +271,7 @@
                     <div style="display:flex; align-items:center; gap:20px; opacity:0; transition:opacity 0.6s ease-in; width:100%; justify-content:center;">
                         <div style="white-space:nowrap">✨ Dnes: <strong>${todayNames}</strong> | Zítra: ${tomorrowNames}</div>
                         <div style="width:1px; height:12px; background:rgba(212,175,55,0.2)"></div>
-                        <div style="white-space:nowrap; font-style:italic">🔮 Moudro: <span id="wisdom-content">${wisdom}</span></div>
+                        <div style="white-space:nowrap; font-style:italic">🔮 Moudro dne: <span id="wisdom-content">${wisdom}</span></div>
                     </div>
                 `;
                 setTimeout(() => {
@@ -296,7 +296,7 @@
             };
 
             const slide1 = createSlide(`✨ <strong>${todayNames}</strong> (zítra ${tomorrowNames})`);
-            const slide2 = createSlide(`🔮 <span style="font-style:italic">${wisdom}</span>`);
+            const slide2 = createSlide(`🔮 <span id="wisdom-label" style="font-weight:600; font-size:0.7rem; opacity:0.6; text-transform:uppercase; margin-right:5px">Moudro dne:</span> <span style="font-style:italic">${wisdom}</span>`);
             container.appendChild(slide1);
             container.appendChild(slide2);
 
@@ -329,20 +329,32 @@
         });
 
         // Fetch AI Wisdom asynchronously if not cached (with retry if service not yet loaded)
-        const fetchWithRetry = (retries = 5) => {
-            if (localStorage.getItem(CACHE_KEY)) return;
+        const fetchWithRetry = (retries = 10) => {
+            if (localStorage.getItem(CACHE_KEY)) {
+                console.log('[Wisdom] Using cached AI wisdom.');
+                return;
+            }
             
             if (window.GeminiService) {
+                console.log('[Wisdom] GeminiService found, fetching AI wisdom...');
                 window.GeminiService.getDailyWisdom(userSign, moon)
                     .then(aiWisdom => {
                         if (aiWisdom && aiWisdom.length > 5) {
+                            console.log('[Wisdom] AI wisdom successfully fetched.');
                             localStorage.setItem(CACHE_KEY, aiWisdom);
                             updateWidgetContent(aiWisdom);
+                        } else {
+                            console.warn('[Wisdom] AI returned empty or short response, staying on fallback.');
                         }
                     })
-                    .catch(err => console.warn('AI Wisdom fetch failed.', err));
+                    .catch(err => {
+                        console.error('[Wisdom] AI fetch failed:', err);
+                    });
             } else if (retries > 0) {
+                console.log(`[Wisdom] GeminiService not ready, retrying (${retries} left)...`);
                 setTimeout(() => fetchWithRetry(retries - 1), 1000);
+            } else {
+                console.warn('[Wisdom] GeminiService failed to load after multiple retries.');
             }
         };
 
