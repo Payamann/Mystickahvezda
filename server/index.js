@@ -419,6 +419,22 @@ app.use('/js', express.static(path.join(rootDir, 'js'), {
     }
 }));
 
+// Serve local fonts with immutable caching and proper MIME types
+app.use('/fonts', express.static(path.join(rootDir, 'fonts'), {
+    maxAge: '1y',
+    immutable: true,
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.ttf')) {
+            res.setHeader('Content-Type', 'font/ttf');
+        } else if (filePath.endsWith('.woff2')) {
+            res.setHeader('Content-Type', 'font/woff2');
+        } else if (filePath.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+        }
+        res.setHeader('Vary', 'Accept-Encoding');
+    }
+}));
+
 
 // Apply sensitive operation limiter to password reset (stricter than authLimiter)
 app.use('/api/auth/reset-password', sensitiveLimiter);

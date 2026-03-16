@@ -71,17 +71,11 @@
 
 
 
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
   <link rel="preconnect" href="https://js.stripe.com">
 
-  <!-- Optimized Font Loading -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;600;700&display=swap&subset=latin,latin-ext" as="style">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;600;700&display=swap&subset=latin,latin-ext" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;600;700&display=swap&subset=latin,latin-ext"></noscript>
+  <!-- Local Fonts - Eliminates 750ms Google Fonts CDN latency -->
+  <link rel="preload" href="/fonts/local-fonts.css" as="style">
+  <link rel="stylesheet" href="/fonts/local-fonts.css">
 
   <!-- Critical CSS - Load asynchronously to prevent render blocking -->
   <link rel="preload" href="/css/style.v2.min.css?v=11" as="style">

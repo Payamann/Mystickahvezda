@@ -238,9 +238,9 @@ router.get('/:sign/:date', async (req, res, next) => {
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/img/icon-192.webp">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet">
+  <!-- Local Fonts - Eliminates 750ms Google Fonts CDN latency -->
+  <link rel="preload" href="/fonts/local-fonts.css" as="style">
+  <link rel="stylesheet" href="/fonts/local-fonts.css">
   <link rel="stylesheet" href="/css/style.v2.min.css?v=11">
 </head>
 <body>
