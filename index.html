@@ -78,130 +78,16 @@
   <link rel="dns-prefetch" href="https://fonts.gstatic.com">
   <link rel="preconnect" href="https://js.stripe.com">
 
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;600;700&display=swap&subset=latin,latin-ext" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <!-- Optimized Font Loading -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;600;700&display=swap&subset=latin,latin-ext" as="style">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;600;700&display=swap&subset=latin,latin-ext" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;600;700&display=swap&subset=latin,latin-ext"></noscript>
 
-  <!-- Styles -->
-  <link rel="preload" href="css/style.v2.min.css?v=12" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="css/style.v2.min.css?v=12"></noscript>
-
-  <style>
-    :root{--color-deep-space:#050510;--color-cosmic-purple:#1a0a2e;--color-mystic-gold:#ffd700;--color-starlight:#fff;--color-silver-mist:#e0e1dd;--color-ethereal-violet:#9d4edd;--font-heading:'Cinzel',serif;--font-body:'Inter',sans-serif;--radius-md:8px;--radius-full:9999px;--transition-base:400ms cubic-bezier(.2,.8,.2,1)}
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{font-size:16px;overflow-x:hidden;max-width:100vw;background-color:#050510}
-    html::before{content:"";position:fixed;top:0;left:0;right:0;bottom:0;z-index:-100;background-image:url('img/bg-cosmic-hd.webp');background-size:cover;background-position:center;background-repeat:no-repeat;pointer-events:none}
-    @media(max-width:768px){html::before{background-image:url('img/bg-cosmic-mobile.webp')}}
-    body{font-family:'Inter',sans-serif;font-size:1rem;line-height:1.6;color:#fff;min-height:100vh;background-color:transparent;overflow-x:hidden}
-    .header{position:fixed;top:0;left:0;right:0;z-index:999;padding:.75rem 0;background:rgba(10,10,26,.4);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);min-height:85px}
-    @media(max-width:768px){.header{min-height:70px}}
-    .container{max-width:1200px;margin:0 auto;padding:0 1.5rem}
-    .section--hero{padding-top:180px;padding-bottom:5rem}
-    .hero__content{max-width:800px;margin:0 auto;text-align:center}
-    .hero__title{font-family:'Cinzel',serif;font-size:clamp(2.5rem,5vw,4.5rem);margin-bottom:1rem;line-height:1.1}
-    .hero__image{width:100%;max-width:500px;margin:0 auto;display:block}
-    .btn{display:inline-flex;align-items:center;justify-content:center;padding:1rem 3rem;border-radius:9999px;text-decoration:none;font-weight:600;transition:all var(--transition-base)}
-    .btn--secondary{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff}
-    .header.scrolled{background:rgba(10,10,26,.95);backdrop-filter:blur(20px)}
-    .header__inner{display:flex;align-items:center;justify-content:center;gap:1.5rem;position:relative;width:100%}
-    @media(max-width:992px){.header__inner{justify-content:space-between;padding:0 1rem;gap:0}}
-    .logo{font-family:'Cinzel',serif;font-size:clamp(1.5rem,2vw,1.75rem);font-weight:700;color:#fff;display:flex;align-items:center;gap:.5rem;margin-right:auto;text-decoration:none}
-    @media(max-width:992px){.logo{margin-right:0}}.logo__image{height:60px;width:60px;mix-blend-mode:screen}
-    .nav{display:flex;align-items:center;gap:1rem;flex:1 1 auto;justify-content:center}
-    @media(max-width:992px){.nav{display:none}}
-    .nav__toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:.5rem;background:none;border:none}
-    @media(max-width:992px){.nav__toggle{display:flex}}.nav__toggle span{width:24px;height:2px;background:#fff;border-radius:2px;display:block}
-    .auth-buttons{display:flex;gap:.5rem;align-items:center}.mobile-auth-buttons{display:none!important}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:1rem 3rem;font-family:'Inter',sans-serif;font-size:.875rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;border:none;border-radius:9999px;cursor:pointer;transition:all var(--transition-base);text-decoration:none}
-    .btn--primary{background:linear-gradient(135deg,#FFD700 0%,#B8860B 100%);color:#0F0F1A;font-weight:700;border:1px solid rgba(255,255,255,.2);position:relative;overflow:hidden}
-    .btn--secondary{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;backdrop-filter:blur(5px)}
-    .btn--lg{padding:1.5rem 5rem;font-size:1rem}
-    .hero{position:relative;overflow:hidden}
-    .hero__content{max-width:800px;margin:0 auto;text-align:center;position:relative;z-index:var(--z-base)}
-    .hero__title{font-family:'Cinzel',serif;font-size:clamp(3.5rem,5vw,4.5rem);margin-bottom:1rem;line-height:1.0;color:#fff}
-    .hero__subtitle{font-size:1.25rem;color:#e0e1dd;margin-bottom:3rem;max-width:600px;margin-left:auto;margin-right:auto}
-    .hero__cta{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap}
-    .hero__badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.1);backdrop-filter:blur(10px);padding:.5rem 1.5rem;border-radius:9999px;font-size:.875rem;margin-bottom:3rem;border:1px solid rgba(255,255,255,.1)}
-    .hero__badge-dot{width:8px;height:8px;background:#ffd700;border-radius:50%}
-
-
-
-    /* =============================================
-
-       MOBILE BOTTOM NAVIGATION — 5 položek
-
-       ============================================= */
-
-    .mobile-bottom-nav {
-
-      display: none;
-
-      /* skryt na desktopu */
-
-      position: fixed;
-
-      bottom: 0;
-
-      left: 0;
-
-      right: 0;
-
-      z-index: 1000;
-
-      background: rgba(10, 5, 25, 0.95);
-
-      backdrop-filter: blur(12px);
-
-      -webkit-backdrop-filter: blur(12px);
-
-      border-top: 1px solid rgba(155, 89, 182, 0.2);
-
-      padding: 0.5rem 0 env(safe-area-inset-bottom, 0.5rem);
-
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; overflow-x: hidden; max-width: 100vw; background-color: #050510; }
-    body { font-family: var(--font-body); font-size: var(--text-base); line-height: 1.6; color: var(--color-starlight); background: transparent; overflow-x: hidden; }
-    html::before { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -100; background-color: var(--color-deep-space); background-image: url('img/bg-cosmic-hd.webp'); background-size: cover; background-position: center; pointer-events: none; }
-    h1, h2, h3 { font-family: var(--font-heading); margin-bottom: 0.5em; }
-    img { max-width: 100%; height: auto; display: block; }
-    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--space-xl); }
-    .header { position: fixed; top: 0; left: 0; right: 0; z-index: 999; padding: 0.75rem 0; background: rgba(10, 10, 26, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(12px); }
-    .header__inner { display: flex; align-items: center; justify-content: space-between; position: relative; width: 100%; gap: 2rem; }
-    .logo { font-family: var(--font-heading); font-size: var(--text-2xl); font-weight: 700; color: #fff; display: flex; align-items: center; gap: var(--space-sm); text-decoration: none; flex-shrink: 0; }
-    .logo__image { height: 60px; width: auto; mix-blend-mode: screen; filter: drop-shadow(0 0 10px rgba(157, 78, 221, 0.5)); }
-    .section--hero { padding-top: 180px; padding-bottom: var(--space-2xl); }
-    .hero { position: relative; overflow: hidden; }
-    .hero__content { max-width: 800px; margin: 0 auto; text-align: center; position: relative; z-index: 5; }
-    .hero__title { font-size: var(--text-6xl); margin-bottom: var(--space-md); line-height: 1.0; }
-    .hero__subtitle { font-size: var(--text-xl); color: var(--color-silver-mist); margin-bottom: var(--space-xl); max-width: 600px; margin-left: auto; margin-right: auto; }
-    .text-gradient { background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .text-glow { text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); }
-    .hero__image { width: 100%; max-width: 500px; margin: 0 auto; filter: drop-shadow(0 0 30px rgba(155,89,182,0.3)); }
-    .mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: rgba(10, 5, 25, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(155, 89, 182, 0.2); padding: 0.5rem 0 env(safe-area-inset-bottom, 0.5rem); }
-    @media (max-width: 768px) {
-      .mobile-bottom-nav { display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; }
-      .container { padding: 0 var(--space-md); }
-      .section--hero { padding-top: 120px; }
-      .hero__title { font-size: 2.5rem; }
-      .hero__subtitle { font-size: 1.1rem; }
-      body { padding-bottom: 65px; }
-    }
-  </style>
-
-  <link rel="stylesheet" href="css/style.v2.min.css?v=12">
-
-
-
-  <script defer src="https://js.stripe.com/v3/"></script>
-
-
-
   <!-- Preload Critical Assets -->
-
   <link rel="preload" as="image" href="img/hero-3d.webp" fetchpriority="high">
-  <link rel="preload" as="image" href="img/bg-cosmic-mobile.webp" media="(max-width: 768px)">
-
-  <link rel="preload" as="image" href="img/bg-cosmic-hd.webp" type="image/webp" fetchpriority="low">
+  <link rel="preload" as="image" href="img/logo-3d.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="img/bg-cosmic-mobile.webp" media="(max-width: 768px)" fetchpriority="high">
+  <link rel="preload" as="image" href="img/bg-cosmic-hd.webp" type="image/webp" media="(min-width: 769px)" fetchpriority="low">
 
 
 
@@ -307,19 +193,101 @@
 
 
 
-  <!-- ============================================
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <div class="header__inner">
+        <a href="index.html" class="logo">
+          <img src="img/logo-3d.webp?v=4" alt="Mystická Hvězda Logo" class="logo__image" width="40" height="40">
+          <span class="logo__text">Mystická<span class="text-gradient">Hvězda</span></span>
+        </a>
 
-       HEADER (DIVI: Header Section)
+        <button class="nav__toggle" aria-label="Menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-       ============================================ -->
+        <nav class="nav">
+          <ul class="nav__list">
+            <li class="nav__item"><a href="index.html" class="nav__link">Domů</a></li>
 
-  <!-- ============================================
+            <li class="nav__item nav__item--has-dropdown">
+              <a href="#" class="nav__link nav__link--dropdown-toggle">Astrologie <span class="dropdown-icon">▾</span></a>
+              <ul class="nav__dropdown">
+                <li><a href="horoskopy.html" class="nav__dropdown-link">Horoskopy</a></li>
+                <li><a href="natalni-karta.html" class="nav__dropdown-link">Natální Karta</a></li>
+                <li><a href="lunace.html" class="nav__dropdown-link">Lunární Fáze</a></li>
+                <li><a href="astro-mapa.html" class="nav__dropdown-link">Astro Mapa</a></li>
+                <li><a href="partnerska-shoda.html" class="nav__dropdown-link">Partnerská Shoda</a></li>
+                <li><a href="cinsky-horoskop.html" class="nav__dropdown-link">Čínský Horoskop</a></li>
+                <li style="border-top: 1px solid rgba(255,255,255,0.07); margin-top: 0.4rem; padding-top: 0.4rem;">
+                  <a href="horoskop/index.html" class="nav__dropdown-link" style="font-size:0.85rem; opacity:0.8;">Znamení zvěrokruhu →</a>
+                </li>
+              </ul>
+            </li>
 
-       HEADER (Loaded dynamically)
+            <li class="nav__item nav__item--has-dropdown">
+              <a href="#" class="nav__link nav__link--dropdown-toggle">Věštění & Tarot <span class="dropdown-icon">▾</span></a>
+              <ul class="nav__dropdown">
+                <li><a href="tarot.html" class="nav__dropdown-link">Tarot</a></li>
+                <li><a href="tarot-ano-ne.html" class="nav__dropdown-link">Tarot ANO nebo NE</a></li>
+                <li><a href="andelske-karty.html" class="nav__dropdown-link">Andělské Karty</a></li>
+                <li><a href="andelska-posta.html" class="nav__dropdown-link">Andělská Pošta</a></li>
+                <li><a href="runy.html" class="nav__dropdown-link">Věštění z Run</a></li>
+                <li><a href="kristalova-koule.html" class="nav__dropdown-link">Křišťálová Koule</a></li>
+                <li><a href="snar.html" class="nav__dropdown-link">Lexikon Snů (Snář)</a></li>
+              </ul>
+            </li>
 
-       ============================================ -->
+            <li class="nav__item nav__item--has-dropdown">
+              <a href="#" class="nav__link nav__link--dropdown-toggle">Čísla & Energie <span class="dropdown-icon">▾</span></a>
+              <ul class="nav__dropdown">
+                <li><a href="numerologie.html" class="nav__dropdown-link">Numerologie</a></li>
+                <li><a href="aura.html" class="nav__dropdown-link">Aura Kalkulačka</a></li>
+                <li><a href="afirmace.html" class="nav__dropdown-link">Denní Afirmace</a></li>
+                <li><a href="jmena/" class="nav__dropdown-link">Databáze Jmen</a></li>
+                <li><a href="biorytmy.html" class="nav__dropdown-link">Biorytmy</a></li>
+                <li><a href="slovnik.html" class="nav__dropdown-link">Ezoterický Slovník</a></li>
+              </ul>
+            </li>
 
-  <div id="header-placeholder"></div>
+            <li class="nav__item nav__item--has-dropdown">
+              <a href="#" class="nav__link nav__link--dropdown-toggle">Poznání <span class="dropdown-icon">▾</span></a>
+              <ul class="nav__dropdown">
+                <li><a href="testy/index.html" class="nav__dropdown-link" style="color: var(--color-mystic-gold);">Mystické Testy</a></li>
+                <li><a href="blog.html" class="nav__dropdown-link">Mystický Blog</a></li>
+                <li><a href="faq.html" class="nav__dropdown-link">Časté otázky</a></li>
+                <li><a href="o-nas.html" class="nav__dropdown-link">O nás</a></li>
+              </ul>
+            </li>
+
+            <li class="nav__item nav__item--has-dropdown">
+              <a href="#" class="nav__link nav__link--dropdown-toggle">Premium <span class="dropdown-icon">▾</span></a>
+              <ul class="nav__dropdown">
+                <li><a href="mentor.html" class="nav__dropdown-link" data-premium="true">Průvodce</a></li>
+                <li><a href="cenik.html" class="nav__dropdown-link">Ceník</a></li>
+              </ul>
+            </li>
+
+            <li class="nav__item mobile-auth-buttons">
+              <a href="profil.html" id="mobile-profile-link-index" class="btn btn--glass btn--sm" style="display: none;">👤 Profil</a>
+              <a href="#" id="mobile-auth-register-btn-index" class="btn btn--secondary">Registrace</a>
+              <a href="#" id="mobile-auth-btn-index" class="btn btn--primary">Přihlásit se</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="header__actions">
+          <div class="auth-buttons">
+            <a href="profil.html" id="profile-link-index" class="btn btn--glass btn--sm" style="display: none;">👤 Profil</a>
+            <a href="#" id="auth-register-btn-index" class="btn btn--secondary">Registrace</a>
+            <a href="#" id="auth-btn-index" class="btn btn--primary">Přihlásit se</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
 
 
@@ -2147,7 +2115,84 @@
 
        ============================================ -->
 
-  <div id="footer-placeholder"></div>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid footer__grid--5-col">
+        <div class="footer__brand">
+          <div class="footer__logo logo">
+            <img src="img/logo-3d.webp" alt="Mystická Hvězda Logo" class="logo__image" width="40" height="40" loading="lazy">
+            <span style="margin-left: 10px;">Mystická<span class="text-gradient">Hvězda</span></span>
+          </div>
+          <p class="footer__desc">
+            Moderní astrologická služba pro českou komunitu.
+            Spojujeme tisíciletou moudrost s důvěryhodnou praxí.
+          </p>
+          <div class="footer__social">
+            <a href="https://www.tiktok.com/@mystickahvezda" aria-label="TikTok" target="_blank" rel="noopener">🎵</a>
+            <a href="https://www.instagram.com/mystickahvezda" aria-label="Instagram" target="_blank" rel="noopener">📷</a>
+            <a href="https://www.facebook.com/mystickahvezda" aria-label="Facebook" target="_blank" rel="noopener">📘</a>
+          </div>
+        </div>
+
+        <div>
+          <h5 class="footer__title">Astrologie</h5>
+          <ul class="footer__links">
+            <li><a href="horoskopy.html">Horoskopy</a></li>
+            <li><a href="horoskop/index.html" style="color: var(--color-mystic-gold); font-weight: 500;">Znamení zvěrokruhu</a></li>
+            <li><a href="natalni-karta.html">Natální Karta</a></li>
+            <li><a href="partnerska-shoda.html">Partnerská Shoda</a></li>
+            <li><a href="lunace.html">Lunární Fáze</a></li>
+            <li><a href="astro-mapa.html">Astro Mapa</a></li>
+            <li><a href="cinsky-horoskop.html">Čínský Horoskop</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="footer__title">Věštění & Energie</h5>
+          <ul class="footer__links">
+            <li><a href="tarot.html">Tarot & Výklady</a></li>
+            <li><a href="andelske-karty.html">Andělské Karty</a></li>
+            <li><a href="runy.html">Věštění z Run</a></li>
+            <li><a href="kristalova-koule.html">Křišťálová Koule</a></li>
+            <li><a href="mentor.html">Hvězdný Průvodce</a></li>
+            <li><a href="numerologie.html">Numerologie</a></li>
+            <li><a href="aura.html">Aura kalkulačka</a></li>
+            <li><a href="biorytmy.html">Biorytmy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="footer__title">Poznání</h5>
+          <ul class="footer__links">
+            <li><a href="testy/index.html" style="color: var(--color-mystic-gold); font-weight: 500;">Mystické Testy</a></li>
+            <li><a href="blog.html">Mystický Blog</a></li>
+            <li><a href="slovnik.html">Ezoterický Slovník</a></li>
+            <li><a href="snar.html">Snář</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="footer__title">Podpora</h5>
+          <ul class="footer__links">
+            <li><a href="o-nas.html">O nás</a></li>
+            <li><a href="cenik.html">Ceník</a></li>
+            <li><a href="kontakt.html">Kontakt</a></li>
+            <li><a href="faq.html">FAQ (Časté dotazy)</a></li>
+            <li><a href="jak-to-funguje.html">Jak to funguje</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <p>© 2026 Mystická Hvězda. Všechna práva vyhrazena.</p>
+        <div class="footer__legal">
+          <a href="podminky.html">Obchodní podmínky</a>
+          <a href="soukromi.html">Ochrana soukromí</a>
+        </div>
+      </div>
+    </div>
+  </footer>
 
 
 

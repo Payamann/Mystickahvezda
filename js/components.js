@@ -30,7 +30,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function loadComponent(elementId, path, basePath = '', highPriority = false) {
     const element = document.getElementById(elementId);
-    if (!element) return;
+    
+    // Check if the component is already hardcoded or loaded
+    // If we have hardcoded content, we don't need to load it
+    const alreadyPresent = (elementId === 'header-placeholder' && document.querySelector('.header')) ||
+                          (elementId === 'footer-placeholder' && document.querySelector('.footer'));
+    
+    if (!element && !alreadyPresent) return;
+    
+    // If it's already in the DOM, just ensure initialization runs
+    if (alreadyPresent) {
+        console.log(`[components.js] Component "${elementId}" already present in DOM, skipping fetch.`);
+        return;
+    }
 
     try {
         const response = await fetch(path, highPriority ? { priority: 'high' } : {});
