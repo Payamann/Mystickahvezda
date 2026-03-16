@@ -264,13 +264,14 @@
         
         const updateWidgetContent = (wisdom) => {
             const isMobile = window.innerWidth < 1024;
-            
-                // --- STYLING TOKENS ---
-                const gold = 'rgba(212, 175, 55, 0.95)';
+            const gold = 'rgba(212, 175, 55, 0.95)';
+            const glow = `text-shadow: 0 0 10px rgba(212, 175, 55, 0.3), 0 0 20px rgba(212, 175, 55, 0.1);`;
+
+            if (!isMobile) {
+                // --- DESKTOP LAYOUT ---
                 const labelStyle = `color: ${gold}; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; font-size: 0.68rem; margin-right: 4px;`;
                 const separator = `<span style="color: ${gold}; opacity: 0.4; margin: 0 15px; font-size: 1.1rem; line-height: 0;">·</span>`;
-                const glow = `text-shadow: 0 0 10px rgba(212, 175, 55, 0.3), 0 0 20px rgba(212, 175, 55, 0.1);`;
-
+                
                 container.innerHTML = `
                     <div style="display:flex; align-items:center; opacity:0; transition:opacity 0.6s ease-in; width:100%; justify-content:center;">
                         <div style="white-space:nowrap">
@@ -287,49 +288,36 @@
                     const el = container.firstElementChild;
                     if (el) el.style.opacity = '1';
                 }, 50);
-                return;
+            } else {
+                // --- MOBILE LAYOUT (Ticker) ---
+                container.innerHTML = '';
+                const mobileLabelStyle = `color: ${gold}; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; font-size: 0.65rem; display: block; margin-bottom: 2px;`;
+                const mobileGlow = `text-shadow: 0 0 8px rgba(212, 175, 55, 0.25);`;
+
+                const mSlide1 = createSlide(`<div><span style="${mobileLabelStyle}">Dnes slaví</span><strong>${todayNames}</strong></div>`);
+                const mSlide2 = createSlide(`<div><span style="${mobileLabelStyle}">Moudro dne</span><span style="font-style:italic; ${mobileGlow}">${wisdom}</span></div>`);
+                
+                container.appendChild(mSlide1);
+                container.appendChild(mSlide2);
+
+                let current = 0;
+                const slides = [mSlide1, mSlide2];
+                const showSlide = (index) => {
+                    slides.forEach((s, i) => {
+                        const isActive = i === index;
+                        s.style.opacity = isActive ? '1' : '0';
+                        s.style.transform = isActive ? 'translateY(0)' : 'translateY(-5px)';
+                        s.style.pointerEvents = isActive ? 'auto' : 'none';
+                    });
+                };
+
+                showSlide(0);
+                if (window.namedayTickerInterval) clearInterval(window.namedayTickerInterval);
+                window.namedayTickerInterval = setInterval(() => {
+                    current = (current + 1) % slides.length;
+                    showSlide(current);
+                }, 5000);
             }
-
-            // Ticker for mobile
-            container.innerHTML = '';
-            const createSlide = (html) => {
-                const slide = document.createElement('div');
-                slide.style.cssText = `
-                    position: absolute; width: 100%; opacity: 0;
-                    transition: opacity 0.8s ease-in-out, transform 0.8s ease-out;
-                    transform: translateY(5px); pointer-events: none;
-                    display: flex; align-items: center; justify-content: center; text-align: center;
-                `;
-                slide.innerHTML = html;
-                return slide;
-            };
-
-            const gold = 'rgba(212, 175, 55, 0.95)';
-            const labelStyle = `color: ${gold}; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; font-size: 0.65rem; display: block; margin-bottom: 2px;`;
-            const glow = `text-shadow: 0 0 8px rgba(212, 175, 55, 0.25);`;
-
-            const slide1 = createSlide(`<div><span style="${labelStyle}">Dnes slaví</span><strong>${todayNames}</strong></div>`);
-            const slide2 = createSlide(`<div><span style="${labelStyle}">Moudro dne</span><span style="font-style:italic; ${glow}">${wisdom}</span></div>`);
-            container.appendChild(slide1);
-            container.appendChild(slide2);
-
-            let current = 0;
-            const slides = [slide1, slide2];
-            const showSlide = (index) => {
-                slides.forEach((s, i) => {
-                    const isActive = i === index;
-                    s.style.opacity = isActive ? '1' : '0';
-                    s.style.transform = isActive ? 'translateY(0)' : 'translateY(-5px)';
-                    s.style.pointerEvents = isActive ? 'auto' : 'none';
-                });
-            };
-
-            showSlide(0);
-            if (window.namedayTickerInterval) clearInterval(window.namedayTickerInterval);
-            window.namedayTickerInterval = setInterval(() => {
-                current = (current + 1) % slides.length;
-                showSlide(current);
-            }, 5000); // Faster ticker (5s)
         };
 
         // Initial render
