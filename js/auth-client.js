@@ -322,7 +322,6 @@
                 const registerBtn = e.target.closest('#auth-register-btn, #mobile-auth-register-btn');
                 if (registerBtn) {
                     e.preventDefault();
-                    console.log('✅ Register button clicked, opening modal...');
                     this.openModal('register');
                     return;
                 }
@@ -339,7 +338,6 @@
                 const authBtn = e.target.closest('#auth-btn, #mobile-auth-btn');
                 if (authBtn) {
                     e.preventDefault();
-                    console.log('✅ Auth button clicked:', this.isLoggedIn() ? 'logging out...' : 'opening login modal...');
                     if (this.isLoggedIn()) {
                         this.logout();
                     } else {
