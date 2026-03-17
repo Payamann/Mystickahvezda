@@ -206,6 +206,10 @@ class Templates{static renderTarotResult(e,s,i=!0,t=""){const a=i?"Velk\xE1 ark\
                 <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem;">Heslo</label>
                 <input type="password" name="password" required autocomplete="current-password" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-size: 16px; min-height: 48px;">
             </div>
+            <div id="confirm-password-field-wrapper" style="display: none; margin-bottom: 1rem;">
+                <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem;">Potvr\u010Fte heslo</label>
+                <input type="password" name="confirm_password" autocomplete="new-password" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-size: 16px; min-height: 48px;">
+            </div>
             <div id="forgot-password-link" style="text-align: right; margin-bottom: 1rem;">
                 <a href="#" id="auth-forgot-password" style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">Zapomn\u011Bli jste heslo?</a>
             </div>
@@ -221,8 +225,6 @@ class Templates{static renderTarotResult(e,s,i=!0,t=""){const a=i?"Velk\xE1 ark\
                     <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem;">Datum narozen\xED</label>
                     <input type="date" name="birth_date" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-size: 16px; min-height: 48px;">
                 </div>
-                <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem;">Potvr\u010Fte heslo</label>
-                <input type="password" name="confirm_password" autocomplete="new-password" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-size: 16px; min-height: 48px;">
             </div>
 
             <button type="submit" id="auth-submit" class="btn btn--primary" style="width: 100%; min-height: 48px;">P\u0159ihl\xE1sit se</button>
