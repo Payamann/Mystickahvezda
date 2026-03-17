@@ -78,26 +78,3 @@ jobs:
             css/style.v2.min.css
             js/dist/
           retention-days: 7
-
-  deploy:
-    runs-on: ubuntu-latest
-    name: Deploy to Railway
-    needs: [lint, test, build]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      - name: Deploy
-        run: railway up --service b92d4535-ed76-4bfc-9513-2846129612f6
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: 443e6384-9192-4257-a6f7-124bf6e3e31e
