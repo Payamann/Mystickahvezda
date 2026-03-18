@@ -33,6 +33,7 @@ const PLANS = {
         price: 19900, // 199 CZK in halere
         type: 'premium_monthly',
         interval: 'month',
+        trialDays: 7,
         description: 'Premium přístup - Neomezené tarotové výklady, Týdenní + měsíční horoskopy, Natální karta s interpretací'
     },
     'osviceni': {
@@ -40,6 +41,7 @@ const PLANS = {
         price: 49900, // 499 Kč in haléře
         type: 'exclusive_monthly',
         interval: 'month',
+        trialDays: 0,
         description: 'Exkluzivní přístup - Prioritní odpovědi, Exkluzivní obsah, Early access k novinkám'
     },
     'vip-majestrat': {
@@ -47,6 +49,7 @@ const PLANS = {
         price: 99900, // 999 Kč in haléře
         type: 'vip_majestrat',
         interval: 'month',
+        trialDays: 0,
         description: 'VIP přístup - Priority 24/7 podpora, Personalizovaný daily horoscope, Neomezené konzultace s Hvězdným Průvodcem'
     }
 };
@@ -187,6 +190,7 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
                 planType: plan.type
             },
             subscription_data: {
+                ...(plan.trialDays > 0 && { trial_period_days: plan.trialDays }),
                 metadata: {
                     userId: user.id,
                     planType: plan.type
@@ -398,28 +402,32 @@ async function handleCheckoutCompleted(session) {
 
     console.log(`[STRIPE] Checkout completed for user ${userId}, plan: ${planType}`);
 
-    // Get period end from webhook payload (already calculated by Stripe)
-    // Fallback to REST API only if needed
+    // Fetch subscription from Stripe to get both period end and actual status (trialing vs active)
     let currentPeriodEnd;
-    if (session.subscription_details?.current_period_end) {
-        // Use data from webhook payload (most reliable)
-        currentPeriodEnd = new Date(session.subscription_details.current_period_end * 1000).toISOString();
-    } else if (stripeSubscriptionId) {
-        // Fallback: fetch from Stripe if not in webhook
+    let subStatus = 'active';
+
+    if (stripeSubscriptionId) {
         try {
             const stripeSub = await stripe.subscriptions.retrieve(stripeSubscriptionId);
             currentPeriodEnd = new Date(stripeSub.current_period_end * 1000).toISOString();
+            subStatus = stripeSub.status || 'active'; // 'trialing', 'active', etc.
         } catch (e) {
-            console.error('[STRIPE] Failed to retrieve subscription details:', e.message);
-            // Calculate based on plan type
-            const expiry = new Date();
-            if (planType === 'premium_yearly') {
-                expiry.setFullYear(expiry.getFullYear() + 1);
+            console.error('[STRIPE] Failed to retrieve subscription:', e.message);
+            // Fallback: use webhook data or calculate
+            if (session.subscription_details?.current_period_end) {
+                currentPeriodEnd = new Date(session.subscription_details.current_period_end * 1000).toISOString();
             } else {
-                expiry.setMonth(expiry.getMonth() + 1);
+                const expiry = new Date();
+                if (planType === 'premium_yearly') {
+                    expiry.setFullYear(expiry.getFullYear() + 1);
+                } else {
+                    expiry.setMonth(expiry.getMonth() + 1);
+                }
+                currentPeriodEnd = expiry.toISOString();
             }
-            currentPeriodEnd = expiry.toISOString();
         }
+    } else if (session.subscription_details?.current_period_end) {
+        currentPeriodEnd = new Date(session.subscription_details.current_period_end * 1000).toISOString();
     }
 
     // Save Stripe customer ID on the user
@@ -434,7 +442,7 @@ async function handleCheckoutCompleted(session) {
     const subData = {
         user_id: userId,
         plan_type: planType,
-        status: 'active',
+        status: subStatus,
         current_period_end: currentPeriodEnd,
         stripe_subscription_id: stripeSubscriptionId || null
     };
@@ -463,12 +471,26 @@ async function handleCheckoutCompleted(session) {
 
                 if (!oldSubs || oldSubs.length === 0) {
                     // First purchase - send reminders and churn prevention
+                    // Skip upgrade reminders for trial users (they already paid/are trialing)
+                    if (subStatus !== 'trialing') {
+                        try {
+                            await sendUpgradeReminders(userId, userEmail);
+                            await sendChurnRecoveryEmail(userId, userEmail);
+                            console.log(`[RETENTION] Email sequences scheduled for new subscriber ${userId}`);
+                        } catch (seqError) {
+                            console.warn(`[RETENTION] Failed to schedule sequences for ${userId}:`, seqError.message);
+                        }
+                    }
+                }
+
+                // Schedule trial reminder emails if this is a trial subscription
+                if (subStatus === 'trialing' && currentPeriodEnd) {
                     try {
-                        await sendUpgradeReminders(userId, userEmail);
-                        await sendChurnRecoveryEmail(userId, userEmail);
-                        console.log(`[RETENTION] Email sequences scheduled for new subscriber ${userId}`);
-                    } catch (seqError) {
-                        console.warn(`[RETENTION] Failed to schedule sequences for ${userId}:`, seqError.message);
+                        const { sendTrialReminderEmails } = await import('./email-service.js');
+                        await sendTrialReminderEmails(userId, userEmail, currentPeriodEnd);
+                        console.log(`[RETENTION] Trial reminders scheduled for ${userId}`);
+                    } catch (trialEmailError) {
+                        console.warn(`[RETENTION] Trial reminder scheduling failed:`, trialEmailError.message);
                     }
                 }
             } catch (emailError) {
@@ -631,7 +653,7 @@ async function handleSubscriptionUpdated(subscription) {
     let status = subscription.status; // active, past_due, canceled, trialing, etc.
 
     // Map Stripe statuses to our internal statuses
-    if (subscription.cancel_at_period_end && status === 'active') {
+    if (subscription.cancel_at_period_end && (status === 'active' || status === 'trialing')) {
         status = 'cancel_pending';
     }
 

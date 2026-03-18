@@ -134,10 +134,22 @@ function renderSubscriptionCard(sub) {
         </div>
     `;
 
+    // Trial countdown
+    if (sub.status === 'trialing' && periodEnd) {
+        const daysRemaining = Math.max(0, Math.ceil((periodEnd - new Date()) / 86400000));
+        const dayWord = daysRemaining === 1 ? 'den' : (daysRemaining >= 2 && daysRemaining <= 4) ? 'dny' : 'dní';
+        html += `<div class="trial-countdown" style="margin: 12px 0; padding: 12px 16px; background: rgba(52, 152, 219, 0.15); border: 1px solid rgba(52, 152, 219, 0.3); border-radius: 8px;">
+            <span style="color: var(--color-starlight, #f0e68c);">⏳ Zkušební období: zbývá <strong>${daysRemaining}</strong> ${dayWord}</span>
+            <span style="display: block; opacity: 0.7; font-size: 0.85rem; margin-top: 4px;">Končí: ${periodEndStr}</span>
+        </div>`;
+    }
+
     // Period end
     if (isPremium && periodEndStr) {
         const label = sub.status === 'cancel_pending'
             ? 'Přístup končí'
+            : sub.status === 'trialing'
+            ? 'Zkušební období končí'
             : 'Další platba';
         html += `<p class="subscription-period">${label}: <strong>${periodEndStr}</strong></p>`;
     }
