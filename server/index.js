@@ -12,6 +12,16 @@ import path from 'path';
 import fs from 'fs';
 import Stripe from 'stripe';
 
+// Global error handlers — catch unhandled errors before they crash the server
+process.on('uncaughtException', (err) => {
+    console.error('[FATAL] Uncaught Exception:', err);
+    // Give Sentry time to flush, then exit
+    setTimeout(() => process.exit(1), 2000);
+});
+process.on('unhandledRejection', (reason) => {
+    console.error('[FATAL] Unhandled Rejection:', reason);
+});
+
 // Auth & DB
 import authRoutes from './auth.js';
 import newsletterRoutes from './newsletter.js';
