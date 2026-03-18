@@ -77,15 +77,13 @@
   <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
   <!-- Local Fonts - Eliminates 750ms Google Fonts CDN latency -->
-  <link rel="preload" href="/fonts/local-fonts.css" as="style">
   <link rel="stylesheet" href="/fonts/local-fonts.css">
 
   <!-- Critical CSS - Inline for instant rendering (FCP optimization) -->
   <style>:root{--color-deep-space:#050510;--color-cosmic-purple:#1a0a2e;--color-mystic-gold:#ffd700;--color-ethereal-violet:#9d4edd;--color-starlight:#ffffff;--color-nebula-pink:#f72585;--font-heading:'Cinzel',serif;--font-body:'Inter',sans-serif;--text-2xl:clamp(1.5rem,2vw,1.75rem);--text-3xl:clamp(1.85rem,2.5vw,2.25rem);--space-md:1rem;--space-lg:1.5rem;--transition-fast:200ms}*{margin:0;padding:0;box-sizing:border-box}html{font-size:16px}body{background:var(--color-deep-space);color:var(--color-starlight);font-family:var(--font-body);line-height:1.5}h1,h2,h3,h4,h5,h6{font-family:var(--font-heading);font-weight:700;line-height:1.2}</style>
 
-  <!-- Preload critical font files for faster LCP (WOFF2 66% smaller than TTF) -->
-  <link rel="preload" href="/fonts/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
-  <link rel="preload" href="/fonts/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
+  <!-- Preload critical font for LCP heading (Cinzel, not Inter) -->
+  <link rel="preload" href="/fonts/cinzel-latin-ext.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
 
   <!-- Main CSS -->
   <link rel="preload" href="/css/style.v2.min.css?v=11" as="style">
@@ -93,14 +91,10 @@
 
   <!-- Preload Critical Assets - Hero image responsive (matches srcset in <img>) -->
   <link rel="preload" as="image" imagesrcset="img/hero-3d-mobile.webp 400w, img/hero-3d.webp 800w" imagesizes="(max-width: 500px) 55vw, 50vw" fetchpriority="high">
-  <link rel="preload" as="image" href="img/bg-cosmic-mobile.webp" media="(max-width: 768px)" fetchpriority="low">
-  <link rel="preload" as="image" href="img/bg-cosmic-hd.webp" type="image/webp" media="(min-width: 769px)" fetchpriority="low">
 
   <!-- Modulepreload for critical JS (parallel download with CSS/fonts) -->
   <link rel="modulepreload" href="/js/dist/main.js">
-  <link rel="modulepreload" href="/js/dist/ui/header.js">
   <link rel="modulepreload" href="/js/dist/personalization.js">
-  <link rel="modulepreload" href="/js/dist/utils/helpers.js">
 
   <!-- SEO Schema -->
 
