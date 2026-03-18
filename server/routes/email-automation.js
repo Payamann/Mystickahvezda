@@ -1,6 +1,6 @@
 import express from 'express';
 import { supabase } from '../db-supabase.js';
-import { authenticateToken } from '../middleware.js';
+import { authenticateToken, requireAdmin } from '../middleware.js';
 import {
   sendUpgradeReminders,
   sendChurnRecoveryEmail,
@@ -109,7 +109,7 @@ router.post('/unsubscribe-all', authenticateToken, async (req, res) => {
 // ============================================
 // POST /trigger-upgrade-reminders - Admin: Trigger upgrade sequence
 // ============================================
-router.post('/trigger-upgrade-reminders', authenticateToken, async (req, res) => {
+router.post('/trigger-upgrade-reminders', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { userId } = req.body;
 
@@ -152,7 +152,7 @@ router.post('/trigger-upgrade-reminders', authenticateToken, async (req, res) =>
 // ============================================
 // POST /trigger-churn-recovery - Admin: Trigger churn recovery
 // ============================================
-router.post('/trigger-churn-recovery', authenticateToken, async (req, res) => {
+router.post('/trigger-churn-recovery', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { userId } = req.body;
 
@@ -195,7 +195,7 @@ router.post('/trigger-churn-recovery', authenticateToken, async (req, res) => {
 // ============================================
 // POST /send-weekly-feature - Admin: Send weekly feature email
 // ============================================
-router.post('/send-weekly-feature', authenticateToken, async (req, res) => {
+router.post('/send-weekly-feature', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { email, feature_title, feature_description, benefits, feature_url } = req.body;
 
