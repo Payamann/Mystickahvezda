@@ -195,9 +195,6 @@ router.post('/login', authLimiter, async (req, res) => {
             });
         }
 
-        // Successful login - clear lockout
-        clearLoginAttempts(validatedEmail);
-
         const authUser = authData.user;
         logDebug(`Login attempt for: ${authUser.email} (ID: ${authUser.id})`);
 

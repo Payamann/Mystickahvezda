@@ -141,14 +141,47 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
         // Strip markdown code fences if Gemini wraps JSON in ```json ... ```
         const cleanResponse = response.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
 
-        await saveCachedHoroscope(cacheKey, sign, period, cleanResponse, periodLabel);
-        console.log(`💾 Horoscope cached in DB: ${cacheKey}`);
+        // Save to DB cache (non-blocking — don't let DB errors kill the response)
+        saveCachedHoroscope(cacheKey, sign, period, cleanResponse, periodLabel)
+            .then(() => console.log(`💾 Horoscope cached in DB: ${cacheKey}`))
+            .catch(err => console.warn(`[HOROSCOPE] Cache save failed (non-fatal):`, err.message));
 
         res.json({ success: true, response: cleanResponse, period: periodLabel });
 
     } catch (error) {
-        console.error('Horoscope Error:', error);
-        res.status(500).json({ success: false, error: 'Předpověď není dostupná...' });
+        console.error('[HOROSCOPE] Gemini Error:', error.message || error);
+
+        // Fallback: return a static horoscope so users aren't left with empty page
+        const fallbackMessages = {
+            'cs': {
+                prediction: `Hvězdy dnes pro znamení ${sign} naznačují čas pro introspekci a klid. Energie dne vás vede k tomu, abyste se zastavili a naslouchali svému vnitřnímu hlasu. Důvěřujte svým instinktům — budou vás vést správným směrem.`,
+                affirmation: 'Jsem v souladu s vesmírem a důvěřuji své cestě.',
+            },
+            'sk': {
+                prediction: `Hviezdy dnes pre znamenie ${sign} naznačujú čas pre introspekciu a pokoj. Energia dňa vás vedie k tomu, aby ste sa zastavili a počúvali svoj vnútorný hlas. Dôverujte svojim inštinktom — budú vás viesť správnym smerom.`,
+                affirmation: 'Som v súlade s vesmírom a dôverujem svojej ceste.',
+            },
+            'pl': {
+                prediction: `Gwiazdy dzisiaj dla znaku ${sign} wskazują czas na introspekcję i spokój. Energia dnia prowadzi Cię do zatrzymania się i wsłuchania w swój wewnętrzny głos. Zaufaj swoim instynktom — poprowadzą Cię we właściwym kierunku.`,
+                affirmation: 'Jestem w harmonii ze wszechświatem i ufam swojej drodze.',
+            }
+        };
+
+        const fb = fallbackMessages[targetLang] || fallbackMessages['cs'];
+        const luckyNumbers = Array.from({ length: 4 }, () => Math.floor(Math.random() * 49) + 1);
+
+        const fallbackResponse = JSON.stringify({
+            prediction: fb.prediction,
+            affirmation: fb.affirmation,
+            luckyNumbers: luckyNumbers
+        });
+
+        res.json({
+            success: true,
+            response: fallbackResponse,
+            period: periodLabel,
+            fallback: true
+        });
     }
 });
 

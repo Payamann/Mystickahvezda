@@ -72,35 +72,29 @@
 
 
   <!-- DNS Prefetch for external resources -->
-  <link rel="preconnect" href="https://js.stripe.com">
   <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
   <link rel="dns-prefetch" href="https://browser.sentry-cdn.com">
   <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
   <!-- Local Fonts - Eliminates 750ms Google Fonts CDN latency -->
-  <link rel="preload" href="/fonts/local-fonts.css" as="style">
   <link rel="stylesheet" href="/fonts/local-fonts.css">
 
   <!-- Critical CSS - Inline for instant rendering (FCP optimization) -->
   <style>:root{--color-deep-space:#050510;--color-cosmic-purple:#1a0a2e;--color-mystic-gold:#ffd700;--color-ethereal-violet:#9d4edd;--color-starlight:#ffffff;--color-nebula-pink:#f72585;--font-heading:'Cinzel',serif;--font-body:'Inter',sans-serif;--text-2xl:clamp(1.5rem,2vw,1.75rem);--text-3xl:clamp(1.85rem,2.5vw,2.25rem);--space-md:1rem;--space-lg:1.5rem;--transition-fast:200ms}*{margin:0;padding:0;box-sizing:border-box}html{font-size:16px}body{background:var(--color-deep-space);color:var(--color-starlight);font-family:var(--font-body);line-height:1.5}h1,h2,h3,h4,h5,h6{font-family:var(--font-heading);font-weight:700;line-height:1.2}</style>
 
-  <!-- Preload critical font files for faster LCP (WOFF2 66% smaller than TTF) -->
-  <link rel="preload" href="/fonts/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
-  <link rel="preload" href="/fonts/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
+  <!-- Preload critical font for LCP heading (Cinzel, not Inter) -->
+  <link rel="preload" href="/fonts/cinzel-latin-ext.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
 
   <!-- Main CSS -->
   <link rel="preload" href="/css/style.v2.min.css?v=11" as="style">
   <link rel="stylesheet" href="/css/style.v2.min.css?v=11">
 
-  <!-- Preload Critical Assets -->
-  <link rel="preload" as="image" href="img/hero-3d.webp" fetchpriority="high">
-  <link rel="preload" as="image" href="img/logo-3d.webp" fetchpriority="high">
-  <link rel="preload" as="image" href="img/bg-cosmic-mobile.webp" media="(max-width: 768px)" fetchpriority="high">
-  <link rel="preload" as="image" href="img/bg-cosmic-hd.webp" type="image/webp" media="(min-width: 769px)" fetchpriority="low">
+  <!-- Preload Critical Assets - Hero image responsive (matches srcset in <img>) -->
+  <link rel="preload" as="image" imagesrcset="img/hero-3d-mobile.webp 400w, img/hero-3d.webp 800w" imagesizes="(max-width: 500px) 55vw, 50vw" fetchpriority="high">
 
   <!-- Modulepreload for critical JS (parallel download with CSS/fonts) -->
   <link rel="modulepreload" href="/js/dist/main.js">
-  <link rel="modulepreload" href="/js/dist/ui/header.js">
+  <link rel="modulepreload" href="/js/dist/personalization.js">
 
   <!-- SEO Schema -->
 
@@ -2379,120 +2373,18 @@
 
 
   <!-- Carousel Pagination Dots -->
-
-  <script>
-
-    (function () {
-
-      document.addEventListener('DOMContentLoaded', function () {
-
-        const track = document.querySelector('.carousel-track');
-
-        const container = document.querySelector('.carousel-container');
-
-        if (!track || !container) return;
-
-        const slides = Array.from(track.querySelectorAll('.carousel-slide'));
-
-        if (!slides.length) return;
-
-        const dotsWrapper = document.createElement('div');
-
-        dotsWrapper.className = 'carousel-dots';
-
-        slides.forEach((_, i) => {
-
-          const dot = document.createElement('button');
-
-          dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-
-          dot.setAttribute('aria-label', 'Slide ' + (i + 1));
-
-          dot.addEventListener('click', () => updateDots(i));
-
-          dotsWrapper.appendChild(dot);
-
-        });
-
-        container.after(dotsWrapper);
-
-        let current = 0;
-
-        function updateDots(idx) {
-
-          current = idx;
-
-          dotsWrapper.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
-
-        }
-
-        const prev = container.querySelector('.carousel-btn.prev');
-
-        const next = container.querySelector('.carousel-btn.next');
-
-        if (prev) prev.addEventListener('click', () => updateDots(Math.max(0, current - 1)));
-
-        if (next) next.addEventListener('click', () => updateDots(Math.min(slides.length - 1, current + 1)));
-
-      });
-
-    })();
-
-  </script>
+  <script src="js/dist/carousel-dots.js" defer></script>
 
 
 
   <!-- GDPR Cookie Save Handler -->
-
-  <script>
-
-    (function () {
-
-      const KEY = 'mh_cookie_prefs';
-
-      function hide() { const b = document.getElementById('cookie-banner'); if (b) b.style.display = 'none'; }
-
-      function save(analytics, marketing) {
-
-        localStorage.setItem(KEY, JSON.stringify({ analytics, marketing, ts: Date.now() }));
-
-        hide();
-
-      }
-
-      if (localStorage.getItem(KEY)) hide();
-
-      document.addEventListener('DOMContentLoaded', function () {
-
-        if (localStorage.getItem(KEY)) hide();
-
-        const saveBtn = document.getElementById('cookie-save');
-
-        const acceptBtn = document.getElementById('cookie-accept');
-
-        const rejectBtn = document.getElementById('cookie-reject');
-
-        if (saveBtn) saveBtn.addEventListener('click', function () {
-
-          save(!!document.getElementById('cookie-analytics')?.checked, !!document.getElementById('cookie-marketing')?.checked);
-
-        });
-
-        if (acceptBtn) acceptBtn.addEventListener('click', () => save(true, true));
-
-        if (rejectBtn) rejectBtn.addEventListener('click', () => save(false, false));
-
-      });
-
-    })();
-
-  </script>
+  <script src="js/dist/cookie-handler.js" defer></script>
 
 
 
   <!-- Analytics Initialization & Tracking -->
 
-  <script type="module">
+  <script type="module" async>
 
     import { initAnalytics, trackPageLoadMetrics } from './js/dist/ga-tracking.js?v=6';
 
@@ -2518,7 +2410,52 @@
 
   </script>
 
-
+  <!-- Hamburger menu failsafe (in case module chain fails) -->
+  <script>
+  (function(){
+    if(document.querySelector('.nav__toggle.failsafe-init'))return;
+    function init(){
+      var tog=document.querySelector('.nav__toggle');
+      var nav=document.querySelector('.nav__list');
+      if(!tog||!nav||tog.dataset.fsInit)return;
+      tog.dataset.fsInit='1';
+      tog.addEventListener('click',function(e){
+        e.stopPropagation();
+        var open=nav.classList.toggle('open');
+        tog.classList.toggle('active',open);
+        tog.setAttribute('aria-expanded',String(open));
+        nav.setAttribute('aria-hidden',String(!open));
+      });
+      document.addEventListener('click',function(e){
+        if(!tog.contains(e.target)&&!nav.contains(e.target)&&nav.classList.contains('open')){
+          nav.classList.remove('open');tog.classList.remove('active');
+          tog.setAttribute('aria-expanded','false');nav.setAttribute('aria-hidden','true');
+        }
+      });
+      nav.querySelectorAll('a:not(.nav__link--dropdown-toggle)').forEach(function(a){
+        a.addEventListener('click',function(){
+          nav.classList.remove('open');tog.classList.remove('active');
+          tog.setAttribute('aria-expanded','false');nav.setAttribute('aria-hidden','true');
+        });
+      });
+      var drops=nav.querySelectorAll('.nav__link--dropdown-toggle');
+      drops.forEach(function(d){
+        d.addEventListener('click',function(ev){
+          ev.preventDefault();
+          if(window.innerWidth<=992){
+            var p=d.closest('.nav__item--has-dropdown');
+            nav.querySelectorAll('.nav__item--has-dropdown.is-active').forEach(function(i){
+              if(i!==p)i.classList.remove('is-active');
+            });
+            p.classList.toggle('is-active');
+          }
+        });
+      });
+    }
+    if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init)}
+    else{init()}
+  })();
+  </script>
 
 </body>
 

@@ -1,6 +1,6 @@
 import express from 'express';
 import { supabase } from '../db-supabase.js';
-import { authenticateToken } from '../middleware.js';
+import { authenticateToken, requireAdmin } from '../middleware.js';
 import {
   sendUpgradeReminders,
   sendChurnRecoveryEmail,
@@ -109,7 +109,7 @@ router.post('/unsubscribe-all', authenticateToken, async (req, res) => {
 // ============================================
 // POST /trigger-upgrade-reminders - Admin: Trigger upgrade sequence
 // ============================================
-router.post('/trigger-upgrade-reminders', authenticateToken, async (req, res) => {
+router.post('/trigger-upgrade-reminders', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { userId } = req.body;
 
@@ -152,7 +152,7 @@ router.post('/trigger-upgrade-reminders', authenticateToken, async (req, res) =>
 // ============================================
 // POST /trigger-churn-recovery - Admin: Trigger churn recovery
 // ============================================
-router.post('/trigger-churn-recovery', authenticateToken, async (req, res) => {
+router.post('/trigger-churn-recovery', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { userId } = req.body;
 
@@ -195,7 +195,7 @@ router.post('/trigger-churn-recovery', authenticateToken, async (req, res) => {
 // ============================================
 // POST /send-weekly-feature - Admin: Send weekly feature email
 // ============================================
-router.post('/send-weekly-feature', authenticateToken, async (req, res) => {
+router.post('/send-weekly-feature', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { email, feature_title, feature_description, benefits, feature_url } = req.body;
 
@@ -203,10 +203,10 @@ router.post('/send-weekly-feature', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'email and feature_title required' });
     }
 
-    // Get all users with weekly features enabled
+    // Fetch all active users with their email preferences in one query
     const { data: users, error: usersError } = await supabase
       .from('users')
-      .select('email')
+      .select('id, email, email_preferences(weekly_features, unsubscribe_all)')
       .eq('status', 'active');
 
     if (usersError) {
@@ -225,14 +225,12 @@ router.post('/send-weekly-feature', authenticateToken, async (req, res) => {
 
     for (const user of users) {
       try {
-        // Check preferences
-        const { data: preferences } = await supabase
-          .from('email_preferences')
-          .select('weekly_features, unsubscribe_all')
-          .eq('user_id', user.id)
-          .single();
+        // Check preferences from the joined data
+        const prefs = Array.isArray(user.email_preferences)
+          ? user.email_preferences[0]
+          : user.email_preferences;
 
-        if (preferences?.unsubscribe_all || preferences?.weekly_features === false) {
+        if (prefs?.unsubscribe_all || prefs?.weekly_features === false) {
           continue;
         }
 

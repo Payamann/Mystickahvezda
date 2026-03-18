@@ -290,7 +290,7 @@ router.post('/astrocartography', authenticateToken, requirePremium, async (req, 
 
 // ─── Angel Cards ──────────────────────────────────────────────────────────────
 
-router.post('/angel-card', optionalPremiumCheck, async (req, res) => {
+router.post('/angel-card', authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { card, intention = 'obecný vhled do dnešního dne' } = req.body;
 
@@ -333,7 +333,7 @@ router.post('/angel-card', optionalPremiumCheck, async (req, res) => {
 });
 
 // ─── Runes (Elder Futhark) ────────────────────────────────────────────────────
-router.post('/runes', optionalPremiumCheck, async (req, res) => {
+router.post('/runes', authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { rune, intention = 'obecný duchovní vhled', history = [] } = req.body;
 
@@ -362,7 +362,7 @@ router.post('/runes', optionalPremiumCheck, async (req, res) => {
 });
 
 // ─── Daily Wisdom (AI Powered) ────────────────────────────────────────────────
-router.post('/daily-wisdom', optionalPremiumCheck, async (req, res) => {
+router.post('/daily-wisdom', authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { sign, moonPhase, lang = 'cs' } = req.body;
         
