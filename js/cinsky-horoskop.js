@@ -219,12 +219,12 @@ window.showAnimal = function (slugOverride, exactYear = null) {
     const elGood = document.getElementById('compat-good');
     const elBad = document.getElementById('compat-bad');
     if (elGood) {
-        const sanitizedGood = DOMPurify.sanitize(data.good.map(a => `<span class="compat-badge compat-good">${a}</span>`).join(''));
-        elGood.innerHTML = sanitizedGood;
+        const rawGood = data.good.map(a => `<span class="compat-badge compat-good">${a}</span>`).join('');
+        elGood.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawGood) : rawGood;
     }
     if (elBad) {
-        const sanitizedBad = DOMPurify.sanitize(data.bad.map(a => `<span class="compat-badge compat-bad">${a}</span>`).join(''));
-        elBad.innerHTML = sanitizedBad;
+        const rawBad = data.bad.map(a => `<span class="compat-badge compat-bad">${a}</span>`).join('');
+        elBad.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawBad) : rawBad;
     }
 
     // Vztahova analyza zobrazeni/schovani containeru "Rozsirena AI"
