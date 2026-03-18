@@ -13,8 +13,8 @@
             this.setupListeners();
             this.handleRedirect();
             this.refreshSession(); // Auto-sync profile on load
-            // Auto-refresh token every hour
-            setInterval(() => this.refreshSession(), 3600000);
+            // Auto-refresh token every 15 minutes (faster detection of trial expiration)
+            setInterval(() => this.refreshSession(), 900000);
         },
 
         async refreshSession() {

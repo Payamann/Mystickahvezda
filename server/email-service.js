@@ -378,6 +378,58 @@ export const EMAIL_TEMPLATES = {
         </table>
       </div>
     `, 'Nová zpráva - Mystická Hvězda')
+  },
+
+  trial_ending_reminder: {
+    subject: 'Vaše zkušební období končí za 2 dny ⏳',
+    getHtml: (data) => getBaseTemplate(`
+      <h1 class="h1">Zkušební období brzy končí</h1>
+      <p>Vaše zkušební období u Mystické Hvězdy končí za <span class="highlight">${data.daysRemaining || 2} dny</span>.</p>
+
+      <p>Během zkušebního období jste měli přístup k:</p>
+      <div class="feature-item">
+        <ul style="margin-top: 10px; padding-left: 20px;">
+          <li>📖 Neomezeným tarotovým výkladům</li>
+          <li>⭐ Detailním osobním horoskopům</li>
+          <li>✨ Duchovnímu průvodci</li>
+          <li>🗺️ Natálním kartám</li>
+        </ul>
+      </div>
+
+      <p>Po skončení zkušebního období bude automaticky aktivováno vaše předplatné. Pokud si nepřejete pokračovat, můžete předplatné zrušit v nastavení profilu.</p>
+
+      <div class="cta-box">
+        <a href="${process.env.APP_URL}/profil.html" class="btn">Spravovat předplatné →</a>
+      </div>
+    `, 'Zkušební období končí')
+  },
+
+  trial_ended: {
+    subject: 'Děkujeme za vyzkoušení Mystické Hvězdy ✨',
+    getHtml: (data) => getBaseTemplate(`
+      <h1 class="h1">Zkušební období skončilo</h1>
+      <p>Vaše 7denní zkušební období právě skončilo a vaše předplatné <span class="highlight">Hvězdný Průvodce</span> je nyní plně aktivní.</p>
+
+      <p>Od dnešního dne vám bude pravidelně účtována měsíční platba. Veškeré prémiové funkce zůstávají k dispozici.</p>
+
+      <div class="feature-item">
+        <strong>Co máte k dispozici:</strong>
+        <ul style="margin-top: 10px; padding-left: 20px;">
+          <li>📖 Neomezené tarotové výklady</li>
+          <li>⭐ Týdenní a měsíční horoskopy</li>
+          <li>✨ Duchovní průvodce pro hluboké otázky</li>
+          <li>🗺️ Natální karty s interpretací</li>
+        </ul>
+      </div>
+
+      <div class="cta-box">
+        <a href="${process.env.APP_URL}/profil.html" class="btn">Otevřít svůj profil →</a>
+      </div>
+
+      <p style="font-size: 13px; opacity: 0.7; text-align: center;">
+        Předplatné můžete kdykoli spravovat ve svém profilu.
+      </p>
+    `, 'Vítejte v plném předplatném')
   }
 
 };
@@ -570,6 +622,50 @@ export async function sendWeeklyFeatureEmail(email, featureData = {}) {
   }
 }
 
+/**
+ * Schedule trial reminder emails (Day 5: ending soon, Day 7: ended)
+ */
+export async function sendTrialReminderEmails(userId, email, trialEndDate) {
+  if (!trialEndDate) return;
+  const trialEnd = new Date(trialEndDate);
+  if (isNaN(trialEnd.getTime())) return; // guard against invalid date
+
+  try {
+    const { scheduleEmailLater } = await import('./jobs/email-queue.js');
+    const now = new Date();
+
+    // Day 5: "Trial ending in 2 days"
+    const day5Delay = Math.max(0, Math.floor((trialEnd - now - 2 * 86400000) / 1000));
+    if (day5Delay > 60) { // at least 1 minute in the future
+      await scheduleEmailLater({
+        userId,
+        email,
+        template: 'trial_ending_reminder',
+        data: { daysRemaining: 2 },
+        delaySeconds: day5Delay
+      });
+    }
+
+    // Day 7: "Trial ended, subscription active"
+    const day7Delay = Math.max(0, Math.floor((trialEnd - now) / 1000));
+    if (day7Delay > 60) {
+      await scheduleEmailLater({
+        userId,
+        email,
+        template: 'trial_ended',
+        data: {},
+        delaySeconds: day7Delay
+      });
+    }
+
+    console.log(`[EMAIL] Trial reminders scheduled for user ${userId} (end: ${trialEndDate})`);
+    return { success: true };
+  } catch (error) {
+    console.error('[EMAIL] Failed to schedule trial reminders:', error);
+    throw error;
+  }
+}
+
 export default {
   sendEmail,
   sendOnboardingSequence,
@@ -578,5 +674,6 @@ export default {
   sendUpgradeReminders,
   sendChurnRecoveryEmail,
   sendWeeklyFeatureEmail,
+  sendTrialReminderEmails,
   EMAIL_TEMPLATES
 };

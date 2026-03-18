@@ -26,7 +26,7 @@ export async function generateToken(userId) {
 
         const status = sub?.plan_type;
         const isPremium = status && PREMIUM_PLAN_TYPES.includes(status) &&
-                         sub.status === 'active' &&
+                         ['active', 'trialing', 'cancel_pending'].includes(sub.status) &&
                          new Date(sub.current_period_end) > new Date();
 
         // Fetch user email
@@ -274,7 +274,7 @@ router.post('/login', authLimiter, async (req, res) => {
 
         // Check if premium (and not expired)
         const isPremium = status && PREMIUM_PLAN_TYPES.includes(status) &&
-                         sub.status === 'active' &&
+                         ['active', 'trialing', 'cancel_pending'].includes(sub.status) &&
                          new Date(sub.current_period_end) > new Date();
 
         const token = jwt.sign({
