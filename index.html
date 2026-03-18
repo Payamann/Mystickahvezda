@@ -98,7 +98,9 @@
   <link rel="preload" as="image" href="img/bg-cosmic-mobile.webp" media="(max-width: 768px)" fetchpriority="high">
   <link rel="preload" as="image" href="img/bg-cosmic-hd.webp" type="image/webp" media="(min-width: 769px)" fetchpriority="low">
 
-
+  <!-- Modulepreload for critical JS (parallel download with CSS/fonts) -->
+  <link rel="modulepreload" href="/js/dist/main.js">
+  <link rel="modulepreload" href="/js/dist/ui/header.js">
 
   <!-- SEO Schema -->
 
@@ -162,9 +164,6 @@
 
 
 
-  <!-- Deferred Scripts -->
-  <script type="module" src="js/moon-phase.js?v=2" defer></script>
-
   <link rel="canonical" href="https://mystickahvezda.cz/">
   <link rel="alternate" hreflang="cs" href="https://mystickahvezda.cz/index.html">
   <link rel="alternate" hreflang="sk" href="https://mystickahvezda.cz/sk/index.html">
@@ -172,7 +171,6 @@
   <link rel="alternate" hreflang="x-default" href="https://mystickahvezda.cz/index.html">
 
   <!-- Google Analytics & Sentry Initialization -->
-  <script src="js/analytics-init.js?v=1" defer></script>
 </head>
 
 
@@ -2286,9 +2284,6 @@
 
   </script>
 
-  <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
-
   <!-- Sentry for error tracking (Browser SDK) -->
   <script src="https://browser.sentry-cdn.com/7.99.0/bundle.min.js" integrity="sha384-wVjNuGiBl9KGqSbK8t2BNohBZZPcVc3p4i8Ydv4eLhV8FNvB3L3RjmvEkP8yIjsB" crossorigin="anonymous" async></script>
   <script>
@@ -2309,7 +2304,7 @@
   <script src="js/dist/analytics.js" defer></script>
   <script src="js/dist/api-config.js" defer></script>
   <script src="js/dist/templates.js" defer></script>
-  <script type="module" src="js/dist/personalization.js?v=6"></script>
+  <script type="module" src="js/dist/personalization.js?v=6" async></script>
   <script src="js/dist/auth-client.js" defer></script>
   <script src="js/dist/exit-intent.js" defer></script>
 
@@ -2317,21 +2312,15 @@
 
   <script src="js/dist/daily-card.js" defer></script>
 
-  <script type="module">
-
+  <script type="module" async>
     import { initPaymentButtons } from './js/platby.js';
-
-    document.addEventListener('DOMContentLoaded', () => {
-
-      initPaymentButtons();
-
-    });
-
+    document.addEventListener('DOMContentLoaded', () => initPaymentButtons());
   </script>
 
 
 
-  <script type="module" src="js/dist/main.js"></script>
+  <script type="module" src="js/moon-phase.js?v=2" async></script>
+  <script type="module" src="js/dist/main.js" async></script>
 
 
 
