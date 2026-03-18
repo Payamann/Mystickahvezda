@@ -161,6 +161,8 @@
     .section--hero { min-height: 45vh !important; display: flex; align-items: center; justify-content: center; padding: 100px 0 40px !important; }
     .hero__title { font-size: clamp(2.5rem, 8vw, 4rem); text-align: center; margin-bottom: 1rem; }
     </style>
+  <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
 </head>
 
 
