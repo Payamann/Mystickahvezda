@@ -152,7 +152,10 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
         console.error('[HOROSCOPE] Gemini Error:', error.message || error);
 
         // Fallback: return a static horoscope so users aren't left with empty page
-        const signName = sign || req.body?.sign || 'neznámé znamení';
+        const { sign: bodySign, lang: bodyLang = 'cs' } = req.body || {};
+        const signName = bodySign || 'neznámé znamení';
+        const supportedLangs = ['cs', 'sk', 'pl'];
+        const fallbackTargetLang = supportedLangs.includes(bodyLang) ? bodyLang : 'cs';
         const fallbackMessages = {
             'cs': {
                 prediction: `Hvězdy dnes pro znamení ${signName} naznačují čas pro introspekci a klid. Energie dne vás vede k tomu, abyste se zastavili a naslouchali svému vnitřnímu hlasu. Důvěřujte svým instinktům — budou vás vést správným směrem.`,
@@ -168,8 +171,14 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
             }
         };
 
-        const fb = fallbackMessages[targetLang] || fallbackMessages['cs'];
+        const fb = fallbackMessages[fallbackTargetLang] || fallbackMessages['cs'];
         const luckyNumbers = Array.from({ length: 4 }, () => Math.floor(Math.random() * 49) + 1);
+        const labels = {
+            'cs': { 'daily': 'Denní inspirace', 'weekly': 'Týdenní horoskop', 'monthly': 'Měsíční horoskop' },
+            'sk': { 'daily': 'Denná inšpirácia', 'weekly': 'Týždenný horoskop', 'monthly': 'Mesačný horoskop' },
+            'pl': { 'daily': 'Dzienna inspiracja', 'weekly': 'Horoskop tygodniowy', 'monthly': 'Horoskop miesięczny' }
+        };
+        const fallbackPeriodLabel = labels[fallbackTargetLang]?.daily || 'Denní inspirace';
 
         const fallbackResponse = JSON.stringify({
             prediction: fb.prediction,
@@ -180,7 +189,7 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
         res.json({
             success: true,
             response: fallbackResponse,
-            period: periodLabel,
+            period: fallbackPeriodLabel,
             fallback: true
         });
     }
