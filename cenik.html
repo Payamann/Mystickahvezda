@@ -518,6 +518,7 @@
     
     <script src="js/analytics.js?v=5" defer></script>
     <script src="js/api-config.js?v=5" defer></script>
+    <script src="js/auth-client.js?v=5" defer></script>
     <script src="js/templates.js?v=12" defer></script>
     <script src="js/components.js?v=12" defer></script>
     <script type="module" src="js/main.js?v=12"></script>
@@ -552,6 +553,36 @@
     </script>
 
     <script>
+        const PLAN_LABELS = {
+            pruvodce: 'Otevřít bránu',
+            osviceni: 'Probudit se',
+            'vip-majestrat': 'Vstoupit do VIP'
+        };
+
+        async function startCheckout(planId) {
+            const btn = document.querySelector(`[data-plan="${planId}"]`);
+            if (btn) { btn.textContent = 'Přesměrovávám...'; btn.disabled = true; }
+            try {
+                const baseUrl = (typeof API_CONFIG !== 'undefined' ? API_CONFIG.BASE_URL : null) || '/api';
+                const res = await fetch(`${baseUrl}/payment/create-checkout-session`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ planId })
+                });
+                const data = await res.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    if (btn) { btn.disabled = false; btn.textContent = PLAN_LABELS[planId] || 'Pokračovat'; }
+                    alert('Nepodařilo se spustit platbu. Zkuste to prosím znovu.');
+                }
+            } catch (err) {
+                console.error('Checkout error:', err);
+                if (btn) { btn.disabled = false; btn.textContent = PLAN_LABELS[planId] || 'Pokračovat'; }
+            }
+        }
+
         // Plan checkout handler
         document.querySelectorAll('.plan-checkout-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
@@ -559,37 +590,33 @@
                 const planId = btn.dataset.plan;
                 if (!planId) return;
 
-                // If not logged in, save plan and redirect to register
-                if (!window.Auth || !window.Auth.isLoggedIn()) {
+                // Wait for Auth to be available (defer scripts)
+                const auth = window.Auth;
+                if (!auth || !auth.isLoggedIn()) {
                     sessionStorage.setItem('pending_plan', planId);
                     window.location.href = '/registrace.html';
                     return;
                 }
 
-                // Logged in: create checkout session
-                btn.textContent = 'Přesměrovávám...';
-                btn.disabled = true;
-
-                try {
-                    const res = await fetch(`${window.API_CONFIG?.BASE_URL || '/api'}/payment/create-checkout-session`, {
-                        method: 'POST',
-                        credentials: 'include',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ planId })
-                    });
-                    const data = await res.json();
-                    if (data.url) {
-                        window.location.href = data.url;
-                    } else {
-                        alert('Nepodařilo se spustit platbu. Zkuste to prosím znovu.');
-                        btn.disabled = false;
-                        btn.textContent = planId === 'pruvodce' ? 'Otevřít bránu' : planId === 'osviceni' ? 'Probudit se' : 'Vstoupit do VIP';
-                    }
-                } catch (err) {
-                    console.error('Checkout error:', err);
-                    btn.disabled = false;
-                }
+                await startCheckout(planId);
             });
+        });
+
+        // After login redirect back: auto-trigger checkout if pending plan
+        document.addEventListener('DOMContentLoaded', () => {
+            const pending = sessionStorage.getItem('pending_plan');
+            if (!pending) return;
+
+            // Poll for Auth (loaded via defer)
+            const wait = setInterval(() => {
+                if (!window.Auth) return;
+                clearInterval(wait);
+                if (window.Auth.isLoggedIn()) {
+                    sessionStorage.removeItem('pending_plan');
+                    startCheckout(pending);
+                }
+            }, 100);
+            setTimeout(() => clearInterval(wait), 5000);
         });
     </script>
 </body>
