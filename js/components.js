@@ -4,6 +4,18 @@
  * ALSO includes standalone hamburger menu handler (no module dependencies).
  */
 
+// Load GA4 on every page (lazy, non-blocking)
+(function () {
+    const scriptTag = document.querySelector('script[src*="js/components.js"]');
+    const basePath = scriptTag ? scriptTag.getAttribute('src').split('js/components.js')[0] : '';
+    if (!window.gtag && !document.querySelector('script[src*="analytics-init.js"]')) {
+        const s = document.createElement('script');
+        s.src = basePath + 'js/analytics-init.js';
+        s.defer = true;
+        document.head.appendChild(s);
+    }
+})();
+
 document.addEventListener('DOMContentLoaded', async () => {
     // Determine the base path based on where this script is loaded from
     // This allows the component loader to work correctly from subdirectories (like /blog/ or /sk/)

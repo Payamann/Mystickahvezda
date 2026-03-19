@@ -8,7 +8,7 @@
 export const GA_CONFIG = {
     // Your Google Analytics 4 Measurement ID
     // Format: G-XXXXXXXXXX
-    MEASUREMENT_ID: 'G-H22CGHF34K', // ✅ Configured for Mystická Hvězda
+    MEASUREMENT_ID: 'G-VZ3J109ZYJ', // ✅ Configured for Mystická Hvězda
 
     // Custom dimensions you want to track
     CUSTOM_DIMENSIONS: {
