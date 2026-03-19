@@ -152,17 +152,18 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
         console.error('[HOROSCOPE] Gemini Error:', error.message || error);
 
         // Fallback: return a static horoscope so users aren't left with empty page
+        const signName = sign || req.body?.sign || 'neznámé znamení';
         const fallbackMessages = {
             'cs': {
-                prediction: `Hvězdy dnes pro znamení ${sign} naznačují čas pro introspekci a klid. Energie dne vás vede k tomu, abyste se zastavili a naslouchali svému vnitřnímu hlasu. Důvěřujte svým instinktům — budou vás vést správným směrem.`,
+                prediction: `Hvězdy dnes pro znamení ${signName} naznačují čas pro introspekci a klid. Energie dne vás vede k tomu, abyste se zastavili a naslouchali svému vnitřnímu hlasu. Důvěřujte svým instinktům — budou vás vést správným směrem.`,
                 affirmation: 'Jsem v souladu s vesmírem a důvěřuji své cestě.',
             },
             'sk': {
-                prediction: `Hviezdy dnes pre znamenie ${sign} naznačujú čas pre introspekciu a pokoj. Energia dňa vás vedie k tomu, aby ste sa zastavili a počúvali svoj vnútorný hlas. Dôverujte svojim inštinktom — budú vás viesť správnym smerom.`,
+                prediction: `Hviezdy dnes pre znamenie ${signName} naznačujú čas pre introspekciu a pokoj. Energia dňa vás vedie k tomu, aby ste sa zastavili a počúvali svoj vnútorný hlas. Dôverujte svojim inštinktom — budú vás viesť správnym smerom.`,
                 affirmation: 'Som v súlade s vesmírom a dôverujem svojej ceste.',
             },
             'pl': {
-                prediction: `Gwiazdy dzisiaj dla znaku ${sign} wskazują czas na introspekcję i spokój. Energia dnia prowadzi Cię do zatrzymania się i wsłuchania w swój wewnętrzny głos. Zaufaj swoim instynktom — poprowadzą Cię we właściwym kierunku.`,
+                prediction: `Gwiazdy dzisiaj dla znaku ${signName} wskazują czas na introspekcję i spokój. Energia dnia prowadzi Cię do zatrzymania się i wsłuchania w swój wewnętrzny głos. Zaufaj swoim instynktom — poprowadzą Cię we właściwym kierunku.`,
                 affirmation: 'Jestem w harmonii ze wszechświatem i ufam swojej drodze.',
             }
         };
