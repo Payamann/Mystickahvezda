@@ -249,7 +249,7 @@
                             <li><i data-lucide="check" class="feature-icon" style="width:14px;"></i> Lunární rituály (96 kombinací)</li>
                             <li><i data-lucide="check" class="feature-icon" style="width:14px;"></i> Partnerská shoda detailní</li>
                         </ul>
-                        <a href="https://buy.stripe.com/14A7sKfqRdNg2BJeTTc7u02" class="btn btn--primary btn-full" data-plan="pruvodce" target="_blank" rel="noopener">Otevřít bránu</a>
+                        <a href="#" class="btn btn--primary btn-full plan-checkout-btn" data-plan="pruvodce">Otevřít bránu</a>
                     </div>
 
                     <!-- EXCLUSIVE -->
@@ -257,6 +257,7 @@
                         <h4 class="card__title">Osvícení</h4>
                         <p class="card__text" style="font-size:0.8rem; opacity:0.5;">Analýza osudu</p>
                         <div class="card__price" data-price-plan="osviceni">
+                            <span style="font-size:0.7rem; color:var(--color-mystic-gold); font-weight:800; text-transform:uppercase; margin-bottom:4px;">✨ 7 dní zdarma</span>
                             <span class="price-amount">499 Kč</span>
                             <span class="price-suffix">/měsíc</span>
                         </div>
@@ -267,7 +268,7 @@
                             <li><i data-lucide="check" class="feature-icon" style="width:14px;"></i> Astrokartografie</li>
                             <li><i data-lucide="check" class="feature-icon" style="width:14px;"></i> Přednostní přístup</li>
                         </ul>
-                        <a href="https://buy.stripe.com/dRm6oG1A18sW9077rrc7u01" class="btn btn--secondary btn-full" data-plan="osviceni" target="_blank" rel="noopener">Probudit se</a>
+                        <a href="#" class="btn btn--secondary btn-full plan-checkout-btn" data-plan="osviceni">Probudit se</a>
                     </div>
 
                     <!-- VIP -->
@@ -285,7 +286,7 @@
                             <li><i data-lucide="check" class="feature-icon" style="width:14px;"></i> Roční mapa osudu</li>
                             <li><i data-lucide="check" class="feature-icon" style="width:14px;"></i> VIP rituální sady</li>
                         </ul>
-                        <a href="https://buy.stripe.com/bJebJ0ceF4cG6RZ5jjc7u00" class="btn btn--primary btn-full" data-plan="vip_majestat" style="background:linear-gradient(to right, #d4af37, #b38b00); border:none; color:#000; font-weight:800;" target="_blank" rel="noopener">Vstoupit do VIP</a>
+                        <a href="#" class="btn btn--primary btn-full plan-checkout-btn" data-plan="vip-majestrat" style="background:linear-gradient(to right, #d4af37, #b38b00); border:none; color:#000; font-weight:800;">Vstoupit do VIP</a>
                     </div>
                 </div>
             </div>
@@ -548,6 +549,48 @@
 
         document.getElementById('toggle-monthly').addEventListener('click', () => setPrices(false));
         document.getElementById('toggle-yearly').addEventListener('click', () => setPrices(true));
+    </script>
+
+    <script>
+        // Plan checkout handler
+        document.querySelectorAll('.plan-checkout-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const planId = btn.dataset.plan;
+                if (!planId) return;
+
+                // If not logged in, save plan and redirect to register
+                if (!window.Auth || !window.Auth.isLoggedIn()) {
+                    sessionStorage.setItem('pending_plan', planId);
+                    window.location.href = '/registrace.html';
+                    return;
+                }
+
+                // Logged in: create checkout session
+                btn.textContent = 'Přesměrovávám...';
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch(`${window.API_CONFIG?.BASE_URL || '/api'}/payment/create-checkout-session`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ planId })
+                    });
+                    const data = await res.json();
+                    if (data.url) {
+                        window.location.href = data.url;
+                    } else {
+                        alert('Nepodařilo se spustit platbu. Zkuste to prosím znovu.');
+                        btn.disabled = false;
+                        btn.textContent = planId === 'pruvodce' ? 'Otevřít bránu' : planId === 'osviceni' ? 'Probudit se' : 'Vstoupit do VIP';
+                    }
+                } catch (err) {
+                    console.error('Checkout error:', err);
+                    btn.disabled = false;
+                }
+            });
+        });
     </script>
 </body>
 </html>

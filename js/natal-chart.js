@@ -473,6 +473,16 @@ async function generateNatalChart(planetsGroup) {
             return;
         }
 
+        // Premium required for AI interpretation
+        if (!window.Auth.isPremium()) {
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+            if (window.Premium?.showTrialPaywall) {
+                window.Premium.showTrialPaywall('natalni_interpretace');
+            }
+            return;
+        }
+
         // Call API via centralized helper
         const data = await window.callAPI('/natal-chart', {
             birthDate,

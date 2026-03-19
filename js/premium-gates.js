@@ -102,8 +102,23 @@ window.Premium = {
         document.body.appendChild(overlay);
 
         // Event listeners
-        overlay.querySelector('.paywall-upgrade').addEventListener('click', () => {
-            window.location.href = '/cenik.html';
+        overlay.querySelector('.paywall-upgrade').addEventListener('click', async () => {
+            const btn = overlay.querySelector('.paywall-upgrade');
+            btn.textContent = 'Přesměrovávám...';
+            btn.disabled = true;
+            if (window.Auth && window.Auth.isLoggedIn()) {
+                try {
+                    const res = await fetch(`${window.API_CONFIG?.BASE_URL || '/api'}/payment/create-checkout-session`, {
+                        method: 'POST', credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ planId: 'pruvodce' })
+                    });
+                    const data = await res.json();
+                    if (data.url) { window.location.href = data.url; return; }
+                } catch (e) { console.error(e); }
+            }
+            sessionStorage.setItem('pending_plan', 'pruvodce');
+            window.location.href = '/registrace.html';
         });
 
         overlay.querySelector('.paywall-close').addEventListener('click', () => {
@@ -149,8 +164,23 @@ window.Premium = {
 
         document.body.appendChild(overlay);
 
-        overlay.querySelector('.paywall-upgrade').addEventListener('click', () => {
-            window.location.href = '/cenik.html';
+        overlay.querySelector('.paywall-upgrade').addEventListener('click', async () => {
+            const btn = overlay.querySelector('.paywall-upgrade');
+            btn.textContent = 'Přesměrovávám...';
+            btn.disabled = true;
+            if (window.Auth && window.Auth.isLoggedIn()) {
+                try {
+                    const res = await fetch(`${window.API_CONFIG?.BASE_URL || '/api'}/payment/create-checkout-session`, {
+                        method: 'POST', credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ planId: 'osviceni' })
+                    });
+                    const data = await res.json();
+                    if (data.url) { window.location.href = data.url; return; }
+                } catch (e) { console.error(e); }
+            }
+            sessionStorage.setItem('pending_plan', 'osviceni');
+            window.location.href = '/registrace.html';
         });
         overlay.querySelector('.paywall-close').addEventListener('click', () => overlay.remove());
         overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
@@ -235,6 +265,63 @@ window.Premium = {
         } catch (error) {
             console.error('Analytics tracking error:', error);
         }
+    },
+
+    showTrialPaywall(featureName) {
+        this.trackPaywallHit(featureName);
+        const featureMessages = {
+            'rituals': 'Lunární rituály tě provedou každou fází měsíce',
+            'partnerska_detail': 'Detailní analýza odhalí hlubší dynamiku vašeho vztahu',
+            'numerologie_vyklad': 'AI výklad odhalí co tvá čísla skutečně znamenají',
+            'natalni_interpretace': 'Plná AI interpretace tvé natální karty'
+        };
+        const msg = featureMessages[featureName] || 'Tato funkce je součástí Hvězdného Průvodce';
+
+        const overlay = document.createElement('div');
+        overlay.className = 'paywall-overlay';
+        overlay.innerHTML = `
+            <div class="paywall-content">
+                <div class="paywall-icon">✨</div>
+                <div style="background:linear-gradient(135deg,#f9d423,#ff4e50);color:#000;padding:6px 16px;border-radius:20px;font-size:0.75rem;font-weight:800;letter-spacing:1px;display:inline-block;margin-bottom:1rem;">7 DNÍ ZDARMA</div>
+                <h3 class="paywall-title">Hvězdný Průvodce</h3>
+                <p class="paywall-message">${this._escapeHTML(msg)}</p>
+                <div class="paywall-benefits">
+                    <div class="benefit-item">✓ Neomezený AI chat bez limitu</div>
+                    <div class="benefit-item">✓ Lunární rituály & výklady</div>
+                    <div class="benefit-item">✓ Natální karta s interpretací</div>
+                    <div class="benefit-item">✓ Numerologie AI výklad</div>
+                </div>
+                <div class="paywall-actions">
+                    <button class="btn btn--primary paywall-upgrade">
+                        🌟 Vyzkoušet 7 dní zdarma
+                    </button>
+                    <button class="btn btn--ghost paywall-close">Teď ne</button>
+                </div>
+                <p class="paywall-footer">Zrušíš kdykoliv • Karta požadována po trialu • 199 Kč/měsíc</p>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        overlay.querySelector('.paywall-upgrade').addEventListener('click', async () => {
+            const btn = overlay.querySelector('.paywall-upgrade');
+            btn.textContent = 'Přesměrovávám...';
+            btn.disabled = true;
+            if (window.Auth && window.Auth.isLoggedIn()) {
+                try {
+                    const res = await fetch(`${window.API_CONFIG?.BASE_URL || '/api'}/payment/create-checkout-session`, {
+                        method: 'POST', credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ planId: 'pruvodce' })
+                    });
+                    const data = await res.json();
+                    if (data.url) { window.location.href = data.url; return; }
+                } catch (e) { console.error(e); }
+            }
+            sessionStorage.setItem('pending_plan', 'pruvodce');
+            window.location.href = '/registrace.html';
+        });
+        overlay.querySelector('.paywall-close').addEventListener('click', () => overlay.remove());
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
     },
 
     /**

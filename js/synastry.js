@@ -158,9 +158,18 @@ async function calculateCompatibility() {
             <div class="lock-icon">🔒</div>
             <h3 style="color: var(--color-mystic-gold); margin-bottom: 0.5rem;">Detailní rozbor</h3>
             <p style="color: var(--color-silver-mist);">Emoce, komunikace a vášeň jsou dostupné pouze pro Hvězdné Průvodce.</p>
-            <a href="cenik.html" class="btn btn--primary btn--sm mt-md">Odemknout vše</a>
+            <button class="btn btn--primary btn--sm mt-md synastry-upgrade-btn">🌟 Vyzkoušet 7 dní zdarma</button>
         `;
         detailCard.appendChild(overlay);
+
+        overlay.querySelector('.synastry-upgrade-btn').addEventListener('click', () => {
+            if (window.Premium?.showTrialPaywall) {
+                window.Premium.showTrialPaywall('partnerska_detail');
+            } else {
+                sessionStorage.setItem('pending_plan', 'pruvodce');
+                window.location.href = '/registrace.html';
+            }
+        });
     }
 
 

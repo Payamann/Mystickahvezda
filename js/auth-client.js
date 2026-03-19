@@ -241,6 +241,13 @@
             localStorage.setItem('auth_user', JSON.stringify(data.user));
             this.updateUI();
             this.closeModal();
+
+            // After login/register success: check for pending plan redirect
+            const pendingPlan = sessionStorage.getItem('pending_plan');
+            if (pendingPlan) {
+                sessionStorage.removeItem('pending_plan');
+                this._startCheckout(pendingPlan);
+            }
         },
 
         logout() {
@@ -640,7 +647,27 @@
                 console.error('getProfile failed', e);
                 return null;
             }
-        }
+        },
+
+        async _startCheckout(planId) {
+            try {
+                const res = await fetch(`${API_URL}/payment/create-checkout-session`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ planId })
+                });
+                const data = await res.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    window.location.href = '/cenik.html';
+                }
+            } catch (e) {
+                console.error('Checkout error:', e);
+                window.location.href = '/cenik.html';
+            }
+        },
     };
 
     // Expose to window

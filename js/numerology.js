@@ -225,13 +225,26 @@ async function displayInterpretation(name, birthDate, birthTime, lifePath, desti
                 <div class="premium-lock-overlay">
                     <div class="lock-icon">🔒</div>
                     <p class="lock-text">Detailní rozbor je Premium funkce</p>
-                    <a href="cenik.html" class="btn btn--gold unlock-btn">💎 Odemknout Premium</a>
+                    <button class="btn btn--gold unlock-btn numerology-upgrade-btn">🌟 Vyzkoušet 7 dní zdarma</button>
                 </div>
             </div>
         `;
 
         // Track paywall hit (if premium-gates.js is loaded)
-        if (window.Premium?.trackPaywallHit) window.Premium.trackPaywallHit('numerology');
+        if (window.Premium?.trackPaywallHit) window.Premium.trackPaywallHit('numerologie_vyklad');
+
+        // Wire up the upgrade button to trial paywall
+        const upgradeBtn = interpretationContainer.querySelector('.numerology-upgrade-btn');
+        if (upgradeBtn) {
+            upgradeBtn.addEventListener('click', () => {
+                if (window.Premium?.showTrialPaywall) {
+                    window.Premium.showTrialPaywall('numerologie_vyklad');
+                } else {
+                    sessionStorage.setItem('pending_plan', 'pruvodce');
+                    window.location.href = '/registrace.html';
+                }
+            });
+        }
         return;
     }
 

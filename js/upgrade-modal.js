@@ -1,86 +1,80 @@
 /**
- * Upgrade Modal - Soft Wall Upsell
- * Shows premium offer when user hits feature limits
- * Instead of hard block: "You've hit daily limit" → "Upgrade for unlimited"
+ * Upgrade Modal - Trial-aware Soft Wall Upsell
+ * Shows premium trial offer when user hits feature limits
  */
 
 export function showUpgradeModal(data) {
     const {
-        title = 'Chcete Unlimited Přístup?',
-        message = 'Jste dosáhli denního limitu. Upgrade na Premium pro neomezené možnosti.',
+        title = 'Odemkni neomezený přístup',
+        message = 'Dosáhl jsi denního limitu. Vyzkoušej Premium 7 dní zdarma.',
         feature = 'Unknown Feature',
         plan = 'pruvodce',
-        price = 179,
+        price = 199,
         priceLabel = 'Kč/měsíc',
-        upgradeUrl = '/cenik?selected=pruvodce',
+        trialDays = 7,
         features = [
-            '✓ Neomezené čtení',
-            '✓ Personalizované analýzy',
-            '✓ Sdílení výsledků'
+            '✓ Neomezený AI Průvodce',
+            '✓ Neomezený Tarot, Runy & Andělské karty',
+            '✓ Lunární rituály',
+            '✓ Natální karta s interpretací'
         ]
     } = data;
 
-    // Remove existing modal if any
     const existingModal = document.getElementById('upgrade-modal-overlay');
     if (existingModal) existingModal.remove();
 
-    // Create modal HTML
+    const trialBadge = trialDays > 0
+        ? `<div class="upgrade-modal-trial-badge">✨ ${trialDays} DNÍ ZDARMA</div>`
+        : '';
+
+    const priceBlock = trialDays > 0
+        ? `<div class="upgrade-modal-price">
+               <div class="price-trial">Prvních ${trialDays} dní zdarma</div>
+               <div class="price-then">pak ${price} ${priceLabel}</div>
+           </div>`
+        : `<div class="upgrade-modal-price">
+               <div class="price-number">${price}</div>
+               <div class="price-unit">${priceLabel}</div>
+           </div>`;
+
+    const ctaText = trialDays > 0 ? `Vyzkoušet ${trialDays} dní zdarma` : 'Upgradovat Teď';
+
     const modalHTML = `
         <div id="upgrade-modal-overlay" class="upgrade-modal-overlay">
             <div class="upgrade-modal-content">
-                <!-- Close Button -->
                 <button class="upgrade-modal-close" id="upgrade-close-btn" aria-label="Zavřít">×</button>
-
-                <!-- Premium Badge -->
-                <div class="upgrade-modal-badge">⭐ PREMIUM</div>
-
-                <!-- Title -->
+                ${trialBadge}
+                <div class="upgrade-modal-badge">⭐ HVĚZDNÝ PRŮVODCE</div>
                 <h2 class="upgrade-modal-title">${title}</h2>
-
-                <!-- Message -->
                 <p class="upgrade-modal-message">${message}</p>
-
-                <!-- Features List -->
                 <div class="upgrade-modal-features">
-                    ${features.map(feature => `<div class="upgrade-feature-item">${feature}</div>`).join('')}
+                    ${features.map(f => `<div class="upgrade-feature-item">${f}</div>`).join('')}
                 </div>
-
-                <!-- Price Display -->
-                <div class="upgrade-modal-price">
-                    <div class="price-number">${price}</div>
-                    <div class="price-unit">${priceLabel}</div>
-                </div>
-
-                <!-- CTA Buttons -->
+                ${priceBlock}
                 <div class="upgrade-modal-buttons">
-                    <a href="${upgradeUrl}" class="btn-upgrade-primary" id="upgrade-cta-btn">
-                        Upgradovat Teď
-                    </a>
+                    <button class="btn-upgrade-primary" id="upgrade-cta-btn">
+                        ${ctaText}
+                    </button>
                     <button class="btn-upgrade-secondary" id="upgrade-later-btn">
-                        Později
+                        Teď ne
                     </button>
                 </div>
-
-                <!-- Trust Indicators -->
                 <div class="upgrade-modal-trust">
-                    <span>💳 Zabezpečená platba</span>
-                    <span>📞 24/7 podpora</span>
-                    <span>↩️ 30 dní záruka</span>
+                    <span>💳 Karta požadována po trialu</span>
+                    <span>↩️ Zrušíš kdykoliv</span>
+                    <span>🔒 Zabezpečená platba</span>
                 </div>
             </div>
         </div>
     `;
 
-    // Insert modal into DOM
     document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-    // Get modal elements
     const modal = document.getElementById('upgrade-modal-overlay');
     const closeBtn = document.getElementById('upgrade-close-btn');
     const laterBtn = document.getElementById('upgrade-later-btn');
     const ctaBtn = document.getElementById('upgrade-cta-btn');
 
-    // Close modal handlers
     const closeModal = () => {
         modal.classList.add('closing');
         setTimeout(() => modal.remove(), 300);
@@ -89,56 +83,51 @@ export function showUpgradeModal(data) {
     closeBtn.addEventListener('click', closeModal);
     laterBtn.addEventListener('click', closeModal);
 
-    // Track upgrade modal view (analytics)
+    ctaBtn.addEventListener('click', async () => {
+        ctaBtn.textContent = 'Přesměrovávám...';
+        ctaBtn.disabled = true;
+
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'upgrade_cta_clicked', { feature, plan });
+        }
+
+        // If user is logged in, go directly to checkout
+        if (window.Auth && window.Auth.isLoggedIn()) {
+            try {
+                const res = await fetch(`${window.API_CONFIG?.BASE_URL || '/api'}/payment/create-checkout-session`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ planId: plan })
+                });
+                const data = await res.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                    return;
+                }
+            } catch (e) {
+                console.error('Checkout error:', e);
+            }
+        }
+
+        // Not logged in: save plan, go to register
+        sessionStorage.setItem('pending_plan', plan);
+        window.location.href = '/registrace.html';
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal && document.body.contains(modal)) closeModal();
+    });
+
     if (typeof gtag !== 'undefined') {
-        gtag('event', 'upgrade_modal_shown', {
-            feature: feature,
-            plan: plan,
-            price: price
-        });
+        gtag('event', 'upgrade_modal_shown', { feature, plan, price });
     }
 
-    // Track CTA click
-    ctaBtn.addEventListener('click', () => {
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'upgrade_cta_clicked', {
-                feature: feature,
-                plan: plan
-            });
-        }
-    });
-
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal && document.body.contains(modal)) {
-            closeModal();
-        }
-    });
-
-    // Trigger animation
-    requestAnimationFrame(() => {
-        modal.classList.add('active');
-    });
+    requestAnimationFrame(() => modal.classList.add('active'));
 
     return modal;
 }
 
-/**
- * Helper: Check if user hit daily limit and show modal
- * Usage in your feature endpoints:
- *
- * if (!req.isPremium && count >= 3) {
- *     return res.status(402).json({
- *         success: false,
- *         upsell: {
- *             title: 'Chcete neomezené čtení?',
- *             feature: 'crystal_ball',
- *             plan: 'pruvodce',
- *             price: 179
- *         }
- *     });
- * }
- */
 export function handleUpgradeResponse(response) {
     if (response && response.upsell) {
         showUpgradeModal(response.upsell);

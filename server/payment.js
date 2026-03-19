@@ -41,7 +41,7 @@ const PLANS = {
         price: 49900, // 499 Kč in haléře
         type: 'exclusive_monthly',
         interval: 'month',
-        trialDays: 0,
+        trialDays: 7,
         description: 'Exkluzivní přístup - Prioritní odpovědi, Exkluzivní obsah, Early access k novinkám'
     },
     'vip-majestrat': {
@@ -182,6 +182,8 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
                 quantity: 1,
             }],
             mode: 'subscription',
+            payment_method_collection: 'always',
+            locale: 'cs',
             success_url: `${APP_URL}/profil.html?payment=success`,
             cancel_url: `${APP_URL}/cenik.html?payment=cancel`,
             client_reference_id: user.id,

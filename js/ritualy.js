@@ -77,14 +77,15 @@
         const enterBtn = document.getElementById('btn-enter-ritual');
         if (enterBtn) {
             enterBtn.addEventListener('click', (e) => {
+                // Gate: requires Průvodce (premium) plan
                 if (!window.Auth || !window.Auth.isLoggedIn()) {
                     e.preventDefault();
-                    window.Auth?.openModal('login');
+                    window.Premium?.showLoginGate(document.querySelector('.ritual-result') || document.body, '🌙 Přihlaste se zdarma a odemkněte lunární rituály');
                     return;
                 }
                 if (!window.Auth.isPremium()) {
                     e.preventDefault();
-                    window.Premium?.showPaywall('rituals');
+                    window.Premium?.showTrialPaywall('rituals');
                     return;
                 }
                 // Premium user — proceed to session normally
