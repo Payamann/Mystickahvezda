@@ -133,7 +133,7 @@ export async function trackPaywallHit(userId, toolName) {
 export const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 300,
-    skip: (req) => req.path.match(/\.(js|css|jpg|jpeg|png|gif|ico|svg|ttf|webp|woff|woff2)$/),
+    skip: (req) => process.env.NODE_ENV === 'test' || req.path.match(/\.(js|css|jpg|jpeg|png|gif|ico|svg|ttf|webp|woff|woff2)$/),
     standardHeaders: true,
     legacyHeaders: false,
     validate: { xForwardedForHeader: false },
@@ -148,7 +148,7 @@ export const globalLimiter = rateLimit({
 export const staticLimiter = rateLimit({
     windowMs: 1 * 60 * 1000,
     max: 500,
-    skip: (req) => req.path.startsWith('/api/'),
+    skip: (req) => process.env.NODE_ENV === 'test' || req.path.startsWith('/api/'),
     standardHeaders: true,
     legacyHeaders: false,
     validate: { xForwardedForHeader: false }
@@ -157,7 +157,7 @@ export const staticLimiter = rateLimit({
 export const aiLimiter = rateLimit({
     windowMs: 24 * 60 * 60 * 1000,
     max: (req) => {
-        if (process.env.NODE_ENV === 'development') return 1000;
+        if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') return 10000;
         return req.user?.isPremium ? 100 : 10;
     },
     message: { error: 'Překročen denní limit pro generování výkladů. Upgradujte na premium pro neomezený přístup.' },
