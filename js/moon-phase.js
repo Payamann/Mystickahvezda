@@ -26,7 +26,6 @@ export function getMoonPhase(date = new Date()) {
     if (phase < 0.78) return { name: 'Poslední čtvrť', slug: 'last-quarter', icon: '🌗', illumination: illuminationPct };
     if (phase < 0.97) return { name: 'Ubývající srpek', slug: 'waning-crescent', icon: '🌘', illumination: illuminationPct };
     return { name: 'Novoluní', slug: 'new-moon', icon: '🌑', illumination: illuminationPct };
-    return { name: 'Novoluní', slug: 'new-moon', icon: '🌑' };
 }
 
 export function getRitualDescription(phaseSlug) {
@@ -41,4 +40,19 @@ export function getRitualDescription(phaseSlug) {
         'waning-crescent': 'Čas odpočinku, obnovy a tiché přípravy na nový cyklus.',
     };
     return rituals[phaseSlug] || 'Univerzální rituál pro harmonii s hvězdami.';
+}
+
+// Auto-update moon phase card on page load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMoonPhaseCard);
+} else {
+    initMoonPhaseCard();
+}
+
+function initMoonPhaseCard() {
+    const card = document.getElementById('moon-phase-card');
+    if (card) {
+        const phase = getMoonPhase();
+        card.textContent = `${phase.icon} ${phase.name}`;
+    }
 }
