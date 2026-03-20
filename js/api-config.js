@@ -5,11 +5,7 @@
 
 const API_CONFIG = {
     // Use environment-appropriate URL
-    BASE_URL: (
-        window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1' ||
-        window.location.protocol === 'file:' // Handle Opening index.html directly
-    ) ? 'http://localhost:3001/api' : '/api',
+    BASE_URL: '/api',
 
     // Stripe publishable key — loaded from server at runtime (see initConfig)
     STRIPE_PUBLISHABLE_KEY: null,
