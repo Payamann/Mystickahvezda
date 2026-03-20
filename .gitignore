@@ -12,6 +12,8 @@ server/node_modules/
 # Build & Cache
 dist/
 build/
+!js/dist/
+!js/dist/**
 coverage/
 .cache/
 

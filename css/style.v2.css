@@ -3475,8 +3475,6 @@ body.page-mentor .header {
 
   .hero__visual {
 
-    order: -1;
-
     margin-bottom: var(--space-lg);
 
   }
@@ -4960,8 +4958,6 @@ body.page-mentor .header {
 
 
   .hero__visual {
-
-    order: -1;
 
     margin-bottom: var(--space-sm);
 

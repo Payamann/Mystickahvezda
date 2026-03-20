@@ -335,3 +335,17 @@ window.calculateChineseSynastry = function () {
         res.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 50);
 };
+
+// Event delegation for +/- year input buttons
+document.addEventListener('click', (e) => {
+    const action = e.target.getAttribute('data-action');
+    if (action === 'stepDown' || action === 'stepUp') {
+        const input = e.target.parentNode.querySelector('input');
+        if (action === 'stepDown') {
+            input.stepDown();
+        } else {
+            input.stepUp();
+        }
+        input.dispatchEvent(new Event('change'));
+    }
+});

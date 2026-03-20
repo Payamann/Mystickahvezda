@@ -278,57 +278,9 @@
 
     </div>
 
-    <script>
-        // Event delegation for banner close button
-        document.addEventListener('click', (e) => {
-            const action = e.target.getAttribute('data-action');
-            if (action === 'closeBanner') {
-                document.getElementById('freemium-banner').style.display = 'none';
-            }
-        });
-    </script>
+    <script src="/js/close-banner.js" defer></script>
 
-    <script>
-
-    (function() {
-
-        const today = new Date().toDateString();
-
-        const storageKey = 'mh_daily_mentor_' + today;
-
-        const DAILY_LIMIT = 3;
-
-        const used = parseInt(localStorage.getItem(storageKey) || '0');
-
-        const remaining = Math.max(0, DAILY_LIMIT - used);
-
-        
-
-        const banner = document.getElementById('freemium-banner');
-
-        const countEl = document.getElementById('freemium-count');
-
-        
-
-        // Zobrazit jen nepřihlášeným nebo free uživatelům
-
-        document.addEventListener('DOMContentLoaded', () => {
-
-            const auth = window.Auth;
-
-            if (!auth || !auth.isPremium()) {
-
-                if (countEl) countEl.textContent = remaining + ' / ' + DAILY_LIMIT;
-
-                if (banner) banner.style.display = 'block';
-
-            }
-
-        });
-
-    })();
-
-    </script>
+    <script src="js/freemium-mentor.js" defer></script>
 
 
 

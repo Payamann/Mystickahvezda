@@ -320,41 +320,7 @@
 
     </div>
 
-    <script>
-
-    (function() {
-
-        const blogIndex = [{"title": "Životní číslo: Starověký klíč k vaší karmě a skrytému potenciálu", "slug": "zivotni-cislo-odhaleni-kodu-vasi-duse", "short_description": "Vaše datum narození není matematická náhoda. Objevte, jak starořecká numerologie dešifruje mapu vaší duše a jaký osudový úkol vám byl svěřen.", "category": "Numerologie", "published_at": "2026-02-27T20:06:34.985Z", "featured_image": "img/blog-numerology.webp", "readTime": 4}, {"title": "Architektura Osudu: Skryté tajemství 12 Astrologických domů", "slug": "tajemstvi-12-astrologickych-domu", "short_description": "Myslíte si, že znát své znamení stačí? Pokud neznáte své Astrologické domy, čtete z mapy svého života jen obal s názvem knihy. Pojďme do hloubky.", "category": "Astrologie", "published_at": "2026-02-24T20:06:34.988Z", "featured_image": "img/blog-astrology.webp", "readTime": 3}, {"title": "Futhark: Syrová krása Run a proč severská magie není hrou pro slabé", "slug": "runy-severska-magie-v-modernim-svete", "short_description": "Zatímco Tarot odpovídá v jemných psychologických nuancích, Runy do vás vrhnou syrovou, ostrulou severskou pravdu. Jak bezpečně pracovat s tímto starodávným systémem?", "category": "Věštění", "published_at": "2026-02-21T20:06:34.988Z", "featured_image": "img/blog-divination.webp", "readTime": 3}, {"title": "Andělská čísla a Synchronicita: Co znamená opakováné 11:11 a 22:22?", "slug": "andelska-cisla-1111", "short_description": "Podíváte se na telefon – je přesně 11:11. Účet za kávu je 222 Kč. Před vámi jede auto s poznávací značkou 333. Ztrácíte rozum, nebo s vámi promlouvá Vesmír?", "category": "Spiritualita", "published_at": "2026-02-17T20:06:34.988Z", "featured_image": "img/blog-spirituality.webp", "readTime": 3}, {"title": "Iluze jménem \"Spřízněná duše\": Proč nás tytéž vztahy chronicky stahují ke dnu?", "slug": "iluze-spriznene-duse-karmicke-vztahy", "short_description": "Motýlci v břiše, pocit, že se znáte staletí, a pak náhlý a zničující pád. Proč astrolgická praxe nabádá k maximální opatrnosti před karmickými svazky?", "category": "Vztahy", "published_at": "2026-02-14T20:06:34.987Z", "featured_image": "img/blog-relationships.webp", "readTime": 3}, {"title": "Vypadané zuby a sen o pádu: Co se vám snaží říct vaše stínové nevědomí?", "slug": "psychologie-snu-stici-stromy", "short_description": "Myslíte si, že ten mrazivý sen, v němž nemůžete utéct, je jen hloupost? Sny jsou královskou cestou do hlubin toho nejtemnějšího uvnitř nás. Pojďme je rozluštit.", "category": "Snář", "published_at": "2026-02-11T20:06:34.988Z", "featured_image": "img/blog-dreams.webp", "readTime": 3}, {"title": "7 Čaker: Zevrubná anatomie neviditelného energetického světla", "slug": "zaklady-sedmi-caker-anatomie", "short_description": "Myslíte si, že tělo končí vaší kožní bariérou? Existuje prastará mapa sedmi silových generátorů, u níž by zablokování i jediné pumpy ohrozilo všechny psychofyzikální vrstvy.", "category": "Spiritualita", "published_at": "2026-02-04T20:06:34.988Z", "featured_image": "img/blog-spirituality.webp", "readTime": 4}, {"title": "Za oponou prostoru a času: Skutečné umění \"Scryingu\" z Křišťálové koule", "slug": "tajemstvi-kristalove-koule-scrying", "short_description": "Pokud považujete křišťálovou kouli jen za rekvizitu pro hollywoodské filmy o čarodějnicích, připravujete se o jednu z nejsilnějších technik starověkého zření (scrying).", "category": "Věštění", "published_at": "2026-01-30T20:06:34.987Z", "featured_image": "img/blog-divination.webp", "readTime": 3}, {"title": "Věda a Esoterika Biorytmů: Proč neštěstí nechodí náhodou, ale v sinusoidách", "slug": "skryty-kod-biorytmu-energeticke-cykly", "short_description": "Některé dny sršíte vtipem a všechno se daří. O týden později máte pocit, že se proti vám spikl svět. Co když ale tyto výkyvy nejsou náhodné, ale přísně matematické?", "category": "Spiritualita", "published_at": "2026-01-15T20:06:34.988Z", "featured_image": "img/blog-spirituality.webp", "readTime": 4}, {"title": "Hrůzostrašná karta Věž XVI: Nekompromisní hlubinná transformace plamenem", "slug": "lekce-padajici-veze-tarot", "short_description": "Pokud existuje karta, u níž zkušeným kartářkám hrkne v hrudi, nebývá to s populární legendou opředená Smrt, nýbrž hrůzostrašná a ničivá karta Věž.", "category": "Tarot", "published_at": "2025-12-31T20:06:34.988Z", "featured_image": "img/blog-tarot.webp", "readTime": 4}];
-
-        const currentSlug = window.location.pathname.split('/').pop().replace('.html','');
-
-        const related = blogIndex.filter(p => p.slug !== currentSlug).sort(() => Math.random() - 0.5).slice(0, 3);
-
-        const grid = document.getElementById('related-posts-grid');
-
-        if (!grid) return;
-
-        related.forEach(post => {
-
-            const img = post.featured_image ? post.featured_image.replace('../', '') : 'img/blog-astrology.webp';
-
-            grid.innerHTML += `<a href="../blog/${post.slug}.html" style="display:block;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;text-decoration:none;transition:transform 0.2s,border-color 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.borderColor='rgba(212,175,55,0.3)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(255,255,255,0.08)'">
-
-                <img src="../${img}" alt="${post.title}" style="width:100%;height:140px;object-fit:cover;" loading="lazy" onerror="this.src='../img/blog-astrology.webp'">
-
-                <div style="padding:1rem;">
-
-                    <p style="color:white;font-size:0.88rem;line-height:1.4;margin:0;font-weight:500;">${post.title}</p>
-
-                </div>
-
-            </a>`;
-
-        });
-
-    })();
-
-    </script>
+    <script src="/js/blog-related.js" defer></script>
 
 
 

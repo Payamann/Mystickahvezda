@@ -93,23 +93,6 @@
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VZ3J109ZYJ"></script>
 
-    <script>
-
-      window.dataLayer = window.dataLayer || [];
-
-      function gtag(){dataLayer.push(arguments);}
-
-      gtag('js', new Date());
-
-      gtag('config', 'G-VZ3J109ZYJ', {
-
-        'page_path': window.location.pathname,
-
-        'anonymize_ip': true
-
-      });
-
-    </script>
 
   <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
@@ -631,23 +614,7 @@
 
     <!-- Service Worker Registration -->
 
-    <script>
-
-        if ('serviceWorker' in navigator) {
-
-            window.addEventListener('load', () => {
-
-                navigator.serviceWorker.register('/service-worker.js')
-
-                    .then(reg => console.log('? Service Worker registered'))
-
-                    .catch(err => console.log('SW registration failed:', err));
-
-            });
-
-        }
-
-    </script>
+    <script src="/js/register-sw.js" defer></script>
 
 
 
@@ -670,9 +637,7 @@
 
 
     <!-- Initialize Lucide -->
-    <script>
-      lucide.createIcons();
-    </script>
+    <script src="js/lucide-init.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
 </body>
 

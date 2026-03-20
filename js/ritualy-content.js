@@ -5,67 +5,103 @@
 (function () {
     'use strict';
 
-    /* ─── ZNAMEN Í ────────────────────────────────────────────────── */
+    /* ─── ZNAMENÍ ─────────────────────────────────────────────────── */
     const SIGNS = {
         beran:    { name: 'Beran',    emoji: '♈', element: 'Oheň',   barva: '#e74c3c',
                     focus: 'svou odvahu a přirozenou akčnost',
                     vizObraz: 'jasný plamen ve vašem srdci — čistý, pevný a nekontrolovatelný',
-                    mantraSlovo: 'odvaze', ruler: 'Mars' },
+                    mantraSlovo: 'odvaze', ruler: 'Mars',
+                    uzemeniVeta: 'Cítíte Martovu energii — připravenou k akci, ne k čekání.',
+                    uzavreniVeta: 'Mars stojí za vámi. Jdete vpřed.',
+                    journalQ: 'Kde jsem dnes jednal/a okamžitě a správně — bez přílišného přemýšlení?' },
 
         byk:      { name: 'Byk',      emoji: '♉', element: 'Země',   barva: '#27ae60',
                     focus: 'svou stabilitu a propojení s přírodou',
                     vizObraz: 'hluboké kořeny stromu, které drží pevně v zemi bez ohledu na vítr',
-                    mantraSlovo: 'stabilitě', ruler: 'Venuše' },
+                    mantraSlovo: 'stabilitě', ruler: 'Venuše',
+                    uzemeniVeta: 'Cítíte pevnou zemi pod nohama — váš přirozený zdroj síly.',
+                    uzavreniVeta: 'Venuše vás provází každým klidným krokem kupředu.',
+                    journalQ: 'Co mi dnes přineslo skutečný pocit bezpečí a vnitřního klidu?' },
 
         blizenci: { name: 'Blíženci', emoji: '♊', element: 'Vzduch', barva: '#f39c12',
                     focus: 'svou zvídavost a schopnost spojovat protiklady',
                     vizObraz: 'čistý horský vzduch, který pročišťuje každou myšlenku',
-                    mantraSlovo: 'jasnosti', ruler: 'Merkur' },
+                    mantraSlovo: 'jasnosti', ruler: 'Merkur',
+                    uzemeniVeta: 'Váš Merkurovský um se čistí jako vzduch po dešti — pohyblivý a jasný.',
+                    uzavreniVeta: 'Merkur nese vaše záměry přesně tam, kam mají jít.',
+                    journalQ: 'Jakou neočekávanou spojitost jsem dnes zahlédl/a — a co by mohla znamenat?' },
 
         rak:      { name: 'Rak',      emoji: '♋', element: 'Voda',   barva: '#2980b9',
                     focus: 'svou intuici a schopnost pečovat o druhé i o sebe',
                     vizObraz: 'klidná hladina jezera, která zrcadlí hvězdy dokonale',
-                    mantraSlovo: 'intuici', ruler: 'Měsíc' },
+                    mantraSlovo: 'intuici', ruler: 'Měsíc',
+                    uzemeniVeta: 'Jste v domovině Měsíce — žádné jiné znamení necítí lunární energii tak přirozeně jako vy.',
+                    uzavreniVeta: 'Váš Měsíc vám otevřel přesně to, co jste potřeboval/a vidět.',
+                    journalQ: 'Co mi dnes řekla moje intuice jako první — a jak jsem na ni reagoval/a?' },
 
         lev:      { name: 'Lev',      emoji: '♌', element: 'Oheň',   barva: '#e67e22',
                     focus: 'svou tvořivost a přirozené sebevyjádření',
                     vizObraz: 'zlaté sluneční světlo vycházející přímo z vašeho srdce',
-                    mantraSlovo: 'tvořivosti', ruler: 'Slunce' },
+                    mantraSlovo: 'tvořivosti', ruler: 'Slunce',
+                    uzemeniVeta: 'Sluneční záře ve vašem srdci svítí i v noci — to je váš přirozený stav.',
+                    uzavreniVeta: 'Sluneční energie zůstává ve vás — ještě dlouho po zhasnuté svíčce.',
+                    journalQ: 'Kde jsem dnes přirozeně zazářil/a — a jak to ovlivnilo lidi kolem mě?' },
 
         panna:    { name: 'Panna',    emoji: '♍', element: 'Země',   barva: '#8e44ad',
                     focus: 'svou preciznost a schopnost vidět krásu v detailech',
                     vizObraz: 'čistá průzračná voda tekoucí přes hladké kameny',
-                    mantraSlovo: 'péči', ruler: 'Merkur' },
+                    mantraSlovo: 'péči', ruler: 'Merkur',
+                    uzemeniVeta: 'Vaše přirozená preciznost je dar — nechte ji pracovat tiše a přesně pro vás.',
+                    uzavreniVeta: 'Každý detail, jemuž věnujete péči, roste a přináší ovoce.',
+                    journalQ: 'Jaký detail jsem dnes zachytil/a, který ostatní přehlédli — a co to odhalilo?' },
 
         vahy:     { name: 'Váhy',     emoji: '♎', element: 'Vzduch', barva: '#16a085',
                     focus: 'svou touhu po harmonii ve vztazích i v sobě',
                     vizObraz: 'dokonale vyvážené zlaté váhy klidně spočívající ve středu',
-                    mantraSlovo: 'harmonii', ruler: 'Venuše' },
+                    mantraSlovo: 'harmonii', ruler: 'Venuše',
+                    uzemeniVeta: 'Vaše vnitřní váhy se tiše vyrovnávají — Venuše vás v tom podporuje.',
+                    uzavreniVeta: 'Harmonie, po které toužíte, vždy začíná uvnitř vás samotných.',
+                    journalQ: 'Kde jsem dnes vnáš/a rovnováhu do vztahů nebo situací — vědomě nebo instinktivně?' },
 
         stir:     { name: 'Štír',     emoji: '♏', element: 'Voda',   barva: '#c0392b',
                     focus: 'svou hloubku a schopnost procházet transformací',
                     vizObraz: 'fénix stoupající z temné vody — proměněný, silnější, svobodný',
-                    mantraSlovo: 'transformaci', ruler: 'Pluto' },
+                    mantraSlovo: 'transformaci', ruler: 'Pluto',
+                    uzemeniVeta: 'Temnota vás nestraší — vy z ní přirozeně čerpáte svou největší sílu.',
+                    uzavreniVeta: 'Pluto stvrdil vaši proměnu. Jste silnější, než jste byli při začátku tohoto rituálu.',
+                    journalQ: 'Čeho jsem se dnes ochoten/ochotna pustit, co jsem dříve považoval/a za nedílnou součást sebe?' },
 
         strelec:  { name: 'Střelec',  emoji: '♐', element: 'Oheň',   barva: '#d35400',
                     focus: 'svou touhu po expanzi, pravdě a svobodě',
                     vizObraz: 'šíp letící přesně a s jistotou k vzdálenému cíli',
-                    mantraSlovo: 'svobodě', ruler: 'Jupiter' },
+                    mantraSlovo: 'svobodě', ruler: 'Jupiter',
+                    uzemeniVeta: 'Jupiter rozšiřuje váš obzor — cítíte tu prostorovost a svobodu?',
+                    uzavreniVeta: 'Váš šíp letí. Svoboda je vnitřní stav — a vy ji nosíte stále v sobě.',
+                    journalQ: 'Kam přesně míří můj záměr — a je to stále pravda a svoboda, po níž skutečně toužím?' },
 
         kozoroh:  { name: 'Kozoroh',  emoji: '♑', element: 'Země',   barva: '#7f8c8d',
                     focus: 'svou disciplínu a vizi dlouhodobého záměru',
                     vizObraz: 'hora, která stojí pevně tisíce let — neochvějná a majestátní',
-                    mantraSlovo: 'vytrvalosti', ruler: 'Saturn' },
+                    mantraSlovo: 'vytrvalosti', ruler: 'Saturn',
+                    uzemeniVeta: 'Saturn vám dává dar trpělivosti — nejcennější ze všech zdrojů.',
+                    uzavreniVeta: 'Kámen po kameni, krok po kroku — tak se staví hory i celé životy.',
+                    journalQ: 'Jaký dlouhodobý záměr jsem dnes posunul/a o jeden konkrétní, měřitelný krok vpřed?' },
 
         vodnar:   { name: 'Vodnář',   emoji: '♒', element: 'Vzduch', barva: '#2471a3',
                     focus: 'svou originalitu a vizi lepšího světa',
                     vizObraz: 'hvězdy propojené světelnými vlákny do jednoho velkého vzoru',
-                    mantraSlovo: 'vizi', ruler: 'Uran' },
+                    mantraSlovo: 'vizi', ruler: 'Uran',
+                    uzemeniVeta: 'Vaše vize předbíhá dobu — Uran vás posílá tam, kde ostatní ještě nejsou.',
+                    uzavreniVeta: 'Uran přináší revoluci. Vy ji vedete — klidně, vědomě, s přehledem.',
+                    journalQ: 'Jakou neobvyklou myšlenku jsem dnes zachytil/a — a co by se stalo, kdybych ji naplno sledoval/a?' },
 
         ryby:     { name: 'Ryby',     emoji: '♓', element: 'Voda',   barva: '#1a5276',
                     focus: 'svůj soucit a intuici přesahující rozum',
                     vizObraz: 'tiché hluboké moře, jehož dno skrývá starodávnou moudrost',
-                    mantraSlovo: 'soucitu', ruler: 'Neptun' },
+                    mantraSlovo: 'soucitu', ruler: 'Neptun',
+                    uzemeniVeta: 'Neptunova hlubina ve vás je bezpečná — nechte ji prozářit vaše tušení.',
+                    uzavreniVeta: 'Vaše intuice je most mezi světy. Důvěřujte jí — vede vás přesněji než jakákoliv logika.',
+                    journalQ: 'Jakému snu, pocitu nebo tušení jsem dnes věnoval/a pozornost — a co mi tichým hlasem říkal?' },
     };
 
     /* ─── FÁZE ────────────────────────────────────────────────────── */
@@ -79,7 +115,7 @@
             kroky: [
                 {
                     title: 'Uzemění',
-                    text: (s) => `Rozsvěťte svíčku a sedněte si pohodlně. Třikrát zhluboka dýchejte — nádech nosem na 4 doby, zadržte na 4, výdech ústy na 6. S každým výdechem pusťte napětí tohoto dne. Nechte ticho novolunění, aby vás zahalilo jako přikrývka.`,
+                    text: (s) => `Rozsvěťte svíčku a sedněte si pohodlně. Třikrát zhluboka dýchejte — nádech nosem na 4 doby, zadržte na 4, výdech ústy na 6. S každým výdechem pusťte napětí tohoto dne. Nechte ticho novolunění, aby vás zahalilo jako přikrývka. ${s.uzemeniVeta}`,
                     subtext: 'Příprava posvátného prostoru',
                 },
                 {
@@ -99,12 +135,12 @@
                 },
                 {
                     title: 'Mantra',
-                    text: (s) => `Třikrát opakujte nahlas nebo v duchu:\n\n„V ${s.mantraSlovo} a tichu novoluní zasívám svou budoucnost.\nNechť přijde v pravý čas."`,
+                    text: (s) => `Třikrát opakujte nahlas nebo v duchu:\n\n„V ${s.mantraSlovo} a tichu novoluní zasívám svou budoucnost.\nNechť přijde v pravý čas — pod vedením ${s.ruler}."`,
                     subtext: 'Opakujte třikrát — s plným přesvědčením',
                 },
                 {
                     title: 'Uzavření',
-                    text: (s) => `Poděkujte Měsíci za jeho skrytou sílu temnoty. Poděkujte sobě za to, že jste udělali čas pro tuto praxi. Zhasněte svíčku vědomě, jako akt uzavření posvátného prostoru. Váš záměr byl přijat.`,
+                    text: (s) => `Poděkujte Měsíci za jeho skrytou sílu temnoty. Poděkujte sobě za to, že jste udělali čas pro tuto praxi. ${s.uzavreniVeta} Zhasněte svíčku vědomě, jako akt uzavření posvátného prostoru. Váš záměr byl přijat.`,
                     subtext: 'Rituál je dokončen',
                 },
             ],
@@ -112,6 +148,7 @@
                 `Co se ve mně pohnulo, když jsem formuloval/a záměry? Co mě překvapilo?`,
                 `Jaké části záměru mi jde nejhůř uvěřit — a co to říká o mé víře v sebe?`,
                 `Co musím pustit, aby nový začátek mohl přijít?`,
+                s.journalQ,
             ],
         },
 
@@ -124,7 +161,7 @@
             kroky: [
                 {
                     title: 'Uzemění',
-                    text: (s) => `Rozsvěťte svíčku. Třikrát zhluboka dýchejte. S každým výdechem propusťte jeden strach nebo pochybnost. Nechte dorůstající energii Měsíce proudit vašim tělem jako první ranní světlo.`,
+                    text: (s) => `Rozsvěťte svíčku. Třikrát zhluboka dýchejte. S každým výdechem propusťte jeden strach nebo pochybnost. Nechte dorůstající energii Měsíce proudit vašim tělem jako první ranní světlo. ${s.uzemeniVeta}`,
                     subtext: 'Příprava na akci',
                 },
                 {
@@ -144,12 +181,12 @@
                 },
                 {
                     title: 'Mantra',
-                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} a odvaze konám první krok.\nMěsíc roste se mnou."`,
+                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} konám první krok.\nMěsíc roste se mnou — a ${s.ruler} mi dává sílu."`,
                     subtext: 'Opakujte třikrát',
                 },
                 {
                     title: 'Uzavření',
-                    text: (s) => `Poděkujte si za odvahu začít. Každá velká cesta začíná krokem, který vypadá malý. Zhasněte svíčku vědomě. Vaše odhodlání bylo stvrzeno.`,
+                    text: (s) => `Poděkujte si za odvahu začít. Každá velká cesta začíná krokem, který vypadá malý. ${s.uzavreniVeta} Zhasněte svíčku vědomě. Vaše odhodlání bylo stvrzeno.`,
                     subtext: 'Rituál dokončen',
                 },
             ],
@@ -157,6 +194,7 @@
                 `Co mě v prvním kroku nejvíce brzdí? Je to reálná překážka, nebo jen strach z neznámého?`,
                 `Jak se budu cítit, až ten krok udělám — i kdyby se ukázalo, že byl špatný?`,
                 `Komu mohu říct o svém záměru, aby mě ve správnou chvíli podpořil/a?`,
+                s.journalQ,
             ],
         },
 
@@ -169,7 +207,7 @@
             kroky: [
                 {
                     title: 'Uzemění',
-                    text: (s) => `Rozsvěťte svíčku. Stoupněte si pevně nohama na zem. Třikrát zhluboka dýchejte. Cítěte stabilitu pod sebou. Žádná překážka vás nevykoří — stojíte pevně jako strom.`,
+                    text: (s) => `Rozsvěťte svíčku. Stoupněte si pevně nohama na zem. Třikrát zhluboka dýchejte. Cítěte stabilitu pod sebou. Žádná překážka vás nevykoří — stojíte pevně jako strom. ${s.uzemeniVeta}`,
                     subtext: 'Uzemění ve vůli',
                 },
                 {
@@ -189,12 +227,12 @@
                 },
                 {
                     title: 'Mantra',
-                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} a odhodlání procházím překážkou.\nNic mě nezastavuje."`,
+                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} a odhodlání procházím překážkou.\nNic mě nezastavuje — ${s.ruler} stojí za mnou."`,
                     subtext: 'Opakujte třikrát s přesvědčením',
                 },
                 {
                     title: 'Uzavření',
-                    text: (s) => `Poděkujte si za odvahu pojmenovat to, co vás brzdí. Překážka pojmenovaná je napůl překonaná. Zhasněte svíčku. Jdete dál.`,
+                    text: (s) => `Poděkujte si za odvahu pojmenovat to, co vás brzdí. Překážka pojmenovaná je napůl překonaná. ${s.uzavreniVeta} Zhasněte svíčku. Jdete dál.`,
                     subtext: 'Rituál dokončen',
                 },
             ],
@@ -202,6 +240,7 @@
                 `Co tato překážka říká o mých skutečných hodnotách a o tom, co opravdu chci?`,
                 `Kdo nebo co mi v minulosti pomohlo překonat podobnou situaci?`,
                 `Jak vypadá verze mě, která stojí na druhé straně této výzvy?`,
+                s.journalQ,
             ],
         },
 
@@ -214,7 +253,7 @@
             kroky: [
                 {
                     title: 'Uzemění',
-                    text: (s) => `Rozsvěťte svíčku. Třikrát zhluboka dýchejte — s vědomou vděčností za to, jak daleko jste od novolunění dospěli. Cítěte momentum tohoto cyklu: jsou za vámi tři čtvrtiny cesty. Poslední kousek jde nejlépe.`,
+                    text: (s) => `Rozsvěťte svíčku. Třikrát zhluboka dýchejte — s vědomou vděčností za to, jak daleko jste od novolunění dospěli. Cítěte momentum tohoto cyklu: jsou za vámi tři čtvrtiny cesty. ${s.uzemeniVeta}`,
                     subtext: 'Vděčné uzemění',
                 },
                 {
@@ -234,12 +273,12 @@
                 },
                 {
                     title: 'Mantra',
-                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} a přesnosti dosahuji svého cíle.\nJsem téměř tam."`,
+                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} a přesnosti dosahuji svého cíle.\nJsem téměř tam — ${s.ruler} mi ukazuje poslední krok."`,
                     subtext: 'Opakujte třikrát',
                 },
                 {
                     title: 'Uzavření',
-                    text: (s) => `Poděkujte si za vytrvalost — vydrželi jste celý tento cyklus. Úplněk přichází a vy jste připraveni. Zhasněte svíčku. Poslední krok vás čeká.`,
+                    text: (s) => `Poděkujte si za vytrvalost — vydrželi jste celý tento cyklus. Úplněk přichází a vy jste připraveni. ${s.uzavreniVeta} Zhasněte svíčku. Poslední krok vás čeká.`,
                     subtext: 'Rituál dokončen',
                 },
             ],
@@ -247,6 +286,7 @@
                 `Co mě v tomto cyklu nejvíce překvapilo — v dobrém i v náročném?`,
                 `Jaký jeden detail, pokud ho vyladím, posune celý záměr na jinou úroveň?`,
                 `Jak se budu cítit při Úplňku, až to bude hotové?`,
+                s.journalQ,
             ],
         },
 
@@ -259,7 +299,7 @@
             kroky: [
                 {
                     title: 'Uzemění',
-                    text: (s) => `Rozsvěťte svíčku. Třikrát zhluboka dýchejte. Cítěte plnou energii Úplňku — jak proniká do každé buňky vašeho těla. Jste na vrcholu lunárního cyklu. Vše, co bylo zaseto, je nyní viditelné.`,
+                    text: (s) => `Rozsvěťte svíčku. Třikrát zhluboka dýchejte. Cítěte plnou energii Úplňku — jak proniká do každé buňky vašeho těla. Jste na vrcholu lunárního cyklu. Vše, co bylo zaseto, je nyní viditelné. ${s.uzemeniVeta}`,
                     subtext: 'Uzemění v plné energii',
                 },
                 {
@@ -279,12 +319,12 @@
                 },
                 {
                     title: 'Mantra',
-                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} a vděčnosti propouštím staré.\nJsem volný/á a připravený/á pro nový cyklus."`,
+                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} a vděčnosti propouštím staré.\nJsem volný/á a připravený/á — ${s.ruler} otevírá nový cyklus."`,
                     subtext: 'Opakujte třikrát — s lehkostí a vděčností',
                 },
                 {
                     title: 'Uzavření',
-                    text: (s) => `Vezměte sklenku vody a podržte ji chvíli v dlaních. Představte si, jak do ní proudí světlo Úplňku. Vypijte ji jako symbol přijetí nové energie. Poděkujte Měsíci. Zhasněte svíčku.`,
+                    text: (s) => `Vezměte sklenku vody a podržte ji chvíli v dlaních. Představte si, jak do ní proudí světlo Úplňku. Vypijte ji jako symbol přijetí nové energie. ${s.uzavreniVeta} Poděkujte Měsíci. Zhasněte svíčku.`,
                     subtext: 'Rituál dokončen — cyklus se uzavírá',
                 },
             ],
@@ -292,6 +332,7 @@
                 `Co konkrétního se v tomto lunárním cyklu naplnilo nebo projevilo — i nečekaně?`,
                 `Co propouštím a jak se cítím po tomto rozhodnutí? Co to uvolnění přinese?`,
                 `Jaký je první záměr pro nový cyklus, který brzy začne?`,
+                s.journalQ,
             ],
         },
 
@@ -304,7 +345,7 @@
             kroky: [
                 {
                     title: 'Uzemění',
-                    text: (s) => `Rozsvěťte svíčku. Třikrát zhluboka dýchejte s vědomím, že ubývající světlo Měsíce nese vaši moudrost domů. Dovolte si zpomalit — žádný spěch, žádné nároky. Jen přítomnost.`,
+                    text: (s) => `Rozsvěťte svíčku. Třikrát zhluboka dýchejte s vědomím, že ubývající světlo Měsíce nese vaši moudrost domů. Dovolte si zpomalit — žádný spěch, žádné nároky. Jen přítomnost. ${s.uzemeniVeta}`,
                     subtext: 'Uzemění v reflexi a klidu',
                 },
                 {
@@ -324,12 +365,12 @@
                 },
                 {
                     title: 'Mantra',
-                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} a vděčnosti sdílím světlo, které jsem přijal/a.\nMá moudrost roste předáváním."`,
+                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} a vděčnosti sdílím světlo, které jsem přijal/a.\nMá moudrost roste předáváním — tak jako ${s.ruler} naplňuje svůj cyklus."`,
                     subtext: 'Opakujte třikrát',
                 },
                 {
                     title: 'Uzavření',
-                    text: (s) => `Poděkujte za vše, co tento cyklus přinesl — dobré i náročné. Obojí bylo vaším učitelem. Zhasněte svíčku. Nesete moudrost dál — to je nejvzácnější věc, co můžete dát.`,
+                    text: (s) => `Poděkujte za vše, co tento cyklus přinesl — dobré i náročné. Obojí bylo vaším učitelem. ${s.uzavreniVeta} Zhasněte svíčku. Nesete moudrost dál — to je nejvzácnější věc, co můžete dát.`,
                     subtext: 'Rituál dokončen',
                 },
             ],
@@ -337,6 +378,7 @@
                 `Jaká moudrost z tohoto cyklu mě nejvíce překvapila nebo zasáhla?`,
                 `Komu mohu předat to, co jsem se naučil/a? Jak to udělám konkrétně?`,
                 `Za co jsem nejhlouběji vděčný/á — i za to, co bylo těžké?`,
+                s.journalQ,
             ],
         },
 
@@ -349,7 +391,7 @@
             kroky: [
                 {
                     title: 'Uzemění',
-                    text: (s) => `Rozsvěťte svíčku. Třikrát zhluboka dýchejte. S každým výdechem si představte, jak vydechujete vše staré, přebytečné a unavující. Cítíte se lehčí s každým dechem. Ubývající Měsíc nese staré pryč.`,
+                    text: (s) => `Rozsvěťte svíčku. Třikrát zhluboka dýchejte. S každým výdechem si představte, jak vydechujete vše staré, přebytečné a unavující. Cítíte se lehčí s každým dechem. Ubývající Měsíc nese staré pryč. ${s.uzemeniVeta}`,
                     subtext: 'Uzemění v očistě',
                 },
                 {
@@ -369,12 +411,12 @@
                 },
                 {
                     title: 'Mantra',
-                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} a jasnosti čistím svůj prostor.\nTo, co odchází, vytváří místo pro nové."`,
+                    text: (s) => `Třikrát opakujte:\n\n„V ${s.mantraSlovo} a jasnosti čistím svůj prostor.\nTo, co odchází, vytváří místo pro nové — a ${s.ruler} mi dává jasnost vidět, co si nést dál."`,
                     subtext: 'Opakujte třikrát',
                 },
                 {
                     title: 'Uzavření',
-                    text: (s) => `Poděkujte si za odvahu pustit to, co bylo třeba. Každý odchod je pozvánka pro příchod. Zhasněte svíčku. Váš prostor — vnitřní i vnější — je čistší.`,
+                    text: (s) => `Poděkujte si za odvahu pustit to, co bylo třeba. Každý odchod je pozvánka pro příchod. ${s.uzavreniVeta} Zhasněte svíčku. Váš prostor — vnitřní i vnější — je čistší.`,
                     subtext: 'Rituál dokončen',
                 },
             ],
@@ -382,6 +424,7 @@
                 `Jak se cítím po tomto vědomém propuštění? Co se pohnulo?`,
                 `Co si s sebou do nového cyklu beru jako poučení — ne jako břemeno?`,
                 `Jaký prostor jsem v sobě dnes otevřel/a pro nové?`,
+                s.journalQ,
             ],
         },
 
@@ -394,7 +437,7 @@
             kroky: [
                 {
                     title: 'Uzemění',
-                    text: (s) => `Rozsvěťte svíčku. Lehněte si nebo pohodlně sedněte. Třikrát zhluboka dýchejte bez jakéhokoli záměru — jen čisté dýchání. Dovolte svému tělu a mysli odpočívat bez nároku na výkon.`,
+                    text: (s) => `Rozsvěťte svíčku. Lehněte si nebo pohodlně sedněte. Třikrát zhluboka dýchejte bez jakéhokoli záměru — jen čisté dýchání. Dovolte svému tělu a mysli odpočívat bez nároku na výkon. ${s.uzemeniVeta}`,
                     subtext: 'Uzemění v hlubokém klidu',
                 },
                 {
@@ -414,12 +457,12 @@
                 },
                 {
                     title: 'Mantra',
-                    text: (s) => `Třikrát opakujte — pomalu, téměř v šepotu:\n\n„V ${s.mantraSlovo} a tichu se obnovuji.\nNový cyklus začíná brzy."`,
+                    text: (s) => `Třikrát opakujte — pomalu, téměř v šepotu:\n\n„V ${s.mantraSlovo} a tichu se obnovuji.\nNový cyklus začíná brzy — ${s.ruler} připravuje nový začátek."`,
                     subtext: 'Šeptejte třikrát — jemně',
                 },
                 {
                     title: 'Uzavření',
-                    text: (s) => `Poděkujte si za to, že jste si dovolili zastavit. Odpočinek není slabost — je to příprava pro vše, co přijde. Zhasněte svíčku. Novolunění se blíží a vy budete připraveni.`,
+                    text: (s) => `Poděkujte si za to, že jste si dovolili zastavit. Odpočinek není slabost — je to příprava pro vše, co přijde. ${s.uzavreniVeta} Zhasněte svíčku. Novolunění se blíží a vy budete připraveni.`,
                     subtext: 'Rituál dokončen — cyklus se uzavírá',
                 },
             ],
@@ -427,6 +470,7 @@
                 `Jak se cítím, když si dovolím opravdu odpočinout — bez výčitek?`,
                 `Co z tohoto lunárního cyklu si nesu jako dar a poučení do nového?`,
                 `Co by novoluní mohlo přinést, kdyby vše bylo možné?`,
+                s.journalQ,
             ],
         },
     };

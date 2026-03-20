@@ -359,23 +359,6 @@
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VZ3J109ZYJ"></script>
 
-    <script>
-
-      window.dataLayer = window.dataLayer || [];
-
-      function gtag(){dataLayer.push(arguments);}
-
-      gtag('js', new Date());
-
-      gtag('config', 'G-VZ3J109ZYJ', {
-
-        'page_path': window.location.pathname,
-
-        'anonymize_ip': true
-
-      });
-
-    </script>
 
   <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
@@ -417,47 +400,7 @@
 
     </div>
 
-    <script>
-
-    (function() {
-
-        const today = new Date().toDateString();
-
-        const storageKey = 'mh_daily_crystal_' + today;
-
-        const DAILY_LIMIT = 3;
-
-        const used = parseInt(localStorage.getItem(storageKey) || '0');
-
-        const remaining = Math.max(0, DAILY_LIMIT - used);
-
-        
-
-        const banner = document.getElementById('freemium-banner');
-
-        const countEl = document.getElementById('freemium-count');
-
-        
-
-        // Zobrazit jen nepřihlášeným nebo free uživatelům
-
-        document.addEventListener('DOMContentLoaded', () => {
-
-            const auth = window.Auth;
-
-            if (!auth || !auth.isPremium()) {
-
-                if (countEl) countEl.textContent = remaining + ' / ' + DAILY_LIMIT;
-
-                if (banner) banner.style.display = 'block';
-
-            }
-
-        });
-
-    })();
-
-    </script>
+    <script src="js/freemium-koule.js" defer></script>
 
 
 
@@ -649,33 +592,9 @@
 
     <!-- Service Worker Registration -->
 
-    <script>
+    <script src="/js/register-sw.js" defer></script>
 
-        if ('serviceWorker' in navigator) {
-
-            window.addEventListener('load', () => {
-
-                navigator.serviceWorker.register('/service-worker.js')
-
-                    .then(reg => console.log('? Service Worker registered'))
-
-                    .catch(err => console.log('SW registration failed:', err));
-
-            });
-
-        }
-
-    </script>
-
-    <script>
-        // Event delegation for banner close button
-        document.addEventListener('click', (e) => {
-            const action = e.target.getAttribute('data-action');
-            if (action === 'closeBanner') {
-                document.getElementById('freemium-banner').style.display = 'none';
-            }
-        });
-    </script>
+    <script src="/js/close-banner.js" defer></script>
 
     <script src="js/api-config.js?v=5" defer></script>
 

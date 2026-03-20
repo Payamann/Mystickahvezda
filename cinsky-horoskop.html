@@ -666,21 +666,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" defer></script>
     <script src="js/cinsky-horoskop.js?v=6" defer></script>
 
-    <script>
-        // Event delegation for +/- year input buttons
-        document.addEventListener('click', (e) => {
-            const action = e.target.getAttribute('data-action');
-            if (action === 'stepDown' || action === 'stepUp') {
-                const input = e.target.parentNode.querySelector('input');
-                if (action === 'stepDown') {
-                    input.stepDown();
-                } else {
-                    input.stepUp();
-                }
-                input.dispatchEvent(new Event('change'));
-            }
-        });
-    </script>
 
 </body>
 
