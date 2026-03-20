@@ -68,24 +68,40 @@
     }
 
     // Observer — čeká na zobrazení výsledků a přidá share button
-    function observeResults() {
-        const selectors = [
-            '.reading-result', '.ai-result', '.result-section',
-            '.crystal-result', '#tarot-result', '#horoscope-result',
-            '.natal-result', '.numerology-result', '.synastry-result',
-            '.mentor-result', '#ai-reading', '.oracle-response'
-        ];
+    const selectors = [
+        // obecné třídy
+        '.reading-result', '.ai-result', '.result-section',
+        '.crystal-result', '.natal-result', '.numerology-result',
+        '.synastry-result', '.mentor-result', '#ai-reading', '.oracle-response',
+        // konkrétní ID na jednotlivých stránkách
+        '#tarot-result', '#tarot-results',
+        '#result-panel',
+        '#horoscope-result', '#horoscope-detail-section',
+        '#chart-results',
+        '#numerology-results',
+        '#phaseCard',
+        '#astro-results',
+        '#answer-container',
+        '#biorhythm-results',
+        '#aura-result',
+        '#messages-container',
+    ];
 
-        const observer = new MutationObserver(() => {
-            selectors.forEach(sel => {
-                const el = document.querySelector(sel);
-                if (el && el.children.length > 0 && !el.querySelector('.share-result-btn')) {
-                    const pageTitle = document.title.replace(' | Mystická Hvězda', '');
-                    addShareButton(el, `Můj výsledek: ${pageTitle} | Mystická Hvězda`);
-                }
-            });
+    function checkAll() {
+        selectors.forEach(sel => {
+            const el = document.querySelector(sel);
+            if (el && el.children.length > 0 && !el.querySelector('.share-result-btn')) {
+                const pageTitle = document.title.replace(' | Mystická Hvězda', '');
+                addShareButton(el, `Můj výsledek: ${pageTitle} | Mystická Hvězda`);
+            }
         });
+    }
 
+    function observeResults() {
+        // Okamžitá kontrola — pro elementy s obsahem hned při loadu
+        checkAll();
+
+        const observer = new MutationObserver(checkAll);
         observer.observe(document.body, { childList: true, subtree: true });
     }
 
