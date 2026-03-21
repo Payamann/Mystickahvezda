@@ -3,7 +3,7 @@
   function init(){
     var tog=document.querySelector('.nav__toggle');
     var nav=document.querySelector('.nav__list');
-    if(!tog||!nav||tog.dataset.fsInit)return;
+    if(!tog||!nav||tog.dataset.fsInit||tog.dataset.navInitialized==='true')return;
     tog.dataset.fsInit='1';
     tog.addEventListener('click',function(e){
       e.stopPropagation();
