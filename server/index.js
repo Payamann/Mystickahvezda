@@ -44,6 +44,7 @@ import angelPostRoutes from './routes/angel-post.js';
 import briefingRoutes from './routes/briefing.js';
 import horoscopeSubscribeRoutes from './routes/horoscope-subscribe.js';
 import pastLifeRoutes from './routes/past-life.js';
+import medicineWheelRoutes from './routes/medicine-wheel.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -506,6 +507,9 @@ app.use('/api/subscribe/horoscope', horoscopeSubscribeRoutes);
 
 // Past Life — premium feature
 app.use('/api/past-life', aiLimiter, pastLifeRoutes);
+
+// Medicine Wheel — premium feature
+app.use('/api/medicine-wheel', aiLimiter, medicineWheelRoutes);
 
 // Health Check - registered above rate limiter (see top of file)
 // Admin comment: duplicate route registrations removed

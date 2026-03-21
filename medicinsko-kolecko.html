@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Odhalte své místo na Medicínském Kolečku indiánských národů Severní Ameriky. Zjistěte svůj měsíční totem, světovou stranu, živel a duchovní poselství.">
+    <meta name="keywords" content="medicínské kolečko, indiánský horoskop, totemové zvíře, světové strany, duchovní zvíře, severní Amerika, indiánská tradice, měsíční totem">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0a0a1a">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Medicínské Kolečko — Indiánská Moudrost | Mystická Hvězda">
+    <meta property="og:description" content="Odhalte své místo na Medicínském Kolečku. Váš měsíční totem, světová strana a duchovní poselství inspirované moudrostí indiánských národů Severní Ameriky.">
+    <meta property="og:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
+    <meta property="og:url" content="https://mystickahvezda.cz/medicinsko-kolecko.html">
+    <meta property="og:locale" content="cs_CZ">
+    <meta property="og:site_name" content="Mystická Hvězda">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Medicínské Kolečko — Indiánská Moudrost | Mystická Hvězda">
+    <meta name="twitter:description" content="Odhalte své místo na Medicínském Kolečku. Váš měsíční totem a duchovní poselství.">
+    <meta name="twitter:image" content="https://mystickahvezda.cz/img/hero-3d.webp">
+    <title>Medicínské Kolečko — Indiánská Moudrost | Mystická Hvězda</title>
+    <link rel="canonical" href="https://mystickahvezda.cz/medicinsko-kolecko.html">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.v2.min.css?v=11">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Medicínské Kolečko — Indiánská Moudrost",
+      "description": "Odhalte své místo na Medicínském Kolečku indiánských národů Severní Ameriky.",
+      "url": "https://mystickahvezda.cz/medicinsko-kolecko.html",
+      "inLanguage": "cs",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Mystická Hvězda",
+        "url": "https://mystickahvezda.cz"
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Domů", "item": "https://mystickahvezda.cz" },
+          { "@type": "ListItem", "position": 2, "name": "Medicínské Kolečko", "item": "https://mystickahvezda.cz/medicinsko-kolecko.html" }
+        ]
+      }
+    }
+    </script>
+    <style>
+        /* ============================================================
+           KEYFRAMES
+        ============================================================ */
+        @keyframes outerRingSpin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+        @keyframes segPulse {
+            0%,100% { opacity: 0.75; }
+            50%      { opacity: 1; }
+        }
+        @keyframes glowPulse2 {
+            0%,100% { opacity: 0.65; }
+            50%      { opacity: 1; }
+        }
+        @keyframes totemReveal {
+            from { opacity: 0; transform: scale(0.6) rotate(-10deg); }
+            to   { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        @keyframes cardSlideIn {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes featherFloat {
+            0%,100% { transform: translateY(0) rotate(-5deg); }
+            50%      { transform: translateY(-14px) rotate(5deg); }
+        }
+        @keyframes mwSpin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes breathe {
+            0%,100% { r: 34; }
+            50%      { r: 37; }
+        }
+        @keyframes heroFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes glowPulse {
+            0%,100% { box-shadow: 0 0 20px rgba(139,90,180,0.2), 0 0 40px rgba(139,90,180,0.05); }
+            50%      { box-shadow: 0 0 30px rgba(139,90,180,0.4), 0 0 60px rgba(139,90,180,0.15); }
+        }
+        @keyframes shimmer {
+            from { background-position: -200% center; }
+            to   { background-position: 200% center; }
+        }
+
+        /* ============================================================
+           HERO
+        ============================================================ */
+        .mw-hero {
+            min-height: 55vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 7rem 1rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .mw-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 50% 50%, rgba(10,6,30,0.72) 0%, rgba(10,6,30,0.45) 60%, transparent 100%),
+                radial-gradient(ellipse at 50% -10%, rgba(120,80,180,0.25) 0%, transparent 65%);
+        }
+        /* Faint large watermark wheel */
+        .mw-hero::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(600px, 120vw);
+            height: min(600px, 120vw);
+            border-radius: 50%;
+            border: 1px solid rgba(139,90,180,0.08);
+            box-shadow:
+                0 0 0 40px rgba(139,90,180,0.03),
+                0 0 0 80px rgba(139,90,180,0.02),
+                0 0 0 120px rgba(139,90,180,0.01);
+            pointer-events: none;
+        }
+        .mw-hero__content {
+            position: relative;
+            z-index: 1;
+            animation: heroFadeIn 0.8s ease both;
+        }
+        .mw-hero__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 1rem;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.35);
+            border-radius: 50px;
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-mystic-gold);
+            margin-bottom: 1.5rem;
+        }
+        .mw-hero__title {
+            font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+            font-family: var(--font-heading);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.5);
+        }
+        .mw-hero__title-gradient {
+            background: linear-gradient(135deg, #D4AF37 0%, #8B5AB4 40%, #D4AF37 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 4s linear infinite;
+        }
+        .mw-hero__desc {
+            max-width: 520px;
+            margin: 0 auto 1.5rem;
+            color: rgba(255,255,255,0.85);
+            font-size: 1.05rem;
+            line-height: 1.75;
+            text-shadow: 0 1px 12px rgba(0,0,0,0.9);
+        }
+        /* Floating feather decorations */
+        .mw-feather {
+            position: absolute;
+            font-size: 1.8rem;
+            opacity: 0.25;
+            pointer-events: none;
+            animation: featherFloat 4s ease-in-out infinite;
+        }
+        .mw-feather:nth-child(1) { top: 15%; left: 8%;  animation-delay: 0s;    animation-duration: 4.5s; }
+        .mw-feather:nth-child(2) { top: 25%; right: 7%; animation-delay: 1s;    animation-duration: 3.8s; }
+        .mw-feather:nth-child(3) { top: 60%; left: 5%;  animation-delay: 2s;    animation-duration: 5s; }
+        .mw-feather:nth-child(4) { top: 55%; right: 5%; animation-delay: 0.5s;  animation-duration: 4.2s; }
+        @media (max-width: 600px) {
+            .mw-feather { display: none; }
+        }
+
+        /* Direction color pills below hero */
+        .mw-directions-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        .mw-dir-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.85rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            border: 1px solid;
+        }
+        .mw-dir-pill--east  { background: rgba(212,175,55,0.1);  border-color: rgba(212,175,55,0.3);  color: #D4AF37; }
+        .mw-dir-pill--south { background: rgba(92,158,74,0.1);   border-color: rgba(92,158,74,0.3);   color: #7DBF5A; }
+        .mw-dir-pill--west  { background: rgba(139,90,180,0.1);  border-color: rgba(139,90,180,0.3);  color: #8B5AB4; }
+        .mw-dir-pill--north { background: rgba(168,200,216,0.1); border-color: rgba(168,200,216,0.3); color: #A8C8D8; }
+
+        /* ============================================================
+           FORM
+        ============================================================ */
+        .mw-form-section {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 0 1rem 5rem;
+        }
+        .mw-form {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+        }
+        .mw-form::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.8), transparent);
+        }
+        .mw-form__icon {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .mw-form__title {
+            text-align: center;
+            font-size: 1.35rem;
+            font-family: var(--font-heading);
+            margin-bottom: 0.3rem;
+        }
+        .mw-form__subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.38);
+            font-size: 0.85rem;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 0.5rem;
+        }
+        .form-group input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.9rem 1.1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(212,175,55,0.25);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: rgba(212,175,55,0.6);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+        }
+        .mw-error {
+            display: none;
+            background: rgba(255,60,60,0.1);
+            border: 1px solid rgba(255,60,60,0.3);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #ff9999;
+        }
+        .mw-submit-btn {
+            width: 100%;
+            font-size: 1rem;
+            padding: 1.05rem 2rem;
+        }
+        .mw-form__disclaimer {
+            text-align: center;
+            font-size: 0.68rem;
+            color: rgba(255,255,255,0.22);
+            margin-top: 0.85rem;
+        }
+
+        /* ============================================================
+           LOADING
+        ============================================================ */
+        .mw-loading {
+            display: none;
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+        .mw-spinner {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 5px solid transparent;
+            border-top-color: #D4AF37;
+            border-right-color: #7DBF5A;
+            border-bottom-color: #8B5AB4;
+            border-left-color: #A8C8D8;
+            animation: mwSpin 1.4s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+        .mw-spinner__inner {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: rgba(139,90,180,0.4);
+            border-bottom-color: rgba(168,200,216,0.4);
+            animation: mwSpin 1s linear infinite reverse;
+            margin: 9px auto 0;
+        }
+        .mw-loading__text {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============================================================
+           RESULT SECTION
+        ============================================================ */
+        .mw-result {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem 6rem;
+        }
+        .mw-result.visible { display: block; }
+
+        /* ── Compass container ── */
+        .mw-wheel-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+        .mw-compass-svg {
+            width: clamp(260px, 60vw, 340px);
+            height: clamp(260px, 60vw, 340px);
+            filter: drop-shadow(0 0 40px rgba(139,90,180,0.25));
+            overflow: visible;
+            display: block;
+        }
+        /* Base compass points */
+        .mw-wheel__segment {
+            transition: filter 0.5s ease;
+        }
+        .mw-wheel__segment.active {
+            filter: brightness(1.7) saturate(1.3);
+        }
+        /* Directional glow overlays */
+        .mw-seg-glow {
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            pointer-events: none;
+        }
+        .mw-seg-glow.active {
+            animation: glowPulse2 2.5s ease-in-out infinite;
+        }
+        #seg-north-glow.active {
+            filter: drop-shadow(0 -10px 18px rgba(110,180,255,0.9))
+                    drop-shadow(0 -5px 10px rgba(80,150,255,0.65));
+        }
+        #seg-south-glow.active {
+            filter: drop-shadow(0 10px 18px rgba(40,220,135,0.9))
+                    drop-shadow(0 5px 10px rgba(20,180,100,0.65));
+        }
+        #seg-east-glow.active {
+            filter: drop-shadow(10px 0 18px rgba(255,215,0,0.9))
+                    drop-shadow(5px 0 10px rgba(200,160,0,0.65));
+        }
+        #seg-west-glow.active {
+            filter: drop-shadow(-10px 0 18px rgba(195,60,255,0.9))
+                    drop-shadow(-5px 0 10px rgba(145,30,210,0.65));
+        }
+        /* Direction labels in SVG */
+        .mw-compass-dir-label {
+            font-size: 7px;
+            fill: rgba(212,175,55,0.5);
+            font-family: sans-serif;
+            letter-spacing: 2px;
+            font-weight: 600;
+            transition: fill 0.4s, filter 0.4s;
+        }
+        .mw-compass-dir-label.active {
+            fill: rgba(255,225,50,1);
+            filter: url(#txt-glow-filter);
+        }
+
+        /* ── Direction legend below wheel ── */
+        .mw-wheel-legend {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1.25rem;
+        }
+        .mw-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.45);
+        }
+        .mw-legend-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ── Totem Banner ── */
+        .mw-totem-banner {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(157,78,221,0.06) 50%, rgba(212,175,55,0.04) 100%);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 24px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            animation: glowPulse 4s ease-in-out infinite;
+        }
+        .mw-totem-banner::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.7), transparent);
+        }
+        .mw-totem-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
+        }
+        .mw-totem-banner__label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 1rem;
+        }
+        .mw-totem-banner__emoji {
+            font-size: clamp(3.5rem, 10vw, 5.5rem);
+            display: block;
+            margin-bottom: 0.75rem;
+            animation: totemReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            filter: drop-shadow(0 4px 20px rgba(212,175,55,0.35));
+        }
+        .mw-totem-banner__name {
+            font-size: clamp(1.8rem, 5vw, 2.6rem);
+            font-family: var(--font-heading);
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd700, #fcf6ba, #ffd700);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+            margin-bottom: 0.35rem;
+            line-height: 1.2;
+        }
+        .mw-totem-banner__native {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.3);
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── Cards grid ── */
+        .mw-cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 580px) {
+            .mw-cards-grid { grid-template-columns: 1fr; }
+        }
+        .mw-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .mw-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .mw-card:hover::before { opacity: 1; }
+        .mw-card:hover {
+            border-color: rgba(212,175,55,0.25);
+            box-shadow: 0 4px 20px rgba(212,175,55,0.08);
+        }
+        .mw-card--wide { grid-column: 1 / -1; }
+        .mw-card--east  { border-color: rgba(212,175,55,0.2); }
+        .mw-card--south { border-color: rgba(92,158,74,0.2);  }
+        .mw-card--west  { border-color: rgba(139,90,180,0.2); }
+        .mw-card--north { border-color: rgba(168,200,216,0.2);}
+        .mw-card__icon {
+            font-size: 1.75rem;
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+        .mw-card__label {
+            font-size: 0.63rem;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 0.5rem;
+        }
+        .mw-card__text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.82);
+        }
+
+        /* Entrance animations for cards */
+        .mw-result.visible .mw-card {
+            animation: cardSlideIn 0.5s ease both;
+        }
+        .mw-result.visible .mw-card:nth-child(1) { animation-delay: 0.05s; }
+        .mw-result.visible .mw-card:nth-child(2) { animation-delay: 0.15s; }
+        .mw-result.visible .mw-card:nth-child(3) { animation-delay: 0.25s; }
+        .mw-result.visible .mw-card:nth-child(4) { animation-delay: 0.35s; }
+
+        /* ── Premium wall ── */
+        .mw-premium-wall {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, rgba(139,90,180,0.06), rgba(212,175,55,0.04));
+            border: 1px solid rgba(139,90,180,0.2);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .mw-premium-wall::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(139,90,180,0.6), transparent);
+        }
+        .mw-premium-wall__lock {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            filter: drop-shadow(0 4px 12px rgba(139,90,180,0.3));
+        }
+        .mw-premium-wall__title {
+            color: #8B5AB4;
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            margin-bottom: 0.6rem;
+        }
+        .mw-premium-wall__desc {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+            line-height: 1.65;
+            margin-bottom: 1.5rem;
+            max-width: 380px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ── Message ── */
+        .mw-message {
+            text-align: center;
+            padding: 2rem 2rem;
+            background: linear-gradient(135deg, rgba(139,90,180,0.08), rgba(92,158,74,0.04));
+            border: 1px solid rgba(139,90,180,0.2);
+            border-radius: 18px;
+            margin-top: 1rem;
+            font-size: 1.05rem;
+            line-height: 1.75;
+            color: rgba(255,255,255,0.85);
+            font-style: italic;
+            position: relative;
+        }
+        .mw-message::before {
+            content: '"';
+            position: absolute;
+            top: -0.5rem; left: 1.5rem;
+            font-size: 4rem;
+            font-family: Georgia, serif;
+            color: rgba(139,90,180,0.25);
+            line-height: 1;
+        }
+
+        /* ── Tribal divider ── */
+        .mw-divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0 1.5rem;
+            color: rgba(255,255,255,0.2);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .mw-divider::before,
+        .mw-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(139,90,180,0.25), transparent);
+        }
+
+        /* ── Share bar ── */
+        .mw-share {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        .mw-share__label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 1rem;
+        }
+        .mw-share__buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.6rem 1.15rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.75);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-family: var(--font-body);
+        }
+        .share-btn:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); color: #fff; }
+        .share-btn--fb:hover   { background: rgba(24,119,242,0.15); border-color: rgba(24,119,242,0.5); }
+        .share-btn--copy       { border-color: rgba(139,90,180,0.3); }
+        .share-btn--copy:hover { background: rgba(139,90,180,0.12); border-color: rgba(139,90,180,0.6); color: #8B5AB4; }
+        .share-btn--native     { border-color: rgba(92,158,74,0.3); }
+        .share-btn--native:hover { background: rgba(92,158,74,0.15); border-color: rgba(92,158,74,0.6); }
+        .share-btn--copy.copied { border-color: rgba(80,200,120,0.5); color: #6ee7a0; background: rgba(80,200,120,0.08); }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
+    <div id="header-placeholder"></div>
+
+    <main id="main-content">
+
+        <!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+        <section class="mw-hero">
+            <!-- Floating feathers -->
+            <span class="mw-feather" aria-hidden="true">🪶</span>
+            <span class="mw-feather" aria-hidden="true">🪶</span>
+            <span class="mw-feather" aria-hidden="true">🪶</span>
+            <span class="mw-feather" aria-hidden="true">🪶</span>
+
+            <div class="mw-hero__content">
+                <div class="mw-hero__badge">
+                    <span>🧭</span> Indiánská moudrost Severní Ameriky
+                </div>
+                <h1 class="mw-hero__title">
+                    Medicínské<br>
+                    <span class="mw-hero__title-gradient">Kolečko</span>
+                </h1>
+                <p class="mw-hero__desc">
+                    Posvátný kruh čtyř světových stran odhalí váš měsíční totem,
+                    živel a duchovní poselství zakódované ve vašem datu narození.
+                </p>
+                <div class="mw-directions-row" aria-hidden="true">
+                    <span class="mw-dir-pill mw-dir-pill--east">🌅 Východ · Oheň</span>
+                    <span class="mw-dir-pill mw-dir-pill--south">🌿 Jih · Voda</span>
+                    <span class="mw-dir-pill mw-dir-pill--west">🌄 Západ · Země</span>
+                    <span class="mw-dir-pill mw-dir-pill--north">❄️ Sever · Vzduch</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ FORM ═══════════════════════════════ -->
+        <section class="mw-form-section" id="mw-form-section">
+            <div class="mw-form">
+                <div class="mw-form__icon">🧭</div>
+                <h2 class="mw-form__title">Vstoupit do Kolečka</h2>
+                <p class="mw-form__subtitle">Zadejte své údaje a kolečko odhalí vaši cestu</p>
+
+                <div class="form-group">
+                    <label for="mw-name">Křestní jméno</label>
+                    <input type="text" id="mw-name" placeholder="Např. Jana" maxlength="60" autocomplete="given-name">
+                </div>
+                <div class="form-group">
+                    <label for="mw-birth">Datum narození</label>
+                    <input type="date" id="mw-birth" min="1900-01-01" max="2010-12-31">
+                </div>
+
+                <div class="mw-error" id="mw-error"></div>
+
+                <button id="mw-submit" class="btn btn--primary mw-submit-btn" type="button">
+                    🧭 Otevřít mé Medicínské Kolečko
+                </button>
+                <p class="mw-form__disclaimer">Výsledky jsou generovány AI pro zábavu a sebereflexii</p>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ LOADING ═══════════════════════════════ -->
+        <div class="mw-loading" id="mw-loading">
+            <div class="mw-spinner">
+                <div class="mw-spinner__inner"></div>
+            </div>
+            <p class="mw-loading__text">Čtení Medicínského Kolečka…</p>
+        </div>
+
+        <!-- ═══════════════════════════════ RESULT ═══════════════════════════════ -->
+        <section class="mw-result" id="mw-result">
+
+            <!-- Medicine Wheel SVG -->
+            <div class="mw-wheel-wrap">
+                <svg class="mw-compass-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-label="Mystický kompas — váš totem je zvýrazněn" role="img">
+                    <defs>
+                        <!-- Per-direction glow gradients (tip → centre) -->
+                        <linearGradient id="grad-glow-north" x1="150" y1="40" x2="150" y2="150" gradientUnits="userSpaceOnUse">
+                            <stop offset="0"   stop-color="#90c8ff" stop-opacity="1"/>
+                            <stop offset="0.6" stop-color="#4080cc" stop-opacity="0.55"/>
+                            <stop offset="1"   stop-color="#0c2060" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="grad-glow-south" x1="150" y1="260" x2="150" y2="150" gradientUnits="userSpaceOnUse">
+                            <stop offset="0"   stop-color="#3de8a0" stop-opacity="1"/>
+                            <stop offset="0.6" stop-color="#18a060" stop-opacity="0.55"/>
+                            <stop offset="1"   stop-color="#063020" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="grad-glow-east" x1="260" y1="150" x2="150" y2="150" gradientUnits="userSpaceOnUse">
+                            <stop offset="0"   stop-color="#ffd700" stop-opacity="1"/>
+                            <stop offset="0.6" stop-color="#cc8800" stop-opacity="0.55"/>
+                            <stop offset="1"   stop-color="#7a4000" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="grad-glow-west" x1="40" y1="150" x2="150" y2="150" gradientUnits="userSpaceOnUse">
+                            <stop offset="0"   stop-color="#c855ff" stop-opacity="1"/>
+                            <stop offset="0.6" stop-color="#8030c0" stop-opacity="0.55"/>
+                            <stop offset="1"   stop-color="#300060" stop-opacity="0"/>
+                        </linearGradient>
+                        <!-- Background disc -->
+                        <radialGradient id="grad-cmp-bg" cx="0.5" cy="0.5" r="0.5">
+                            <stop offset="0"   stop-color="#1c1035"/>
+                            <stop offset="0.7" stop-color="#100c22"/>
+                            <stop offset="1"   stop-color="#08061a"/>
+                        </radialGradient>
+                        <!-- Centre orb -->
+                        <radialGradient id="grad-cmp-orb" cx="0.38" cy="0.3" r="0.75">
+                            <stop offset="0"   stop-color="#5a3090"/>
+                            <stop offset="0.5" stop-color="#231545"/>
+                            <stop offset="1"   stop-color="#0d0b1e"/>
+                        </radialGradient>
+                        <!-- Text glow for active labels -->
+                        <filter id="txt-glow-filter" x="-60%" y="-60%" width="220%" height="220%">
+                            <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    <!-- Background disc -->
+                    <circle cx="150" cy="150" r="128" fill="url(#grad-cmp-bg)"/>
+
+                    <!-- Outer rings -->
+                    <circle cx="150" cy="150" r="128" fill="none" stroke="rgba(212,175,55,0.28)" stroke-width="1.5"/>
+                    <circle cx="150" cy="150" r="121" fill="none" stroke="rgba(212,175,55,0.07)" stroke-width="0.8" stroke-dasharray="2.5 5"/>
+
+                    <!-- 8 tick marks (4 major cardinal, 4 minor intercardinal) -->
+                    <g stroke="rgba(212,175,55,0.55)" stroke-linecap="round">
+                        <line x1="150" y1="22" x2="150" y2="38" stroke-width="2.2"/>   <!-- N -->
+                        <line x1="150" y1="262" x2="150" y2="278" stroke-width="2.2"/> <!-- S -->
+                        <line x1="262" y1="150" x2="278" y2="150" stroke-width="2.2"/> <!-- E -->
+                        <line x1="22"  y1="150" x2="38"  y2="150" stroke-width="2.2"/> <!-- W -->
+                        <line x1="241" y1="59"  x2="233" y2="67"  stroke-width="1"/>   <!-- NE -->
+                        <line x1="241" y1="241" x2="233" y2="233" stroke-width="1"/>   <!-- SE -->
+                        <line x1="59"  y1="241" x2="67"  y2="233" stroke-width="1"/>   <!-- SW -->
+                        <line x1="59"  y1="59"  x2="67"  y2="67"  stroke-width="1"/>   <!-- NW -->
+                    </g>
+
+                    <!-- Intercardinal small decorative triangles -->
+                    <g fill="rgba(212,175,55,0.2)">
+                        <path d="M170,120 L213,87 L180,130 Z"/>  <!-- NE -->
+                        <path d="M170,180 L213,213 L180,170 Z"/> <!-- SE -->
+                        <path d="M130,180 L87,213 L120,170 Z"/>  <!-- SW -->
+                        <path d="M130,120 L87,87 L120,130 Z"/>   <!-- NW -->
+                    </g>
+
+                    <!-- ── Main compass points – two halves for faceted 3D look ── -->
+
+                    <!-- NORTH (tip y=40) -->
+                    <g id="seg-north" class="mw-wheel__segment">
+                        <path d="M150,150 L136,97 L150,40 Z"   fill="rgba(95,70,8,0.6)"/>
+                        <path d="M150,150 L150,40 L164,97 Z"   fill="rgba(212,175,55,0.75)"/>
+                    </g>
+
+                    <!-- SOUTH (tip y=260) -->
+                    <g id="seg-south" class="mw-wheel__segment">
+                        <path d="M150,150 L150,260 L136,203 Z" fill="rgba(212,175,55,0.75)"/>
+                        <path d="M150,150 L164,203 L150,260 Z" fill="rgba(95,70,8,0.6)"/>
+                    </g>
+
+                    <!-- EAST (tip x=260) -->
+                    <g id="seg-east" class="mw-wheel__segment">
+                        <path d="M150,150 L203,136 L260,150 Z" fill="rgba(212,175,55,0.75)"/>
+                        <path d="M150,150 L260,150 L203,164 Z" fill="rgba(95,70,8,0.6)"/>
+                    </g>
+
+                    <!-- WEST (tip x=40) -->
+                    <g id="seg-west" class="mw-wheel__segment">
+                        <path d="M150,150 L97,136 L40,150 Z"   fill="rgba(95,70,8,0.6)"/>
+                        <path d="M150,150 L40,150 L97,164 Z"   fill="rgba(212,175,55,0.75)"/>
+                    </g>
+
+                    <!-- ── Directional glow overlays (opacity:0, shown when .active) ── -->
+                    <path id="seg-north-glow" class="mw-seg-glow" d="M150,150 L136,97 L150,40 L164,97 Z"   fill="url(#grad-glow-north)"/>
+                    <path id="seg-south-glow" class="mw-seg-glow" d="M150,150 L164,203 L150,260 L136,203 Z" fill="url(#grad-glow-south)"/>
+                    <path id="seg-east-glow"  class="mw-seg-glow" d="M150,150 L203,136 L260,150 L203,164 Z" fill="url(#grad-glow-east)"/>
+                    <path id="seg-west-glow"  class="mw-seg-glow" d="M150,150 L97,164 L40,150 L97,136 Z"   fill="url(#grad-glow-west)"/>
+
+                    <!-- Centre orb -->
+                    <circle cx="150" cy="150" r="44" fill="url(#grad-cmp-orb)"/>
+                    <circle cx="150" cy="150" r="44" fill="none" stroke="rgba(212,175,55,0.42)" stroke-width="1.5"/>
+                    <circle cx="150" cy="150" r="36" fill="none" stroke="rgba(212,175,55,0.1)"  stroke-width="0.8"/>
+                    <circle cx="150" cy="150" r="5"  fill="rgba(212,175,55,0.78)"/>
+
+                    <!-- Gold diamond markers at cardinal tips -->
+                    <polygon points="150,33 153.5,40 150,47 146.5,40" fill="rgba(212,175,55,0.9)"/>
+                    <polygon points="150,253 153.5,260 150,267 146.5,260" fill="rgba(212,175,55,0.9)"/>
+                    <polygon points="253,150 260,146.5 267,150 260,153.5" fill="rgba(212,175,55,0.9)"/>
+                    <polygon points="47,150 40,153.5 33,150 40,146.5" fill="rgba(212,175,55,0.9)"/>
+
+                    <!-- Centre totem emoji (updated by JS on reveal) -->
+                    <text id="mw-center-emoji" x="150" y="159" text-anchor="middle"
+                        font-size="26" style="transition: all 0.5s;">🧭</text>
+
+                    <!-- ── Direction labels (full names, IDs used by JS for active toggle) ── -->
+                    <text id="lbl-north" x="150" y="17"  text-anchor="middle" class="mw-compass-dir-label">SEVER</text>
+                    <text id="lbl-south" x="150" y="289" text-anchor="middle" class="mw-compass-dir-label">JIH</text>
+                    <text id="lbl-east"  x="296" y="154" text-anchor="end"    class="mw-compass-dir-label">VÝCHOD</text>
+                    <text id="lbl-west"  x="4"   y="154" text-anchor="start"  class="mw-compass-dir-label">ZÁPAD</text>
+                </svg>
+            </div>
+
+            <!-- Totem Banner -->
+            <div class="mw-totem-banner">
+                <div class="mw-totem-banner__label">Váš měsíční totem</div>
+                <span class="mw-totem-banner__emoji" id="res-animal"></span>
+                <div class="mw-totem-banner__name" id="res-totem"></div>
+                <div class="mw-totem-banner__native" id="res-native"></div>
+            </div>
+
+            <!-- Free cards: Direction + Element -->
+            <div class="mw-cards-grid" id="mw-free-cards">
+                <div class="mw-card" id="mw-direction-card">
+                    <span class="mw-card__icon" id="mw-direction-icon">🧭</span>
+                    <div class="mw-card__label">Světová strana</div>
+                    <div class="mw-card__text" id="res-direction"></div>
+                </div>
+                <div class="mw-card">
+                    <span class="mw-card__icon" id="mw-element-icon">🌊</span>
+                    <div class="mw-card__label">Živel a roční období</div>
+                    <div class="mw-card__text" id="res-element"></div>
+                </div>
+            </div>
+
+            <!-- Premium section -->
+            <div id="mw-premium-section">
+
+                <!-- When premium: full content -->
+                <div id="mw-premium-content" style="display:none;">
+                    <div class="mw-divider">Plné čtení</div>
+                    <div class="mw-cards-grid">
+                        <div class="mw-card">
+                            <span class="mw-card__icon">💪</span>
+                            <div class="mw-card__label">Vaše silné stránky</div>
+                            <div class="mw-card__text" id="res-strengths"></div>
+                        </div>
+                        <div class="mw-card">
+                            <span class="mw-card__icon">🌀</span>
+                            <div class="mw-card__label">Výzvy na vaší cestě</div>
+                            <div class="mw-card__text" id="res-challenges"></div>
+                        </div>
+                    </div>
+                    <div class="mw-message" id="res-message"></div>
+                </div>
+
+                <!-- When not premium: upgrade wall -->
+                <div id="mw-premium-wall" style="display:none;">
+                    <div class="mw-divider">Plné čtení</div>
+                    <div class="mw-cards-grid">
+                        <div class="mw-premium-wall">
+                            <div class="mw-premium-wall__lock">🔒</div>
+                            <h3 class="mw-premium-wall__title">Odemkněte plné čtení</h3>
+                            <p class="mw-premium-wall__desc">
+                                Silné stránky vašeho totemu, výzvy na životní cestě
+                                a osobní duchovní poselství čekají na vás.
+                            </p>
+                            <a href="cenik.html" class="btn btn--primary" style="max-width:320px; display:block; margin: 0 auto 0.75rem;">
+                                ✨ Hvězdný Průvodce — 199 Kč/měsíc
+                            </a>
+                            <a href="registrace.html" class="btn btn--secondary" style="max-width:320px; display:block; margin: 0 auto;">
+                                Vytvořit účet zdarma
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Share -->
+            <div class="mw-share">
+                <div class="mw-share__label">🌿 Sdílet svůj totem</div>
+                <div class="mw-share__buttons">
+                    <button class="share-btn share-btn--native" id="share-native" style="display:none;" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                        Sdílet
+                    </button>
+                    <a class="share-btn share-btn--fb" id="share-fb" href="#" target="_blank" rel="noopener">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Facebook
+                    </a>
+                    <a class="share-btn share-btn--x" id="share-x" href="#" target="_blank" rel="noopener">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        X
+                    </a>
+                    <button class="share-btn share-btn--copy" id="share-copy" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <span id="copy-label">Kopírovat odkaz</span>
+                    </button>
+                </div>
+            </div>
+
+            <div style="text-align:center; margin-top:2.5rem;">
+                <button id="mw-reset" class="btn btn--secondary">🔄 Hledat znovu</button>
+            </div>
+
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/api-config.js?v=5" defer></script>
+    <script src="js/components.js?v=10" defer></script>
+    <script src="js/auth-client.js?v=5" defer></script>
+    <script src="js/nav-failsafe.js" defer></script>
+    <script src="js/medicinsko-kolecko.js" defer></script>
+</body>
+</html>
