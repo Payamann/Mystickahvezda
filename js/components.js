@@ -147,6 +147,32 @@ function initStandaloneHeader() {
         navList.setAttribute('aria-hidden', String(!isOpen));
     });
 
+    // === MOBILE DROPDOWNS ===
+    navList.querySelectorAll('.nav__link--dropdown-toggle').forEach(toggleLink => {
+        toggleLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const item = toggleLink.closest('.nav__item--has-dropdown');
+            if (!item) return;
+            const isOpen = item.classList.contains('is-active');
+            // Close all other dropdowns
+            navList.querySelectorAll('.nav__item--has-dropdown.is-active').forEach(el => el.classList.remove('is-active'));
+            // Toggle current
+            item.classList.toggle('is-active', !isOpen);
+        });
+    });
+
+    // Close menu when clicking a nav dropdown link (actual page link)
+    navList.querySelectorAll('.nav__dropdown-link').forEach(link => {
+        link.addEventListener('click', () => {
+            navList.classList.remove('open');
+            toggle.classList.remove('active');
+            toggle.setAttribute('aria-expanded', 'false');
+            navList.setAttribute('aria-hidden', 'true');
+            navList.querySelectorAll('.nav__item--has-dropdown').forEach(el => el.classList.remove('is-active'));
+        });
+    });
+
     // Close menu when clicking a nav link (ignore dropdown toggles)
     navList.querySelectorAll('.nav__link:not(.nav__link--dropdown-toggle)').forEach(link => {
         link.addEventListener('click', () => {
