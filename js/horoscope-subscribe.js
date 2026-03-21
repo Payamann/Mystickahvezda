@@ -4,24 +4,15 @@
     var SUB_KEY = 'mh_horoscope_subscribed';
 
     function init() {
-        var toggle = document.getElementById('horoscope-subscribe-toggle');
-        var form = document.getElementById('horoscope-subscribe-form');
         var btn = document.getElementById('horoscope-subscribe-btn');
-
-        if (!toggle || !form) return;
-
-        // If already subscribed, show active state
-        if (localStorage.getItem(SUB_KEY)) {
-            toggle.innerHTML = '✅ Odběr aktivní';
-            toggle.classList.add('btn--active');
-        }
-
-        toggle.addEventListener('click', function () {
-            if (localStorage.getItem(SUB_KEY)) return;
-            form.style.display = form.style.display === 'none' ? 'block' : 'none';
-        });
+        var subscribedMsg = document.getElementById('horoscope-subscribed-msg');
 
         if (!btn) return;
+
+        // If already subscribed, show success state
+        if (localStorage.getItem(SUB_KEY)) {
+            showSubscribed();
+        }
 
         btn.addEventListener('click', async function () {
             var email = document.getElementById('horoscope-email-input').value.trim();
@@ -42,7 +33,6 @@
             try {
                 var base = (window.API_CONFIG && window.API_CONFIG.BASE_URL) || '/api';
 
-                // Fetch CSRF token required for all POST requests
                 var csrfRes = await fetch(base + '/csrf-token', { credentials: 'include' });
                 var csrfData = await csrfRes.json();
                 var csrfToken = csrfData.csrfToken || csrfData.token || '';
@@ -57,13 +47,9 @@
 
                 if (res.ok && data.success) {
                     localStorage.setItem(SUB_KEY, sign);
-                    form.style.display = 'none';
-                    toggle.innerHTML = '✅ Odběr aktivní';
-                    toggle.classList.add('btn--active');
+                    showSubscribed();
                     if (window.Auth && window.Auth.showToast) {
                         window.Auth.showToast('Hotovo!', 'Potvrzení přijde na tvůj email.', 'success');
-                    } else {
-                        alert('Odběr aktivován! Potvrzení přijde na tvůj email.');
                     }
                 } else {
                     alert(data.error || 'Chyba při přihlašování. Zkuste to znovu.');
@@ -77,8 +63,18 @@
             }
         });
 
+        function showSubscribed() {
+            if (btn) { btn.style.display = 'none'; }
+            if (subscribedMsg) { subscribedMsg.style.display = 'block'; }
+            var emailInput = document.getElementById('horoscope-email-input');
+            var signSelect = document.getElementById('horoscope-sign-select');
+            if (emailInput) emailInput.style.display = 'none';
+            if (signSelect) signSelect.style.display = 'none';
+        }
+
         // Pre-fill sign from personalization
         window.addEventListener('personalization:ready', function () {
+            if (localStorage.getItem(SUB_KEY)) return;
             var sign = window.MH_PERSONALIZATION && window.MH_PERSONALIZATION.getSign && window.MH_PERSONALIZATION.getSign();
             var signMap = { beran: 'Beran', byk: 'Býk', blizenci: 'Blíženci', rak: 'Rak', lev: 'Lev', panna: 'Panna', vahy: 'Váhy', stir: 'Štír', strelec: 'Střelec', kozoroh: 'Kozoroh', vodnar: 'Vodnář', ryby: 'Ryby' };
             var sel = document.getElementById('horoscope-sign-select');
