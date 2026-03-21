@@ -31,6 +31,7 @@ import mentorRoutes from './mentor.js';
 import adminRoutes from './admin.js';
 import crypto from 'crypto';
 import { initializeEmailQueueJob } from './jobs/email-queue.js';
+import schedule from 'node-schedule';
 import { globalLimiter, staticLimiter, aiLimiter, sensitiveLimiter } from './middleware.js';
 
 // Route modules
@@ -569,6 +570,17 @@ if (isMain || process.env.NODE_ENV === 'production') {
         } catch (jobErr) {
             console.error('[JOBS] Failed to init email queue:', jobErr.message);
         }
+
+        // Daily horoscope emails — every day at 07:00 UTC
+        schedule.scheduleJob('0 7 * * *', async () => {
+            try {
+                const { run } = await import('./scripts/send-daily-horoscope.js');
+                await run();
+            } catch (e) {
+                console.error('[CRON] Daily horoscope failed:', e.message);
+            }
+        });
+        console.warn('📅 Daily horoscope cron scheduled (07:00 UTC).');
     });
 }
 

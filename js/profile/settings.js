@@ -1,8 +1,110 @@
 /**
- * Settings: Avatar picker and subscription management
+ * Settings: Avatar picker, subscription management, profile & password update
  */
 
 import { apiUrl, authHeaders } from './shared.js';
+
+// ==========================================
+// SETTINGS FORM
+// ==========================================
+
+export function initSettingsForm() {
+    const user = window.Auth?.user;
+    if (!user) return;
+
+    const nameEl = document.getElementById('settings-name');
+    const emailEl = document.getElementById('settings-email');
+    const birthtimeEl = document.getElementById('settings-birthtime');
+    const birthplaceEl = document.getElementById('settings-birthplace');
+
+    if (nameEl) nameEl.value = user.first_name || '';
+    if (emailEl) emailEl.value = user.email || '';
+    if (birthtimeEl) birthtimeEl.value = user.birth_time || '';
+    if (birthplaceEl) birthplaceEl.value = user.birth_place || '';
+}
+
+export async function saveSettings() {
+    const btn = document.getElementById('save-settings-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Ukládám...'; }
+
+    try {
+        const name = document.getElementById('settings-name')?.value.trim();
+        const birthtime = document.getElementById('settings-birthtime')?.value;
+        const birthplace = document.getElementById('settings-birthplace')?.value.trim();
+        const currentPassword = document.getElementById('settings-current-password')?.value;
+        const newPassword = document.getElementById('settings-password')?.value;
+        const confirmPassword = document.getElementById('settings-password-confirm')?.value;
+
+        // Profile update
+        const profileBody = {};
+        if (name !== undefined) profileBody.first_name = name;
+        if (birthtime) profileBody.birth_time = birthtime;
+        if (birthplace !== undefined) profileBody.birth_place = birthplace;
+
+        const profileRes = await fetch(`${apiUrl()}/auth/profile`, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: authHeaders(true),
+            body: JSON.stringify(profileBody)
+        });
+
+        if (!profileRes.ok) {
+            const err = await profileRes.json().catch(() => ({}));
+            throw new Error(err.error || 'Nepodařilo se uložit profil.');
+        }
+
+        const profileData = await profileRes.json();
+
+        // Update local auth_user cache
+        let cached = {};
+        try { cached = JSON.parse(localStorage.getItem('auth_user') || '{}'); } catch (e) { /* */ }
+        Object.assign(cached, profileData.user || profileBody);
+        localStorage.setItem('auth_user', JSON.stringify(cached));
+        if (window.Auth) window.Auth.user = cached;
+
+        // Password change (only if new password is provided)
+        if (newPassword) {
+            if (!currentPassword) {
+                throw new Error('Zadejte prosím aktuální heslo.');
+            }
+            if (newPassword !== confirmPassword) {
+                throw new Error('Nová hesla se neshodují.');
+            }
+
+            const pwRes = await fetch(`${apiUrl()}/user/password`, {
+                method: 'PUT',
+                credentials: 'include',
+                headers: authHeaders(true),
+                body: JSON.stringify({
+                    currentPassword,
+                    password: newPassword,
+                    password_confirm: confirmPassword
+                })
+            });
+
+            if (!pwRes.ok) {
+                const err = await pwRes.json().catch(() => ({}));
+                throw new Error(err.error || 'Nepodařilo se změnit heslo.');
+            }
+
+            // Clear password fields
+            const fields = ['settings-current-password', 'settings-password', 'settings-password-confirm'];
+            fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+
+            window.Auth?.showToast?.('Heslo změněno', 'Heslo bylo úspěšně změněno. Budete odhlášeni.', 'success');
+            setTimeout(() => window.Auth?.logout?.(), 2000);
+            return;
+        }
+
+        window.Auth?.showToast?.('Uloženo', 'Nastavení bylo úspěšně uloženo.', 'success');
+
+    } catch (e) {
+        console.error('Settings save error:', e);
+        window.Auth?.showToast?.('Chyba', e.message || 'Nepodařilo se uložit nastavení.', 'error');
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Uložit změny'; }
+    }
+}
 
 // ==========================================
 // AVATAR PICKER

@@ -54,10 +54,9 @@ async function getOrGenerateHoroscope(sign) {
     return text;
 }
 
-async function run() {
+export async function run() {
     console.log(`[DailyHoroscope] Starting — ${new Date().toISOString()}`);
 
-    // Fetch all active subscribers grouped by sign
     const { data: subs, error } = await supabase
         .from('horoscope_subscriptions')
         .select('email, zodiac_sign, unsubscribe_token')
@@ -65,17 +64,16 @@ async function run() {
 
     if (error) {
         console.error('[DailyHoroscope] Failed to fetch subscribers:', error.message);
-        process.exit(1);
+        return;
     }
 
     if (!subs || subs.length === 0) {
-        console.log('[DailyHoroscope] No active subscribers. Exiting.');
-        process.exit(0);
+        console.log('[DailyHoroscope] No active subscribers.');
+        return;
     }
 
     console.log(`[DailyHoroscope] ${subs.length} subscribers across ${new Set(subs.map(s => s.zodiac_sign)).size} signs`);
 
-    // Generate horoscopes for each unique sign
     const horoscopeCache = {};
     const uniqueSigns = [...new Set(subs.map(s => s.zodiac_sign))];
 
@@ -88,7 +86,6 @@ async function run() {
         }
     }
 
-    // Send emails
     const dateStr = new Date().toLocaleDateString('cs-CZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     let sent = 0, failed = 0;
 
@@ -115,21 +112,21 @@ async function run() {
             failed++;
         }
 
-        // Small delay to avoid rate limits
         await new Promise(r => setTimeout(r, 100));
     }
 
-    // Update last_sent_at for all active subscribers
     await supabase
         .from('horoscope_subscriptions')
         .update({ last_sent_at: new Date().toISOString() })
         .eq('active', true);
 
     console.log(`[DailyHoroscope] Done — sent: ${sent}, failed: ${failed}`);
-    process.exit(0);
 }
 
-run().catch(e => {
-    console.error('[DailyHoroscope] Fatal error:', e);
-    process.exit(1);
-});
+// Allow running standalone: node server/scripts/send-daily-horoscope.js
+if (process.argv[1] && process.argv[1].endsWith('send-daily-horoscope.js')) {
+    run().catch(e => {
+        console.error('[DailyHoroscope] Fatal error:', e);
+        process.exit(1);
+    }).then(() => process.exit(0));
+}
