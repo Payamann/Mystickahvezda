@@ -32,6 +32,7 @@
             hideError();
             var name = document.getElementById('pl-name').value.trim();
             var birth = document.getElementById('pl-birth').value;
+            var place = (document.getElementById('pl-place').value || '').trim();
             var gender = selectedGender;
 
             if (!name || name.length < 2) { showError('Zadejte své jméno.'); return; }
@@ -55,7 +56,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-Token': csrfData.csrfToken || ''
                     },
-                    body: JSON.stringify({ name: name, birthDate: birth, gender: gender })
+                    body: JSON.stringify({ name: name, birthDate: birth, gender: gender, place: place })
                 });
 
                 var data = await res.json();
