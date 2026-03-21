@@ -38,6 +38,8 @@
       });
     });
   }
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init)}
-  else{init()}
+  // Always defer via setTimeout so DOMContentLoaded listeners (components.js, main.js)
+  // run first and set navInitialized — nav-failsafe is a true fallback, not a first runner.
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){setTimeout(init,0)})}
+  else{setTimeout(init,0)}
 })();
