@@ -12,7 +12,8 @@ import { supabase } from '../db-supabase.js';
 export const router = express.Router();
 
 const SYSTEM_PROMPT = `Jsi starověký akashický průvodce, který čte záznamy minulých životů duší.
-Tvým úkolem je na základě jména, data narození a pohlaví odhalit minulý život dané osoby.
+Tvým úkolem je na základě jména, data narození, místa narození a pohlaví odhalit minulý život dané osoby.
+Místo narození použij jako energetický ukazatel — energie místa ovlivňuje karmické vzorce duše.
 
 Odpověz POUZE ve formátu JSON (bez markdown, bez backticks), přesně takto:
 {
@@ -44,13 +45,14 @@ async function getCached(cacheKey) {
     }
 }
 
-async function saveCache(cacheKey, name, birthDate, gender, response) {
+async function saveCache(cacheKey, name, birthDate, gender, response, place = '') {
     try {
         await supabase.from('cache_past_life').upsert({
             cache_key: cacheKey,
             name,
             birth_date: birthDate,
             gender,
+            birth_place: place || null,
             response,
             generated_at: new Date().toISOString()
         }, { onConflict: 'cache_key' });
@@ -61,7 +63,7 @@ async function saveCache(cacheKey, name, birthDate, gender, response) {
 
 router.post('/', authenticateToken, requirePremium, async (req, res) => {
     try {
-        const { name, birthDate, gender } = req.body;
+        const { name, birthDate, gender, place } = req.body;
 
         if (!name || typeof name !== 'string' || name.trim().length < 2) {
             return res.status(400).json({ success: false, error: 'Zadejte své jméno.' });
@@ -74,8 +76,9 @@ router.post('/', authenticateToken, requirePremium, async (req, res) => {
         }
 
         const cleanName = name.trim().substring(0, 80);
+        const cleanPlace = (place && typeof place === 'string') ? place.trim().substring(0, 100) : '';
         const cacheKey = crypto.createHash('sha256')
-            .update(`${cleanName}|${birthDate}|${gender}`)
+            .update(`${cleanName}|${birthDate}|${gender}|${cleanPlace}`)
             .digest('hex')
             .substring(0, 32);
 
@@ -88,6 +91,7 @@ router.post('/', authenticateToken, requirePremium, async (req, res) => {
         const genderLabel = gender === 'muz' ? 'muž' : 'žena';
         const userMsg = `Jméno: ${cleanName}
 Datum narození: ${birthDate}
+Místo narození: ${cleanPlace || 'neuvedeno'}
 Pohlaví: ${genderLabel}
 
 Odhal minulý život této duše.`;
@@ -112,7 +116,7 @@ Odhal minulý život této duše.`;
             }
         }
 
-        await saveCache(cacheKey, cleanName, birthDate, gender, result);
+        await saveCache(cacheKey, cleanName, birthDate, gender, result, cleanPlace);
 
         res.json({ success: true, result, cached: false });
 
