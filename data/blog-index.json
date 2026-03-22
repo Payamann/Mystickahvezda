@@ -1,11 +1,155 @@
 [
   {
+    "title": "Pentagramy v Tarotu: Průvodce materiálním světem, penězi a kariérou",
+    "slug": "pentagramy-tarot-penize-kariera",
+    "short_description": "Pentagramy nejsou nudnou suitou. Jsou mapou materiálního světa — práce, peněz, těla i hojnosti. Průvodce všemi 14 kartami zemního živlu.",
+    "category": "Tarot",
+    "published_at": "2026-04-10T10:00:00.000Z",
+    "featured_image": "img/blog-tarot.webp",
+    "readTime": 4
+  },
+  {
+    "title": "Hůlkové karty v Tarotu: Oheň, vášeň a energie, která mění životy",
+    "slug": "hulkove-karty-tarot-vyznam",
+    "short_description": "Hůlky jsou suitou ohně, vůle a životní síly. Průvodce všemi 14 kartami — od Esa po Krále — a jak je číst v kontextu kariéry, lásky i varování.",
+    "category": "Tarot",
+    "published_at": "2026-04-07T10:00:00.000Z",
+    "featured_image": "img/blog-tarot.webp",
+    "readTime": 4
+  },
+  {
+    "title": "Numerologie jména: Co skrývá vaše křestní jméno a jak ho změna ovlivní osud",
+    "slug": "numerologie-jmena-krizni-jmeno",
+    "short_description": "Vaše jméno vibruje na konkrétní frekvenci. Pythagorická numerologie odhalí, co vaše křestní jméno říká o vaší osobnosti — a co se stane, když ho změníte.",
+    "category": "Numerologie",
+    "published_at": "2026-04-03T10:00:00.000Z",
+    "featured_image": "img/blog-numerology.webp",
+    "readTime": 4
+  },
+  {
+    "title": "Čakrové léčení: Praktický návod, jak otevřít a vyčistit každou čakru",
+    "slug": "cakrove-leceni-navod",
+    "short_description": "Teorie čaker je krásná — ale jak skutečně pracovat s blokacemi? Praktický průvodce léčením všech 7 čaker od příznaků po konkrétní techniky.",
+    "category": "Spiritualita",
+    "published_at": "2026-03-31T10:00:00.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 5
+  },
+  {
+    "title": "Nový Měsíc: Rituál pro začátečníky a jak správně zasadit semena přání",
+    "slug": "novy-mesic-ritual-zacatecnici",
+    "short_description": "Nový Měsíc je nejsilnější okamžik pro zasazení záměrů. Průvodce rituálem pro začátečníky — bez mystického balastu, jen čistá praxe.",
+    "category": "Spiritualita",
+    "published_at": "2026-03-27T10:00:00.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 4
+  },
+  {
+    "title": "Karta Soudce (XX) v Tarotu: Volání vyššího já a karmická bilance",
+    "slug": "karta-soudce-tarot-vyznam",
+    "short_description": "Karta Soudce nepřichází jako trest — přichází jako volání. Probuzení, absolution a karmická bilance v jednom mocném obrazu.",
+    "category": "Tarot",
+    "published_at": "2026-03-24T10:00:00.000Z",
+    "featured_image": "img/blog-tarot.webp",
+    "readTime": 4
+  },
+  {
+    "title": "Partnerská kompatibilita v numerologii: Jsou vaše čísla osudu ve shodě?",
+    "slug": "numerologie-kompatibilita-partneru",
+    "short_description": "Numerologie odhaluje hlubší vrstvu partnerské dynamiky než horoskopy. Zjistěte, jak vaše životní čísla spolupracují — a kde leží největší výzvy.",
+    "category": "Numerologie",
+    "published_at": "2026-03-20T10:00:00.000Z",
+    "featured_image": "img/blog-numerology.webp",
+    "readTime": 5
+  },
+  {
+    "title": "Mečové karty v Tarotu: Průvodce bolestí, pravdou a mentální silou",
+    "slug": "mecove-karty-tarot-vyznam",
+    "short_description": "Meče jsou nejobávanější suitou tarotu. Ale co když právě tyto karty přinášejí osvobozující pravdu, kterou jste potřebovali slyšet?",
+    "category": "Tarot",
+    "published_at": "2026-03-17T10:00:00.000Z",
+    "featured_image": "img/blog-tarot.webp",
+    "readTime": 4
+  },
+  {
+    "title": "Keltský kříž: Jak číst nejslavnější tarotové rozložení krok za krokem",
+    "slug": "keltsky-kriz-tarot-rozlozeni",
+    "short_description": "Keltský kříž je nejkomplexnější tarotové rozložení, jaké existuje. Naučte se číst všech 10 pozic a poskládat z nich jeden ucelený příběh.",
+    "category": "Tarot",
+    "published_at": "2026-03-13T10:00:00.000Z",
+    "featured_image": "img/blog-tarot.webp",
+    "readTime": 5
+  },
+  {
+    "title": "Šamanské Kolo: Jak zjistit své totemové zvíře a co vám o sobě prozradí",
+    "slug": "shamansko-kolo-totemove-zvire",
+    "short_description": "Každý z nás se rodí pod ochranou konkrétního totemového zvířete. Šamanské Kolo vám ukáže, které to je — a co vám o vaší cestě životem prozrazuje.",
+    "category": "Šamanismus",
+    "published_at": "2026-03-10T10:00:00.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 5
+  },
+  {
+    "title": "Retrográdní Venuše 2026: Co čekat v lásce, vztazích a financích",
+    "slug": "retrograde-venus-2026-co-cekat-v-lasce",
+    "short_description": "Venuše jde retrográdně v roce 2026. Přesná data, výklad pro každé znamení a praktický průvodce: co dělat, čeho se vyvarovat a jak tuto energii využít ve svůj prospěch.",
+    "category": "Astrologie",
+    "published_at": "2026-03-05T10:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 10
+  },
+  {
+    "title": "Úplněk v Panně: Rituál, výklad a co čekat pro každé znamení",
+    "slug": "uplnek-v-panne-ritual-a-vyklad-pro-kazde-znameni",
+    "short_description": "Úplněk v Panně přináší čas čistoty, přehodnocení a propuštění. Zjistěte přesný výklad pro vaše znamení, rituál a jak tuto lunaci vědomě využít.",
+    "category": "Lunární Magie",
+    "published_at": "2026-03-03T10:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 10
+  },
+  {
+    "title": "Úplněk v Kozorohu: Čas sklizně ambicí a uvolnění strachu z neúspěchu",
+    "slug": "uplnek-v-kozorohovi-ritual-a-vyznam",
+    "short_description": "Úplněk v Kozorohu osvěcuje kariéru, ambice a vztah k autoritě. Rituál a výklad pro každé znamení.",
+    "category": "Lunární Magie",
+    "published_at": "2026-03-01T10:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 8
+  },
+  {
+    "title": "Merkur v retrográdě 2026: Co to skutečně znamená pro každé znamení",
+    "slug": "merkur-v-retrograde-co-to-znamena-pro-vase-znameni",
+    "short_description": "Merkur v retrográdě nemusí být pohromou. Zjistěte, co toto astrologické období přináší každému ze 12 znamení, jak se připravit a jak retrográdu využít ve svůj prospěch.",
+    "category": "Astrologie",
+    "published_at": "2026-02-28T10:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 9
+  },
+  {
+    "title": "Karmický vztah vs. Spřízněná duše: Proč vám to v lásce nevychází?",
+    "slug": "proc-vam-to-v-lasce-nevyhcazi",
+    "short_description": "Stále se točíte v bludném kruhu toxických vztahů? Možná potkáváte karmické učitele místo své skutečné spřízněné duše. Zjistěte ten zásadní rozdíl.",
+    "category": "Vztahy",
+    "published_at": "2026-02-27T18:56:29.000Z",
+    "featured_image": "img/blog-relationships.webp",
+    "readTime": 4
+  },
+  {
     "title": "Životní číslo: Starověký klíč k vaší karmě a skrytému potenciálu",
     "slug": "zivotni-cislo-odhaleni-kodu-vasi-duse",
     "short_description": "Vaše datum narození není matematická náhoda. Objevte, jak starořecká numerologie dešifruje mapu vaší duše a jaký osudový úkol vám byl svěřen.",
     "category": "Numerologie",
     "published_at": "2026-02-27T20:06:34.985Z",
     "featured_image": "img/blog-numerology.webp",
+    "readTime": 4
+  },
+  {
+    "title": "Slunce, Měsíc, Ascendent: Vaše svatá astrologická trojice",
+    "slug": "rozpoznejte-svou-astrologickou-signaturu",
+    "short_description": "Číst pofidérní horoskopy v časopisech z vás astrologa neudělá. K pochopení vaší skutečné osobnosti musíte znát svou velkou trojku.",
+    "category": "Astrologie",
+    "published_at": "2026-02-24T18:56:29.000Z",
+    "featured_image": "img/blog-astrology.webp",
     "readTime": 4
   },
   {
@@ -18,16 +162,34 @@
     "readTime": 3
   },
   {
+    "title": "Štír muž a Panna žena: Kompatibilita vztahu, láska a výzvy",
+    "slug": "stir-muz-a-panna-zena-kompatibilita",
+    "short_description": "Štír muž a Panna žena – jeden z nejsilnějších párů zvěrokruhu? Detailní analýza kompatibility, lásky, komunikace a sexuální chemie tohoto spojení.",
+    "category": "Kompatibilita",
+    "published_at": "2026-02-22T10:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 9
+  },
+  {
     "title": "Futhark: Syrová krása Run a proč severská magie není hrou pro slabé",
     "slug": "runy-severska-magie-v-modernim-svete",
-    "short_description": "Zatímco Tarot odpovídá v jemných psychologických nuancích, Runy do vás vrhnou syrovou, ostrulou severskou pravdu. Jak bezpečně pracovat s tímto starodávným systémem?",
+    "short_description": "Zatímco Tarot odpovídá v jemných psychologických nuancích, Runy do vás vrhnou syrovou, ostrou severskou pravdu. Jak bezpečně pracovat s tímto starodávným systémem?",
     "category": "Věštění",
     "published_at": "2026-02-21T20:06:34.988Z",
     "featured_image": "img/blog-divination.webp",
     "readTime": 3
   },
   {
-    "title": "Andělská čísla a Synchronicita: Co znamená opakováné 11:11 a 22:22?",
+    "title": "Co je synastrie a jak funguje partnerská astrologie?",
+    "slug": "co-je-synastrie-jak-funguje-partnerska-astrologie",
+    "short_description": "Synastrie je astrologická metoda porovnávání dvou natálních karet. Zjistěte, co synastrie skutečně ukazuje, jak ji číst a proč sluneční znamení nestačí pro posouzení vztahu.",
+    "category": "Astrologie",
+    "published_at": "2026-02-19T10:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 10
+  },
+  {
+    "title": "Andělská čísla a Synchronicita: Co znamená opakované 11:11 a 22:22?",
     "slug": "andelska-cisla-1111",
     "short_description": "Podíváte se na telefon – je přesně 11:11. Účet za kávu je 222 Kč. Před vámi jede auto s poznávací značkou 333. Ztrácíte rozum, nebo s vámi promlouvá Vesmír?",
     "category": "Spiritualita",
@@ -36,13 +198,40 @@
     "readTime": 3
   },
   {
-    "title": "Iluze jménem \"Spřízněná duše\": Proč nás tytéž vztahy chronicky stahují ke dnu?",
+    "title": "5 znamení, že potkáváte svou spřízněnou duši",
+    "slug": "5-znaku-ze-potkavate-svou-spriznenou-dusi",
+    "short_description": "Jak poznáte, že jste potkali svou spřízněnou duši? Pět konkrétních znamení – a proč spřízněná duše nemusí být ta, u které zůstanete navždy.",
+    "category": "Spiritualita",
+    "published_at": "2026-02-17T12:00:00.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 7
+  },
+  {
+    "title": "Číslo Výrazu, Duše a Osobnosti: Jak je vypočítat a co prozradí",
+    "slug": "jak-zjistit-sve-logo-a-sestici-v-numerologii",
+    "short_description": "Logo (Číslo Výrazu), Číslo Duše a Číslo Osobnosti – tři klíčové numerologické ukazatele, které jdou daleko za Číslo Osudu. Kompletní průvodce výpočtem a výkladem.",
+    "category": "Numerologie",
+    "published_at": "2026-02-16T10:00:00.000Z",
+    "featured_image": "img/blog-numerology.webp",
+    "readTime": 9
+  },
+  {
+    "title": "Iluze jménem Spřízněná duše: Proč nás tytéž vztahy chronicky stahují ke dnu?",
     "slug": "iluze-spriznene-duse-karmicke-vztahy",
-    "short_description": "Motýlci v břiše, pocit, že se znáte staletí, a pak náhlý a zničující pád. Proč astrolgická praxe nabádá k maximální opatrnosti před karmickými svazky?",
+    "short_description": "Motýlci v břiše, pocit, že se znáte staletí, a pak náhlý a zničující pád. Proč astrologická praxe nabádá k maximální opatrnosti před karmickými svazky?",
     "category": "Vztahy",
     "published_at": "2026-02-14T20:06:34.987Z",
     "featured_image": "img/blog-relationships.webp",
     "readTime": 3
+  },
+  {
+    "title": "Pohárové karty v Tarotu: Skrytý svět emocí, lásky a intuice",
+    "slug": "co-znamenaji-pohary-v-tarotu",
+    "short_description": "Barva pohárů v malých arkánách vypovídá o našem emocionálním životě, lásce a intuici. Naučte se číst poselství elementu vody.",
+    "category": "Tarot",
+    "published_at": "2026-02-12T10:00:00.000Z",
+    "featured_image": "img/blog-tarot.webp",
+    "readTime": 4
   },
   {
     "title": "Vypadané zuby a sen o pádu: Co se vám snaží říct vaše stínové nevědomí?",
@@ -54,6 +243,15 @@
     "readTime": 3
   },
   {
+    "title": "Ascendent vs. Sluneční znamení: Jaký je skutečný rozdíl?",
+    "slug": "ascendent-vs-slunecni-znameni-jaky-je-rozdil",
+    "short_description": "Proč se někdy nevztahujete ke svému slunečnímu znamení? Ascendent odhaluje, jak vás vidí svět. Pochopte rozdíl a zjistěte, jaký je váš Ascendent.",
+    "category": "Astrologie",
+    "published_at": "2026-02-08T10:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 8
+  },
+  {
     "title": "7 Čaker: Zevrubná anatomie neviditelného energetického světla",
     "slug": "zaklady-sedmi-caker-anatomie",
     "short_description": "Myslíte si, že tělo končí vaší kožní bariérou? Existuje prastará mapa sedmi silových generátorů, u níž by zablokování i jediné pumpy ohrozilo všechny psychofyzikální vrstvy.",
@@ -63,12 +261,30 @@
     "readTime": 4
   },
   {
-    "title": "Za oponou prostoru a času: Skutečné umění \"Scryingu\" z Křišťálové koule",
+    "title": "Za oponou prostoru a času: Skutečné umění Scryingu z Křišťálové koule",
     "slug": "tajemstvi-kristalove-koule-scrying",
-    "short_description": "Pokud považujete křišťálovou kouli jen za rekvizitu pro hollywoodské filmy o čarodějnicích, připravujete se o jednu z nejsilnějších technik starověkého zření (scrying).",
+    "short_description": "Pokud považujete křišťálovou kouli jen za rekvizitu pro hollywoodské filmy o čarodějnicích, připravujete se o jednu z nejsilnějších technik starověkého zření.",
     "category": "Věštění",
     "published_at": "2026-01-30T20:06:34.987Z",
     "featured_image": "img/blog-divination.webp",
+    "readTime": 3
+  },
+  {
+    "title": "Tajemství snů: Jak správně dekódovat noční vizualizace",
+    "slug": "tajemstvi-snilku-jak-rozklivovat-nocni-vzazy",
+    "short_description": "Padání z útesu, vypadávající zuby, pronásledování... Každou noc hrajeme ve vlastním filmu, jehož autorem je naše podvědomí. Jak těmto poselstvím porozumět?",
+    "category": "Snář",
+    "published_at": "2026-01-28T18:56:29.000Z",
+    "featured_image": "img/blog-dreams.webp",
+    "readTime": 3
+  },
+  {
+    "title": "Zvěrokruh a peníze: Kdo se topí ve zlatě a kdo má průvan v peněžence?",
+    "slug": "znameni-zverokruhu-a-penize",
+    "short_description": "Každé znamení má jiný skrytý postoj k financím. Zjistěte, jestli jste od přírody magnet na peníze, nebo se musíte naučit zkrotit nutkání utrácet.",
+    "category": "Astrologie",
+    "published_at": "2026-01-18T18:56:29.000Z",
+    "featured_image": "img/blog-astrology.webp",
     "readTime": 3
   },
   {
@@ -81,6 +297,24 @@
     "readTime": 4
   },
   {
+    "title": "Skrytý kód těla: Proč máte dny, kdy vám padá všechno z rukou?",
+    "slug": "biorytmy-proc-se-vam-nedari",
+    "short_description": "Jste bez energie, v práci děláte chyby a s partnerem jste na nože. Dříve se tomu říkalo smůla. Dnes tomu říkáme kritický den Biorytmu.",
+    "category": "Spiritualita",
+    "published_at": "2026-01-10T18:56:29.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 3
+  },
+  {
+    "title": "Vidíte všude 1111? Poselství andělů a co vám říkají",
+    "slug": "vidite-vsude-1111-poselstvi-andelu",
+    "short_description": "Vidíte všude číslo 1111? Andělé vám posílají silné poselství. Zjistěte, co toto andělské číslo znamená pro váš život, lásku a duchovní cestu.",
+    "category": "Spiritualita",
+    "published_at": "2026-01-01T10:00:00.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 5
+  },
+  {
     "title": "Hrůzostrašná karta Věž XVI: Nekompromisní hlubinná transformace plamenem",
     "slug": "lekce-padajici-veze-tarot",
     "short_description": "Pokud existuje karta, u níž zkušeným kartářkám hrkne v hrudi, nebývá to s populární legendou opředená Smrt, nýbrž hrůzostrašná a ničivá karta Věž.",
@@ -88,5 +322,158 @@
     "published_at": "2025-12-31T20:06:34.988Z",
     "featured_image": "img/blog-tarot.webp",
     "readTime": 4
+  },
+  {
+    "title": "Jak odrazit energetické upíry: Štíty v každodenním životě",
+    "slug": "pruvodce-energie-ochrana",
+    "short_description": "Znáte lidi, po kterých se cítíte, jako by vás přejel parní válec? Ukážeme vám, jak se zamknout před odsáváním životní energie.",
+    "category": "Spiritualita",
+    "published_at": "2025-12-29T18:56:29.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 3
+  },
+  {
+    "title": "Zatmění Slunce a Měsíce 2026: Jak přežít kosmický chaos?",
+    "slug": "zatmeni-slunce-a-mesice-2026",
+    "short_description": "Zatmění nejsou jen pěkná astronomická podívaná. V astrologii fungují jako urychlovače osudu. Připravte se na to, že věci naberou spád.",
+    "category": "Astrologie",
+    "published_at": "2025-12-26T18:56:29.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 2
+  },
+  {
+    "title": "Proč to Pannám a Beranům neklape? Anatomie vztahové katastrofy",
+    "slug": "panna-a-beran-partnerska-shoda",
+    "short_description": "Některé znakové kombinace vypadají na papíře skvěle, ale v reálu končí slzami a křikem. Pojďme si rozebrat klasický příklad nesourodého spojení.",
+    "category": "Vztahy",
+    "published_at": "2025-12-21T18:56:29.000Z",
+    "featured_image": "img/blog-relationships.webp",
+    "readTime": 3
+  },
+  {
+    "title": "Retrográdní Merkur: Ultimátní průvodce přežitím",
+    "slug": "retrogradni-merkur-pruvodce",
+    "short_description": "Rozbité telefony, ztracené emaily, ex-partneři v DMs... Vítejte v týdnech Retrográdního Merkuru. Jak tuto dobu otočit ve svůj prospěch?",
+    "category": "Astrologie",
+    "published_at": "2025-12-16T18:56:29.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 3
+  },
+  {
+    "title": "Manifestace a Zákon Přitažlivosti: 3 fatální chyby, které vás blokují",
+    "slug": "zakon-pritazlivosti-chyby",
+    "short_description": "Tak rádi byste přitáhli hojnost a lásku, ale The Secret pro vás nefunguje? Děláte pravděpodobně jednu z těchto tří začátečnických chyb.",
+    "category": "Spiritualita",
+    "published_at": "2025-12-11T18:56:29.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 3
+  },
+  {
+    "title": "Jak vyložit Tarot doma zadarmo: Manuál pro úplné začátečníky",
+    "slug": "vyklad-tarotu-pro-zacatecniky",
+    "short_description": "Chcete se zeptat karet na budoucnost, ale bojíte se, že něco pokazíte? Tento průvodce vás krok za krokem provede prvním bezpečným domácím výkladem.",
+    "category": "Tarot",
+    "published_at": "2025-12-06T18:56:29.000Z",
+    "featured_image": "img/blog-tarot.webp",
+    "readTime": 3
+  },
+  {
+    "title": "Saturův návrat: Proč je 29. rok života zlomový a co ti přinese",
+    "slug": "saturuv-navrat-29-rok-zivota",
+    "short_description": "Saturův návrat kolem 29. roku zásadně mění kariéru, vztahy i identitu. Zjisti, co tě čeká, jak se připravit a proč jde o nejdůležitější tranzit v životě.",
+    "category": "Astrologie",
+    "published_at": "2025-11-15T10:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 5
+  },
+  {
+    "title": "Karta Hvězda (XVII) v Tarotu: Naděje, uzdravení a světlo po temnotě",
+    "slug": "karta-hvezda-tarot-vyznam",
+    "short_description": "Karta Hvězda v tarotu symbolizuje naději a uzdravení po těžkých časech. Poznej její symboliku, výklad v lásce, kariéře i kombinace s jinými kartami.",
+    "category": "Tarot",
+    "published_at": "2025-11-01T10:00:00.000Z",
+    "featured_image": "img/blog-tarot.webp",
+    "readTime": 4
+  },
+  {
+    "title": "Uzel osudu v astrologii: Severní a Jižní uzel — tvoje karmická cesta",
+    "slug": "uzel-osudu-severni-jizni-uzel",
+    "short_description": "Co jsou severní a jižní uzel osudu v astrologii? Zjisti svou karmickou misi, co pustit z minulých životů a kdy přicházejí velké životní zlomy každých 18,5 let.",
+    "category": "Astrologie",
+    "published_at": "2025-10-18T10:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 5
+  },
+  {
+    "title": "Osobní rok v numerologii: Co tě čeká v roce 2026",
+    "slug": "osobni-rok-numerologie-2026",
+    "short_description": "Zjisti, co ti přinese rok 2026 podle numerologie. Vypočítej svůj osobní rok, pochop energii každého čísla a využij ji vědomě ve svůj prospěch.",
+    "category": "Numerologie",
+    "published_at": "2025-10-04T10:00:00.000Z",
+    "featured_image": "img/blog-numerology.webp",
+    "readTime": 5
+  },
+  {
+    "title": "Karta Měsíc (XVIII) v Tarotu: Iluze, podvědomí a skryté pravdy",
+    "slug": "karta-mesic-tarot-vyznam",
+    "short_description": "Karta Měsíc v tarotu odhaluje iluze, podvědomé strachy a skryté pravdy. Zjisti, co znamená ve vztazích, kariéře a jak projít jejím mlžným územím.",
+    "category": "Tarot",
+    "published_at": "2025-09-20T10:00:00.000Z",
+    "featured_image": "img/blog-tarot.webp",
+    "readTime": 4
+  },
+  {
+    "title": "Attachment styly v lásce: Proč se opakují stejné vzorce ve vztazích",
+    "slug": "attachment-styly-vzorce-ve-vztazich",
+    "short_description": "Proč přitahujeme stále stejné typy lidí? Pochop attachment styly — jistý, úzkostný, vyhýbavý — a zjisti, jak změnit hluboké vztahové vzorce.",
+    "category": "Vztahy",
+    "published_at": "2025-09-06T10:00:00.000Z",
+    "featured_image": "img/blog-relationships.webp",
+    "readTime": 5
+  },
+  {
+    "title": "Létání ve snu: Co znamená a co ti chce podvědomí říct",
+    "slug": "letani-ve-snu-vyznam",
+    "short_description": "Létání ve snu je jedním z nejčastějších a nejkrásnějších snových zážitků. Zjisti, co ti chce podvědomí říct a jak tyto sny vědomě využít.",
+    "category": "Snář",
+    "published_at": "2025-08-23T10:00:00.000Z",
+    "featured_image": "img/blog-dreams.webp",
+    "readTime": 4
+  },
+  {
+    "title": "Feng Shui doma: Jak upravit prostor pro příliv energie, lásky a peněz",
+    "slug": "feng-shui-doma-energie-penizy-laska",
+    "short_description": "Feng shui doma není jen o dekoraci. Naučte se, jak pomocí bagua mapy aktivovat zóny prosperity, lásky a hojnosti ve svém bytě nebo domě.",
+    "category": "Spiritualita",
+    "published_at": "2025-08-09T10:00:00.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 5
+  },
+  {
+    "title": "Karta Slunce (XIX) v Tarotu: Radost, úspěch a životní síla",
+    "slug": "karta-slunce-tarot-vyznam",
+    "short_description": "Karta Slunce v tarotu je symbolem radosti, vítězství a životní síly. Zjistěte, co přesně tato karta říká ve výkladu a jak přivolat její energii.",
+    "category": "Tarot",
+    "published_at": "2025-07-26T10:00:00.000Z",
+    "featured_image": "img/blog-tarot.webp",
+    "readTime": 4
+  },
+  {
+    "title": "Mistrovská čísla 11, 22 a 33 v numerologii: Dar nebo prokletí?",
+    "slug": "mistrovska-cisla-numerologie",
+    "short_description": "Mistrovská čísla 11, 22 a 33 nesou mimořádný potenciál i mimořádnou zátěž. Zjistěte, co znamenají, jak je poznat ve svém životopisu a jak s nimi pracovat.",
+    "category": "Numerologie",
+    "published_at": "2025-07-12T10:00:00.000Z",
+    "featured_image": "img/blog-numerology.webp",
+    "readTime": 6
+  },
+  {
+    "title": "Jak se připravit na nadcházející magický Úplněk",
+    "slug": "jak-se-pripravit-na-uplnek",
+    "short_description": "Úplněk je časem uvolnění a silných energií. Zjistěte, jaké rituály vám pomohou tuto energii využít naplno.",
+    "category": "Lunární Magie",
+    "published_at": "2025-07-05T10:00:00.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 3
   }
 ]
