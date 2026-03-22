@@ -1,6 +1,4 @@
-[providers]
-  node = {}
-  python = {}
+providers = ["node", "python"]
 
 [phases.install]
   cmds = ["npm install", "pip install -r social-media-agent/requirements.txt"]
