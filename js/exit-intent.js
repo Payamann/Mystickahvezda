@@ -49,8 +49,12 @@
                 <h2 style="font-family: 'Cinzel', serif; color: #d4af37; font-size: 1.4rem; margin-bottom: 0.75rem;">
                     Tvůj výklad jde mnohem dál
                 </h2>
-                <p style="color: rgba(255,255,255,0.65); line-height: 1.7; margin-bottom: 1.5rem; font-size: 0.95rem;">
-                    Natální karta, partnerská shoda a horoskopy bez omezení.<br>
+                <div style="color: rgba(255,255,255,0.7); line-height: 2; margin-bottom: 1.5rem; font-size: 0.92rem; text-align: left; display: inline-block;">
+                    <div>🔮 Natální karta &amp; partnerská shoda</div>
+                    <div>🌙 Horoskopy bez omezení</div>
+                    <div>✨ Tarot, runy, výklady a mnohem více</div>
+                </div>
+                <p style="color: rgba(255,255,255,0.45); line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.88rem;">
                     <strong style="color: #d4af37;">Přes 12 000 lidí</strong> už zná svůj vesmírný plán.
                 </p>
 

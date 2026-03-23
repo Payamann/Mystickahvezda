@@ -26,8 +26,12 @@
                 <h2 style="font-family: 'Cinzel', serif; color: #d4af37; font-size: 1.4rem; margin-bottom: 0.75rem;">
                     Tv\u016Fj v\xFDklad jde mnohem d\xE1l
                 </h2>
-                <p style="color: rgba(255,255,255,0.65); line-height: 1.7; margin-bottom: 1.5rem; font-size: 0.95rem;">
-                    Nat\xE1ln\xED karta, partnersk\xE1 shoda a horoskopy bez omezen\xED.<br>
+                <div style="color: rgba(255,255,255,0.7); line-height: 2; margin-bottom: 1.5rem; font-size: 0.92rem; text-align: left; display: inline-block;">
+                    <div>\u{1F52E} Nat\xE1ln\xED karta &amp; partnersk\xE1 shoda</div>
+                    <div>\u{1F319} Horoskopy bez omezen\xED</div>
+                    <div>\u2728 Tarot, runy, v\xFDklady a mnohem v\xEDce</div>
+                </div>
+                <p style="color: rgba(255,255,255,0.45); line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.88rem;">
                     <strong style="color: #d4af37;">P\u0159es 12 000 lid\xED</strong> u\u017E zn\xE1 sv\u016Fj vesm\xEDrn\xFD pl\xE1n.
                 </p>
 
