@@ -104,7 +104,7 @@
     function trigger() {
         if (triggered) return;
         if (Date.now() - startTime < MIN_TIME_ON_PAGE) return;
-        if (typeof window.Auth !== 'undefined' && window.Auth.isLoggedIn?.()) return; // nespouštět pro přihlášené
+        if (typeof window.Auth !== 'undefined' && window.Auth.isPremium?.()) return; // nespouštět pro premium členy
         triggered = true;
         sessionStorage.setItem(STORAGE_KEY, '1');
         createModal();
