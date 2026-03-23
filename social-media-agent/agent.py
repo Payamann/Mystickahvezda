@@ -379,21 +379,45 @@ def cmd_batch(days: int = 3, platform: str = "instagram"):
             current_date = dateclass.today() + timedelta(days=day_offset)
             day_posts = []
 
+            # ── Anti-repetition: sleduj co bylo použito dnes ──
+            today_used_topics = []
+            today_used_hooks = []
+            today_used_types = []
+
             for slot in config.DAILY_TIME_SLOTS:
-                # Téma — vyhni se nedávno použitým
+                # Téma — vyhni se nedávno použitým + DNES použitým
                 variety = get_variety_context()
                 recent_topics = variety.get("recent_topics", [])
-                available_topics = [t for t in config.CONTENT_THEMES if t not in recent_topics]
+                blocked_topics = set(recent_topics) | set(today_used_topics)
+                available_topics = [t for t in config.CONTENT_THEMES if t not in blocked_topics]
+                if not available_topics:
+                    available_topics = [t for t in config.CONTENT_THEMES if t not in today_used_topics]
                 if not available_topics:
                     available_topics = config.CONTENT_THEMES
                 topic = random.choice(available_topics)
+                today_used_topics.append(topic)
 
-                # Typ z preferovaných pro slot — respektuj Content Pillars poměr
+                # Typ z preferovaných pro slot — vyhni se dnes použitým typům
                 from generators.content_memory import pick_post_type_for_slot
-                post_type = pick_post_type_for_slot(slot["preferred_types"])
+                slot_types = [t for t in slot["preferred_types"] if t not in today_used_types]
+                if not slot_types:
+                    slot_types = slot["preferred_types"]
+                post_type = pick_post_type_for_slot(slot_types)
+                today_used_types.append(post_type)
 
                 # Content intent
                 content_intent = slot["content_intent"] or pick_content_intent()
+
+                # ── Kontext pro prompt: co už dnes bylo použito ──
+                today_context = ""
+                if today_used_topics[:-1]:  # předchozí posty (ne aktuální)
+                    today_context = (
+                        f"\n\nDNEŠNÍ ANTI-REPETITION (POVINNÉ — dodržuj!):\n"
+                        f"Dnes už byly vygenerovány posty na: {', '.join(today_used_topics[:-1])}\n"
+                        f"Dnes použité hook formule: {', '.join(today_used_hooks) if today_used_hooks else 'žádné'}\n"
+                        f"Dnes použité typy: {', '.join(today_used_types[:-1])}\n"
+                        f"MUSÍŠ použít JINÝ úhel, JINOU hook formuli a JINÝ tón než předchozí posty dnes."
+                    )
 
                 progress.update(
                     main_task,
@@ -410,6 +434,7 @@ def cmd_batch(days: int = 3, platform: str = "instagram"):
                         platform=platform,
                         use_astro_context=(day_offset == 0),  # astro kontext jen pro dnes
                         content_intent=content_intent,
+                        extra_context=today_context,
                     )
 
                     # Rule-based QG (bez AI review pro rychlost batch generování)
@@ -434,6 +459,11 @@ def cmd_batch(days: int = 3, platform: str = "instagram"):
                             post_data = refined
                             qg_result = refined_qg
 
+                    # Sleduj hook pro anti-repetition v rámci dne
+                    used_hook = post_data.get("hook_formula", "")
+                    if used_hook:
+                        today_used_hooks.append(used_hook)
+
                     # Uložení
                     post_data["quality_score"] = qg_result["score"]
                     json_path = save_post(post_data, None, platform, topic, post_type)
@@ -441,7 +471,7 @@ def cmd_batch(days: int = 3, platform: str = "instagram"):
                     # Záznam do paměti
                     record_post(
                         topic, post_type,
-                        post_data.get("hook_formula", ""),
+                        used_hook,
                         content_intent=content_intent,
                     )
                     record_approved_post(
