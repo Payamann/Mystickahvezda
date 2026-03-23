@@ -81,25 +81,29 @@ CONTENT_THEMES = [
 ]
 
 # Témata s přímým nástrojem na webu — vhodná pro soft_promo a direct_promo
-PROMOTABLE_THEMES = [
-    "tarot",
-    "numerologie",
-    "astrologie",
-    "runy",
-    "andělé a andělské karty",
-    "lunární rituály a fáze měsíce",
-    "natální karta a birth chart",
-    "partnerská shoda a kompatibilita",
-    "minulé životy a karma",
-    "šamanské kolo a totemová zvířata",
-    "horoskopy a předpovědi",
-    "sny a jejich výklad",
-    "biorytmy a osobní cykly",
-    "aura a barvy energie",
-    "afirmace a denní záměry",
-    "astromapa a místa na světě",
-    "čínský horoskop",
-]
+# Každé téma má URL na mystickahvezda.cz — agent MUSÍ odkazovat jen na relevantní URL
+PROMOTABLE_TOOLS = {
+    "tarot":                           "mystickahvezda.cz/tarot",
+    "numerologie":                     "mystickahvezda.cz/numerologie",
+    "astrologie":                      "mystickahvezda.cz/horoscope",
+    "runy":                            "mystickahvezda.cz/runy",
+    "andělé a andělské karty":         "mystickahvezda.cz/angelske-karty",
+    "lunární rituály a fáze měsíce":   "mystickahvezda.cz/lunar-calendar",
+    "natální karta a birth chart":     "mystickahvezda.cz/natalni-karta.html",
+    "partnerská shoda a kompatibilita":"mystickahvezda.cz/partner-compatibility",
+    "minulé životy a karma":           "mystickahvezda.cz/minuly-zivot",
+    "šamanské kolo a totemová zvířata":"mystickahvezda.cz/shamanske-kolo",
+    "horoskopy a předpovědi":          "mystickahvezda.cz/horoscope",
+    "sny a jejich výklad":             "mystickahvezda.cz/snar",
+    "biorytmy a osobní cykly":         "mystickahvezda.cz/biorytmy",
+    "aura a barvy energie":            "mystickahvezda.cz/aura",
+    "afirmace a denní záměry":         "mystickahvezda.cz/hvezdny-pruvodce",
+    "astromapa a místa na světě":      "mystickahvezda.cz/astromapa",
+    "čínský horoskop":                 "mystickahvezda.cz/cinsky-horoskop",
+}
+
+# Zpětná kompatibilita — seznam témat pro anti-repetition logiku
+PROMOTABLE_THEMES = list(PROMOTABLE_TOOLS.keys())
 
 # Typy postů (kompletní seznam)
 POST_TYPES = {
@@ -124,24 +128,83 @@ DAILY_TIME_SLOTS = [
         "id": "morning",
         "label": "🌅 Ráno",
         "time": "08:00",
-        "preferred_types": ["quote", "daily_energy", "tip", "save_worthy"],
+        # save_worthy zvýšeno — ranní saves jsou nejsilnější signál pro IG algoritmus
+        "preferred_types": ["daily_energy", "quote", "tip", "save_worthy"],
+        "type_weights":    [0.30,           0.20,    0.25,  0.25],
         "content_intent": "pure_value",
     },
     {
         "id": "noon",
         "label": "☀️ Poledne",
         "time": "12:00",
-        "preferred_types": ["educational", "myth_bust", "story", "blog_promo", "cross_system", "tool_demo"],
+        # cross_system a tool_demo jsou unikátní formáty — musí být v rotaci každý týden
+        "preferred_types": ["educational", "myth_bust", "story", "cross_system", "tool_demo", "blog_promo"],
+        "type_weights":    [0.25,           0.15,        0.20,   0.20,            0.15,         0.05],
         "content_intent": None,  # auto z pick_content_intent()
     },
     {
         "id": "evening",
         "label": "🌙 Večer",
         "time": "19:00",
-        "preferred_types": ["question", "challenge"],
+        "preferred_types": ["question", "challenge", "myth_bust"],
+        "type_weights":    [0.55,        0.25,         0.20],
         "content_intent": "pure_value",
     },
 ]
+
+# Týdenní rytmus — různé dny mají různý obsah a energii
+# Agent to použije pro výběr témat a tónu
+WEEKLY_RHYTHM = {
+    0: {  # Pondělí
+        "mood": "motivační",
+        "focus": "nový začátek, záměry, energie týdne",
+        "preferred_themes": ["afirmace a denní záměry", "numerologie", "lunární rituály a fáze měsíce"],
+        "avoid_types": ["challenge"],  # Pondělí není den pro výzvy — lidé teprve startují
+        "boost_types": ["daily_energy", "quote", "save_worthy"],
+    },
+    1: {  # Úterý
+        "mood": "vzdělávací",
+        "focus": "hloubkové znalosti, systémy, jak věci fungují",
+        "preferred_themes": ["tarot", "runy", "astrologie", "numerologie", "andělé a andělské karty"],
+        "avoid_types": [],
+        "boost_types": ["educational", "cross_system", "myth_bust"],
+    },
+    2: {  # Středa
+        "mood": "praktický",
+        "focus": "rituály, tipy, konkrétní nástroje",
+        "preferred_themes": ["lunární rituály a fáze měsíce", "šamanské kolo a totemová zvířata", "biorytmy a osobní cykly"],
+        "avoid_types": [],
+        "boost_types": ["tip", "tool_demo", "save_worthy"],
+    },
+    3: {  # Čtvrtek
+        "mood": "hluboký",
+        "focus": "sebepoznání, stíny, karmanické vzorce",
+        "preferred_themes": ["natální karta a birth chart", "minulé životy a karma", "karmické vztahy a spřízněné duše"],
+        "avoid_types": [],
+        "boost_types": ["story", "cross_system", "educational"],
+    },
+    4: {  # Pátek
+        "mood": "lehký a zábavný",
+        "focus": "vztahy, kompatibilita, horoskopy — konec týdne, odlehčení",
+        "preferred_themes": ["partnerská shoda a kompatibilita", "horoskopy a předpovědi", "synchronicita a znamení"],
+        "avoid_types": ["challenge"],
+        "boost_types": ["question", "myth_bust", "quote"],
+    },
+    5: {  # Sobota
+        "mood": "komunitní",
+        "focus": "sdílení, příběhy, otázky — víkend = více času na čtení",
+        "preferred_themes": ["sny a jejich výklad", "aura a barvy energie", "duchovní rozvoj"],
+        "avoid_types": [],
+        "boost_types": ["story", "question", "save_worthy"],
+    },
+    6: {  # Neděle
+        "mood": "reflexivní",
+        "focus": "uzavírání týdne, příprava na nový, introspekce",
+        "preferred_themes": ["sebepoznání a životní účel", "sezónní energie a astrologie roku", "afirmace a denní záměry"],
+        "avoid_types": ["tool_demo"],  # Neděle není prodejní den
+        "boost_types": ["quote", "daily_energy", "tip"],
+    },
+}
 
 # Adresář pro content kalendáře
 CALENDAR_DIR = OUTPUT_DIR / "calendar"

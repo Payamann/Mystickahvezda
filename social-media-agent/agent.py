@@ -393,12 +393,28 @@ def cmd_batch(days: int = 3, platform: str = "instagram"):
             today_used_hooks = []
             today_used_types = []
 
+            # ── Týdenní rytmus pro tento den ──
+            weekday = current_date.weekday()  # 0=Pondělí, 6=Neděle
+            weekly_rhythm = config.WEEKLY_RHYTHM.get(weekday, {})
+            rhythm_mood = weekly_rhythm.get("mood", "")
+            rhythm_focus = weekly_rhythm.get("focus", "")
+            rhythm_preferred = weekly_rhythm.get("preferred_themes", [])
+            rhythm_avoid_types = weekly_rhythm.get("avoid_types", [])
+            rhythm_boost_types = weekly_rhythm.get("boost_types", [])
+
             for slot in config.DAILY_TIME_SLOTS:
                 # Téma — vyhni se nedávno použitým + DNES použitým
+                # Preferuj témata z týdenního rytmu
                 variety = get_variety_context()
                 recent_topics = variety.get("recent_topics", [])
                 blocked_topics = set(recent_topics) | set(today_used_topics)
-                available_topics = [t for t in config.CONTENT_THEMES if t not in blocked_topics]
+
+                # Nejdřív zkus témata z weekly rhythm (pokud jsou dostupná)
+                rhythm_available = [t for t in rhythm_preferred if t not in blocked_topics]
+                if rhythm_available:
+                    available_topics = rhythm_available
+                else:
+                    available_topics = [t for t in config.CONTENT_THEMES if t not in blocked_topics]
                 if not available_topics:
                     available_topics = [t for t in config.CONTENT_THEMES if t not in today_used_topics]
                 if not available_topics:
@@ -406,12 +422,23 @@ def cmd_batch(days: int = 3, platform: str = "instagram"):
                 topic = random.choice(available_topics)
                 today_used_topics.append(topic)
 
-                # Typ z preferovaných pro slot — vyhni se dnes použitým typům
+                # Typ z preferovaných pro slot — vyhni se dnes použitým typům + avoid_types z rytmu
                 from generators.content_memory import pick_post_type_for_slot
-                slot_types = [t for t in slot["preferred_types"] if t not in today_used_types]
+                slot_types = [
+                    t for t in slot["preferred_types"]
+                    if t not in today_used_types and t not in rhythm_avoid_types
+                ]
+                if not slot_types:
+                    slot_types = [t for t in slot["preferred_types"] if t not in today_used_types]
                 if not slot_types:
                     slot_types = slot["preferred_types"]
-                post_type = pick_post_type_for_slot(slot_types)
+
+                # Boost types z weekly rytmu — přidej na začátek pro vyšší pravděpodobnost
+                boosted = [t for t in rhythm_boost_types if t in slot_types]
+                rest = [t for t in slot_types if t not in boosted]
+                slot_types_weighted = boosted + rest  # boosted typy mají přednost
+
+                post_type = pick_post_type_for_slot(slot_types_weighted)
                 today_used_types.append(post_type)
 
                 # Content intent
@@ -423,7 +450,12 @@ def cmd_batch(days: int = 3, platform: str = "instagram"):
                         log.info("Intent downgraded na pure_value — téma '%s' nemá nástroj na webu", topic)
                 content_intent = raw_intent
 
-                # ── Kontext pro prompt: co už dnes bylo použito ──
+                # URL pro promo — z PROMOTABLE_TOOLS dict (přesná URL pro dané téma)
+                promo_url = ""
+                if content_intent in ("soft_promo", "direct_promo"):
+                    promo_url = config.PROMOTABLE_TOOLS.get(topic, "")
+
+                # ── Kontext pro prompt: co už dnes bylo použito + týdenní rytmus + URL ──
                 today_context = ""
                 if today_used_topics[:-1]:  # předchozí posty (ne aktuální)
                     today_context = (
@@ -432,6 +464,19 @@ def cmd_batch(days: int = 3, platform: str = "instagram"):
                         f"Dnes použité hook formule: {', '.join(today_used_hooks) if today_used_hooks else 'žádné'}\n"
                         f"Dnes použité typy: {', '.join(today_used_types[:-1])}\n"
                         f"MUSÍŠ použít JINÝ úhel, JINOU hook formuli a JINÝ tón než předchozí posty dnes."
+                    )
+                if rhythm_mood:
+                    today_context += (
+                        f"\n\nTÝDENNÍ RYTMUS — dnes je {['pondělí','úterý','středa','čtvrtek','pátek','sobota','neděle'][weekday]}:\n"
+                        f"Nálada dne: {rhythm_mood}\n"
+                        f"Fokus: {rhythm_focus}\n"
+                        f"Přizpůsob tón a obsah tomuto zaměření."
+                    )
+                if promo_url:
+                    today_context += (
+                        f"\n\nPROMO URL (POVINNÉ — použij přesně tuto URL v CTA):\n"
+                        f"→ {promo_url}\n"
+                        f"NEZAMĚŇUJ s jinou URL — tato URL odpovídá tématu '{topic}'."
                     )
 
                 progress.update(

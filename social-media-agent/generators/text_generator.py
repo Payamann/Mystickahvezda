@@ -162,6 +162,17 @@ Když zmiňuješ astro kontext (Měsíc v Beranovi, Slunce v Býku...), VŽDY od
 "A co to znamená pro můj dnešek?" Nestačí říct že něco "je" — musíš říct CO S TÍM.
   ✗ "Měsíc je v Býku" (dekorativní — a co?)
   ✓ "Měsíc v Býku říká: zpomal s rozhodováním, ale věnuj se tomu, co ti dává smyslový požitek" (funkční)
+
+VZDĚLÁVÁNÍ = POVINNÉ — VYSVĚTLUJ MECHANISMY:
+Čtenář nechce jen VĚŘIT — chce ROZUMĚT. Každé tvrzení musí mít vysvětlení jak funguje.
+  ✗ "Dnes je den čísla 1." (holé tvrzení — proč? odkud?)
+  ✓ "2+5+3+2+0+2+6 = 20 → 2. Den čísla 2 znamená..." (ukázal jsi logiku)
+  ✗ "Dorůstající Měsíc přináší energii růstu." (dekorativní)
+  ✓ "Dorůstající Měsíc = gravitační příliv zesiluje. V praxi: záměry vyslovené teď mají silnější kotvu." (funkční)
+  ✗ "Tarot odhalí tvou cestu." (vágní)
+  ✓ "Tarot funguje přes projekci — mozek přiřadí symbolu to, co právě prožíváš. Stejný princip jako Rorschach test." (vzdělávací)
+Pravidlo: Pokud post obsahuje numerologický výpočet, ukaž ho. Pokud zmiňuješ astro mechanismus, vysvětli proč.
+Čtenář, který ROZUMÍ, se vrátí. Čtenář, který jen VĚŘÍ, odejde při prvním pochybení.
 """
 
 
