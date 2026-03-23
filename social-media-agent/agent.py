@@ -272,10 +272,14 @@ def _save_calendar_markdown(calendar: list, platform: str) -> "Path":
             caption = post["post_data"].get("caption", "")
             hashtags = post["post_data"].get("hashtags", [])
             hashtag_str = ("\n\n" + "  ".join(hashtags)) if hashtags else ""
+            grammar_changes = post["post_data"].get("grammar_changes", [])
             lines.append("**📝 Caption:**")
             lines.append("")
             lines.append(caption + hashtag_str)
             lines.append("")
+            if grammar_changes:
+                lines.append(f"> ✏️ Gramatické opravy: {' · '.join(grammar_changes)}")
+                lines.append("")
 
             # Image prompt
             image_prompt = post["post_data"].get("image_prompt", "")
@@ -637,8 +641,12 @@ def cmd_generate(auto: bool = False, platform: str = "instagram", variations: in
         hook = post_data.get("hook_formula", "")
         hashtags = post_data.get("hashtags", [])
         hashtag_str = "\n\n" + "  ".join(hashtags) if hashtags else ""
+        grammar_changes = post_data.get("grammar_changes", [])
+        grammar_note = ""
+        if grammar_changes:
+            grammar_note = f"\n\n[dim yellow]✏️ Gramatické opravy ({len(grammar_changes)}): {' · '.join(grammar_changes[:3])}{'…' if len(grammar_changes) > 3 else ''}[/dim yellow]"
         console.print(Panel(
-            f"[dim]Hook: {hook}[/dim]\n\n{caption}{hashtag_str}",
+            f"[dim]Hook: {hook}[/dim]\n\n{caption}{hashtag_str}{grammar_note}",
             title=f"📝 {topic.upper()} / {post_type}",
             border_style="cyan",
         ))

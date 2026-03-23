@@ -106,16 +106,28 @@ Publikum je smíšené — ženy, muži, nebinární lidé. NIKDY nepředpoklád
 ZAKÁZÁNO: ženské ani mužské tvary sloves/adjektiv v přímém oslovení.
   ✗ "vstoupila jsi", "cítila ses", "byl jsi", "věděl jsi"
   ✗ "kamarádko", "drahá", "milá"
+  ✗ Lomené tvary JSOU ZAKÁZÁNY: "vstoupil/a", "šel/šla", "viděl/a" — vypadají hrozně.
 
-POVOLENÉ STRATEGIE (použij jednu nebo kombinaci):
-  ✓ Lomené tvary: "vstoupil/a jsi", "cítil/a ses", "věděl/a jsi"
-  ✓ Infinitiv: "vstoupit do pondělí s záměrem" (místo "vstoupil/a jsi")
+POVOLENÉ STRATEGIE (používej v tomto pořadí preferencí):
+  ✓ 2. osoba přítomný čas — NEJLEPŠÍ ŘEŠENÍ pro tykání i neutralitu:
+      SPRÁVNĚ:  "Jdeš ulicí. Vidíš číslo 11:11. Zasměješ se."
+      SPRÁVNĚ:  "Sedíš v kavárně. Díváš se na cizí lidi."
+      SPRÁVNĚ:  "Probudíš se ve tři ráno. Sen byl tak živý."
+      SPRÁVNĚ:  "Otevřeš zprávu. Přečteš ji třikrát."
+
+  ⚠️  POZOR NA DOKONAVÁ SLOVESA v 2. os. přítomného času:
+      Dokonavá slovesa v přítomném čase znějí jako budoucnost, ne přítomnost.
+      ŠPATNĚ:  "Zasmáš se." (zní jako: budeš se smát někdy)
+      SPRÁVNĚ: "Zasměješ se." / "Úsměv se ti mihne na tváři." / "Pokrčíš rameny."
+      ŠPATNĚ:  "Uvěříš tomu." → SPRÁVNĚ: "Začneš tomu věřit."
+      ŠPATNĚ:  "Rozhodneš se." → SPRÁVNĚ: "Děláš rozhodnutí." / "V hlavě se něco rozhodne."
+
+  ✓ Infinitiv: "Vstoupit do pondělí se záměrem." / "Nechat věci plynout."
   ✓ Množné číslo: "Lidé, kteří..." / "Ti z nás, kteří..."
   ✓ Podstatná jména bez rodu: "člověk", "každý z nás", "ten z nás, kdo..."
-  ✓ Přeformulování: "Kdy naposledy jsi vstoupil/a..." → "Kdy jsi naposledy..."
 
-PREFEROVANÝ STYL: Lomené tvary (vstoupil/a) jsou na českém IG standardní a přirozené.
-Infinitivní konstrukce použij tam, kde lomený tvar zní neohrabaně.
+PREFEROVANÝ STYL: Mikropříběhy VŽDY v 2. osobě přítomného času s nedokonavými slovesy.
+Je to přirozené tykání + gender-neutral + filmové. Čtenář se okamžitě vidí v příběhu.
 
 CTA VARIACE — POVINNÉ PRAVIDLO:
 NESMÍŠ opakovat stejný typ CTA ve více než 2 postech ze série.
@@ -1208,6 +1220,17 @@ PŘÍKLADY správného stylu (rozviň dle tématu, VŽDY přidej border instrukc
     # Vždy přidej content_intent do výsledku (pro agent.py a post_saver)
     result["content_intent"] = content_intent
 
+    # ── Grammar check — automatická oprava češtiny ──
+    caption_raw = result.get("caption", "")
+    if caption_raw:
+        gc = grammar_check_post(caption_raw, client=client, model_name=model_name)
+        if gc["had_errors"]:
+            result["caption"] = gc["corrected"]
+            result["grammar_changes"] = gc["changes"]
+            log.info("Grammar check: opraveno %d chyb — %s", len(gc["changes"]), gc["changes"])
+        else:
+            result["grammar_changes"] = []
+
     # ── Border framing — povinný suffix pro ořez vodoznaku ──
     # Pokud LLM border instrukci vynechal, appendneme ji automaticky
     BORDER_FRAMING = (
@@ -1224,6 +1247,69 @@ PŘÍKLADY správného stylu (rozviň dle tématu, VŽDY přidej border instrukc
         result["image_prompt"] = img + BORDER_FRAMING
 
     return result
+
+
+# ============================================================
+# GRAMMAR CHECK — kontrola češtiny po generování
+# ============================================================
+
+def grammar_check_post(caption: str, client=None, model_name: str = None) -> dict:
+    """
+    Zkontroluje a opraví gramatiku a pravopis českého caption.
+
+    Returns:
+        {
+            "corrected": str,       # opravený text (nebo originál pokud bez chyb)
+            "changes": list[str],   # popis provedených změn
+            "had_errors": bool,     # True pokud byly nalezeny chyby
+        }
+    """
+    if client is None:
+        client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
+    if model_name is None:
+        model_name = config.CLAUDE_MODEL
+
+    prompt = f"""Jsi expert na českou gramatiku a pravopis. Zkontroluj následující Instagram caption.
+
+ZKONTROLUJ A OPRAV:
+1. Pravopisné chyby (překlepy, i/y, s/z, velká písmena)
+2. Gramatické chyby (skloňování, časování, shoda podmětu s přísudkem)
+3. Dokonavá slovesa v 2. os. přítomného času znějí jako budoucnost — oprav na přirozenější tvar:
+   - "Zasmáš se." → "Zasměješ se." nebo "Usmáš se."
+   - "Rozhodneš se." → "Děláš rozhodnutí."
+   - "Uvěříš." → "Začneš věřit."
+4. Interpunkce (čárky před "ale", "protože", "když", "který" atd.)
+5. Lomené tvary (vstoupil/a, šel/šla) jsou zakázány — přepiš do 2. osoby přítomného času
+6. Zachovej styl, tón a délku originálu — pouze opravuj chyby, nepřepisuj obsah
+
+CAPTION K OPRAVĚ:
+---
+{caption}
+---
+
+Odpověz POUZE ve formátu JSON (bez markdown):
+{{
+  "corrected": "opravený text zde",
+  "changes": ["popis změny 1", "popis změny 2"],
+  "had_errors": true nebo false
+}}
+
+Pokud text neobsahuje žádné chyby, vrať originál s had_errors: false a prázdným polem changes."""
+
+    try:
+        response = _call_claude(client, model_name, prompt, temperature=0.1)
+        result = _parse_json_response(response.text)
+        if result and "corrected" in result:
+            return {
+                "corrected": result.get("corrected", caption),
+                "changes": result.get("changes", []),
+                "had_errors": result.get("had_errors", False),
+            }
+    except Exception as e:
+        log.warning("Grammar check selhal: %s", e)
+
+    # Fallback — vrať originál
+    return {"corrected": caption, "changes": [], "had_errors": False}
 
 
 # ============================================================
