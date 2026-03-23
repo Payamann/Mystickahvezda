@@ -1,4 +1,4 @@
-(function(){"use strict";const t="mh_exit_shown";let s=Date.now(),n=!1;if(["/prihlaseni","/onboarding","/404","/profil"].some(e=>window.location.pathname.includes(e))||sessionStorage.getItem(t))return;function d(){const e=document.createElement("div");e.id="exit-intent-modal",e.style.cssText=`
+(function(){"use strict";const t="mh_exit_shown";let a=Date.now(),n=!1;if(["/prihlaseni","/onboarding","/404","/profil"].some(e=>window.location.pathname.includes(e))||sessionStorage.getItem(t))return;function d(){const e=document.createElement("div");e.id="exit-intent-modal",e.style.cssText=`
             position: fixed; inset: 0; z-index: 99999;
             display: flex; align-items: center; justify-content: center;
             background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
@@ -24,11 +24,11 @@
 
                 <div style="font-size: 3rem; margin-bottom: 1rem;">\u{1F31F}</div>
                 <h2 style="font-family: 'Cinzel', serif; color: #d4af37; font-size: 1.4rem; margin-bottom: 0.75rem;">
-                    Po\u010Dkejte \u2014 hv\u011Bzdy maj\xED pro v\xE1s zpr\xE1vu
+                    Tv\u016Fj v\xFDklad jde mnohem d\xE1l
                 </h2>
                 <p style="color: rgba(255,255,255,0.65); line-height: 1.7; margin-bottom: 1.5rem; font-size: 0.95rem;">
-                    Vyzkou\u0161ejte nat\xE1ln\xED kartu, tarot a personalizovan\xE9 horoskopy.<br>
-                    <strong style="color: #d4af37;">7 dn\xED zcela zdarma</strong> \u2014 bez platebn\xED karty.
+                    Nat\xE1ln\xED karta, partnersk\xE1 shoda a horoskopy bez omezen\xED.<br>
+                    <strong style="color: #d4af37;">P\u0159es 12 000 lid\xED</strong> u\u017E zn\xE1 sv\u016Fj vesm\xEDrn\xFD pl\xE1n.
                 </p>
 
                 <a href="/cenik.html" id="exit-cta" style="
@@ -40,7 +40,7 @@
                     box-shadow: 0 8px 30px rgba(155,89,182,0.4);
                 " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 40px rgba(155,89,182,0.5)'"
                    onmouseout="this.style.transform='';this.style.boxShadow='0 8px 30px rgba(155,89,182,0.4)'">
-                    \u2728 Za\u010D\xEDt 7 dn\xED zdarma
+                    \u2728 Zobrazit co z\xEDsk\xE1m \u2192
                 </a>
 
                 <button id="exit-dismiss" style="
@@ -49,14 +49,14 @@
                     cursor: pointer; padding: 0.5rem;
                     text-decoration: underline;
                 " onmouseover="this.style.color='rgba(255,255,255,0.6)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">
-                    Ne, d\xEDky \u2014 odej\xEDt
+                    Zat\xEDm ne, z\u016Fstanu u z\xE1kladn\xED verze
                 </button>
 
                 <p style="color: rgba(255,255,255,0.2); font-size: 0.75rem; margin-top: 0.75rem;">
-                    Zru\u0161en\xED kdykoliv \u2022 GDPR chr\xE1n\u011Bno
+                    GDPR chr\xE1n\u011Bno
                 </p>
             </div>
-        `,document.body.appendChild(e);function o(){e.style.animation="fadeOut 0.2s ease forwards",setTimeout(()=>e.remove(),200)}e.addEventListener("click",l=>{l.target===e&&o()}),document.getElementById("exit-close").addEventListener("click",o),document.getElementById("exit-dismiss").addEventListener("click",o),document.getElementById("exit-cta").addEventListener("click",()=>{sessionStorage.setItem(t,"1")})}function r(){n||Date.now()-s<15e3||typeof window.Auth<"u"&&window.Auth.isLoggedIn?.()||(n=!0,sessionStorage.setItem(t,"1"),d())}document.addEventListener("mouseleave",e=>{e.clientY<=0&&r()});let i;document.addEventListener("visibilitychange",()=>{document.hidden?i=setTimeout(r,1e3):clearTimeout(i)});const a=document.createElement("style");a.textContent=`
+        `,document.body.appendChild(e);function o(){e.style.animation="fadeOut 0.2s ease forwards",setTimeout(()=>e.remove(),200)}e.addEventListener("click",l=>{l.target===e&&o()}),document.getElementById("exit-close").addEventListener("click",o),document.getElementById("exit-dismiss").addEventListener("click",o),document.getElementById("exit-cta").addEventListener("click",()=>{sessionStorage.setItem(t,"1")})}function i(){n||Date.now()-a<15e3||typeof window.Auth<"u"&&window.Auth.isLoggedIn?.()||(n=!0,sessionStorage.setItem(t,"1"),d())}document.addEventListener("mouseleave",e=>{e.clientY<=0&&i()});let r;document.addEventListener("visibilitychange",()=>{document.hidden?r=setTimeout(i,1e3):clearTimeout(r)});const s=document.createElement("style");s.textContent=`
         @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeOut { to { opacity: 0; } }
-    `,document.head.appendChild(a)})();
+    `,document.head.appendChild(s)})();

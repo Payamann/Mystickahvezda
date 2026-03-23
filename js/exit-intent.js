@@ -47,11 +47,11 @@
 
                 <div style="font-size: 3rem; margin-bottom: 1rem;">🌟</div>
                 <h2 style="font-family: 'Cinzel', serif; color: #d4af37; font-size: 1.4rem; margin-bottom: 0.75rem;">
-                    Počkejte — hvězdy mají pro vás zprávu
+                    Tvůj výklad jde mnohem dál
                 </h2>
                 <p style="color: rgba(255,255,255,0.65); line-height: 1.7; margin-bottom: 1.5rem; font-size: 0.95rem;">
-                    Vyzkoušejte natální kartu, tarot a personalizované horoskopy.<br>
-                    <strong style="color: #d4af37;">7 dní zcela zdarma</strong> — bez platební karty.
+                    Natální karta, partnerská shoda a horoskopy bez omezení.<br>
+                    <strong style="color: #d4af37;">Přes 12 000 lidí</strong> už zná svůj vesmírný plán.
                 </p>
 
                 <a href="/cenik.html" id="exit-cta" style="
@@ -63,7 +63,7 @@
                     box-shadow: 0 8px 30px rgba(155,89,182,0.4);
                 " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 40px rgba(155,89,182,0.5)'"
                    onmouseout="this.style.transform='';this.style.boxShadow='0 8px 30px rgba(155,89,182,0.4)'">
-                    ✨ Začít 7 dní zdarma
+                    ✨ Zobrazit co získám →
                 </a>
 
                 <button id="exit-dismiss" style="
@@ -72,11 +72,11 @@
                     cursor: pointer; padding: 0.5rem;
                     text-decoration: underline;
                 " onmouseover="this.style.color='rgba(255,255,255,0.6)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">
-                    Ne, díky — odejít
+                    Zatím ne, zůstanu u základní verze
                 </button>
 
                 <p style="color: rgba(255,255,255,0.2); font-size: 0.75rem; margin-top: 0.75rem;">
-                    Zrušení kdykoliv • GDPR chráněno
+                    GDPR chráněno
                 </p>
             </div>
         `;
