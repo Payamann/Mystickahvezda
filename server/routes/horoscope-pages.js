@@ -14,18 +14,18 @@ import { getCachedHoroscope, saveCachedHoroscope } from '../services/astrology.j
 export const router = express.Router();
 
 const SIGN_MAP = {
-    'beran':    { name: 'Beran',    nameGen: 'Berana',    symbol: '♈', dates: '21.3. – 19.4.' },
-    'byk':      { name: 'Býk',      nameGen: 'Býka',      symbol: '♉', dates: '20.4. – 20.5.' },
-    'blizenci': { name: 'Blíženci', nameGen: 'Blíženců',  symbol: '♊', dates: '21.5. – 20.6.' },
-    'rak':      { name: 'Rak',      nameGen: 'Raka',      symbol: '♋', dates: '21.6. – 22.7.' },
-    'lev':      { name: 'Lev',      nameGen: 'Lva',       symbol: '♌', dates: '23.7. – 22.8.' },
-    'panna':    { name: 'Panna',    nameGen: 'Panny',     symbol: '♍', dates: '23.8. – 22.9.' },
-    'vahy':     { name: 'Váhy',     nameGen: 'Vah',       symbol: '♎', dates: '23.9. – 22.10.' },
-    'stir':     { name: 'Štír',     nameGen: 'Štíra',     symbol: '♏', dates: '23.10. – 21.11.' },
-    'strelec':  { name: 'Střelec',  nameGen: 'Střelce',   symbol: '♐', dates: '22.11. – 21.12.' },
-    'kozoroh':  { name: 'Kozoroh',  nameGen: 'Kozoroha',  symbol: '♑', dates: '22.12. – 19.1.' },
-    'vodnar':   { name: 'Vodnář',   nameGen: 'Vodnáře',   symbol: '♒', dates: '20.1. – 18.2.' },
-    'ryby':     { name: 'Ryby',     nameGen: 'Ryb',       symbol: '♓', dates: '19.2. – 20.3.' },
+    'beran':    { name: 'Beran',    nameGen: 'Berana',    nameAcc: 'Berana',   symbol: '♈', dates: '21.3. – 19.4.' },
+    'byk':      { name: 'Býk',      nameGen: 'Býka',      nameAcc: 'Býka',     symbol: '♉', dates: '20.4. – 20.5.' },
+    'blizenci': { name: 'Blíženci', nameGen: 'Blíženců',  nameAcc: 'Blížence', symbol: '♊', dates: '21.5. – 20.6.' },
+    'rak':      { name: 'Rak',      nameGen: 'Raka',      nameAcc: 'Raka',     symbol: '♋', dates: '21.6. – 22.7.' },
+    'lev':      { name: 'Lev',      nameGen: 'Lva',       nameAcc: 'Lva',      symbol: '♌', dates: '23.7. – 22.8.' },
+    'panna':    { name: 'Panna',    nameGen: 'Panny',     nameAcc: 'Pannu',    symbol: '♍', dates: '23.8. – 22.9.' },
+    'vahy':     { name: 'Váhy',     nameGen: 'Vah',       nameAcc: 'Váhy',     symbol: '♎', dates: '23.9. – 22.10.' },
+    'stir':     { name: 'Štír',     nameGen: 'Štíra',     nameAcc: 'Štíra',    symbol: '♏', dates: '23.10. – 21.11.' },
+    'strelec':  { name: 'Střelec',  nameGen: 'Střelce',   nameAcc: 'Střelce',  symbol: '♐', dates: '22.11. – 21.12.' },
+    'kozoroh':  { name: 'Kozoroh',  nameGen: 'Kozoroha',  nameAcc: 'Kozoroha', symbol: '♑', dates: '22.12. – 19.1.' },
+    'vodnar':   { name: 'Vodnář',   nameGen: 'Vodnáře',   nameAcc: 'Vodnáře',  symbol: '♒', dates: '20.1. – 18.2.' },
+    'ryby':     { name: 'Ryby',     nameGen: 'Ryb',       nameAcc: 'Ryby',     symbol: '♓', dates: '19.2. – 20.3.' },
 };
 
 const CZECH_MONTHS = ['ledna', 'února', 'března', 'dubna', 'května', 'června',
@@ -151,7 +151,7 @@ router.get('/:sign/:date', async (req, res, next) => {
         const canonicalUrl = `https://mystickahvezda.cz/horoskop/${slug}/${date}`;
         const titleStr = `Horoskop ${signData.nameGen} — ${czechDate} | Mystická Hvězda`;
         const prediction = parsed.prediction || '';
-        const descStr = `Denní horoskop pro ${signData.name} na ${czechDate}. ${prediction.substring(0, 130).replace(/"/g, '&quot;')}…`;
+        const descStr = `Denní horoskop pro ${signData.nameAcc} na ${czechDate}. ${prediction.substring(0, 130).replace(/"/g, '&quot;')}…`;
         // Only index past+today, not future
         const robotsContent = diffDays > 7 ? 'noindex, follow' : 'index, follow';
 
