@@ -4,7 +4,7 @@ const PHASES = [
         name: 'Novolunění',
         emoji: '🌑',
         minAge: 0,
-        maxAge: 1.5,
+        maxAge: 1.85,
         illumination: 0,
         tags: ['Nové začátky', 'Záměry', 'Introspekce', 'Ticho'],
         interpretation: 'Novolunění je kosmickým resetem. Měsíc není na obloze vidět – celá jeho plocha je osvětlena ze strany, která se dívá pryč od nás. Tato tma není prázdnota, ale úrodná půda. Je to nejsilnější moment pro formulování záměrů, vizualizace a sázení semen toho, co chcete přivést do světa v průběhu nadcházejícího cyklu.',
@@ -13,8 +13,8 @@ const PHASES = [
     {
         name: 'Dorůstající srpek',
         emoji: '🌒',
-        minAge: 1.5,
-        maxAge: 6.5,
+        minAge: 1.85,
+        maxAge: 6.38,
         illumination: 25,
         tags: ['Akce', 'Iniciativa', 'Víra', 'Nadšení'],
         interpretation: 'Tenký srpek Měsíce se objevuje na večerní obloze jako první viditelný příslib. Energie tohoto období říká: Je čas začít jednat na základě záměrů, které jste zaseli při Novolunění. Ještě plné světlo nepřišlo, ale směr je jasný. Toto není čas na přemýšlení – je to čas na první kroky.',
@@ -23,8 +23,8 @@ const PHASES = [
     {
         name: 'První čtvrť',
         emoji: '🌓',
-        minAge: 6.5,
-        maxAge: 10.0,
+        minAge: 6.38,
+        maxAge: 8.0,
         illumination: 50,
         tags: ['Překážky', 'Rozhodnutí', 'Vůle', 'Konflikt'],
         interpretation: 'Přesně polovina Měsíce je osvětlena – symbolická rovnováha a zároveň napětí. Toto je bod, kdy se záměry střetávají s realitou. Může přijít první vnitřní nebo vnější odpor. Tyto překážky nejsou signálem k vzdání se – jsou zkouškou, zda chcete svůj cíl skutečně naplnit.',
@@ -33,8 +33,8 @@ const PHASES = [
     {
         name: 'Dorůstající měsíc',
         emoji: '🌔',
-        minAge: 10.0,
-        maxAge: 13.5,
+        minAge: 8.0,
+        maxAge: 13.77,
         illumination: 75,
         tags: ['Vytrvalost', 'Zdokonalování', 'Analýza', 'Dolaďování'],
         interpretation: 'Měsíc je téměř plný a energie narůstá s téměř hmatatelnou intenzitou. Toto je čas pečlivé práce na detailech. Záměr je živý, první momentum je vytvořeno – teď je třeba vyladit, zdokonalit a vytrvat. Příprava vrcholí.',
@@ -43,8 +43,8 @@ const PHASES = [
     {
         name: 'Úplněk',
         emoji: '🌕',
-        minAge: 13.5,
-        maxAge: 16.0,
+        minAge: 13.77,
+        maxAge: 15.77,
         illumination: 100,
         tags: ['Vrchol', 'Manifestace', 'Emoce', 'Odhalení', 'Naplnění'],
         interpretation: 'Úplněk je esoterickem posvátným momentem lunárního cyklu. Měsíc je plně osvětlen a na obloze září jako malé druhé slunce. Emoce jsou zesileny, intuice maximálně naostřena. To, co bylo zaseto, se nyní plně projevuje – dobré i špatné. Věci se vynořují na povrch. Toto je okamžik sklizně, rituálů vděčnosti a propuštění starého, co již neslouží.',
@@ -53,8 +53,8 @@ const PHASES = [
     {
         name: 'Ubývající měsíc',
         emoji: '🌖',
-        minAge: 16.0,
-        maxAge: 21.5,
+        minAge: 15.77,
+        maxAge: 21.15,
         illumination: 75,
         tags: ['Sdílení', 'Moudrost', 'Gratitudine', 'Odpočinek'],
         interpretation: 'Světlo pomalu ustupuje, ale zkušenost a moudrost ze sklizně Úplňku zůstávají. Toto je čas sdílení – toho, co jste se naučili, prožili a vytvořili. Energie přirozeně volá k introverzi, k předávání vědomostí a k ocenění cesty.',
@@ -63,8 +63,8 @@ const PHASES = [
     {
         name: 'Poslední čtvrť',
         emoji: '🌗',
-        minAge: 21.5,
-        maxAge: 25.0,
+        minAge: 21.15,
+        maxAge: 23.15,
         illumination: 50,
         tags: ['Propuštění', 'Čištění', 'Transformace', 'Přehodnocení'],
         interpretation: 'Opět polovina – ale tentokrát na sestupné části cyklu. Přichází čas hlubokého úklidu: fyzického, emocionálního i mentálního. Co starého, přebytečného nebo již nepotřebného je v mém životě? Toto je energie propuštění, ne přidávání.',
@@ -73,7 +73,7 @@ const PHASES = [
     {
         name: 'Ubývající srpek',
         emoji: '🌘',
-        minAge: 25.0,
+        minAge: 23.15,
         maxAge: 28.5,
         illumination: 15,
         tags: ['Obnova', 'Odpočinek', 'Ticho', 'Příprava'],
@@ -83,7 +83,8 @@ const PHASES = [
 ];
 
 function getLunarAge(date) {
-    const knownNewMoon = new Date('2026-02-17T12:01:12Z');
+    // Reference: new moon March 18, 2026 04:00 UTC (verified against SpaceWeatherLive)
+    const knownNewMoon = new Date('2026-03-18T04:00:00Z');
     const LUNAR_CYCLE = 29.53058867;
     const diffMs = date - knownNewMoon;
     const diffDays = diffMs / (1000 * 60 * 60 * 24);
@@ -110,11 +111,19 @@ function renderCycleGrid(currentPhase) {
     `).join('');
 }
 
+function calcIllumination(age) {
+    // Dynamic calculation based on actual lunar age
+    // Formula: (1 - cos(2π * age / cycle)) / 2
+    const LUNAR_CYCLE = 29.53058867;
+    const angle = (2 * Math.PI * age) / LUNAR_CYCLE;
+    return Math.round(((1 - Math.cos(angle)) / 2) * 100);
+}
+
 function renderPhase() {
     const now = new Date();
     const age = getLunarAge(now);
     const phase = getPhase(age);
-    const illumination = Math.round(phase.illumination);
+    const illumination = calcIllumination(age);
 
     document.getElementById('moonEmoji').textContent = phase.emoji;
     document.getElementById('phaseName').textContent = phase.name;

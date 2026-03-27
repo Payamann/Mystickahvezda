@@ -5,7 +5,7 @@
  */
 import express from 'express';
 import { optionalPremiumCheck } from '../middleware.js';
-import { callGemini } from '../services/gemini.js';
+import { callClaude } from '../services/claude.js';
 import { SYSTEM_PROMPTS } from '../config/prompts.js';
 import { getHoroscopeCacheKey, getCachedHoroscope, saveCachedHoroscope } from '../services/astrology.js';
 
@@ -147,9 +147,9 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
 
         const message = `Vygeneruj horoskop pro znamení ${sign} na ${dateStr}.`;
 
-        const response = await callGemini(periodPrompt, message);
+        const response = await callClaude(periodPrompt, message);
 
-        // Strip markdown code fences if Gemini wraps JSON in ```json ... ```
+        // Strip markdown code fences if model wraps JSON in ```json ... ```
         const cleanResponse = response.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
 
         // Save to DB cache (non-blocking — don't let DB errors kill the response)
@@ -160,7 +160,7 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
         res.json({ success: true, response: cleanResponse, period: periodLabel });
 
     } catch (error) {
-        console.error('[HOROSCOPE] Gemini Error:', error.message || error);
+        console.error('[HOROSCOPE] Claude Error:', error.message || error);
 
         // Fallback: return a static horoscope so users aren't left with empty page
         const { sign: bodySign, lang: bodyLang = 'cs' } = req.body || {};

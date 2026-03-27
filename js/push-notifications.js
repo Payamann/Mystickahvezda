@@ -184,7 +184,21 @@
         }
 
         if (count >= 2) {
-            setTimeout(showNotificationPrompt, 5000);
+            // Wait for cookie consent before showing push banner
+            // so we never show two interruptive banners at the same time
+            const cookieConsent = localStorage.getItem('cookieConsent');
+            if (cookieConsent) {
+                // Cookie already resolved → show after 5s
+                setTimeout(showNotificationPrompt, 5000);
+            } else {
+                // Cookie banner is still up → poll until dismissed, then wait 3s more
+                const waitForConsent = setInterval(() => {
+                    if (localStorage.getItem('cookieConsent')) {
+                        clearInterval(waitForConsent);
+                        setTimeout(showNotificationPrompt, 3000);
+                    }
+                }, 500);
+            }
         }
     });
 })();
