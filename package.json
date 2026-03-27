@@ -8,6 +8,12 @@
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report",
+    "test:all": "npm test && npm run test:e2e",
     "build:css": "cleancss -o css/style.v2.min.css css/style.v2.css",
     "build:js": "esbuild js/*.js --minify --outdir=js/dist --bundle=false && esbuild js/main.js --bundle --minify --outfile=js/dist/main.js --platform=browser --format=esm",
     "lint": "eslint server/ js/"
@@ -31,6 +37,7 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "clean-css-cli": "^5.6.3",
     "cross-env": "^10.1.0",
     "esbuild": "^0.20.2",

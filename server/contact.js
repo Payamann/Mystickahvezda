@@ -14,8 +14,8 @@ const contactLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-// POST /contact
-router.post('/contact', contactLimiter, async (req, res) => {
+// POST /api/contact
+router.post('/', contactLimiter, async (req, res) => {
     const { name, email, subject, message } = req.body;
 
     try {
