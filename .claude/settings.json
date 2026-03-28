@@ -1,0 +1,56 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/social-media-agent\" && set PYTHONIOENCODING=utf-8 && python log_post.py:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/validate-html.js",
+            "timeout": 5,
+            "statusMessage": "Validating HTML meta tags..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/validate-html.js",
+            "timeout": 5,
+            "statusMessage": "Validating HTML meta tags..."
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/validate-sw-assets.js",
+            "timeout": 5,
+            "statusMessage": "Validating SW assets..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"Stop\",\"additionalContext\":\"REMINDER: Pokud jsi v této odpovědi vygeneroval Instagram posty pro Mystickou Hvězdu, IHNED spusť log_post.py pro každý post. Viz CLAUDE.md instrukce.\"}}'",
+            "timeout": 5,
+            "statusMessage": "Checking post logging..."
+          }
+        ]
+      }
+    ]
+  }
+}

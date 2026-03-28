@@ -35,7 +35,9 @@ tmp/
 # IDE
 .vscode/
 .idea/
-.claude/
+.claude/*
+!.claude/commands/
+!.claude/settings.json
 _agent/
 
 # Python
