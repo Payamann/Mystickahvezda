@@ -493,5 +493,86 @@
     "published_at": "2025-07-05T10:00:00.000Z",
     "featured_image": "img/blog-spirituality.webp",
     "readTime": 3
+  },
+  {
+    "title": "Andělská čísla 333, 444, 555 — co vám říká vesmír?",
+    "slug": "andelska-cisla-333-444-555",
+    "short_description": "Vidíte všude 333, 444 nebo 555? Každé andělské číslo nese přesnou zprávu. Přečtěte si, co vám vesmír opakovaně posílá — a jak na tuto komunikaci správně reagovat.",
+    "category": "Spiritualita",
+    "published_at": "2026-03-29T10:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 6
+  },
+  {
+    "title": "Jak číst natální kartu: Kompletní průvodce pro začátečníky",
+    "slug": "jak-cist-natalni-kartu-pruvodce",
+    "short_description": "Natální karta je mapa vaší duše zapsaná v hvězdách v moment vašeho narození. Naučte se číst planety, domy a aspekty — i jako úplný začátečník.",
+    "category": "Astrologie",
+    "published_at": "2026-03-29T12:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 8
+  },
+  {
+    "title": "Lilith v natální kartě: Temná bohyně a tvůj skrytý rebel",
+    "slug": "lilith-v-natalni-karte",
+    "short_description": "Lilith v natální kartě označuje místo, kde žijete svou nejsilnější, nejdivočejší a nejméně společensky přijímanou energii. Průvodce Černou Měsíční Lilith v každém znamení.",
+    "category": "Astrologie",
+    "published_at": "2026-03-29T14:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 7
+  },
+  {
+    "title": "Runový výklad doma: Průvodce pro začátečníky krok za krokem",
+    "slug": "runovy-vyklad-doma-pruvodce",
+    "short_description": "Runy jsou prastarý věštecký systém skandinávských Vikingů. Naučte se dělat runové výklady doma — od výběru run přes kladení až po interpretaci symbolů.",
+    "category": "Spiritualita",
+    "published_at": "2026-03-29T16:00:00.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 6
+  },
+  {
+    "title": "Pluto ve Vodnáři 2024–2043: Největší generační transformace za 248 let",
+    "slug": "pluto-ve-vodnari-2024-2043",
+    "short_description": "Pluto vstoupilo do Vodnáře a zůstane tam až do roku 2043. Co tato historická událost znamená pro lidstvo, technologii, AI, revoluci a vaše osobní transformace?",
+    "category": "Astrologie",
+    "published_at": "2026-03-29T18:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 8
+  },
+  {
+    "title": "Váš Měsíční znak: Co Měsíc v natální kartě říká o vaší duši",
+    "slug": "mesicni-znak-natalni-karta",
+    "short_description": "Sluneční znamení znáte. Ale víte, kde byl Měsíc, když jste se narodili? Měsíční znak odhaluje vaše emoce, vnitřní svět, potřeby a to, jak se cítíte bezpečně.",
+    "category": "Astrologie",
+    "published_at": "2026-03-29T20:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 7
+  },
+  {
+    "title": "Čínský horoskop 2026: Rok Ohnivého Koně — co čeká každé zvíře",
+    "slug": "cinsky-horoskop-2026-rok-ohniveho-kone",
+    "short_description": "Rok 2026 je Rokem Ohnivého Koně. Přečtěte si, co tento divoký, vášnivý a nepředvídatelný rok přinese každému z 12 čínských zvířat — a jak se na něj připravit.",
+    "category": "Astrologie",
+    "published_at": "2026-03-30T08:00:00.000Z",
+    "featured_image": "img/blog-astrology.webp",
+    "readTime": 8
+  },
+  {
+    "title": "Jak fungují andělské karty: Průvodce pro začátečníky",
+    "slug": "jak-funguji-andelske-karty",
+    "short_description": "Andělské karty nejsou tarot. Jsou laskavým, povzbudivým systémem, který vás spojuje s vyššími průvodci. Zjistěte, jak fungují, jak s nimi pracovat a jak interpretovat poselství.",
+    "category": "Spiritualita",
+    "published_at": "2026-03-30T10:00:00.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 6
+  },
+  {
+    "title": "Co je aura: Jak ji vidět, číst a čistit",
+    "slug": "co-je-aura-jak-ji-videt-cist-cistit",
+    "short_description": "Aura je energetické pole obklopující každou živou bytost. Naučte se, jak auru vidět, jaké barvy co znamenají a jak ji pravidelně čistit pro více energie a ochranu.",
+    "category": "Spiritualita",
+    "published_at": "2026-03-30T12:00:00.000Z",
+    "featured_image": "img/blog-spirituality.webp",
+    "readTime": 7
   }
 ]
