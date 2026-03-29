@@ -7,6 +7,13 @@
 (function () {
     const GA_ID = 'G-VZ3J109ZYJ';
 
+    // GDPR: Only load GA4 if user has consented to analytics cookies
+    const prefs = JSON.parse(localStorage.getItem('mh_cookie_prefs') || '{}');
+    if (!prefs.analytics) {
+        console.log('[Analytics] GA4 not loaded — no analytics consent.');
+        return;
+    }
+
     // Initialize dataLayer and gtag stub before script loads
     window.dataLayer = window.dataLayer || [];
     function gtag() {

@@ -508,6 +508,7 @@
                 const resetFields = document.getElementById('reset-password-fields');
                 const registerFields = document.getElementById('register-fields');
                 const confirmPwField = document.getElementById('confirm-password-field-wrapper');
+                const gdprWrapper = document.getElementById('gdpr-consent-wrapper');
                 title.textContent = 'Přihlášení';
                 btn.textContent = 'Přihlásit se';
                 toggleBtn.textContent = 'Nemáte účet? Zaregistrujte se';
@@ -516,6 +517,7 @@
                 if (resetFields) resetFields.style.display = 'none';
                 if (registerFields) registerFields.style.display = 'none';
                 if (confirmPwField) confirmPwField.style.display = 'none';
+                if (gdprWrapper) gdprWrapper.style.display = 'none';
                 return;
             }
 
@@ -523,6 +525,7 @@
 
             const fields = document.getElementById('register-fields');
             const confirmPwField = document.getElementById('confirm-password-field-wrapper');
+            const gdprWrapper = document.getElementById('gdpr-consent-wrapper');
 
             if (isLogin) {
                 title.textContent = 'Registrace';
@@ -530,12 +533,14 @@
                 toggleBtn.textContent = 'Již máte účet? Přihlaste se';
                 if (fields) fields.style.display = 'block';
                 if (confirmPwField) confirmPwField.style.display = 'block';
+                if (gdprWrapper) gdprWrapper.style.display = 'block';
             } else {
                 title.textContent = 'Přihlášení';
                 btn.textContent = 'Přihlásit se';
                 toggleBtn.textContent = 'Nemáte účet? Zaregistrujte se';
                 if (fields) fields.style.display = 'none';
                 if (confirmPwField) confirmPwField.style.display = 'none';
+                if (gdprWrapper) gdprWrapper.style.display = 'none';
             }
         },
 
@@ -557,6 +562,7 @@
 
                 const fields = document.getElementById('register-fields');
                 const confirmPwField = document.getElementById('confirm-password-field-wrapper');
+                const gdprWrapper = document.getElementById('gdpr-consent-wrapper');
 
                 if (mode === 'register') {
                     title.textContent = 'Registrace';
@@ -564,12 +570,14 @@
                     toggleBtn.textContent = 'Již máte účet? Přihlaste se';
                     if (fields) fields.style.display = 'block';
                     if (confirmPwField) confirmPwField.style.display = 'block';
+                    if (gdprWrapper) gdprWrapper.style.display = 'block';
                 } else {
                     title.textContent = 'Přihlášení';
                     btn.textContent = 'Přihlásit se';
                     toggleBtn.textContent = 'Nemáte účet? Zaregistrujte se';
                     if (fields) fields.style.display = 'none';
                     if (confirmPwField) confirmPwField.style.display = 'none';
+                    if (gdprWrapper) gdprWrapper.style.display = 'none';
                 }
             }
         },

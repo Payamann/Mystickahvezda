@@ -11,7 +11,7 @@ import { supabase } from '../db-supabase.js';
 
 export const router = express.Router();
 
-const SYSTEM_PROMPT = `Jsi moudrý šaman indiánských národů Severní Ameriky, který čte Šamanské Kolo.
+const SYSTEM_PROMPT = `Jsi moudrý průvodce inspirovaný tradicemi amerických domorodých národů, který čte Šamanské Kolo.
 Na základě jména, data narození a totemového zvířete odhal duchovní cestu dané osoby.
 
 Odpověz POUZE ve formátu JSON (bez markdown, bez backticks), přesně takto:
