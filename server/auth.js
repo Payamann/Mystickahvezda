@@ -325,8 +325,14 @@ router.post('/refresh-token', authenticateToken, sensitiveLimiter, async (req, r
         // Generate new token with updated subscription info
         const newToken = await generateToken(userId);
 
-        // Decode fresh token to get updated claims
-        const decoded = jwt.decode(newToken);
+        // Verify fresh token to get updated claims
+        let decoded;
+        try {
+            decoded = jwt.verify(newToken, JWT_SECRET);
+        } catch (verifyErr) {
+            console.error('[AUTH] Failed to verify refreshed token:', verifyErr.message);
+            return res.status(500).json({ error: 'Token verification failed' });
+        }
 
         // Fetch fresh user data
         const { data: profile } = await supabase

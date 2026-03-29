@@ -7,6 +7,7 @@
 import { supabase } from '../db-supabase.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { JWT_SECRET } from '../config/jwt.js';
 
 /**
  * Add token to blacklist (for logout or password change)
@@ -16,8 +17,14 @@ export async function blacklistToken(token) {
     try {
         if (!token) return;
 
-        // Decode token to get expiration
-        const decoded = jwt.decode(token);
+        // Verify token to get expiration
+        let decoded;
+        try {
+            decoded = jwt.verify(token, JWT_SECRET);
+        } catch (verifyErr) {
+            // Token may be expired but we still need to blacklist it
+            decoded = jwt.decode(token);
+        }
         if (!decoded || !decoded.exp) return;
 
         // Add to blacklist with expiration time
@@ -48,7 +55,13 @@ export async function isTokenBlacklisted(token) {
     try {
         if (!token) return false;
 
-        const decoded = jwt.decode(token);
+        let decoded;
+        try {
+            decoded = jwt.verify(token, JWT_SECRET);
+        } catch (verifyErr) {
+            // Token may be expired — still check blacklist for audit purposes
+            decoded = jwt.decode(token);
+        }
         if (!decoded) return false;
 
         // Check 1: Individual token blacklist (exact token hash match)

@@ -3,6 +3,7 @@
  * Groups smaller AI-powered features that don't warrant individual files
  */
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import { authenticateToken, requirePremium, requirePremiumSoft, optionalPremiumCheck } from '../middleware.js';
 import { callGemini } from '../services/gemini.js';
 import { SYSTEM_PROMPTS } from '../config/prompts.js';
@@ -12,9 +13,16 @@ import { trackPaywallHit } from '../middleware.js';
 
 export const router = express.Router();
 
+// Rate limiter for AI-powered oracle endpoints
+const oracleLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 20,
+    message: { error: 'Příliš mnoho požadavků. Zkuste to znovu za hodinu.' }
+});
+
 // ─── Crystal Ball ──────────────────────────────────────────────────────────────
 
-router.post('/crystal-ball', optionalPremiumCheck, async (req, res) => {
+router.post('/crystal-ball', oracleLimiter, optionalPremiumCheck, async (req, res) => {
     try {
         const { question, history = [], lang = 'cs' } = req.body;
 
@@ -90,7 +98,7 @@ router.post('/crystal-ball', optionalPremiumCheck, async (req, res) => {
 
 // ─── Lexikon Snů ──────────────────────────────────────────────────────────────
 
-router.post('/dream', authenticateToken, requirePremiumSoft, async (req, res) => {
+router.post('/dream', oracleLimiter, authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { dream } = req.body;
 
@@ -124,7 +132,7 @@ router.post('/dream', authenticateToken, requirePremiumSoft, async (req, res) =>
 
 // ─── Tarot ────────────────────────────────────────────────────────────────────
 
-router.post('/tarot', authenticateToken, requirePremiumSoft, async (req, res) => {
+router.post('/tarot', oracleLimiter, authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { question, cards, spreadType = 'tříkartový' } = req.body;
 
@@ -167,7 +175,7 @@ router.post('/tarot', authenticateToken, requirePremiumSoft, async (req, res) =>
     }
 });
 
-router.post('/tarot-summary', authenticateToken, async (req, res) => {
+router.post('/tarot-summary', oracleLimiter, authenticateToken, async (req, res) => {
     try {
         const { cards, spreadType } = req.body;
 
@@ -199,7 +207,7 @@ router.post('/tarot-summary', authenticateToken, async (req, res) => {
 
 // ─── Natal Chart ──────────────────────────────────────────────────────────────
 
-router.post('/natal-chart', optionalPremiumCheck, async (req, res) => {
+router.post('/natal-chart', oracleLimiter, optionalPremiumCheck, async (req, res) => {
     try {
         const { birthDate, birthTime, birthPlace, name } = req.body;
 
@@ -235,7 +243,7 @@ router.post('/natal-chart', optionalPremiumCheck, async (req, res) => {
 
 // ─── Synastry ─────────────────────────────────────────────────────────────────
 
-router.post('/synastry', authenticateToken, requirePremiumSoft, async (req, res) => {
+router.post('/synastry', oracleLimiter, authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { person1, person2 } = req.body;
 
@@ -265,7 +273,7 @@ router.post('/synastry', authenticateToken, requirePremiumSoft, async (req, res)
 
 // ─── Astrocartography ─────────────────────────────────────────────────────────
 
-router.post('/astrocartography', authenticateToken, requirePremium, async (req, res) => {
+router.post('/astrocartography', oracleLimiter, authenticateToken, requirePremium, async (req, res) => {
     try {
         const { birthDate, birthTime, birthPlace, name, intention = 'obecný' } = req.body;
 
@@ -290,7 +298,7 @@ router.post('/astrocartography', authenticateToken, requirePremium, async (req, 
 
 // ─── Angel Cards ──────────────────────────────────────────────────────────────
 
-router.post('/angel-card', authenticateToken, requirePremiumSoft, async (req, res) => {
+router.post('/angel-card', oracleLimiter, authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { card, intention = 'obecný vhled do dnešního dne' } = req.body;
 
@@ -333,7 +341,7 @@ router.post('/angel-card', authenticateToken, requirePremiumSoft, async (req, re
 });
 
 // ─── Runes (Elder Futhark) ────────────────────────────────────────────────────
-router.post('/runes', authenticateToken, requirePremiumSoft, async (req, res) => {
+router.post('/runes', oracleLimiter, authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { rune, intention = 'obecný duchovní vhled', history = [] } = req.body;
 
@@ -362,7 +370,7 @@ router.post('/runes', authenticateToken, requirePremiumSoft, async (req, res) =>
 });
 
 // ─── Daily Wisdom (AI Powered) ────────────────────────────────────────────────
-router.post('/daily-wisdom', authenticateToken, requirePremiumSoft, async (req, res) => {
+router.post('/daily-wisdom', oracleLimiter, authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { sign, moonPhase, lang = 'cs' } = req.body;
         

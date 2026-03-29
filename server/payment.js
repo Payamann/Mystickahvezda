@@ -395,7 +395,12 @@ export async function handleStripeWebhook(rawBody, sig) {
  */
 async function handleCheckoutCompleted(session) {
     const userId = session.client_reference_id || session.metadata?.userId;
-    const planType = session.metadata?.planType || 'premium_monthly';
+    const validPlanTypes = ['premium_monthly', 'premium_yearly', 'premium_lifetime'];
+    let planType = session.metadata?.planType || 'premium_monthly';
+    if (!validPlanTypes.includes(planType)) {
+        console.error('[STRIPE] Invalid plan type in webhook:', planType);
+        planType = 'premium_monthly';
+    }
     const stripeSubscriptionId = session.subscription;
     const stripeCustomerId = session.customer;
     const userEmail = session.customer_email || session.customer_details?.email;
