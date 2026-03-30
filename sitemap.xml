@@ -414,12 +414,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.mystickahvezda.cz/blog/vidite-vsude-1111-poselstvi-andelu.html</loc>
-    <lastmod>2026-01-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://www.mystickahvezda.cz/blog/lekce-padajici-veze-tarot.html</loc>
     <lastmod>2025-12-31</lastmod>
     <changefreq>monthly</changefreq>
@@ -597,12 +591,6 @@
   </url>
 
   <!-- Horoskopy – jednotlivá znamení -->
-  <url>
-    <loc>https://www.mystickahvezda.cz/horoskop/index.html</loc>
-    <lastmod>2026-03-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
   <url>
     <loc>https://www.mystickahvezda.cz/horoskop/beran.html</loc>
     <lastmod>2026-03-30</lastmod>
