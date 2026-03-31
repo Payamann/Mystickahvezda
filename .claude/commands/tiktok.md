@@ -224,8 +224,8 @@ POV = divák SE STÁVÁ tou osobou. Není posluchač, je účastník. Na TikToku
 
 | Slide | Délka | Funkce (MAX 2 na slide) | Pravidlo |
 |-------|-------|-------------------------|----------|
-| 1 — POV HOOK | 3–5s | Vtáhnout diváka DO situace | „POV:" + situace, divák je hlavní postava |
-| 2 — VNITŘNÍ MONOLOG + TWIST | 6–8s | Co persona cítí/myslí + překvapení | Přítomný čas, 1. nebo 2. osoba, intimní |
+| 1 — POV HOOK | 3–5s | Vtáhnout diváka DO situace | „POV:" + specifická situace (ne obecná), divák je hlavní postava |
+| 2 — VIZUÁLNÍ SCÉNA + TWIST | 6–8s | Konkrétní viditelná akce + překvapení | Přítomný čas, 2. osoba, VIZUÁLNÍ scéna (ne jen myšlenka) |
 | 3 — CTA | 4–5s | Komentářový trigger + odkaz | Jen trigger + web, nic navíc |
 
 **Kdy použít POV vs. narativ:**
@@ -241,6 +241,20 @@ POV = divák SE STÁVÁ tou osobou. Není posluchač, je účastník. Na TikToku
 | Narativ (var. A) | POV (var. C) |
 |------------------|-------------|
 | „Píše ti každý den. Rozumí ti. A ty začneš hledat háček." | „POV: Konečně ti někdo rozumí. Píše každý den. A ty otevřeš jeho profil a hledáš, kde to praskne." |
+
+**⚠️ POV HOOK SPECIFIČNOST:**
+První věta POV musí být sama o sobě specifická — ne obecná. Test: pokud si ji může říct kdokoli, je příliš vágní.
+- ❌ „POV: Máš ho ráda." — obecné, platí pro miliony lidí
+- ✅ „POV: Máš ho ráda. A nedokážeš vybrat." — specifické pro Váhy
+- ❌ „POV: Cítíš se divně." — vágní
+- ✅ „POV: Konečně ti někdo rozumí." — specifická situace
+
+**⚠️ POV SLIDE 2 = VIZUÁLNÍ SCÉNA, NE JEN MYŠLENKA:**
+I v POV formátu musí slide 2 obsahovat konkrétní viditelnou akci — ne jen vnitřní monolog.
+- ❌ „Počítáš v hlavě pořád dokola." — interní, divák nic nevidí
+- ✅ „Díváš se na jeho zprávu. Čteš ji potřetí. A zamkneš telefon." — vizuální scéna
+- ❌ „Přemýšlíš, jestli za to stojí." — interní
+- ✅ „Otevřeš jeho profil. Scrolluješ jeho fotky. A zavřeš apku." — vizuální
 
 **⚠️ Pro nový účet s <1000 followers PREFERUJ VARIANTU A nebo C.**
 Kratší video = vyšší watch-through rate = lepší distribuce algoritmem.
@@ -416,7 +430,8 @@ optimized for TikTok/mobile viewing.
 - **Jazyk:** čeština, tykání (2. osoba j.č.)
 - **Žádné lomené tvary** (šel/šla, viděl/a)
 - **Dokonavá slovesa přirozeně** ("zasmáš se" → "zasměješ se")
-- **Gramaticky bezchybný text** — před výstupem mentálně zkontroluj každou větu
+- **Reflexivní slovesa správně** — „ublížit komu" (ne „ublížit se"), „bát se čeho" (ne „bát se na co")
+- **Gramaticky bezchybný text** — před výstupem mentálně zkontroluj každou větu, zejména pády a reflexiva
 - **Celková délka:** 15–20 sekund (var. A) nebo 25–35 sekund (var. B)
 - **Styl:** intimní, přímý, sebejistý — jako by mluvil někdo kdo ví víc než ty
 - **Tempo:** Rychlé, punchy věty. Max 8–10 slov na větu. Žádné dlouhé souvětí.
@@ -430,8 +445,10 @@ Pravidlo: **~2.5 slova za sekundu** (český voiceover, intimní tempo) + pauzy.
 **Postup:**
 1. Spočítej celkový počet slov v CELÉM voiceoveru (všechny slidy dohromady, bez ElevenLabs tagů a slide komentářů)
 2. Vyděl 2.5 → mluvený čas
-3. Přičti pauzy: sečti VŠECHNY `<break>` hodnoty z celého voiceoveru
+3. Přičti pauzy: **sečti KAŽDÝ `<break>` tag zvlášť** — projdi celý voiceover a spočítej: 0.3+0.5+1.0+... = celkové pauzy
 4. Výsledek = reálná délka videa
+
+**⚠️ NEJČASTĚJŠÍ CHYBA: odhadování celkových pauz místo sčítání.** Projdi KAŽDÝ break tag a sečti přesně.
 
 **Příklad (celý voiceover):**
 > Slide 1: "Funguje to. Přesně proto to rozbíjíš." = 7 slov
@@ -570,15 +587,15 @@ Použij tyto značky:
 
 ```
 [SLIDE 1 — POV HOOK] (3–5s, max 2 věty)
-[urgently] POV: [situace — max 7 slov].
+[urgently] POV: [specifická situace — max 7 slov, ne obecná].
 <break time="0.5s" />
-[warmly] [Co persona cítí/vidí/dělá v tu chvíli].
+[warmly] [Co persona vidí/dělá v tu chvíli — vizuální detail].
 <break time="1.0s" />
 
-[SLIDE 2 — VNITŘNÍ MONOLOG + TWIST] (6–8s, prožitek → překvapení)
-[softly] [Co si persona myslí — intimní vnitřní hlas].
+[SLIDE 2 — VIZUÁLNÍ SCÉNA + TWIST] (6–8s, konkrétní akce → překvapení)
+[softly] [VIZUÁLNÍ SCÉNA: co persona dělá — viditelná akce, ne jen myšlenka].
 <break time="0.3s" />
-[confidently] TWIST: [proč to dělá / co to znamená].
+[confidently] TWIST: [proč to dělá / co to znamená — přerámování].
 <break time="1.0s" />
 
 [SLIDE 3 — CTA] (4–5s, jen trigger + odkaz, nic navíc)
@@ -587,16 +604,16 @@ Použij tyto značky:
 [clearly] Odkaz — 1 věta, přirozená, ne reklamní.
 ```
 
-**Příklad POV voiceoveru:**
+**Příklad POV voiceoveru (Štír — sabotáž):**
 ```
 [SLIDE 1 — POV HOOK]
 [urgently] POV: Konečně ti někdo rozumí.
 <break time="0.5s" />
-[warmly] Píše každý den. Rozumí ti. A ty otevřeš jeho profil.
+[warmly] Píše každý den. A ty otevřeš jeho profil.
 <break time="1.0s" />
 
-[SLIDE 2 — VNITŘNÍ MONOLOG + TWIST]
-[softly] Hledáš, kde to praskne. Hledáš háček.
+[SLIDE 2 — VIZUÁLNÍ SCÉNA + TWIST]
+[softly] Hledáš háček. Scrolluješ jeho fotky. Čekáš, kde to praskne.
 <break time="0.3s" />
 [confidently] Nebojíš se, že tě zraní. Bojíš se, že tenhle nezklame.
 <break time="1.0s" />
@@ -605,6 +622,26 @@ Použij tyto značky:
 [inviting] Označ Štíra, co přesně tohle dělá.
 <break time="0.3s" />
 [clearly] V biu máš test shody.
+```
+
+**Příklad POV voiceoveru (Váhy — nerozhodnost):**
+```
+[SLIDE 1 — POV HOOK]
+[urgently] POV: Máš ho ráda. A nedokážeš vybrat.
+<break time="0.5s" />
+[softly] A říkáš si: ještě chvíli.
+<break time="1.0s" />
+
+[SLIDE 2 — VIZUÁLNÍ SCÉNA + TWIST]
+[warmly] Díváš se na jeho zprávu. Čteš ji potřetí. A zamkneš telefon.
+<break time="0.3s" />
+[confidently] Váhy nerozhodují pomalu. Bojí se být tou, co ublíží.
+<break time="1.0s" />
+
+[SLIDE 3 — CTA]
+[inviting] Označ Váhu, co tahle kalkulace zničila.
+<break time="0.3s" />
+[clearly] V biu máš natální kartu.
 ```
 
 ---
@@ -624,12 +661,14 @@ Caption NENÍ jen popisek. Je to **druhá vrstva obsahu**, která zvyšuje dwell
 **Pravidla:**
 - Emoji střídmě (max 2–3)
 - Caption NEOPAKUJE hook videa 1:1 — přidává jinou perspektivu nebo kontext
+- **Caption NESMÍ parafrázovat twist z videa** — pokud voiceover říká „Váhy nerozhodují pomalu. Bojí se být tou, co ublíží.", caption NESMÍ říct „Váhy nemají problém s rozhodováním. Mají problém s tím, být tou, co ublíží." (to je stejný vzorec, jen přeformulovaný)
 - Mikroblog dává vzdělávací hodnotu — divák se dozví PROČ (astro důvod, planetární vliv, mechanismus)
+- **Mikroblog přidává NOVÉ info** — astro fakt (vládnoucí planeta, živel, dům), historický kontext, nebo psychologický mechanismus, který ve videu NENÍ
 - Odkaz na bio přirozeně v kontextu
 - Celkem 4–8 řádků (ne 2–3 jako dřív!)
-- **ŽÁDNÉ symetrické AI-blob struktury** v caption (viz Anti-AI-blob pravidla)
+- **ŽÁDNÉ symetrické AI-blob struktury** v caption — „Nemají X. Mají Y." / „Není to X. Je to Y." = ZAKÁZÁNO
 
-**Příklad:**
+**Příklad (Štír — sabotáž):**
 ```
 Sabotáž? Jo. Ale ne proto, že ho nechceš.
 
@@ -639,6 +678,19 @@ V biu máš test partnerské shody. 🦂
 
 Označ Štíra, co přesně tohle dělá ⬇️
 ```
+
+**Příklad (Váhy — nerozhodnost):**
+```
+„Ještě chvíli." — a to říká Váhářka rok. 🦋
+
+Venuše, vládkyně Vah, nechce konflikty. Nechce bolest.
+Tak počítáš. Koho to zabolí míň? A mezitím plyne čas.
+V biu máš natální kartu — ukáže ti, kde přesně se zasekáváš.
+
+Označ Váhu, co tahle kalkulace zničila ⬇️
+```
+
+**Všimni si:** Voiceover o Váhách má twist „Bojí se být tou, co ublíží." Caption to NEOPAKUJE — místo toho přidává Venuši jako astro kontext (nové info).
 
 ### 5b) Hashtagy
 - `#mystickaHvezda` VŽDY jako **první**
@@ -705,8 +757,10 @@ Před výstupem ověř KAŽDÝ bod. Pokud jakýkoli selže, PŘEPIŠ příslušn
 - [ ] **TWIST TEST:** Existuje ve videu moment překvapení/přerámování? (ne plochý oblouk konstatování→uklidnění)
 - [ ] **KOMENTÁŘOVÝ TRIGGER:** Je ve voiceoveru jasná výzva k napsání komentáře? Odpovídá emočnímu tónu videa?
 - [ ] **AI-BLOB TEST:** Přečti voiceover nahlas — řekla by tohle reálná astroložka kamarádce u vína? Obsahuje symetrické fráze typu "Není to X. Je to Y."? Obsahuje "jsi silnější než si myslíš"? → Pokud ano, přepiš!
-- [ ] **TIMING TEST:** Spočítej slova ÷ 2.5 + pauzy = reálná délka. Sedí ±2s s cílovou délkou?
+- [ ] **TIMING TEST:** Spočítej slova ÷ 2.5 + pauzy (sečti KAŽDÝ break zvlášť!) = reálná délka. Sedí ±2s s cílovou délkou?
 - [ ] **PŘETÍŽENÍ TEST:** Má poslední slide max 2 věty (trigger + odkaz)? Není tam twist + emoce + CTA najednou?
+- [ ] **POV SPECIFIČNOST TEST (var. C):** Je první POV věta sama o sobě specifická? Může si ji říct kdokoli? → Pokud ano, přepiš!
+- [ ] **VIZUÁLNÍ SCÉNA TEST:** Obsahuje slide 2 viditelnou akci (díváš se, otevřeš, zamkneš)? Nebo jen interní myšlenku (počítáš, přemýšlíš)? → Pokud jen myšlenku, přepiš na vizuální scénu!
 
 **🟡 IMPORTANT (pokud selže = oprav):**
 - [ ] Všechny image prompty mají JEDEN centrální objekt (ne složitou scénu)
