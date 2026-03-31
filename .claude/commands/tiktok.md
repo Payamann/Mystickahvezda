@@ -218,7 +218,31 @@ Každý slide má MAX 2 funkce. Pokud potřebuješ twist + trigger + CTA → roz
 - ❌ Slide 3: twist + komentářový trigger + CTA + emocionální propojení = přetížené, divák cítí "prodávají mi"
 - ✅ Slide 2: mikropříběh + twist. Slide 3: trigger + odkaz = čisté, přirozené
 
-**⚠️ Pro nový účet s <1000 followers PREFERUJ VARIANTU A.**
+**VARIANTA C — POV VIDEO (15–20s) — nejvyšší watch-through rate ⭐**
+
+POV = divák SE STÁVÁ tou osobou. Není posluchač, je účastník. Na TikToku POV videa mají 2–3× vyšší watch-through rate než narativní.
+
+| Slide | Délka | Funkce (MAX 2 na slide) | Pravidlo |
+|-------|-------|-------------------------|----------|
+| 1 — POV HOOK | 3–5s | Vtáhnout diváka DO situace | „POV:" + situace, divák je hlavní postava |
+| 2 — VNITŘNÍ MONOLOG + TWIST | 6–8s | Co persona cítí/myslí + překvapení | Přítomný čas, 1. nebo 2. osoba, intimní |
+| 3 — CTA | 4–5s | Komentářový trigger + odkaz | Jen trigger + web, nic navíc |
+
+**Kdy použít POV vs. narativ:**
+| Téma | Lepší formát | Proč |
+|------|-------------|------|
+| Vztahy, sabotáž, emoce | **POV** | Divák prožívá, ne poslouchá |
+| Vzdělávací (jak funguje X) | **Narativ (A/B)** | Potřebuješ vysvětlit mechanismus |
+| Kontroverze/mýty | **Narativ (A/B)** | Potřebuješ prezentovat argument |
+| Identita znamení | **POV** | „Tohle jsem přesně já" efekt |
+
+**Příklad POV vs. narativ:**
+
+| Narativ (var. A) | POV (var. C) |
+|------------------|-------------|
+| „Píše ti každý den. Rozumí ti. A ty začneš hledat háček." | „POV: Konečně ti někdo rozumí. Píše každý den. A ty otevřeš jeho profil a hledáš, kde to praskne." |
+
+**⚠️ Pro nový účet s <1000 followers PREFERUJ VARIANTU A nebo C.**
 Kratší video = vyšší watch-through rate = lepší distribuce algoritmem.
 
 ### 2b) Příběhový oblouk
@@ -231,6 +255,11 @@ IDENTIFIKACE → AHA MOMENT → TRIGGER
 **Varianta B (střední):**
 ```
 IDENTIFIKACE → KONTEXT → PŘEKVAPENÍ → TRIGGER
+```
+
+**Varianta C (POV):**
+```
+VTAŽENÍ DO SITUACE → VNITŘNÍ PROŽITEK + TWIST → TRIGGER
 ```
 
 Každý slide navazuje na předchozí. Žádné náhodné přeskakování témat.
@@ -256,6 +285,55 @@ Každé video MUSÍ obsahovat prvek, který nutí diváka napsat komentář. Bez
 1. Být ve voiceoveru (ne jen v caption)
 2. Odpovídat emočnímu tónu videa (emotivní video ≠ "piš ANO")
 3. Nabádat k akci, která přináší nový reach (tag > emoji > ANO/NE)
+
+### 2d) PROVOKACE UPROSTŘED VIDEA (DOPORUČENO)
+
+Komentářový trigger na konci nestačí — divák musí mít nutkání komentovat DŘÍV.
+
+**Řešení:** Na slide 2 (JÁDRO/TWIST) vlož provokativní statement — větu, se kterou diváci buď souhlasí, nebo nesouhlasí. To vytváří komentáře ještě PŘED CTA.
+
+**Formule provokace:**
+- **Kontroverzní tvrzení:** „Většina Štírů ničí vztahy schválně. A ví to."
+- **Nepohodlná pravda:** „Jo, ničíš to. A ne náhodou."
+- **Generalizace znamení:** „Berani neumí milovat pomalu. Nikdy."
+- **Přerámování stereotypu:** „Štíři nejsou tajemní. Jsou vyděšení."
+
+**Pravidla provokace:**
+- Kontroverzní, ale NE urážlivé — diváci mají oponovat, ne reportovat
+- Musí se vztahovat k tématu videa — ne random provokace
+- Max 1 provokace per video — víc = ztrácí sílu
+- Funguje nejlíp na slide 2, kde divák je už vtažený
+
+**Příklady:**
+
+| Typ videa | Provokace | Reakce diváků |
+|-----------|-----------|---------------|
+| Štír + sabotáž | „Většina Štírů ničí vztahy schválně." | „NE! To není pravda!" / „Bohužel jo 😭" |
+| Blíženci + komunikace | „Blíženci neposlouchají. Nikdy." | „Hele, to není fér!" / „Guilty 😂" |
+| Beran + impulzivita | „Berani se rozhodnou za 3 sekundy. A pak to obhajují 3 hodiny." | „HAHAHA to jsem já" / „Uhh... jo" |
+
+### 2e) SÉRIE FORMÁT — BUDOVÁNÍ PRAVIDELNÉHO PUBLIKA
+
+Jednorázová videa nebudují publikum. Série ano — vytvářejí anticipaci a follow trigger.
+
+**Pravidlo:** Při generování videa VŽDY zvaž, jestli téma může být součástí série. Pokud ano, přidej sérii do konceptu.
+
+**Dostupné série formáty:**
+
+| Série | Popis | Počet dílů | Follow trigger |
+|-------|-------|-----------|----------------|
+| **Proč [znamení] ničí vztahy** | Jedno znamení = jeden díl | 12 | „Sleduj pro další znamení" |
+| **Co ti tvoje znamení nikdy neřekne** | Tajemství každého znamení | 12 | „Které znamení příště?" |
+| **Astro red flags** | Varovné signály u každého znamení | 12 | „Napiš znamení a zjisti svůj red flag" |
+| **POV: jsi [znamení] a…** | Situační mikropříběhy | neomezeno | „Chceš POV pro tvoje znamení?" |
+| **Astro fakta, co tě šokují** | Překvapivé astro info | neomezeno | „Chceš víc? Sleduj." |
+
+**Když je video součástí série:**
+- Text overlay na posledním slidu: **„Díl X/12 — sleduj pro další znamení"**
+- V caption: **„Díl X/12"** + odkaz na předchozí díl (pokud existuje)
+- Ve voiceoveru nemusí být zmíněno — série je vizuální a v caption
+
+**⚠️ Série NEVYNUCUJ u každého videa.** Některá témata jsou přirozeně jednorázová (aktuální astro energie, numerologie dne). Série funguje nejlíp u témat organizovaných podle znamení.
 
 ---
 
@@ -488,16 +566,79 @@ Použij tyto značky:
 
 **⚠️ SLIDE 4 = MAX 2 KRÁTKÉ VĚTY. Žádný twist, žádné nové informace.**
 
+### 4f) Šablona voiceover textu — VARIANTA C (POV, 3 slidy)
+
+```
+[SLIDE 1 — POV HOOK] (3–5s, max 2 věty)
+[urgently] POV: [situace — max 7 slov].
+<break time="0.5s" />
+[warmly] [Co persona cítí/vidí/dělá v tu chvíli].
+<break time="1.0s" />
+
+[SLIDE 2 — VNITŘNÍ MONOLOG + TWIST] (6–8s, prožitek → překvapení)
+[softly] [Co si persona myslí — intimní vnitřní hlas].
+<break time="0.3s" />
+[confidently] TWIST: [proč to dělá / co to znamená].
+<break time="1.0s" />
+
+[SLIDE 3 — CTA] (4–5s, jen trigger + odkaz, nic navíc)
+[inviting] Komentářový trigger — odpovídající emočnímu tónu videa.
+<break time="0.3s" />
+[clearly] Odkaz — 1 věta, přirozená, ne reklamní.
+```
+
+**Příklad POV voiceoveru:**
+```
+[SLIDE 1 — POV HOOK]
+[urgently] POV: Konečně ti někdo rozumí.
+<break time="0.5s" />
+[warmly] Píše každý den. Rozumí ti. A ty otevřeš jeho profil.
+<break time="1.0s" />
+
+[SLIDE 2 — VNITŘNÍ MONOLOG + TWIST]
+[softly] Hledáš, kde to praskne. Hledáš háček.
+<break time="0.3s" />
+[confidently] Nebojíš se, že tě zraní. Bojíš se, že tenhle nezklame.
+<break time="1.0s" />
+
+[SLIDE 3 — CTA]
+[inviting] Označ Štíra, co přesně tohle dělá.
+<break time="0.3s" />
+[clearly] V biu máš test shody.
+```
+
 ---
 
 ## FÁZE 5 — TikTok popis a hashtagy
 
-### 5a) TikTok caption
-- Max 2–3 řádky
-- **První řádek = hook nebo kontroverzní statement** (musí fungovat i bez videa)
-- Odkaz na bio
+### 5a) TikTok caption — MIKROBLOG FORMÁT
+
+Caption NENÍ jen popisek. Je to **druhá vrstva obsahu**, která zvyšuje dwell time (= algoritmus boostuje).
+
+**Struktura caption (3 bloky):**
+
+1. **Řádek 1 — hook/kontroverzní statement** (musí fungovat i bez videa, jiná perspektiva než video hook)
+2. **Řádky 2–4 — mikroblog** (vzdělávací kontext, astro fakt, nebo emoční rozvedení tématu — něco co ve videu NENÍ)
+3. **Poslední řádek — komentářový trigger** (zopakuj CTA z videa textově)
+
+**Pravidla:**
 - Emoji střídmě (max 2–3)
-- **POVINNĚ obsahuje komentářový trigger** (zopakuj CTA z videa textově)
+- Caption NEOPAKUJE hook videa 1:1 — přidává jinou perspektivu nebo kontext
+- Mikroblog dává vzdělávací hodnotu — divák se dozví PROČ (astro důvod, planetární vliv, mechanismus)
+- Odkaz na bio přirozeně v kontextu
+- Celkem 4–8 řádků (ne 2–3 jako dřív!)
+- **ŽÁDNÉ symetrické AI-blob struktury** v caption (viz Anti-AI-blob pravidla)
+
+**Příklad:**
+```
+Sabotáž? Jo. Ale ne proto, že ho nechceš.
+
+Pluto vládne Štírovi. A Pluto ničí, aby mohlo přestavět.
+Štír neničí vztahy ze zlé vůle — potřebuje vědět, jestli to přežijí.
+V biu máš test partnerské shody. 🦂
+
+Označ Štíra, co přesně tohle dělá ⬇️
+```
 
 ### 5b) Hashtagy
 - `#mystickaHvezda` VŽDY jako **první**
@@ -513,24 +654,40 @@ Použij tyto značky:
 
 Ke každému videu přidej stručné pokyny pro střih:
 
+### 6a) SOUND-OFF PRAVIDLO — TEXT OVERLAY NA KAŽDÉM SLIDU (KRITICKÉ)
+
+**80 % diváků na TikToku kouká BEZ ZVUKU.** Pokud text overlay je jen na slide 1 a CTA, 80 % diváků netuší, o čem video je.
+
+**Pravidlo:** Každý slide MUSÍ mít text overlay — zkrácenou verzi voiceoveru (max 2 řádky, bold, čitelný na mobilu). Divák BEZ zvuku musí pochopit celý příběh.
+
 **Varianta A (3 slidy):**
 
 | Slide | Délka | Animace | Přechod | Text overlay |
 |-------|-------|---------|---------|-------------|
-| 1 | Xs | Ken Burns zoom in | Fade in | [hook text — krátký, bold font] |
-| 2 | Xs | Slow pan | Dissolve 0.5s | žádný |
+| 1 | Xs | Ken Burns zoom in | Fade in | [hook text — max 5 slov, bold font] |
+| 2 | Xs | Slow pan | Dissolve 0.5s | [zkrácená pointa/mikropříběh — max 2 řádky] |
 | 3 | Xs | Static/gentle pulse | Fade out | komentářová výzva + mystickahvezda.cz |
 
 **Varianta B (4 slidy):**
 
 | Slide | Délka | Animace | Přechod | Text overlay |
 |-------|-------|---------|---------|-------------|
-| 1 | Xs | Ken Burns zoom in | Fade in | [hook text — krátký, bold font] |
-| 2 | Xs | Slow pan | Dissolve 0.5s | žádný |
-| 3 | Xs | Gentle zoom | Dissolve 0.5s | žádný |
+| 1 | Xs | Ken Burns zoom in | Fade in | [hook text — max 5 slov, bold font] |
+| 2 | Xs | Slow pan | Dissolve 0.5s | [kontext/fakt — max 2 řádky] |
+| 3 | Xs | Gentle zoom | Dissolve 0.5s | [twist/překvapení — max 2 řádky] |
 | 4 | Xs | Static/gentle pulse | Fade out | komentářová výzva + mystickahvezda.cz |
 
-**Text overlay na SLIDE 1:** Krátký hook text (3-5 slov, bold, bílý font s tmavým stínem). Divák musí pochopit téma i bez zvuku.
+**Varianta C (POV) — stejná logika:**
+
+| Slide | Délka | Animace | Přechod | Text overlay |
+|-------|-------|---------|---------|-------------|
+| 1 | Xs | Ken Burns zoom in | Fade in | POV: [situace — max 6 slov] |
+| 2 | Xs | Slow pan | Dissolve 0.5s | [vnitřní monolog — max 2 řádky] |
+| 3 | Xs | Static/gentle pulse | Fade out | komentářová výzva + mystickahvezda.cz |
+
+**Formátování text overlay:** Bílý bold font, tmavý stín/stroke, spodní třetina slidu. Max 2 řádky. Čitelný na malém mobilu.
+
+**⚠️ Text overlay NENÍ přepis voiceoveru.** Je to zkrácená esence — klíčová slova, ne celé věty.
 
 Hudba: Suno ambient track nebo trending TikTok sound, hlasitost 15–20 % pod voiceoverem.
 
@@ -561,11 +718,16 @@ Před výstupem ověř KAŽDÝ bod. Pokud jakýkoli selže, PŘEPIŠ příslušn
 - [ ] Dokonavá slovesa zní přirozeně
 - [ ] CTA je přirozený, ne prodejní — ne "zjisti jak funguješ s jeho znamením", spíš "možná ti řekne něco, co už tušíš"
 - [ ] URL odkaz logicky navazuje na téma videa
-- [ ] Celková délka voiceoveru odpovídá variantě (A: 15–20s, B: 25–35s)
+- [ ] Celková délka voiceoveru odpovídá variantě (A/C: 15–20s, B: 25–35s)
 - [ ] ElevenLabs formátování ([emoce] a <break>) je správné
-- [ ] Caption NEOPAKUJE hook 1:1 — přidává jinou perspektivu
+- [ ] Caption je mikroblog formát (3 bloky: hook + kontext + trigger, ne jen 2 řádky)
+- [ ] Caption NEOPAKUJE hook 1:1 — přidává jinou perspektivu nebo vzdělávací kontext
+- [ ] Caption neobsahuje symetrické AI-blob struktury ("Není X. Je Y.")
 - [ ] Suno prompt má délku 30s (ne kratší — Suno minimum)
 - [ ] Komentářový trigger odpovídá typu videa (emotivní ≠ ANO/NE, viz tabulka)
+- [ ] **SOUND-OFF TEST:** Každý slide má text overlay — divák BEZ zvuku pochopí celý příběh
+- [ ] **SÉRIE TEST:** Pokud je téma organizované podle znamení → zvážena série (ne vynucena)
+- [ ] **PROVOKACE TEST:** Obsahuje video na slide 2 provokativní statement? (doporučeno, ne povinné)
 
 ---
 
@@ -581,10 +743,12 @@ Před výstupem ověř KAŽDÝ bod. Pokud jakýkoli selže, PŘEPIŠ příslušn
 - **Téma:** [téma]
 - **Úhel:** [vzdělávací úhel]
 - **Vizuální styl:** [A/B/C/D — název]
-- **Varianta:** [A (krátké 15–20s) / B (střední 25–35s)]
+- **Varianta:** [A (krátké 15–20s) / B (střední 25–35s) / C (POV 15–20s)]
 - **Cílová délka:** [Xs]
 - **CTA:** [kam odkazuje — URL]
 - **Komentářový trigger:** [jaký typ + přesné znění]
+- **Provokace (slide 2):** [provokativní statement — volitelné ale doporučené]
+- **Série:** [název série + číslo dílu, nebo „jednorázové"]
 
 ---
 
@@ -625,16 +789,23 @@ Před výstupem ověř KAŽDÝ bod. Pokud jakýkoli selže, PŘEPIŠ příslušn
 
 ## ✂️ CapCut střihový plán
 
-| Slide | Délka | Animace | Přechod | Text overlay |
-|-------|-------|---------|---------|-------------|
-| ... | ... | ... | ... | ... |
+| Slide | Délka | Animace | Přechod | Text overlay (SOUND-OFF) |
+|-------|-------|---------|---------|--------------------------|
+| ... | ... | ... | ... | [POVINNÝ na každém slidu] |
 
 ---
 
-## 📝 TikTok popis
+## 📝 TikTok popis (mikroblog formát)
 
 \```
-[caption + hashtagy]
+[Řádek 1 — hook/kontroverzní statement]
+
+[Řádky 2–4 — mikroblog: vzdělávací kontext, astro fakt, emoční rozvedení]
+[Odkaz na bio přirozeně v kontextu]
+
+[Komentářový trigger]
+
+[hashtagy]
 \```
 
 ---
