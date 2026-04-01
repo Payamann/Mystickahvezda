@@ -6,26 +6,47 @@ Argument `$ARGUMENTS` = cílová persona + téma nebo datum. Příklady: "Štír
 
 ---
 
-## 📊 PERFORMANCE DATA — CO REÁLNĚ FUNGUJE (aktualizováno 03/2026)
+## 📊 PERFORMANCE DATA — REÁLNÁ ČÍSLA Z METY (březen 2026)
 
-**Tato data pocházejí z reálných statistik. ŘIĎ SE JIMI, ne intuicí.**
+**Tato data pocházejí z Facebook Insights (Mar 4–31, 2026). ŘIĎ SE JIMI, ne intuicí.**
 
-### ✅ CO FUNGUJE (engagement 3%+):
-| Typ obsahu | Příklad hooku | Proč to funguje |
-|------------|--------------|-----------------|
-| **Znamení + vztahy/láska** | "Tvoje znamení ovlivňuje, jak miluješ — a většina lidí to netuší" | Osobní, specifické, relationship = highest engagement |
-| **Konkrétní bolest/identita** | Hooky cílené na jednoho člověka | Divák se pozná = zastaví scroll |
-| **Reels/Video >> Foto** | N/A | Na Metě: Reel 374 reach vs. Foto 1 reach. Video je 300x silnější |
+### 📈 Celkové metriky za březen 2026:
+| Metrika | Hodnota | Co to znamená |
+|---------|---------|---------------|
+| Views | 2.5K | Většina přišla z 1 videa |
+| Viewers | 2.1K | Unikátních — lidé nekoukají víckrát |
+| Interactions | 39 | 1.56 % engagement |
+| **Link clicks** | **0** | **Nikdo neklikl na web — CTA nefunguje!** |
+| Profile visits | 11 | Skoro nikdo nenavštíví profil |
+| **Follows** | **2** | **Za celý měsíc — obsah nekonvertuje na sledující** |
 
-### ❌ CO NEFUNGUJE (engagement pod 1%):
-| Typ obsahu | Příklad hooku | Proč to nefunguje |
-|------------|--------------|-------------------|
-| **Obecné horoskopy** | "Horoskop pro prvních 6 znamení" | Žádný osobní zásah, divák necítí "to jsem já" |
-| **Poetické/vágní hooky** | "Hvězdy mluví. Stačí poslouchat." | Krásné, ale palec scrollne — chybí urgence |
-| **Popisné hooky** | "Hvězdy tam byly vždycky. Mlčky. Trpělivě." | Atmosférické, ale 0 důvod zastavit se |
+### 🏆 NEJLEPŠÍ VIDEO — „Tvoje znamení ovlivňuje, jak miluješ"
+| Metrika | Hodnota |
+|---------|---------|
+| Views | **1.2K** (= 48 % VŠECH views za měsíc z jednoho videa!) |
+| Interactions | **24** (= 62 % všech interactions) |
+| Typ | Reel z TikTok skillu |
+| Hook | Relationship hook — POTVRZENO jako nejsilnější formule |
 
-### 🎯 KLÍČOVÁ METRIKA: 0 komentářů na VŠECH videích
-**→ Každé video MUSÍ obsahovat komentářový trigger. Bez komentářů = algoritmus nebustuje.**
+### ✅ CO FUNGUJE (doloženo daty):
+| Typ obsahu | Výkon | Proč |
+|------------|-------|------|
+| **Reels z TikTok skillu** | 1.2K views, 24 interactions | Příběh + hook + vizuál = retence |
+| **Relationship hook** | Nejlepší video vůbec | „Tvoje znamení ovlivňuje, jak miluješ" = osobní zásah |
+| **Video >> vše ostatní** | 1 Reel = 48 % všech views | Algoritmus preferuje video |
+
+### ❌ CO NEFUNGUJE (doloženo daty):
+| Problém | Data | Důsledek |
+|---------|------|----------|
+| **Statické posty** | Zbytek obsahu = zbylých 52 % views rozložených do mnoha postů | Foto/text posty nedosahují ani zlomku jednoho Reelu |
+| **CTA na web** | **0 link clicks** za celý měsíc | Stávající přístup „V biu máš..." vůbec nefunguje |
+| **Follow konverze** | **2 follows** z 2.1K viewers | 0.1 % konverze — chybí důvod sledovat |
+| **Profile visits** | 11 za měsíc | Lidé profil nenavštěvují → nemohou kliknout na bio link |
+
+### 🎯 3 KRITICKÉ PROBLÉMY K ŘEŠENÍ:
+1. **0 link clicks** → CTA musí nejdřív dostat lidi NA PROFIL, teprve pak klikat
+2. **2 follows** → Každé video musí dát explicitní důvod SLEDOVAT (série, upcoming content)
+3. **Komentáře stále nízké** → Komentářové triggery musí být silnější a provokativnější
 
 ---
 
@@ -349,6 +370,49 @@ Jednorázová videa nebudují publikum. Série ano — vytvářejí anticipaci a
 
 **⚠️ Série NEVYNUCUJ u každého videa.** Některá témata jsou přirozeně jednorázová (aktuální astro energie, numerologie dne). Série funguje nejlíp u témat organizovaných podle znamení.
 
+### 2f) FOLLOW + PROFIL + LINK STRATEGIE (KRITICKÉ — data ukazují 0 link clicks)
+
+**Problém z dat:** Za celý březen 2026: 0 link clicks, 11 profile visits, 2 follows z 2.1K viewers. CTA „V biu máš..." vůbec nefunguje, protože lidé na profil ani nedojdou.
+
+**Nová strategie — trychtýř v 3 krocích:**
+
+```
+KOMENTÁŘ → PROFIL → BIO LINK
+(trigger v videu)  (follow/curiosity)  (přirozený odkaz)
+```
+
+**Krok 1 — Komentář (priorita #1):** Komentáře = algoritmus boostuje = víc lidí vidí video. BEZ komentářů se video nedostane dál. Komentářový trigger proto zůstává ve voiceoveru.
+
+**Krok 2 — Follow trigger (priorita #2):** Divák musí mít důvod sledovat. Pouze „dobrý obsah" nestačí — musí vědět, co PŘIJDE.
+
+**Follow trigger formule (zvol JEDNU pro CTA slide):**
+- **Série anticipace:** „Příště [další znamení]. Sleduj, ať to neprošvihneš."
+- **Upcoming content:** „Zítra řeknu, které znamení to dělá nejhůř."
+- **Exkluzivita:** „Tohle říkám jen tady. Sleduj pro víc."
+- **Curiosity gap:** „Na profilu mám [konkrétní věc], co tě překvapí."
+
+**Krok 3 — Bio link (priorita #3):** Link click přijde AŽ poté, co divák navštíví profil. Proto musí video vzbudit zvědavost o profilu — ne přímo o linku.
+
+**Co funguje vs. nefunguje pro bio link:**
+- ❌ „V biu máš test shody." — příliš přímé, nikdo nenavštíví profil kvůli tomu
+- ❌ „Odkaz v biu." — generické, žádný důvod kliknout
+- ✅ „Na profilu mám natální kartu zdarma. Zkus si to." — konkrétní hodnota + zvědavost
+- ✅ „Zjisti svou natální kartu — link na profilu." — jasný benefit + kde to najít
+- ✅ Vůbec neříkat (a místo toho dát link do caption) — caption link je klikatelný!
+
+**⚠️ CAPTION LINK > BIO ODKAZ:** Na Facebooku/Instagramu je odkaz v caption přímo klikatelný (na rozdíl od TikToku). Proto do caption přidej přímý URL: `mystickahvezda.cz/[stránka]` — divák nemusí chodit přes profil.
+
+**Nová CTA struktura pro voiceover (slide 3):**
+```
+Věta 1: Komentářový trigger (priorita — engagement)
+Věta 2: Follow trigger NEBO curiosity o profilu (konverze)
+```
+
+**Příklady nového CTA:**
+- „Označ Štíra, co tohle dělá. Příště Beran — sleduj." — trigger + follow
+- „Napiš svoje znamení. Zítra řeknu, kdo to dělá nejhůř." — trigger + anticipace
+- „Označ Váhu, co tohle zná. Na profilu mám natální kartu zdarma." — trigger + profil visit
+
 ---
 
 ## FÁZE 3 — Image prompty pro Nano Banana
@@ -546,13 +610,13 @@ Použij tyto značky:
 [confidently] TWIST: přerámování, odhalení, nebo kontradikce.
 <break time="1.0s" />
 
-[SLIDE 3 — CTA] (4–5s, jen trigger + odkaz, nic navíc)
+[SLIDE 3 — CTA] (4–5s, trigger + follow/curiosity)
 [inviting] Komentářový trigger — odpovídající emočnímu tónu videa.
 <break time="0.3s" />
-[clearly] Odkaz — 1 věta, přirozená, ne reklamní.
+[clearly] Follow trigger NEBO curiosity o profilu — ne „odkaz v biu".
 ```
 
-**⚠️ SLIDE 3 = MAX 2 KRÁTKÉ VĚTY. Žádný twist, žádné emoce, žádné vysvětlování.**
+**⚠️ SLIDE 3 = MAX 2 KRÁTKÉ VĚTY. Věta 1 = engagement trigger. Věta 2 = follow/profil trigger (ne „v biu máš").**
 
 ### 4e) Šablona voiceover textu — VARIANTA B (střední, 4 slidy)
 
@@ -575,13 +639,13 @@ Použij tyto značky:
 [confidently] TWIST: přerámování nebo kontradikce.
 <break time="1.0s" />
 
-[SLIDE 4 — CTA] (4–5s, jen trigger + odkaz)
+[SLIDE 4 — CTA] (4–5s, trigger + follow/curiosity)
 [inviting] Komentářový trigger — odpovídající emočnímu tónu.
 <break time="0.3s" />
-[clearly] Odkaz — 1 věta, přirozená.
+[clearly] Follow trigger NEBO curiosity o profilu.
 ```
 
-**⚠️ SLIDE 4 = MAX 2 KRÁTKÉ VĚTY. Žádný twist, žádné nové informace.**
+**⚠️ SLIDE 4 = MAX 2 KRÁTKÉ VĚTY. Věta 1 = engagement trigger. Věta 2 = follow/profil trigger.**
 
 ### 4f) Šablona voiceover textu — VARIANTA C (POV, 3 slidy)
 
@@ -598,10 +662,10 @@ Použij tyto značky:
 [confidently] TWIST: [proč to dělá / co to znamená — přerámování].
 <break time="1.0s" />
 
-[SLIDE 3 — CTA] (4–5s, jen trigger + odkaz, nic navíc)
+[SLIDE 3 — CTA] (4–5s, trigger + follow/curiosity)
 [inviting] Komentářový trigger — odpovídající emočnímu tónu videa.
 <break time="0.3s" />
-[clearly] Odkaz — 1 věta, přirozená, ne reklamní.
+[clearly] Follow trigger NEBO curiosity o profilu — ne „odkaz v biu".
 ```
 
 **Příklad POV voiceoveru (Štír — sabotáž):**
@@ -621,7 +685,7 @@ Použij tyto značky:
 [SLIDE 3 — CTA]
 [inviting] Označ Štíra, co přesně tohle dělá.
 <break time="0.3s" />
-[clearly] V biu máš test shody.
+[clearly] Příště Beran. Sleduj, ať to neprošvihneš.
 ```
 
 **Příklad POV voiceoveru (Váhy — nerozhodnost):**
@@ -641,7 +705,7 @@ Použij tyto značky:
 [SLIDE 3 — CTA]
 [inviting] Označ Váhu, co tahle kalkulace zničila.
 <break time="0.3s" />
-[clearly] V biu máš natální kartu.
+[clearly] Zítra řeknu, které znamení to dělá nejhůř. Sleduj.
 ```
 
 ---
@@ -664,7 +728,8 @@ Caption NENÍ jen popisek. Je to **druhá vrstva obsahu**, která zvyšuje dwell
 - **Caption NESMÍ parafrázovat twist z videa** — pokud voiceover říká „Váhy nerozhodují pomalu. Bojí se být tou, co ublíží.", caption NESMÍ říct „Váhy nemají problém s rozhodováním. Mají problém s tím, být tou, co ublíží." (to je stejný vzorec, jen přeformulovaný)
 - Mikroblog dává vzdělávací hodnotu — divák se dozví PROČ (astro důvod, planetární vliv, mechanismus)
 - **Mikroblog přidává NOVÉ info** — astro fakt (vládnoucí planeta, živel, dům), historický kontext, nebo psychologický mechanismus, který ve videu NENÍ
-- Odkaz na bio přirozeně v kontextu
+- **Na Facebooku/Instagramu: PŘÍMÝ URL v caption** — `mystickahvezda.cz/[stránka]` je klikatelný! Neodkazuj na bio, dej link přímo.
+- Na TikToku: odkaz na bio (TikTok neumí klikatelné linky v caption)
 - Celkem 4–8 řádků (ne 2–3 jako dřív!)
 - **ŽÁDNÉ symetrické AI-blob struktury** v caption — „Nemají X. Mají Y." / „Není to X. Je to Y." = ZAKÁZÁNO
 
@@ -674,9 +739,10 @@ Sabotáž? Jo. Ale ne proto, že ho nechceš.
 
 Pluto vládne Štírovi. A Pluto ničí, aby mohlo přestavět.
 Štír neničí vztahy ze zlé vůle — potřebuje vědět, jestli to přežijí.
-V biu máš test partnerské shody. 🦂
+🦂 Test partnerské shody: mystickahvezda.cz/partner-compatibility
 
 Označ Štíra, co přesně tohle dělá ⬇️
+Příští díl: Beran — sleduj, ať to neprošvihneš.
 ```
 
 **Příklad (Váhy — nerozhodnost):**
@@ -685,12 +751,17 @@ Označ Štíra, co přesně tohle dělá ⬇️
 
 Venuše, vládkyně Vah, nechce konflikty. Nechce bolest.
 Tak počítáš. Koho to zabolí míň? A mezitím plyne čas.
-V biu máš natální kartu — ukáže ti, kde přesně se zasekáváš.
+🦋 Tvoje natální karta: mystickahvezda.cz/natalni-karta.html
 
 Označ Váhu, co tahle kalkulace zničila ⬇️
+Zítra řeknu, které znamení to dělá nejhůř. Sleduj.
 ```
 
-**Všimni si:** Voiceover o Váhách má twist „Bojí se být tou, co ublíží." Caption to NEOPAKUJE — místo toho přidává Venuši jako astro kontext (nové info).
+**Pravidla caption:**
+1. Voiceover twist se NEOPAKUJE — caption přidává nové astro info (planeta, živel)
+2. **URL přímo v caption** (ne „odkaz v biu") — na FB/IG je klikatelný
+3. **Follow trigger na posledním řádku** — „příští díl" nebo „zítra" = důvod sledovat
+4. Na TikToku nahraď URL za „odkaz na profilu" (TikTok nepovoluje klikatelné linky v caption)
 
 ### 5b) Hashtagy
 - `#mystickaHvezda` VŽDY jako **první**
@@ -782,6 +853,9 @@ Před výstupem ověř KAŽDÝ bod. Pokud jakýkoli selže, PŘEPIŠ příslušn
 - [ ] **SOUND-OFF TEST:** Každý slide má text overlay — divák BEZ zvuku pochopí celý příběh
 - [ ] **SÉRIE TEST:** Pokud je téma organizované podle znamení → zvážena série (ne vynucena)
 - [ ] **PROVOKACE TEST:** Obsahuje video na slide 2 provokativní statement? (doporučeno, ne povinné)
+- [ ] **FOLLOW TRIGGER TEST:** Obsahuje CTA důvod SLEDOVAT? (série anticipace, upcoming content, exkluzivita)
+- [ ] **LINK TEST:** Je v caption přímý URL `mystickahvezda.cz/...`? (ne „v biu máš") — na FB/IG klikatelný
+- [ ] **CTA NEŘÍKÁ „v biu máš"** — 0 link clicks za březen = tento přístup nefunguje
 
 ---
 
@@ -802,7 +876,9 @@ Před výstupem ověř KAŽDÝ bod. Pokud jakýkoli selže, PŘEPIŠ příslušn
 - **CTA:** [kam odkazuje — URL]
 - **Komentářový trigger:** [jaký typ + přesné znění]
 - **Provokace (slide 2):** [provokativní statement — volitelné ale doporučené]
+- **Follow trigger:** [jak přesvědčíme diváka sledovat — série anticipace / upcoming content]
 - **Série:** [název série + číslo dílu, nebo „jednorázové"]
+- **Caption URL:** [přímý odkaz mystickahvezda.cz/... pro FB/IG]
 
 ---
 
