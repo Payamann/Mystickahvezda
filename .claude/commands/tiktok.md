@@ -455,14 +455,12 @@ dark silhouettes against starry sky, photorealistic astrophotography
 Pro KAŽDÝ slide vygeneruj prompt v tomto formátu:
 
 ```
-[JEDEN centrální objekt — jasně popsaný, max 5 slov], [materiál/textura/světlo],
-[1-2 drobné detaily relevantní k tématu], [atmosféra ze zvoleného stylu],
-[barevná paleta identická napříč všemi slidy],
-photorealistic, cinematic, mystical atmosphere,
-vertical portrait 9:16 aspect ratio, 1080x1920px resolution
-
-CRITICAL: Vertical portrait orientation 9:16 (taller than wide),
-optimized for TikTok/mobile viewing.
+A single [centrální objekt — max 5 slov] made of fine star-points,
+warm amber and rose-gold light radiating softly outward,
+subtle [symbol relevantní k tématu] woven between the stars,
+deep navy background (#050510), warm golden nebula haze,
+premium 3D CGI render, icon-art style,
+NO text NO people NO faces NO cards NO frames NO borders, portrait 9:16, 1080x1920px.
 ```
 
 ### 3d) PRAVIDLO JEDNOHO OBJEKTU (KRITICKÉ)
@@ -496,6 +494,13 @@ optimized for TikTok/mobile viewing.
 - **Dokonavá slovesa přirozeně** ("zasmáš se" → "zasměješ se")
 - **Reflexivní slovesa správně** — „ublížit komu" (ne „ublížit se"), „bát se čeho" (ne „bát se na co")
 - **Gramaticky bezchybný text** — před výstupem mentálně zkontroluj každou větu, zejména pády a reflexiva
+- **GENDER NEUTRÁLNÍ — KRITICKÉ:** Voiceover NESMÍ předpokládat pohlaví ani orientaci diváka
+  - ❌ „napsala jsi mu" — ženský rod + předpokládá muže jako příjemce
+  - ❌ „řekl ti" / „ona tě" — zbytečně genderuje
+  - ✅ Preferuj **přítomný čas** — „díváš se", „otevřeš", „zamkneš" — přirozeně genderově neutrální
+  - ✅ Pokud musíš použít minulý čas: přeformuluj větou bez slovesa v min. čase — „ta zpráva, co jsi odeslal/odeslala..." → „ta zpráva, co letěla bez přemýšlení"
+  - ✅ „ten člověk", „ta osoba", „partner/partnerka" místo „on" / „ona"
+  - ⚠️ **Pozor na gramatický rod podstatných jmen** — věty kde podmět je ženský rod podstatného jména (např. *rovnováha*, *energie*, *láska*) a sloveso v minulém čase končí na *-la* mohou znít, jako by se vztahovaly na osobu ženského rodu. Preferuj střední rod nebo přeformuluj: ❌ „kde se ztratila" (rovnováha) → ✅ „co se vychýlilo", „kde to přestalo fungovat", „co zmizelo"
 - **Celková délka:** 15–20 sekund (var. A) nebo 25–35 sekund (var. B)
 - **Styl:** intimní, přímý, sebejistý — jako by mluvil někdo kdo ví víc než ty
 - **Tempo:** Rychlé, punchy věty. Max 8–10 slov na větu. Žádné dlouhé souvětí.
@@ -739,7 +744,7 @@ Sabotáž? Jo. Ale ne proto, že ho nechceš.
 
 Pluto vládne Štírovi. A Pluto ničí, aby mohlo přestavět.
 Štír neničí vztahy ze zlé vůle — potřebuje vědět, jestli to přežijí.
-🦂 Test partnerské shody: mystickahvezda.cz/partner-compatibility
+🦂 Test partnerské shody: mystickahvezda.cz/partnerska-shoda.html
 
 Označ Štíra, co přesně tohle dělá ⬇️
 Příští díl: Beran — sleduj, ať to neprošvihneš.
@@ -789,7 +794,7 @@ Ke každému videu přidej stručné pokyny pro střih:
 |-------|-------|---------|---------|-------------|
 | 1 | Xs | Ken Burns zoom in | Fade in | [hook text — max 5 slov, bold font] |
 | 2 | Xs | Slow pan | Dissolve 0.5s | [zkrácená pointa/mikropříběh — max 2 řádky] |
-| 3 | Xs | Static/gentle pulse | Fade out | komentářová výzva + mystickahvezda.cz |
+| 3 | Xs | Static/gentle pulse | Fade out | [komentářový trigger] + [follow trigger] |
 
 **Varianta B (4 slidy):**
 
@@ -798,7 +803,7 @@ Ke každému videu přidej stručné pokyny pro střih:
 | 1 | Xs | Ken Burns zoom in | Fade in | [hook text — max 5 slov, bold font] |
 | 2 | Xs | Slow pan | Dissolve 0.5s | [kontext/fakt — max 2 řádky] |
 | 3 | Xs | Gentle zoom | Dissolve 0.5s | [twist/překvapení — max 2 řádky] |
-| 4 | Xs | Static/gentle pulse | Fade out | komentářová výzva + mystickahvezda.cz |
+| 4 | Xs | Static/gentle pulse | Fade out | [komentářový trigger] + [follow trigger] |
 
 **Varianta C (POV) — stejná logika:**
 
@@ -806,11 +811,28 @@ Ke každému videu přidej stručné pokyny pro střih:
 |-------|-------|---------|---------|-------------|
 | 1 | Xs | Ken Burns zoom in | Fade in | POV: [situace — max 6 slov] |
 | 2 | Xs | Slow pan | Dissolve 0.5s | [vnitřní monolog — max 2 řádky] |
-| 3 | Xs | Static/gentle pulse | Fade out | komentářová výzva + mystickahvezda.cz |
+| 3 | Xs | Static/gentle pulse | Fade out | [komentářový trigger] + [follow trigger] |
+
+**⚠️ PRAVIDLO POSLEDNÍHO SLIDU — web link NEPATŘÍ do text overlay:**
+- ❌ `Napiš co tě pohánělo ⬇️ / mystickahvezda.cz/lunace.html` — divák neví kam jít, na webu se nic napsat nedá
+- ✅ Poslední slide = POUZE komentářový trigger + follow trigger (série anticipace)
+- ✅ Web link patří do **caption** pod videem — tam je klikatelný a neplete se do CTA
+
+**Správný formát posledního slidu:**
+```
+Tvoje znamení? Napiš níže ⬇️
+Příště: které znamení to dělá nejhůř.
+```
 
 **Formátování text overlay:** Bílý bold font, tmavý stín/stroke, spodní třetina slidu. Max 2 řádky. Čitelný na malém mobilu.
 
 **⚠️ Text overlay NENÍ přepis voiceoveru.** Je to zkrácená esence — klíčová slova, ne celé věty.
+
+**⚠️ Text overlay MUSÍ být gender neutrální.** Minulý čas téměř vždy genderuje — používej přítomný čas.
+- ❌ „Napsala jsi mu. Sama od sebe." — ženský rod + předpokládá muže
+- ❌ „Čekal jsi na každou zprávu." — mužský rod
+- ✅ „Dnes jednáš bez přemýšlení." — přítomný čas, gender neutrální
+- ✅ „Novoluní v Beranu. Mars říká: jednej teď." — neosobní, funguje pro všechny
 
 Hudba: Suno ambient track nebo trending TikTok sound, hlasitost 15–20 % pod voiceoverem.
 
@@ -1001,15 +1023,15 @@ Soft CTA může odkazovat POUZE na:
 | Funkce | URL |
 |--------|-----|
 | Natální karta | /natalni-karta.html |
-| Horoskopy | /horoscope |
-| Tarot | /tarot |
-| Partnerská shoda | /partner-compatibility |
-| Numerologie | /numerologie |
-| Lunární kalendář | /lunar-calendar |
-| Runy | /runy |
-| Andělské karty | /angelske-karty |
-| Šamanské kolo | /shamanske-kolo |
-| Hvězdný průvodce (AI chat) | /hvezdny-pruvodce |
+| Horoskopy | /horoskopy.html |
+| Tarot | /tarot.html nebo /tarot-ano-ne.html |
+| Partnerská shoda | /partnerska-shoda.html |
+| Numerologie | /numerologie.html |
+| Lunární kalendář | /lunace.html |
+| Runy | /runy.html |
+| Andělské karty | /andelske-karty.html |
+| Šamanské kolo | /shamansko-kolo.html |
+| Hvězdný průvodce (AI chat) | /mentor.html |
 
 **NIKDY nepropaguj témata mimo tento seznam.**
 **CTA odkaz MUSÍ logicky navazovat na téma videa.**
