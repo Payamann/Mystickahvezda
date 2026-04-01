@@ -70,7 +70,7 @@
                 const auth = window.Auth;
                 if (!auth || !auth.isLoggedIn()) {
                     sessionStorage.setItem('pending_plan', planId);
-                    window.location.href = '/registrace.html';
+                    window.location.href = '/prihlaseni.html';
                     return;
                 }
 
