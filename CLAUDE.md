@@ -39,15 +39,17 @@ Z výsledku zjisti:
 | Funkce | URL |
 |--------|-----|
 | Natální karta | /natalni-karta.html |
-| Horoskopy (denní/týdenní/měsíční) | /horoscope |
-| Tarot (denní karta, yes/no) | /tarot |
-| Partnerská shoda | /partner-compatibility |
-| Numerologie | /numerologie |
-| Lunární kalendář | /lunar-calendar |
-| Runy | /runy |
-| Andělské karty | /angelske-karty |
-| Šamanské kolo | /shamanske-kolo |
-| Hvězdný průvodce (AI chat) | /hvezdny-pruvodce |
+| Horoskopy (denní/týdenní/měsíční) | /horoskopy.html |
+| Tarot (denní karta, yes/no) | /tarot.html |
+| Partnerská shoda | /partnerska-shoda.html |
+| Numerologie | /numerologie.html |
+| Lunární kalendář | /lunace.html |
+| Runy | /runy.html |
+| Andělské karty | /andelske-karty.html |
+| Šamanské kolo | /shamanske-kolo.html |
+| Hvězdný průvodce (AI chat) | /mentor.html |
+| Křišťálová koule (AI věštba) | /kristalova-koule.html |
+| Minulý život / Akašické záznamy | /minuly-zivot.html |
 
 **⚠️ NIKDY nepropaguj témata, která na webu nemáme** (krystaly, meditace, čaje, knihy atd.)
 **⚠️ Soft_promo odkaz musí LOGICKY navazovat na téma postu** — post o Měsíci → lunární kalendář, post o partnerech → partnerská shoda
