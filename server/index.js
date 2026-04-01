@@ -497,8 +497,8 @@ app.get('/api/config', (req, res) => {
 // AI Oracle routes (crystal-ball, tarot, natal-chart, synastry, astrocartography)
 app.use('/api', aiLimiter, oracleRoutes);
 
-// Horoscope with DB caching
-app.use('/api/horoscope', aiLimiter, horoscopeRoutes);
+// Horoscope with DB caching (AI rate limit applied only on cache miss inside the route)
+app.use('/api/horoscope', horoscopeRoutes);
 app.use('/api', aiLimiter, briefingRoutes);
 
 // Numerology with DB caching (Premium only)

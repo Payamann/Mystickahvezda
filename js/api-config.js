@@ -72,7 +72,9 @@ async function callAPI(endpoint, data) {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP Error: ${response.status}`);
+            const err = new Error(`HTTP Error: ${response.status}`);
+            err.status = response.status;
+            throw err;
         }
 
         const result = await response.json();

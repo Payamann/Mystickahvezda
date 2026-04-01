@@ -4,7 +4,7 @@
  * Includes daily/weekly/monthly horoscope with database caching
  */
 import express from 'express';
-import { optionalPremiumCheck } from '../middleware.js';
+import { optionalPremiumCheck, aiLimiter } from '../middleware.js';
 import { callClaude } from '../services/claude.js';
 import { SYSTEM_PROMPTS } from '../config/prompts.js';
 import { getHoroscopeCacheKey, getCachedHoroscope, saveCachedHoroscope } from '../services/astrology.js';
@@ -100,6 +100,15 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
         }
 
         console.log(`🔄 Horoscope Cache MISS: ${cacheKey} - Generating new for ${targetLang}...`);
+
+        // Apply AI specific rate limit only on cache miss (when actually generating AI content)
+        await new Promise((resolve) => {
+            aiLimiter(req, res, resolve);
+        });
+        if (res.headersSent) {
+            console.log(`⚠️ Horoscope AI Limiter hit for IP: ${req.ip}`);
+            return;
+        }
 
         let periodPrompt;
         let periodLabel;
