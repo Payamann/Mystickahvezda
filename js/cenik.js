@@ -31,50 +31,34 @@
             'vip-majestrat': 'Vstoupit do VIP'
         };
 
-        async function startCheckout(planId) {
-            const btn = document.querySelector(`[data-plan="${planId}"]`);
-            if (btn) { btn.textContent = 'Přesměrovávám...'; btn.disabled = true; }
-            try {
-                const baseUrl = (typeof API_CONFIG !== 'undefined' ? API_CONFIG.BASE_URL : null) || '/api';
-                const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
-                const res = await fetch(`${baseUrl}/payment/create-checkout-session`, {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(csrfToken && { 'X-CSRF-Token': csrfToken })
-                    },
-                    body: JSON.stringify({ planId })
-                });
-                const data = await res.json();
-                if (data.url) {
-                    window.location.href = data.url;
-                } else {
-                    if (btn) { btn.disabled = false; btn.textContent = PLAN_LABELS[planId] || 'Pokračovat'; }
-                    alert('Nepodařilo se spustit platbu. Zkuste to prosím znovu.');
-                }
-            } catch (err) {
-                console.error('Checkout error:', err);
-                if (btn) { btn.disabled = false; btn.textContent = PLAN_LABELS[planId] || 'Pokračovat'; }
+        const STRIPE_URLS = {
+            pruvodce: 'https://buy.stripe.com/14A7sKfqRdNg2BJeTTc7u02',
+            osviceni: 'https://buy.stripe.com/dRm6oG1A18sW9077rrc7u01',
+            'vip-majestrat': 'https://buy.stripe.com/bJebJ0ceF4cG6RZ5jjc7u00'
+        };
+
+        function startCheckout(planId) {
+            const url = STRIPE_URLS[planId];
+            if (url) {
+                window.location.href = url;
             }
         }
 
         // Plan checkout handler
         document.querySelectorAll('.plan-checkout-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
+            btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const planId = btn.dataset.plan;
                 if (!planId) return;
 
-                // Wait for Auth to be available (defer scripts)
                 const auth = window.Auth;
                 if (!auth || !auth.isLoggedIn()) {
                     sessionStorage.setItem('pending_plan', planId);
-                    window.location.href = '/prihlaseni.html';
+                    window.location.href = '/prihlaseni.html?registrace=1';
                     return;
                 }
 
-                await startCheckout(planId);
+                startCheckout(planId);
             });
         });
 
@@ -83,7 +67,6 @@
             const pending = sessionStorage.getItem('pending_plan');
             if (!pending) return;
 
-            // Poll for Auth (loaded via defer)
             const wait = setInterval(() => {
                 if (!window.Auth) return;
                 clearInterval(wait);
