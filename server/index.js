@@ -6,7 +6,6 @@ import rateLimit from 'express-rate-limit'; // Security: Rate Limiting
 import helmet from 'helmet'; // Security: HTTP Headers
 import xss from 'xss-clean'; // Security: Input Sanitization
 import compression from 'compression'; // Performance: Gzip compression
-import * as Sentry from '@sentry/node'; // Error tracking
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
@@ -15,8 +14,7 @@ import Stripe from 'stripe';
 // Global error handlers — catch unhandled errors before they crash the server
 process.on('uncaughtException', (err) => {
     console.error('[FATAL] Uncaught Exception:', err);
-    // Give Sentry time to flush, then exit
-    setTimeout(() => process.exit(1), 2000);
+    process.exit(1);
 });
 process.on('unhandledRejection', (reason) => {
     console.error('[FATAL] Unhandled Rejection:', reason);
@@ -50,19 +48,6 @@ import { spawn } from 'child_process';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env') });
-
-// Initialize Sentry for error tracking
-if (process.env.SENTRY_DSN) {
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.NODE_ENV || 'development',
-    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
-    integrations: [
-      new Sentry.Integrations.Http({ tracing: true }),
-      new Sentry.Integrations.Express({ app: true, request: true })
-    ]
-  });
-}
 
 const app = express();
 // Enable trust proxy for Railway/Heroku/Vercel to correctly identify user IPs
@@ -174,11 +159,6 @@ app.use((req, res, next) => {
 
 // Security Headers with Content Security Policy
 
-// Sentry request handler middleware (must be first)
-if (process.env.SENTRY_DSN) {
-  app.use(Sentry.Handlers.requestHandler());
-  app.use(Sentry.Handlers.tracingHandler());
-}
 
 app.use('/api/', globalLimiter);
 app.use(staticLimiter);
@@ -199,7 +179,7 @@ app.use(helmet({
                 'https://cdn.jsdelivr.net',
                 'https://cdnjs.cloudflare.com',
                 'https://unpkg.com',
-                'https://browser.sentry-cdn.com',
+
                 'https://www.googletagmanager.com',
             ],
             styleSrc: [
@@ -232,7 +212,7 @@ app.use(helmet({
                 'https://fonts.gstatic.com',
                 'https://cdn.jsdelivr.net',
                 'https://unpkg.com',
-                '*.sentry.io',
+
                 'https://www.google-analytics.com',
                 'https://stats.g.doubleclick.net',
             ].filter(Boolean),
@@ -522,10 +502,6 @@ app.use('/api/medicine-wheel', aiLimiter, medicineWheelRoutes);
 // Health Check - registered above rate limiter (see top of file)
 // Admin comment: duplicate route registrations removed
 
-// Sentry error handler middleware (before generic error handler)
-if (process.env.SENTRY_DSN) {
-  app.use(Sentry.Handlers.errorHandler());
-}
 
 // Global Error Handler - Never expose internal details to clients
 app.use((err, req, res, next) => {
@@ -541,10 +517,6 @@ app.use((err, req, res, next) => {
         timestamp: new Date().toISOString(),
     });
 
-    // Also report to Sentry
-    if (process.env.SENTRY_DSN) {
-      Sentry.captureException(err);
-    }
 
     // Return generic error to client (no internal details)
     const statusCode = err.status || 500;
