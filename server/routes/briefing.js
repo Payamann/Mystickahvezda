@@ -1,6 +1,7 @@
 import express from 'express';
 import { callGemini } from '../services/gemini.js';
 import { generalAICache } from '../services/cache.js';
+import { SYSTEM_PROMPTS } from '../config/prompts.js';
 
 const router = express.Router();
 
@@ -24,7 +25,7 @@ router.post('/briefing', async (req, res) => {
             return res.json({ text: cachedResponse, cached: true });
         }
 
-        const systemPrompt = `Jsi Mystický Rádce projektu Mystická Hvězda. Tvým úkolem je vytvořit krátký, inspirativní a sjednocený ranní vzkaz pro uživatele.`;
+        const systemPrompt = SYSTEM_PROMPTS.briefing;
 
         const userMessage = `Vstupní data:
 - Znamení zvěrokruhu: ${zodiacSign}
