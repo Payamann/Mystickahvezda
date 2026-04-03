@@ -57,42 +57,24 @@ def create_pingpong_loop(
     output_path = Path(output_file)
 
     # Zjisti původní délku
-    print("[*] Načítám původní video...")
+    print("[*] Nacitam puvodni video...")
     original_duration = get_video_duration(input_file)
-    print(f"[OK] Délka původního videa: {original_duration:.2f}s")
+    print(f"[OK] Delka puvodni video: {original_duration:.2f}s")
 
     # Vypočítej počet opakování (forward + reverse = 1 cyklus)
     cycle_duration = original_duration * 2  # forward + reverse
     num_cycles = int(target_duration / cycle_duration) + 1
 
-    print(f"[*] Cílová délka: {target_duration:.2f}s")
+    print(f"[*] Cilova delka: {target_duration:.2f}s")
     print(f"[*] Jedna sekvence (forward+reverse): {cycle_duration:.2f}s")
-    print(f"[*] Počet cyklů: {num_cycles}")
+    print(f"[*] Pocet cyklu: {num_cycles}")
 
-    # Vytvoř dočasné soubory pro forward/reverse verze
+    # Vytvoř reverse verzi jako dočasný soubor
+    print("[*] Generuji reverse verzi...")
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)
-        forward_file = tmpdir / "forward.mp4"
         reverse_file = tmpdir / "reverse.mp4"
-        concat_list = tmpdir / "concat.txt"
 
-        # Zkopíruj forward verzi (bez re-encodování)
-        print("[*] Kopíruji forward verzi...")
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-i", input_file,
-                "-c:v", "copy",
-                "-c:a", "copy",
-                "-y",
-                str(forward_file)
-            ],
-            check=True,
-            capture_output=True
-        )
-
-        # Vytvoř reverse verzi
-        print("[*] Generuji reverse verzi...")
         subprocess.run(
             [
                 "ffmpeg",
@@ -113,9 +95,10 @@ def create_pingpong_loop(
 
         # Vytvoř seznam souborů pro concat
         print("[*] Spojuji segmenty...")
+        concat_list = tmpdir / "concat.txt"
         concat_content = ""
         for i in range(num_cycles):
-            concat_content += f"file '{forward_file}'\n"
+            concat_content += f"file '{input_file}'\n"
             concat_content += f"file '{reverse_file}'\n"
 
         concat_list.write_text(concat_content)
@@ -137,14 +120,14 @@ def create_pingpong_loop(
                 output_file
             ],
             check=True,
-            capture_output=True
+            capture_output=False
         )
 
-        print(f"[OK] Hotovo! Video uloženo: {output_file}")
+        print(f"[OK] Hotovo! Video ulozeno: {output_file}")
 
         # Ověř výstup
         output_duration = get_video_duration(output_file)
-        print(f"[OK] Výsledná délka: {output_duration:.2f}s")
+        print(f"[OK] Vysledna delka: {output_duration:.2f}s")
 
 
 def main():
