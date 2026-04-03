@@ -415,16 +415,78 @@ Věta 2: Follow trigger NEBO curiosity o profilu (konverze)
 
 ---
 
-## FÁZE 3 — Image prompty pro Nano Banana
+## FÁZE 3 — Vizuál: Video pozadí + Image prompty
 
-### 3a) Vizuální konzistence (KRITICKÉ)
+**Proč video pozadí:** Data ukazují, že TikTok algoritmus preferuje plynule se pohybující obsah. Tmavé animované pozadí udrží vizuální pozornost, zatímco karaoke titulky a voiceover drží diváka zaháčkovaného. Faceless kanály s video pozadím mají výrazně vyšší watch-through rate.
+
+### 3a-VIDEO) AI Video pozadí — PRIMÁRNÍ VARIANTA ⭐
+
+**Pravidla pro video prompty (vždy dodržuj všechna 4):**
+
+1. **Vertikální formát první:** Vždy začni `Vertical 9:16 video.` — jinak AI generuje 16:9
+2. **Text-friendly zóna:** Střed musí být tmavý a bez rušivých elementů — jinak se text slije s pozadím
+3. **Pomalý pohyb:** `Slow, continuous motion / No sudden cuts` — rychlé střihy odvádějí od čtení
+4. **Barevná paleta:** Dark purple, midnight blue, gold — evokuje tajemno, luxus, bílý text vynikne
+
+**Typ 1 — Mystic Space (default pro horoskopy a znamení):**
+```
+Vertical 9:16 video. A mesmerizing, slow-moving deep space galaxy and nebula
+in dark purple and midnight blue tones. Glowing golden stardust and subtle,
+abstract astrological symbols gently floating in the background.
+Cinematic lighting, dark aesthetic. Smooth, continuous, and extremely slow
+forward camera movement. No sudden cuts or rapid motion. The center of the
+frame is uncluttered, creating a perfect dark background for text overlay.
+4k resolution, highly detailed.
+```
+
+**Typ 2 — Abstract Esoteric (pro tarot, runy, andělské karty — elegantnější):**
+```
+Vertical 9:16 video. Abstract dark aesthetic background. Slowly swirling
+golden cosmic dust on a pitch-black canvas. Mystical and esoteric vibe,
+soft glowing ethereal light. Extreme slow motion, seamless and continuous
+movement. Minimalist composition with a very dark center to allow white
+text to be easily readable. 4k, photorealistic.
+```
+
+**Typ 3 — Lunar Dream (pro lunární témata, numerologii, synchronicity):**
+```
+Vertical 9:16 video. Ultra-slow motion close-up of a full moon surface with
+subtle golden light shimmer and soft cosmic dust drifting across. Deep navy
+and midnight blue tones. Extremely slow drift, no cuts. Dark vignette edges,
+bright center fading to deep space. Perfect dark border for text overlay.
+Cinematic, dreamlike, 4k.
+```
+
+**Kdy použít který typ:**
+| Téma | Video typ | Proč |
+|------|-----------|------|
+| Horoskopy, znamení, vztahy | Mystic Space | Vesmírná estetika = astrologie |
+| Tarot, runy, andělské karty | Abstract Esoteric | Tajemnost, rituál |
+| Lunace, numerologie, 11:11 | Lunar Dream | Měsíc, synchronicita |
+| Obecná mystika, šaman | Mystic Space nebo Esoteric | Podle nálady videa |
+
+**Nástroje pro generování video pozadí:**
+- **Veo 3** (Google AI Studio) — nejlepší kvalita, zdarma v preview
+- **Runway Gen-4** — konzistentní pohyb, dobrá dark estetika
+- **Sora** (OpenAI) — výborná pro abstract textury
+- **Kling AI** — dobrá záloha
+
+**Výstup:** Jedno pozadí na video — trvá celou délku (~20–35s), loopovatelné.
+
+---
+
+### 3b-IMAGE) Image prompty pro Nano Banana — ZÁLOHA
+
+*Použij pokud nemáš přístup k AI video generátoru, nebo jako doplňkový thumbnail.*
+
+### 3b-1) Vizuální konzistence (KRITICKÉ)
 Všechny obrázky v jednom videu MUSÍ sdílet:
 - **Stejnou barevnou paletu** (specifikuj přesně v každém promptu)
 - **Stejný vizuální styl** (fotorealismus / CGI / ilustrace — zvol jeden)
 - **Stejnou atmosféru** (mystická noc / teplý západ slunce / kosmická tma)
 - **Portrait 9:16** orientaci (vždy specifikuj)
 
-### 3b) Dostupné vizuální styly (zvol JEDEN pro celé video)
+### 3b-2) Dostupné vizuální styly (zvol JEDEN pro celé video)
 
 **A — Mystická noc (default):**
 ```
@@ -834,6 +896,18 @@ Příště: které znamení to dělá nejhůř.
 - ✅ „Dnes jednáš bez přemýšlení." — přítomný čas, gender neutrální
 - ✅ „Novoluní v Beranu. Mars říká: jednej teď." — neosobní, funguje pro všechny
 
+**Pokud použiješ video pozadí (primární varianta):**
+- Import video pozadí jako nejspodnější vrstva na časové ose
+- Nastav délku na délku celého videa (loop pokud kratší)
+- Nad video vlož text overlay vrstvy pro každý slide (CapCut text animace)
+- Voiceover přidej jako audio track — hlasitost 100 %
+- **Karaoke titulky:** CapCut Auto Captions → styl "bold white + dark shadow" → střed-dolní třetina
+- Hudba pod voiceoverem 15–20 %
+
+**Pokud použiješ statické obrázky (záloha):**
+- Ken Burns animace na každém slidu (viz tabulka výše)
+- Dissolve přechody mezi slidy
+
 Hudba: Suno ambient track nebo trending TikTok sound, hlasitost 15–20 % pod voiceoverem.
 
 ---
@@ -870,6 +944,7 @@ Před výstupem ověř KAŽDÝ bod. Pokud jakýkoli selže, PŘEPIŠ příslušn
 - [ ] Caption je mikroblog formát (3 bloky: hook + kontext + trigger, ne jen 2 řádky)
 - [ ] Caption NEOPAKUJE hook 1:1 — přidává jinou perspektivu nebo vzdělávací kontext
 - [ ] Caption neobsahuje symetrické AI-blob struktury ("Není X. Je Y.")
+- [ ] **VIDEO POZADÍ TEST:** Je video prompt vertikální (9:16)? Má tmavý, necluttered střed pro karaoke text? Pohyb pomalý bez náhlých střihů?
 - [ ] Suno prompt má délku 30s (ne kratší — Suno minimum)
 - [ ] Komentářový trigger odpovídá typu videa (emotivní ≠ ANO/NE, viz tabulka)
 - [ ] **SOUND-OFF TEST:** Každý slide má text overlay — divák BEZ zvuku pochopí celý příběh
@@ -904,7 +979,18 @@ Před výstupem ověř KAŽDÝ bod. Pokud jakýkoli selže, PŘEPIŠ příslušn
 
 ---
 
-## 🖼️ Image prompty (Nano Banana)
+## 🎥 Video pozadí (AI video generátor) — PRIMÁRNÍ
+
+**Typ:** [Mystic Space / Abstract Esoteric / Lunar Dream]
+\```
+[kompletní video prompt v angličtině]
+\```
+**Nástroj:** [Veo 3 / Runway / Sora / Kling]
+**Délka:** [Xs — odpovídá délce videa]
+
+---
+
+## 🖼️ Image prompty (Nano Banana) — ZÁLOHA / THUMBNAIL
 
 ### Slide 1 — HOOK
 \```
