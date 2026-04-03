@@ -1,148 +1,133 @@
 #!/usr/bin/env python3
 """
 Seamless ping-pong loop video generator.
-Vytvoří video, které se přehraje: forward → reverse → forward → ... do 60s.
+Vytvoří video: forward -> reverse -> forward -> reverse -> ... do cílové délky.
 
 Usage:
+    python loop.py input.mp4
     python loop.py input.mp4 output.mp4 --duration 60
 """
 
 import subprocess
 import sys
-from pathlib import Path
+import os
 import tempfile
 import argparse
+from pathlib import Path
 
 
-def get_video_duration(input_file: str) -> float:
-    """Zjisti délku videa v sekundách pomocí ffprobe."""
-    try:
-        result = subprocess.run(
-            [
-                "ffprobe",
-                "-v", "error",
-                "-select_streams", "v:0",
-                "-show_entries", "stream=duration",
-                "-of", "csv=p=0",
-                input_file
-            ],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        return float(result.stdout.strip())
-    except (subprocess.CalledProcessError, ValueError) as e:
-        raise ValueError(f"Nelze zjistit délku videa: {e}")
+def get_video_duration(path: str) -> float:
+    result = subprocess.run(
+        ["ffprobe", "-v", "error", "-select_streams", "v:0",
+         "-show_entries", "stream=duration", "-of", "csv=p=0", path],
+        capture_output=True, text=True, check=True
+    )
+    return float(result.stdout.strip())
 
 
-def create_pingpong_loop(
-    input_file: str,
-    output_file: str,
-    target_duration: float = 60.0
-) -> None:
-    """
-    Vytvoří ping-pong loop video (forward → reverse → forward → ...).
+def has_audio(path: str) -> bool:
+    result = subprocess.run(
+        ["ffprobe", "-v", "error", "-select_streams", "a",
+         "-show_entries", "stream=codec_type", "-of", "csv=p=0", path],
+        capture_output=True, text=True
+    )
+    return bool(result.stdout.strip())
 
-    Args:
-        input_file: Cesta k vstupnímu videu
-        output_file: Cesta k výstupnímu videu
-        target_duration: Cílová délka výsledného videa (sekund)
-    """
 
-    # Ověř vstupní soubor
+def run(cmd: list, label: str = ""):
+    if label:
+        print(f"[*] {label}...")
+    subprocess.run(cmd, check=True, capture_output=True)
+
+
+def create_pingpong_loop(input_file: str, output_file: str, target_duration: float = 60.0):
     input_path = Path(input_file)
     if not input_path.exists():
         raise FileNotFoundError(f"Soubor nenalezen: {input_file}")
 
-    output_path = Path(output_file)
+    print(f"[*] Analyzuji vstupni video...")
+    duration = get_video_duration(input_file)
+    audio = has_audio(input_file)
+    print(f"[OK] Delka: {duration:.2f}s | Audio: {'ano' if audio else 'ne'}")
 
-    # Zjisti původní délku
-    print("[*] Nacitam puvodni video...")
-    original_duration = get_video_duration(input_file)
-    print(f"[OK] Delka puvodni video: {original_duration:.2f}s")
-
-    # Vypočítej počet opakování (forward + reverse = 1 cyklus)
-    cycle_duration = original_duration * 2  # forward + reverse
+    cycle_duration = duration * 2
     num_cycles = int(target_duration / cycle_duration) + 1
+    print(f"[*] Cyklus (fwd+rev): {cycle_duration:.2f}s | Potreba cyklu: {num_cycles}")
 
-    print(f"[*] Cilova delka: {target_duration:.2f}s")
-    print(f"[*] Jedna sekvence (forward+reverse): {cycle_duration:.2f}s")
-    print(f"[*] Pocet cyklu: {num_cycles}")
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        fwd = tmp / "fwd.mp4"
+        rev = tmp / "rev.mp4"
+        cycle = tmp / "cycle.mp4"
+        concat_txt = tmp / "concat.txt"
 
-    # Vytvoř reverse verzi jako dočasný soubor
-    print("[*] Generuji reverse verzi...")
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmpdir = Path(tmpdir)
-        reverse_file = tmpdir / "reverse.mp4"
+        # Krok 1: Re-encode original -> fwd.mp4 (konzistentni parametry)
+        fwd_cmd = [
+            "ffmpeg", "-i", input_file,
+            "-c:v", "libx264", "-crf", "20", "-preset", "fast",
+            "-pix_fmt", "yuv420p",
+            "-r", "30",  # pevny fps pro konzistenci
+        ]
+        if audio:
+            fwd_cmd += ["-c:a", "aac", "-b:a", "128k", "-ar", "44100"]
+        else:
+            fwd_cmd += ["-an"]
+        fwd_cmd += ["-y", str(fwd)]
+        run(fwd_cmd, "Re-encoduji forward verzi")
 
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-i", input_file,
-                "-vf", "reverse",
-                "-af", "areverse",
-                "-c:v", "libx264",
-                "-crf", "23",
-                "-preset", "fast",
-                "-c:a", "aac",
-                "-b:a", "128k",
-                "-y",
-                str(reverse_file)
-            ],
-            check=True,
-            capture_output=True
-        )
+        # Krok 2: Reverse z fwd.mp4 (stejne parametry jako zdroj)
+        rev_cmd = [
+            "ffmpeg", "-i", str(fwd),
+            "-vf", "reverse",
+            "-c:v", "libx264", "-crf", "20", "-preset", "fast",
+            "-pix_fmt", "yuv420p",
+            "-r", "30",
+        ]
+        if audio:
+            rev_cmd += ["-af", "areverse", "-c:a", "aac", "-b:a", "128k", "-ar", "44100"]
+        else:
+            rev_cmd += ["-an"]
+        rev_cmd += ["-y", str(rev)]
+        run(rev_cmd, "Generuji reverse verzi")
 
-        # Vytvoř seznam souborů pro concat
-        print("[*] Spojuji segmenty...")
-        concat_list = tmpdir / "concat.txt"
+        # Krok 3: Spoj forward+reverse do jednoho cyklu
+        cycle_txt = tmp / "cycle.txt"
+        cycle_txt.write_text(f"file '{fwd}'\nfile '{rev}'\n")
+        run([
+            "ffmpeg",
+            "-f", "concat", "-safe", "0", "-i", str(cycle_txt),
+            "-c", "copy",
+            "-y", str(cycle)
+        ], "Spojuji forward+reverse do jednoho cyklu")
+
+        # Krok 4: Opakuj cycle.mp4 do target_duration
         concat_content = ""
-        for i in range(num_cycles):
-            concat_content += f"file '{input_file}'\n"
-            concat_content += f"file '{reverse_file}'\n"
+        for _ in range(num_cycles):
+            concat_content += f"file '{cycle}'\n"
+        concat_txt.write_text(concat_content)
 
-        concat_list.write_text(concat_content)
+        print(f"[*] Generuji finalni video ({num_cycles}x cyklus = {num_cycles * cycle_duration:.1f}s, oriznu na {target_duration}s)...")
+        subprocess.run([
+            "ffmpeg",
+            "-f", "concat", "-safe", "0", "-i", str(concat_txt),
+            "-t", str(target_duration),
+            "-c", "copy",
+            "-y", output_file
+        ], check=True)
 
-        # Spoň segmenty
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-f", "concat",
-                "-safe", "0",
-                "-i", str(concat_list),
-                "-c:v", "libx264",
-                "-crf", "23",
-                "-preset", "medium",
-                "-c:a", "aac",
-                "-b:a", "128k",
-                "-t", str(target_duration),
-                "-y",
-                output_file
-            ],
-            check=True,
-            capture_output=False
-        )
-
-        print(f"[OK] Hotovo! Video ulozeno: {output_file}")
-
-        # Ověř výstup
-        output_duration = get_video_duration(output_file)
-        print(f"[OK] Vysledna delka: {output_duration:.2f}s")
+        final_duration = get_video_duration(output_file)
+        print(f"[OK] Hotovo! -> {output_file}")
+        print(f"[OK] Vysledna delka: {final_duration:.2f}s")
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Vytvoř ping-pong loop video (forward → reverse → forward → ...)"
+        description="Ping-pong video loop: forward -> reverse -> forward -> ..."
     )
-    parser.add_argument("input", help="Cesta k vstupnímu videu")
-    parser.add_argument("output", nargs="?", help="Cesta k výstupnímu videu (default: input_loop.mp4)")
-    parser.add_argument(
-        "--duration",
-        type=float,
-        default=60.0,
-        help="Cílová délka videa v sekundách (default: 60)"
-    )
-
+    parser.add_argument("input", help="Vstupni video")
+    parser.add_argument("output", nargs="?", help="Vystupni video (default: <input>_loop.mp4)")
+    parser.add_argument("--duration", type=float, default=60.0,
+                        help="Cilova delka v sekundach (default: 60)")
     args = parser.parse_args()
 
     output = args.output or f"{Path(args.input).stem}_loop.mp4"
@@ -150,7 +135,7 @@ def main():
     try:
         create_pingpong_loop(args.input, output, args.duration)
     except Exception as e:
-        print(f"❌ Chyba: {e}", file=sys.stderr)
+        print(f"[CHYBA] {e}", file=sys.stderr)
         sys.exit(1)
 
 
