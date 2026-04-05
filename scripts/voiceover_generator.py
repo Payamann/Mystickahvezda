@@ -366,13 +366,20 @@ def build_voiceover(signs_data: dict, target_date: str) -> str:
             text = re.sub(pattern, replacement, text)
         return text.strip()
 
-    # Sekce znamení — produkční text normalizovaný na tykání
+    def truncate_sentences(text: str, max_sentences: int = 2) -> str:
+        """Zkrátí text na max N vět."""
+        import re
+        sentences = re.split(r'(?<=[.!?])\s+', text.strip())
+        return ' '.join(sentences[:max_sentences])
+
+    # Sekce znamení — produkční text normalizovaný na tykání, max 2 věty
     sign_sections = []
     for sign, prediction in signs_data.items():
         vocative = SIGN_VOCATIVE.get(sign, sign)
         tag = SIGN_ALLOWED_TAGS.get(sign, ['warm'])[0]
         normalized = normalize_tykani(prediction)
-        prediction_lower = normalized[0].lower() + normalized[1:] if normalized else normalized
+        truncated = truncate_sentences(normalized, max_sentences=2)
+        prediction_lower = truncated[0].lower() + truncated[1:] if truncated else truncated
         sign_sections.append(f"[{tag}] {vocative}, {prediction_lower}")
     signs_block = "\n\n".join(sign_sections)
 
