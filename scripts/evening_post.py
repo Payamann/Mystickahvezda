@@ -695,6 +695,8 @@ Délka: 6–10 vět celkem (bez odrážek). Nesmí znít jako reklama.""",
     system = """Jsi copywriter pro českou mystickou stránku Mystická Hvězda.
 Píšeš večerní příspěvky na Instagram a Facebook.
 Tykáš, 2. os. j.č. — NIKDY žádný lomený tvar (šel/šla).
+DŮLEŽITÉ: Piš v rodově neutrálním stylu — vyhýbej se ženským i mužským tvarům minulého času a přídavných jmen.
+Místo "naučila ses" → "naučil/a ses" NE — použij "co jsi se naučil" NE — použij přítomný čas nebo infinitiv: "co se učíš", "co poznáváš", "tvá cesta".
 Žádné markdown formátování. Výstup JEN samotný text příspěvku a hashtags."""
 
     user = f"""Datum: {date_cs}
@@ -727,6 +729,7 @@ Formát výstupu:
     replies_system = """Jsi správce komunity pro českou mystickou stránku Mystická Hvězda.
 Píšeš krátké odpovědi na komentáře pod příspěvky.
 Tykáš, 2. os. j.č. Tón: vřelý, mystický, autentický.
+DŮLEŽITÉ: Piš rodově neutrálně — vyhýbej se "jsem rád/ráda", "ses podělila/podělil". Místo toho: "krásné sdílení", "to rezonuje", "díky za tenhle pohled".
 Každá odpověď max 2 věty. Vždy konči otázkou která prodlouží konverzaci."""
 
     replies_user = f"""Post byl na téma: {topic} (typ: {post_type})
@@ -760,10 +763,11 @@ Formát — přesně takto, nic navíc:
             "moon (exact phase as specified in moon data)",
             "large raw amethyst crystal cluster",
             "selenite wand",
-            "single white ritual candle",
-            "labradorite palm stone",
-            "clear quartz sphere",
+            "single white ritual candle with melted wax drips",
+            "labradorite palm stone showing iridescent flash",
             "obsidian mirror disc",
+            "large rose quartz sphere",
+            "moonstone cabochon gemstone",
         ],
         "planety": [
             "the relevant planet as a photorealistic sphere",
@@ -775,11 +779,12 @@ Formát — přesně takto, nic navíc:
         ],
         "nástroje": [
             "the tool's iconic object (tarot card back, rune stone, etc.)",
-            "amethyst geode",
+            "large amethyst geode split open",
             "antique brass pendulum",
-            "labradorite sphere",
-            "leather-bound grimoire",
-            "clear quartz obelisk",
+            "labradorite sphere showing iridescent flash",
+            "leather-bound grimoire with gold clasps",
+            "large rose quartz sphere",
+            "moonstone cabochon gemstone",
         ],
         "znamení": [
             "the zodiac symbol as a golden 3D emblem",
@@ -841,14 +846,14 @@ STRICT RULES:
 - Object: describe its shape, material, surface texture, and light color only — NO energy effects, NO waves, NO rings, NO trails, NO halos
 - Background: very dark navy #050510 (almost black), faint purple nebula, scattered stars
 - Style: premium 3D CGI render, icon-art style, photorealistic, octane render
-- NO complex scenes, NO actions, NO flowing shapes, NO multiple elements, NO text, NO people, NO frames, NO borders
+- NO complex scenes, NO actions, NO flowing shapes, NO multiple elements, NO text, NO people, NO frames, NO borders, NO vignette, NO dark edges, NO letterboxing
 - Portrait 4:5, object centered, fills the canvas
 
 FORMAT: exactly 4 sentences, structured like this example:
 1. "A single [object] floating in center frame, [specific shape/size details and what is lit/shadowed]."
 2. "The [object]'s surface is [material], rendered in [colors] with [light details]."
 3. "Background is very dark navy #050510 with visible purple and violet nebula clouds softly glowing behind the object, scattered pinpoint stars."
-4. "Premium 3D CGI render, icon-art style, octane render, portrait 4:5 ratio, object centered and fills canvas. NO waves, NO rings, NO energy effects, NO borders, NO halos, NO trails."
+4. "Premium 3D CGI render, icon-art style, octane render, portrait 4:5 ratio, object fills entire canvas edge to edge. NO waves, NO rings, NO energy effects, NO borders, NO halos, NO trails, NO vignette, NO dark edges."
 
 Be literal and specific — describe only what you SEE, not what you FEEL. No metaphors, no abstract concepts."""
 
