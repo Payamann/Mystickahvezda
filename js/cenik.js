@@ -54,7 +54,7 @@
                 const auth = window.Auth;
                 if (!auth || !auth.isLoggedIn()) {
                     sessionStorage.setItem('pending_plan', planId);
-                    window.location.href = '/prihlaseni.html?registrace=1';
+                    window.location.href = '/prihlaseni.html?registrace=1&redirect=/cenik.html';
                     return;
                 }
 
