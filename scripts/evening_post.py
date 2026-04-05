@@ -754,8 +754,64 @@ Formát — přesně takto, nic navíc:
     else:
         first_comment = display_url
 
+    # ── Vizuální koncepty — pool objektů pro rozmanitost ──────────────────────
+    VISUAL_POOLS = {
+        "lunar": [
+            "moon (exact phase as specified in moon data)",
+            "large raw amethyst crystal cluster",
+            "selenite wand",
+            "single white ritual candle",
+            "labradorite palm stone",
+            "clear quartz sphere",
+            "obsidian mirror disc",
+        ],
+        "planety": [
+            "the relevant planet as a photorealistic sphere",
+            "golden celestial orrery arm with orbiting rings",
+            "astrological compass rose",
+            "large raw citrine crystal",
+            "copper astronomical telescope",
+            "zodiac wheel fragment in gold",
+        ],
+        "nástroje": [
+            "the tool's iconic object (tarot card back, rune stone, etc.)",
+            "amethyst geode",
+            "antique brass pendulum",
+            "labradorite sphere",
+            "leather-bound grimoire",
+            "clear quartz obelisk",
+        ],
+        "znamení": [
+            "the zodiac symbol as a golden 3D emblem",
+            "relevant element crystal (fire opal, aquamarine, obsidian, emerald)",
+            "constellation star map fragment",
+            "animal totem of the sign as bronze sculpture",
+        ],
+        "mýty": [
+            "cracked stone tablet with astrological glyphs",
+            "scales of justice in gold (for myth-busting balance)",
+            "magnifying glass lens in crystal",
+            "broken old hourglass",
+        ],
+        "prvky": [
+            "elemental crystal matching the element (fire opal, aquamarine, smoky quartz, malachite)",
+            "the element's sacred geometry shape in crystal",
+            "brazier with colored flame",
+        ],
+        "numerologie": [
+            "golden number sculpture floating in space",
+            "sacred geometry dodecahedron in crystal",
+            "ancient stone dice with carved numbers",
+            "fibonacci spiral in gold",
+        ],
+    }
+
+    # Náhodně vyber vizuální koncept z poolu pro danou kategorii
+    visual_pool = VISUAL_POOLS.get(category, VISUAL_POOLS["nástroje"])
+    visual_concept = random.choice(visual_pool)
+
     # Image prompt
-    print("[*] Generuji image prompt...")
+    print(f"[*] Generuji image prompt (vizuál: {visual_concept[:40]}...)...")
     img_system = """You are an expert at writing image generation prompts for mystical/cosmic brand Mystická Hvězda.
 Output ONLY the prompt — no comments, no explanations. Plain ASCII Latin characters only."""
 
@@ -775,11 +831,13 @@ Output ONLY the prompt — no comments, no explanations. Plain ASCII Latin chara
 Post type: {post_type}
 Date: {date_cs}{moon_data}
 
+CHOSEN VISUAL CONCEPT: {visual_concept}
+Use this as the main object. If it says "exact phase" for the moon, follow the moon data above precisely.
+
 Write a Gemini image prompt for a Facebook/Instagram post visual.
 
 STRICT RULES:
-- Describe ONE single floating 3D CGI object only — pick the most iconic object for the topic
-- If depicting the moon, use the EXACT phase above ({astro['moon_illuminated'] if astro else '~50'}% illuminated) — NOT a generic crescent unless the actual phase is a crescent
+- Describe ONE single floating 3D CGI object only — use the CHOSEN VISUAL CONCEPT above
 - Object: describe its shape, material, surface texture, and light color only — NO energy effects, NO waves, NO rings, NO trails, NO halos
 - Background: very dark navy #050510 (almost black), faint purple nebula, scattered stars
 - Style: premium 3D CGI render, icon-art style, photorealistic, octane render
