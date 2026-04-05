@@ -316,48 +316,57 @@ Napiš TikTok description ve formátu:
 
 
 def build_voiceover(signs_data: dict, target_date: str) -> str:
-    """Přes Claude zformátuje horoskopy do voiceover scriptu se styly."""
+    """Sestaví voiceover script — texty znamení jsou doslovně z produkce, Claude generuje jen hook a outro."""
     date_obj = date.fromisoformat(target_date)
-
-    # Český formát data pro hook
     months_cs = ["ledna", "února", "března", "dubna", "května", "června",
                   "července", "srpna", "září", "října", "listopadu", "prosince"]
     date_cs = f"{date_obj.day}. {months_cs[date_obj.month - 1]}"
 
-    # Připrav podklady — jeden odstavec na znamení včetně povolených tagů
-    signs_text = ""
+    # Sekce znamení — přesný produkční text, jen přidáme vokativ a styl tag
+    sign_sections = []
     for sign, prediction in signs_data.items():
         vocative = SIGN_VOCATIVE.get(sign, sign)
-        allowed = ", ".join(f"[{t}]" for t in SIGN_ALLOWED_TAGS.get(sign, ['warm', 'confident']))
-        signs_text += f"Znamení: {sign} (oslovení: {vocative}) | Povolené tagy: {allowed}\nHoroskop: {prediction}\n\n"
+        tag = SIGN_ALLOWED_TAGS.get(sign, ['warm'])[0]
+        prediction_lower = prediction[0].lower() + prediction[1:] if prediction else prediction
+        sign_sections.append(f"[{tag}] {vocative}, {prediction_lower}")
+    signs_block = "\n\n".join(sign_sections)
 
+    # Claude generuje jen hook (2 věty) a outro
     system = """Jsi copywriter pro českou mystickou stránku Mystická Hvězda.
-Píšeš voiceover script pro krátké video (Instagram Reel / TikTok).
+Píšeš části voiceover scriptu pro krátké video (Instagram Reel / TikTok).
+Tykáš, 2. os. j.č. — NIKDY žádný lomený tvar.
+Vystup JEN samotny text — zadne nadpisy, zadne labely, zadne hvezdicky."""
 
-PRAVIDLA:
-- Tykáš, 2. os. j.č. — NIKDY žádný lomený tvar: šel/šla, napoj sama/sám, udělal/a
-  Správně: "napoj se", "udělej", "jdi" — vždy neutrální nebo imperativ
-- Každé znamení = přesně 3 krátké věty, max 25 slov celkem
-- Každé znamení zacni PRIMO prvni vetou — BEZ nadpisu, BEZ hvezdicek, BEZ prazdneho radku pred nim
-- Prvni veta zacina oslovenim v vokativu: "Berane, ..." — styl tag PRED nim: "[warm] Berane, ..."
-- DULEZITE: Pro kazde znameni pouzivej POUZE jeho povolene tagy (uvedene u kazdeho znameni)
-- Hook na zacatku: PRESNE 2 vety, obe MUSI mit styl tag — "[tag] veta. [tag] veta."
-  Zakonceni POKAZDE JINE — NIKDY NIKDE v celem scriptu nepouzij vetu "Jsi mezi nimi?" ani jeji varianty
-- Slovo "dnes" MAX 2x v celem scriptu — nahrazuj: "ted", "v tuto chvili", "tento den", nebo vynech
-- Planety NESMI se opakovat u dvou po sobe jdoucich znamenich — strídej nebo vynech
-- Outro: CTA na web + vyzva ke sdileni — POKAZDE JINE, originalni
-- Vystup JEN samotny script — ABSOLUTNE zadne nadpisy, zadne **tucne**, zadne labely, zadne hvezdicky"""
+    user = f"""Datum: {date_cs}
+Znamení ve videu: {', '.join(signs_data.keys())}
 
-    user = f"""Datum videa: {date_cs}
+Napiš POUZE:
+1) HOOK — přesně 2 věty, každá musí mít styl tag: "[tag] věta. [tag] věta."
+   Tagy: [mysterious] [intense] [warm] [gentle] [confident] [upbeat] [commanding] [soft]
+   NIKDY nepouzij variantu "Jsi mezi nimi?" ani "patříš mezi ně"
+   Zakonceni POKAZDE JINE a originalni
 
-{signs_text}
-Napiš voiceover script.
+2) OUTRO — 3 věty s tagy, CTA na web + originální výzva ke sdílení
+   Vzor: "[upbeat] věta o webu. [warm] výzva ke sdílení. [gentle] důvod proč poslat dál."
+   NIKDY: "Pošli to někomu komu to sedí" ani "Třeba mu to dnes změní den"
 
-Outro vzor (obsah zachovej, ale vety vymysli originalne — NIKDY nepouzij doslova "Posli to nekomu komu to sedi" ani "Treba mu to dnes zmeni den"):
-"[upbeat] Nenašel jsi své znamení? Kompletní výklad pro všechna znamení na zítřek tě už teď čeká u nás na webu. Odkaz najdeš v biu! [warm] <originalni vyzva ke sdileni> [gentle] <originalni duvod proc to poslat dal>" """
+Výstup ve formátu (nic jiného):
+HOOK: [hook]
+OUTRO: [outro]"""
 
-    print("[*] Generuji voiceover script...")
-    return claude_call(system, user, max_tokens=1200)
+    print("[*] Generuji hook a outro...")
+    raw = claude_call(system, user, max_tokens=400)
+
+    # Parsuj hook a outro
+    hook = ""
+    outro = ""
+    for line in raw.splitlines():
+        if line.startswith("HOOK:"):
+            hook = line[5:].strip()
+        elif line.startswith("OUTRO:"):
+            outro = line[6:].strip()
+
+    return f"{hook}\n\n{signs_block}\n\n{outro}"
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
