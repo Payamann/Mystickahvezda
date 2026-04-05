@@ -534,6 +534,12 @@ def main():
     # 4. Build voiceover + TikTok description + Suno prompt
     script = build_voiceover(horoscopes, target_date)
     script = proofread_script(script)
+    # Přidej datum na začátek voiceover scriptu
+    d = date.fromisoformat(target_date)
+    months_cs = ["ledna", "února", "března", "dubna", "května", "června",
+                 "července", "srpna", "září", "října", "listopadu", "prosince"]
+    date_header = f"🗓️ {d.day}. {months_cs[d.month - 1]} {d.year}\n\n"
+    script = date_header + script
     description = build_tiktok_description(chosen, script, target_date)
     suno = build_suno_prompt(chosen, script, target_date)
 
