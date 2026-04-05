@@ -597,18 +597,24 @@ if (isMain || process.env.NODE_ENV === 'production') {
         // Prefill horoscope cache — every day at 05:00 UTC (6:00 CET)
         // Hits all 12 sign URLs → Gemini generates & saves to _v2 cache
         schedule.scheduleJob('0 5 * * *', async () => {
-            const today = new Date().toISOString().split('T')[0];
             const signs = ['beran','byk','blizenci','rak','lev','panna','vahy','stir','strelec','kozoroh','vodnar','ryby'];
-            console.log(`[CRON] Prefilling horoscope cache for ${today}...`);
-            for (const sign of signs) {
-                try {
-                    await fetch(`https://mystickahvezda.cz/horoskop/${sign}/${today}`);
-                } catch (e) {
-                    console.error(`[CRON] Prefill failed for ${sign}: ${e.message}`);
+            const dates = [0, 1, 2].map(offset => {
+                const d = new Date();
+                d.setUTCDate(d.getUTCDate() + offset);
+                return d.toISOString().split('T')[0];
+            });
+            console.log(`[CRON] Prefilling horoscope cache for: ${dates.join(', ')}...`);
+            for (const date of dates) {
+                for (const sign of signs) {
+                    try {
+                        await fetch(`https://mystickahvezda.cz/horoskop/${sign}/${date}`);
+                    } catch (e) {
+                        console.error(`[CRON] Prefill failed for ${sign}/${date}: ${e.message}`);
+                    }
+                    await new Promise(r => setTimeout(r, 1000));
                 }
-                await new Promise(r => setTimeout(r, 1000));
+                console.log(`[CRON] Prefill done for ${date}.`);
             }
-            console.log(`[CRON] Horoscope prefill done for ${today}.`);
         });
         console.warn('📅 Horoscope prefill cron scheduled (05:00 UTC).');
 
