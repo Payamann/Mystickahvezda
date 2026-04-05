@@ -41,4 +41,19 @@ const INDICATOR_COOKIE_OPTIONS = {
     path: '/'
 };
 
-export { JWT_SECRET, JWT_EXPIRY, COOKIE_OPTIONS, INDICATOR_COOKIE_OPTIONS };
+// Options pro clearCookie — bez maxAge (jinak Node.js varuje "expires immediately")
+const CLEAR_COOKIE_OPTIONS = {
+    httpOnly: true,
+    secure: IS_PRODUCTION,
+    sameSite: 'Strict',
+    path: '/'
+};
+
+const CLEAR_INDICATOR_COOKIE_OPTIONS = {
+    httpOnly: false,
+    secure: IS_PRODUCTION,
+    sameSite: 'Strict',
+    path: '/'
+};
+
+export { JWT_SECRET, JWT_EXPIRY, COOKIE_OPTIONS, INDICATOR_COOKIE_OPTIONS, CLEAR_COOKIE_OPTIONS, CLEAR_INDICATOR_COOKIE_OPTIONS };

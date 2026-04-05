@@ -2,7 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import { supabase } from './db-supabase.js';
-import { JWT_SECRET, JWT_EXPIRY, COOKIE_OPTIONS, INDICATOR_COOKIE_OPTIONS } from './config/jwt.js';
+import { JWT_SECRET, JWT_EXPIRY, COOKIE_OPTIONS, INDICATOR_COOKIE_OPTIONS, CLEAR_COOKIE_OPTIONS, CLEAR_INDICATOR_COOKIE_OPTIONS } from './config/jwt.js';
 import { authenticateToken } from './middleware.js';
 import { validateEmail, validatePassword, validateName, validateBirthDate } from './utils/validation.js';
 import { PREMIUM_PLAN_TYPES } from './config/constants.js';
@@ -374,9 +374,9 @@ router.post('/logout', authenticateToken, async (req, res) => {
             await blacklistToken(token);
         }
 
-        // Clear auth cookies
-        res.clearCookie('auth_token', COOKIE_OPTIONS);
-        res.clearCookie('logged_in', INDICATOR_COOKIE_OPTIONS);
+        // Clear auth cookies (bez maxAge — jinak Node.js varuje "expires immediately")
+        res.clearCookie('auth_token', CLEAR_COOKIE_OPTIONS);
+        res.clearCookie('logged_in', CLEAR_INDICATOR_COOKIE_OPTIONS);
 
         res.json({ success: true, message: 'Odhlášení úspěšné.' });
     } catch (e) {
