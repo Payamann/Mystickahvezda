@@ -461,6 +461,26 @@ Výstup ve formátu (nic jiného — žádné nadpisy jako HOOK: nebo SEKCE:):
     print("[*] Generuji voiceover script...")
     return claude_call(system, user, max_tokens=800)
 
+def proofread_script(script: str) -> str:
+    """Projde voiceover script, opraví gramatiku a přeloží cizí slova do češtiny."""
+    system = """Jsi jazykový korektor češtiny specializovaný na astrologické texty.
+Dostaneš voiceover script s hranatými závorkami [tag] pro hlasové styly — ty NIKDY neměň ani neodstraňuj.
+Výstup JEN opravený text — žádné komentáře, žádné vysvětlování změn, žádné uvozovky kolem textu."""
+
+    user = f"""Oprav tento voiceover script:
+
+1. Gramatické chyby — oprav interpunkci, shodu, pádové koncovky
+2. Cizí slova → česky: Venus → Venuše, Mars → Mars (OK), Mercury → Merkur, Saturn → Saturn (OK), Jupiter → Jupiter (OK), Neptune → Neptun, Pluto → Pluto (OK)
+3. Vykání → tykání pokud ještě někde zbylo (vás/vám/vaše → tě/ti/tvé)
+4. Jinak TEXT NEMĚŇ — zachovej přesné znění, styl, délku
+
+Script:
+{script}"""
+
+    print("[*] Proofreading...")
+    return claude_call(system, user, max_tokens=800)
+
+
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
@@ -513,6 +533,7 @@ def main():
 
     # 4. Build voiceover + TikTok description + Suno prompt
     script = build_voiceover(horoscopes, target_date)
+    script = proofread_script(script)
     description = build_tiktok_description(chosen, script, target_date)
     suno = build_suno_prompt(chosen, script, target_date)
 
