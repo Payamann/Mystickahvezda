@@ -722,6 +722,31 @@ Formát výstupu:
     follow_cta = pick_follow_cta(mem)
     caption = f"{caption}\n\n{follow_cta}"
 
+    # Připravené odpovědi na komentáře
+    print("[*] Generuji odpovědi na komentáře...")
+    replies_system = """Jsi správce komunity pro českou mystickou stránku Mystická Hvězda.
+Píšeš krátké odpovědi na komentáře pod příspěvky.
+Tykáš, 2. os. j.č. Tón: vřelý, mystický, autentický.
+Každá odpověď max 2 věty. Vždy konči otázkou která prodlouží konverzaci."""
+
+    replies_user = f"""Post byl na téma: {topic} (typ: {post_type})
+
+Text postu:
+{caption}
+
+Napiš 3 krátké odpovědi na nejpravděpodobnější typy komentářů:
+1. Pozitivní reakce / souhlas / "to je přesně já"
+2. Otázka nebo zvědavost ohledně tématu
+3. Osobní příběh nebo zkušenost čtenáře
+
+Formát — přesně takto, nic navíc:
+1. [odpověď]
+2. [odpověď]
+3. [odpověď]"""
+
+    replies_raw = claude_call(replies_system, replies_user, max_tokens=300)
+    comment_replies = replies_raw.strip()
+
     # První komentář — URL jde sem, ne do postu (FB algoritmus penalizuje externí linky v postu)
     display_url = blog_url if blog_url else web_url
     if post_type == "engagement" or post_type == "myth_bust":
@@ -776,6 +801,7 @@ Be literal and specific — describe only what you SEE, not what you FEEL. No me
         "hashtags": hashtags,
         "image_prompt": image_prompt,
         "first_comment": first_comment,
+        "comment_replies": comment_replies,
         "type": post_type,
         "topic": topic,
         "category": category,
@@ -859,6 +885,10 @@ def main():
         print(f"\n{sep}")
         print(f"💬 PRVNÍ KOMENTÁŘ (vlož ihned po zveřejnění):")
         print(f"🔗 {result['first_comment']}")
+    print(f"\n{sep}")
+    print(f"💬 ODPOVĚDI NA KOMENTÁŘE")
+    print(sep)
+    print(result["comment_replies"])
     print(f"\n{sep}\n🖼️  IMAGE PROMPT\n{sep}")
     print(result["image_prompt"])
     print(sep)
@@ -886,6 +916,7 @@ def main():
     )
     if result["first_comment"]:
         file_content += f"\n💬 PRVNÍ KOMENTÁŘ:\n🔗 {result['first_comment']}\n"
+    file_content += f"\n💬 ODPOVĚDI NA KOMENTÁŘE\n{sep}\n{result['comment_replies']}\n"
     file_content += f"\nIMAGE PROMPT\n{sep}\n{result['image_prompt']}\n"
     out_path.write_text(file_content, encoding="utf-8")
 
