@@ -133,8 +133,8 @@ def normalize_sign(sign: str) -> str:
     return ''.join(c for c in nfd if unicodedata.category(c) != 'Mn')
 
 def cache_key(sign: str, target_date: str) -> str:
-    # v2 = produkční cache (horoscope-pages.js + Gemini), stejná jako na webu
-    return f"{normalize_sign(sign)}_daily_{target_date}_v2"
+    # v3-cs-nocontext = produkční cache (horoskopy.html + Claude), stejná jako na webu
+    return f"{normalize_sign(sign)}_daily_{target_date}_v3-cs-nocontext"
 
 def supabase_headers() -> dict:
     return {
