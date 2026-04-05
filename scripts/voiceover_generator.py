@@ -322,12 +322,57 @@ def build_voiceover(signs_data: dict, target_date: str) -> str:
                   "července", "srpna", "září", "října", "listopadu", "prosince"]
     date_cs = f"{date_obj.day}. {months_cs[date_obj.month - 1]}"
 
-    # Sekce znamení — přesný produkční text, jen přidáme vokativ a styl tag
+    def normalize_tykani(text: str) -> str:
+        """Převede vykání na tykání a odstraní oslovení (milý/milá/milí X)."""
+        import re
+        # Odstraň oslovení na začátku (Milý Lve, / Milá Panno, / Milí Blíženci, atd.)
+        text = re.sub(r'^Mil[ýáé]\s+\w+,\s*', '', text)
+        # Vykání → tykání
+        replacements = [
+            (r'\bvás\b', 'tě'),
+            (r'\bVás\b', 'tě'),
+            (r'\bvám\b', 'ti'),
+            (r'\bVám\b', 'ti'),
+            (r'\bvaše\b', 'tvé'),
+            (r'\bVaše\b', 'tvé'),
+            (r'\bváš\b', 'tvůj'),
+            (r'\bVáš\b', 'tvůj'),
+            (r'\bvaší\b', 'tvé'),
+            (r'\bVaší\b', 'tvé'),
+            (r'\bvašeho\b', 'tvého'),
+            (r'\bVašeho\b', 'tvého'),
+            (r'\bvašemu\b', 'tvému'),
+            (r'\bVašemu\b', 'tvému'),
+            (r'\bvašich\b', 'tvých'),
+            (r'\bVašich\b', 'tvých'),
+            (r'\bvašimi\b', 'tvými'),
+            (r'\bVašimi\b', 'tvými'),
+            (r'\bvašim\b', 'tvým'),
+            (r'\bVašim\b', 'tvým'),
+            (r'\bvámi\b', 'tebou'),
+            (r'\bVámi\b', 'tebou'),
+            (r'\bbuďte\b', 'buď'),
+            (r'\bBuďte\b', 'Buď'),
+            (r'\bvěnujte\b', 'věnuj'),
+            (r'\bVěnujte\b', 'Věnuj'),
+            (r'\bnezapomeňte\b', 'nezapomeň'),
+            (r'\bNezapomeňte\b', 'Nezapomeň'),
+            (r'\bnebojte se\b', 'neboj se'),
+            (r'\bNebojte se\b', 'Neboj se'),
+            (r'\bjste\b', 'jsi'),
+            (r'\bJste\b', 'Jsi'),
+        ]
+        for pattern, replacement in replacements:
+            text = re.sub(pattern, replacement, text)
+        return text.strip()
+
+    # Sekce znamení — produkční text normalizovaný na tykání
     sign_sections = []
     for sign, prediction in signs_data.items():
         vocative = SIGN_VOCATIVE.get(sign, sign)
         tag = SIGN_ALLOWED_TAGS.get(sign, ['warm'])[0]
-        prediction_lower = prediction[0].lower() + prediction[1:] if prediction else prediction
+        normalized = normalize_tykani(prediction)
+        prediction_lower = normalized[0].lower() + normalized[1:] if normalized else normalized
         sign_sections.append(f"[{tag}] {vocative}, {prediction_lower}")
     signs_block = "\n\n".join(sign_sections)
 
