@@ -8,7 +8,7 @@
  * long-tail searches like "horoskop štír 12 března 2026".
  */
 import express from 'express';
-import { callGemini } from '../services/gemini.js';
+import { callClaude } from '../services/claude.js';
 import { getCachedHoroscope, saveCachedHoroscope } from '../services/astrology.js';
 
 export const router = express.Router();
@@ -114,10 +114,10 @@ router.get('/:sign/:date', async (req, res, next) => {
         const todayStr = getTodayStr();
         const czechDate = formatCzechDate(date);
 
-        // Cache key matches the existing daily cache pattern in astrology.js
+        // Cache key sjednocen s horoskopy.html — stejný klíč, stejný text, stejný model (Claude)
         const signNormalized = signData.name.toLowerCase()
             .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        const cacheKey = `${signNormalized}_daily_${date}_v2`;
+        const cacheKey = `${signNormalized}_daily_${date}_v3-cs-nocontext`;
 
         // Try cache first
         let parsed;
@@ -129,12 +129,18 @@ router.get('/:sign/:date', async (req, res, next) => {
                 parsed = { prediction: cached.response, affirmation: '', luckyNumbers: [] };
             }
         } else {
-            // Generate via Gemini
-            const prompt = `Jsi laskavý astrologický průvodce.\nGeneruj denní horoskop ve formátu JSON.\nOdpověď MUSÍ být validní JSON objekt bez markdown formátování (žádné \`\`\`json).\nStruktura:\n{\n  "prediction": "Text horoskopu (3-4 věty). Hlavní energie dne a jedna konkrétní rada.",\n  "affirmation": "Krátká pozitivní afirmace pro tento den.",\n  "luckyNumbers": [číslo1, číslo2, číslo3, číslo4]\n}\nText piš česky, poeticky a povzbudivě.`;
-            const message = `Znamení: ${signData.name}\nDatum: ${czechDate}`;
+            // Generate via Claude — stejný model a prompt jako horoskopy.html (horoscope.js)
+            const signAccMap = {
+                'Beran': 'Berana', 'Býk': 'Býka', 'Blíženci': 'Blížence', 'Rak': 'Raka',
+                'Lev': 'Lva', 'Panna': 'Pannu', 'Váhy': 'Váhy', 'Štír': 'Štíra',
+                'Střelec': 'Střelce', 'Kozoroh': 'Kozoroha', 'Vodnář': 'Vodnáře', 'Ryby': 'Ryby'
+            };
+            const signAcc = signAccMap[signData.name] || signData.name;
+            const prompt = `Jsi laskavý astrologický průvodce. Generuješ denní horoskop pro ${signAcc} na den ${czechDate}.\nOdpověď MUSÍ být validní JSON objekt bez markdown formátování (žádné \`\`\`json).\nStruktura:\n{\n  "prediction": "Text horoskopu (přesně 3 věty) specifický pro ${signAcc}. Hlavní energie dne a jedna konkrétní rada vycházející z vlastností tohoto znamení.",\n  "affirmation": "Osobní denní mantra — silná, poetická, specifická pro ${signAcc} a jeho element. 15–25 slov, první osoba, přítomný čas.",\n  "luckyNumbers": [číslo1, číslo2, číslo3, číslo4]\n}\nText piš česky, poeticky a povzbudivě. DŮLEŽITÉ: Text piš VŽDY v tykání — 2. osoba jednotného čísla (ty/tě/ti/tvé/tvůj). NIKDY nepoužívej vykání.`;
+            const message = `Vygeneruj horoskop pro znamení ${signData.name} na ${czechDate}.`;
 
             try {
-                const raw = await callGemini(prompt, message);
+                const raw = await callClaude(prompt, message);
                 const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
                 await saveCachedHoroscope(cacheKey, signData.name, 'daily', cleaned, 'Denní inspirace');
                 try {
@@ -142,27 +148,9 @@ router.get('/:sign/:date', async (req, res, next) => {
                 } catch {
                     parsed = { prediction: cleaned, affirmation: '', luckyNumbers: [] };
                 }
-            } catch (geminiError) {
-                console.warn(`[HoroscopePage] Gemini API failed for ${signData.name}, using fallback:`, geminiError.message);
-
-                // Fallback: Unique sign-specific content per language
-                const SIGN_FALLBACKS = {
-                    'Beran': { cs: { prediction: 'Cítíte ten neklid? To není náhoda — dnes je den, kdy se rodí nové začátky. Energie ohně ve vás plane silněji než obvykle a každé váhání je jen ztráta času. Udělejte ten krok, který odkládáte. Právě teď je ta správná chvíle.', affirmation: 'Moje odvaha otevírá dveře, které ostatní považují za zavřené.' } },
-                    'Býk': { cs: { prediction: 'Dnes je den, kdy se vyplatí zpomalit. Všimněte si vůně kávy, teplého světla za oknem, textury dřeva pod prsty. V těchto drobnostech se dnes skrývá víc odpovědí než v jakémkoliv spěchu. Stavějte pomalu, stavějte poctivě — to, co budujete, vydrží.', affirmation: 'Moje trpělivost a pevnost jsou základy, na nichž roste všechno krásné.' } },
-                    'Blíženci': { cs: { prediction: 'Někdo vám dnes řekne větu, která změní váš pohled na věc, o které jste přemýšleli celý týden. Buďte pozorní — ten rozhovor může přijít odkudkoliv: z náhodného setkání, zprávy od přítele, nebo řádky v knize. Vaše slova mají dnes zvláštní sílu — používejte je moudře.', affirmation: 'Moje zvídavost přináší odpovědi dřív, než si ostatní položí otázku.' } },
-                    'Rak': { cs: { prediction: 'Zavřete na chvíli oči a zeptejte se sami sebe: co právě teď potřebuji? Ne co chtějí ostatní, ne co se sluší — co potřebujete vy. Dnes je vaše citlivost superschopností, ne slabostí. Srdce vám šeptá odpověď, kterou rozum ještě neslyší.', affirmation: 'Moje intuice je most mezi tím, co je, a tím, co být má.' } },
-                    'Lev': { cs: { prediction: 'Scéna je připravena a reflektory jsou namířené přesně na vás. Ne proto, že byste o to museli prosit, ale proto, že to tak má být. Kreativní energie ve vás dnes hledá ventil — malujte, mluvte, tvořte, tančete. Cokoliv, co je autenticky vaše, dnes zazáří.', affirmation: 'Moje světlo neubírá světlo ostatním — naopak je rozsvěcuje.' } },
-                    'Panna': { cs: { prediction: 'Tam, kde ostatní vidí chaos, vy vidíte vzorce. A dnes jsou ty vzorce obzvlášť zřetelné. Je čas uklidit — ne jen na stole, ale i v hlavě. Roztřiďte priority, odhoďte zbytečné a soustřeďte se na to, co si zaslouží vaši preciznost. Přesnost se dnes vyplatí víc než rychlost.', affirmation: 'Moje pozornost k detailům tvoří dokonalost z obyčejných okamžiků.' } },
-                    'Váhy': { cs: { prediction: 'Vztah, který vás v poslední době zaměstnává, dnes dostane nový impuls. Klíč neleží v tom, kdo má pravdu, ale v tom, co chcete oba. Vaše diplomacie je dar — dokáže proměnit napětí v dialog a konflikt v dohodu. Hledejte harmonii, ne kompromis.', affirmation: 'Moje schopnost nacházet rovnováhu přináší mír tam, kde vládl svár.' } },
-                    'Štír': { cs: { prediction: 'Pod povrchem se něco hýbe. Vy to cítíte — ten tichý, ale nezastavitelný proud transformace, který mění pravidla hry. Dnes je čas podívat se pravdě do očí a pustit to, co vás brzdí. Nebojte se hloubky. Právě tam nacházíte svou největší sílu.', affirmation: 'Moje síla roste v každé proměně, kterou odvážně přijmu.' } },
-                    'Střelec': { cs: { prediction: 'Obzor se dnes rozšiřuje — a s ním i vaše možnosti. Možná to bude nečekaný nápad, pozvánka, nebo prostě pocit, že je čas vykročit za hranice známého. Nechte se vést zvědavostí, ne strachem. Příležitost, která na vás čeká, je větší, než si zatím dovedete představit.', affirmation: 'Moje svoboda začíná tam, kde přestávám pochybovat o vlastním směru.' } },
-                    'Kozoroh': { cs: { prediction: 'Každý malý krok, který dnes uděláte, pokládá základní kámen něčeho většího. Možná to zatím nevidíte — ale hvězdy ano. Vaše disciplína není nuda, je to superschopnost. Svět odměňuje ty, kdo vytrvají, i když výsledky nejsou okamžitě viditelné. A vy to víte líp než kdokoliv jiný.', affirmation: 'Moje vytrvalost buduje to, co žádná zkratka nikdy přinést nemůže.' } },
-                    'Vodnář': { cs: { prediction: 'Co kdybys dnes udělal přesný opak toho, co se od tebe čeká? Ne ze vzdoru — z vize. Svět potřebuje lidi, kteří myslí jinak, a dnes jsi přesně takový člověk. Jedno nekonvenční rozhodnutí může změnit mnohem víc, než tušíš. Důvěřuj svým nejdivočejším nápadům.', affirmation: 'Moje vize budoucnosti je dar, který sdílím se světem bez omluv.' } },
-                    'Ryby': { cs: { prediction: 'Ten sen, co se vám zdál — nebo ta myšlenka, co přišla těsně před usnutím — v sobě nese víc pravdy, než si myslíte. Dnes jste obzvlášť citliví na jemné proudy kolem sebe. Použijte tuto vnímavost jako dar, ne jako zátěž. Nechte se vést pocity — dnes jsou přesnějším kompasem než jakákoliv logika.', affirmation: 'Moje empatie je síla, která léčí mě i ty, kdo jsou mi blízcí.' } },
-                };
-
-                const fallback = SIGN_FALLBACKS[signData.name]?.cs || SIGN_FALLBACKS['Beran'].cs;
-                parsed = fallback;
+            } catch (claudeError) {
+                console.warn(`[HoroscopePage] Claude API failed for ${signData.name}:`, claudeError.message);
+                parsed = { prediction: `Hvězdy dnes pro ${signAcc} připravily zvláštní energii. Důvěřuj svému vnitřnímu hlasu a jednej podle svých hodnot.`, affirmation: 'Má cesta je jedinečná a přesně taková, jaká má být.', luckyNumbers: [3, 7, 12, 21] };
             }
         }
 
