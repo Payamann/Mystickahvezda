@@ -336,6 +336,7 @@ PRAVIDLA:
 - GENDEROVÁ NEUTRALITA: Absolutní zákaz minulých příčestí (toužila, čekala, hledal, snil, otevírala). VŽDY přítomný nebo budoucí čas. Místo "cesta, po které toužila" → "cesta, po které toužíš". Místo "byl jsi" → "jsi".
 - Přesně 3 věty textu — záhadné, osobní, taháček na kliknutí
 - Hook v první větě — napětí nebo otázka, přidej přesně 2 emoji organicky do textu (ne na konci)
+- DATUM: Zahrň datum "{date_cs}" přirozeně do první věty — např. "Dnes {date_cs} přichází..." nebo "{date_cs} — den, kdy..."
 - Vyhni se klišé jako "ze hvězd", "od hvězd", "hvězdy ti posílají" — hledej svěžejší formulace
 - NEZMIŇUJ explicitně která 3 znamení jsou ve videu — zachovej záhadu
 - Třetí věta = silná výzva k akci BEZ odkazu — např. "Sleduj nás ať ti neunikne nic." nebo "Ulož si video, budeš se k němu vracet." nebo "Označ někoho, komu to dnes sedí."
@@ -377,6 +378,7 @@ PRAVIDLA:
 - Tykáš, 2. os. j.č., žádné lomené tvary (šel/šla)
 - GENDEROVÁ NEUTRALITA: Absolutní zákaz minulých příčestí (toužila, čekala, hledal, snil). VŽDY přítomný nebo budoucí čas. Místo "cesta, po které toužila" → "cesta, po které toužíš". Vyhni se klišé "ze hvězd", "od hvězd" — hledej svěžejší formulace.
 - Přesně 4 věty textu — RYTMUS: první 2 věty KRÁTKÉ (do 10 slov každá), třetí rozvíjí energii dne, čtvrtá silný závěr + CTA
+- DATUM: Zahrň "{date_cs}" přirozeně do první nebo druhé věty
 - 2–3 emoji organicky v textu, ne na konci jako blok
 - NEZMIŇUJ explicitně která 3 znamení jsou ve videu — zachovej záhadu
 - Čtvrtá věta = CTA s odkazem: "Celý výklad najdeš na mystickahvezda.cz/horoskopy.html ✨"
@@ -542,6 +544,7 @@ Napiš celý voiceover script ve třech částech:
 
 1) HOOK — přesně 2 věty, každá s tagem: "[tag] věta. [tag] věta."
    PRAVIDLO: NIKDY nejmenuj konkrétní znamení — divák musí video dokoukat, aby zjistil která.
+   DATUM V HOOKU: Zahrň datum "{date_cs}" přirozeně do první nebo druhé věty — např. "Dnes, {date_cs}, přichází energie..." nebo "{date_cs} přináší vybraným znamením...". Datum ukáže, že jsme aktuální.
    Vyvolej zvědavost: naznač, že VYBRANÁ znamení dostanou speciální energii/průlom.
    NIKDY nepiš číslo znamení (ne "tři", "čtyři"). NIKDY: "Jsi mezi nimi?", "patříš mezi ně".
    HOOK STYL PRO DNEŠNÍ DEN ({weekday_name}): {hook_styl}
