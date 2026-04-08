@@ -111,17 +111,32 @@ def pick_signs(target_date: str) -> list:
     return chosen
 
 
-HOROSCOPE_SYSTEM_PROMPT = """Jsi laskavý astrologický průvodce.
-Generuj denní horoskop ve formátu JSON.
+HOROSCOPE_SYSTEM_PROMPT = """Jsi laskavý astrologický průvodce. Generuješ denní horoskop.
 Odpověď MUSÍ být validní JSON objekt bez markdown formátování (žádné ```json).
 Struktura:
 {
-  "prediction": "Text horoskopu (přesně 2 věty). Hlavní energie dne a jedna konkrétní rada.",
-  "affirmation": "Krátká pozitivní afirmace pro tento den.",
+  "prediction": "Text horoskopu (přesně 3 věty) specifický pro dané znamení. Hlavní energie dne a jedna konkrétní rada vycházející z vlastností tohoto znamení.",
+  "affirmation": "Osobní denní mantra — silná, poetická, specifická pro dané znamení a jeho element. 15–25 slov, první osoba, přítomný čas. Nesmí být generická ani klišovitá.",
   "luckyNumbers": [číslo1, číslo2, číslo3, číslo4]
 }
 Text piš česky, poeticky a povzbudivě.
-DŮLEŽITÉ: Text piš VŽDY v tykání — 2. osoba jednotného čísla (ty/tě/ti/tvé/tvůj). NIKDY nepoužívej vykání (vás/vám/vaše/váš/buďte/věnujte/nebojte/využijte/jste)."""
+DŮLEŽITÉ: Text piš VŽDY v tykání — 2. osoba jednotného čísla (ty/tě/ti/tvé/tvůj). NIKDY nepoužívej vykání (vás/vám/vaše/váš/buďte/věnujte/nebojte/využijte/jste).
+GENDEROVÁ NEUTRALITA: Vyhni se minulému času a slovům, která určují pohlaví čtenáře. Piš v přítomném nebo budoucím čase."""
+
+SIGN_ENERGY_PROFILES = {
+    'Beran':    'průkopník, akce, odvaha, impulzivnost — energie ohně',
+    'Býk':      'stabilita, smyslovost, trpělivost, materialismus — energie země',
+    'Blíženci': 'komunikace, zvídavost, dualita, rychlost — energie vzduchu',
+    'Rak':      'emoce, domov, intuice, ochrana — energie vody',
+    'Lev':      'kreativita, sebevyjádření, vedení, drama — energie ohně',
+    'Panna':    'analýza, detail, služba, zdraví — energie země',
+    'Váhy':     'harmonie, vztahy, krása, rozhodování — energie vzduchu',
+    'Štír':     'transformace, hloubka, tajemství, regenerace — energie vody',
+    'Střelec':  'svoboda, expanze, cestování, filozofie — energie ohně',
+    'Kozoroh':  'disciplína, kariéra, ambice, struktura — energie země',
+    'Vodnář':   'revoluce, komunita, originalita, budoucnost — energie vzduchu',
+    'Ryby':     'sny, empatie, spiritualita, iluze — energie vody',
+}
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -203,7 +218,9 @@ def generate_horoscope(sign: str, target_date: str) -> str:
                   "července", "srpna", "září", "října", "listopadu", "prosince"]
     d = date.fromisoformat(target_date)
     date_cs = f"{d.day}. {months_cs[d.month - 1]} {d.year}"
-    user_prompt = f"Znamení: {sign}\nDatum: {date_cs}"
+    energy = SIGN_ENERGY_PROFILES.get(sign, '')
+    energy_line = f"\nENERGIE ZNAMENÍ {sign.upper()}: {energy}. Přizpůsob tón, metafory a radu této energii." if energy else ""
+    user_prompt = f"Znamení: {sign}\nDatum: {date_cs}{energy_line}"
     raw = claude_call(HOROSCOPE_SYSTEM_PROMPT, user_prompt, max_tokens=600)
 
     # Parsuj JSON z odpovědi
@@ -235,18 +252,43 @@ def build_suno_prompt(signs: list, script: str, target_date: str) -> str:
         tag_counts[tag] = script.count(f'[{tag}]')
     dominant = max(tag_counts, key=tag_counts.get)
 
+    # Denní variace — jiná kombinace nástrojů každý den
+    INSTRUMENT_VARIATIONS = [
+        "warm piano and soft orchestral strings",
+        "gentle marimba and airy synth pads",
+        "acoustic guitar harmonics and warm cello",
+        "soft vibraphone and shimmering synth layers",
+        "light harp and delicate flute melody",
+        "mellow Rhodes piano and warm ambient textures",
+        "gentle music box melody over soft orchestral bed",
+    ]
+    TEXTURE_VARIATIONS = [
+        "shimmering cosmic light trails",
+        "gentle stardust floating through warm air",
+        "soft nebula glow on the horizon",
+        "sunrise breaking through a starlit sky",
+        "golden light filtering through cosmic clouds",
+        "morning dew on a celestial landscape",
+        "first rays of light touching distant galaxies",
+    ]
+
+    import hashlib as _hs
+    day_seed = int(_hs.md5(target_date.encode()).hexdigest(), 16)
+    instruments = INSTRUMENT_VARIATIONS[day_seed % len(INSTRUMENT_VARIATIONS)]
+    texture = TEXTURE_VARIATIONS[(day_seed // 7) % len(TEXTURE_VARIATIONS)]
+
     MOOD_SEEDS = {
-        'intense':    'dark cosmic, tense build-up, deep bass, dramatic strings',
-        'mysterious': 'ethereal ambient, mystical pads, distant bells, cosmic drone',
-        'commanding': 'epic orchestral, powerful drums, bold brass, cinematic',
-        'serious':    'deep ambient, slow evolving pads, minor key, contemplative',
-        'gentle':     'soft piano, delicate strings, warm pads, healing frequency',
-        'soft':       'breathy flute, gentle harp, airy atmosphere, tender',
-        'warm':       'warm acoustic, gentle guitar, golden hour feel, hopeful',
-        'confident':  'uplifting cinematic, rising strings, triumphant, bright',
-        'upbeat':     'light electronic, positive energy, flowing rhythm, inspiring',
+        'intense':    'motivational and bright, energizing without aggression',
+        'mysterious': 'gently mysterious, warm and hopeful, like a cosmic morning secret',
+        'commanding': 'confident and uplifting, inspiring forward momentum',
+        'serious':    'calm and grounding, peaceful morning meditation',
+        'gentle':     'tender and healing, soft and reassuring',
+        'soft':       'delicate and airy, like floating through morning light',
+        'warm':       'golden and hopeful, sunrise energy, easy and flowing',
+        'confident':  'bright and empowering, feel-good and positive',
+        'upbeat':     'light and cheerful, flowing rhythm, easy listening joy',
     }
-    mood_seed = MOOD_SEEDS.get(dominant, 'cosmic ambient, ethereal')
+    mood_seed = MOOD_SEEDS.get(dominant, 'warm and uplifting, positive cosmic energy')
 
     system = """You are an expert music producer writing song descriptions for the AI music generator Suno.
 Output: ONLY the song description — max 3 lines, plain English.
@@ -254,21 +296,21 @@ CRITICAL: Use ONLY standard ASCII Latin characters. Zero Chinese, Japanese, Kore
 No style tags, no headers, no comments. Just the description."""
 
     user = f"""Date: {date_cs}
-Zodiac signs in the video: {', '.join(signs)}
-Dominant mood: {dominant}
-Music seed: {mood_seed}
-
-Voiceover excerpt:
-{script[:300]}
+Zodiac signs: {', '.join(signs)}
+Featured instruments today: {instruments}
+Visual texture: {texture}
+Mood character: {mood_seed}
 
 Write a Suno song description. The music must:
 - Be instrumental (no vocals, no lyrics)
-- Match slow cosmic visuals (nebula, stars, space)
-- Feel like a seamless ~60 second loop
-- Reflect the mood of the zodiac signs above
-- Be unique every time — vary instruments, texture and energy significantly
-- NEVER use: acoustic guitar, chimes, fingerstyle — find completely different sonic palette each time
-- For dominant mood "{dominant}" lean into: {mood_seed}"""
+- SHORT: exactly 60-90 seconds — mention this
+- Style: positive morning music — relaxing, uplifting, easy listening
+- Subtly mystical and cosmic but LIGHT — like a sunrise, not a storm
+- NO dark tones, NO tension, NO minor key, NO drama
+- Use the featured instruments: {instruments}
+- Evoke the visual texture: {texture}
+- Feel unique to today while staying in this warm positive style
+- End with: "Short instrumental, 60-90 seconds, loop-ready." """
 
     print("[*] Generuji Suno prompt...")
     return claude_call(system, user, max_tokens=300)
@@ -291,13 +333,57 @@ Píšeš TikTok / Instagram description k horoskopu videu.
 
 PRAVIDLA:
 - Tykáš, 2. os. j.č., žádné lomené tvary (šel/šla)
+- GENDEROVÁ NEUTRALITA: Absolutní zákaz minulých příčestí (toužila, čekala, hledal, snil, otevírala). VŽDY přítomný nebo budoucí čas. Místo "cesta, po které toužila" → "cesta, po které toužíš". Místo "byl jsi" → "jsi".
 - Přesně 3 věty textu — záhadné, osobní, taháček na kliknutí
 - Hook v první větě — napětí nebo otázka, přidej přesně 2 emoji organicky do textu (ne na konci)
+- Vyhni se klišé jako "ze hvězd", "od hvězd", "hvězdy ti posílají" — hledej svěžejší formulace
 - NEZMIŇUJ explicitně která 3 znamení jsou ve videu — zachovej záhadu
-- Třetí věta = odkaz na web přirozeně: "Celý výklad tě čeká tady → [URL]"
+- Třetí věta = silná výzva k akci BEZ odkazu — např. "Sleduj nás ať ti neunikne nic." nebo "Ulož si video, budeš se k němu vracet." nebo "Označ někoho, komu to dnes sedí."
+- Na TikToku NESMÍ být žádný odkaz ani URL — pouze text a hashtags
 - Za textem PRÁZDNÝ ŘÁDEK a pak hashtags na samostatném řádku
-- Hashtags: #mystickaHvezda + znamení s velkým počátečním písmenem + fixní tagy
+- Hashtags: MAX 5 celkem — #mystickaHvezda + 1–2 ze znamení (ne nutně všechna, s velkým počátečním písmenem) + 1 obecný (#astrologie nebo #horoskop) + 1 trendový (#fyp nebo #spiritualita)
 - Piš POUZE česky, pouze latinkou, žádné cizí znaky ani kanji
+- Výstup JEN samotný text, žádné komentáře"""
+
+    user = f"""Datum: {date_cs}
+Znamení ve videu: {', '.join(signs)} (NEzmiňuj je explicitně v textu)
+
+Voiceover script (pro kontext):
+{script[:600]}
+
+Napiš TikTok description ve formátu:
+[3 věty textu s emoji]
+
+#mystickaHvezda [1–2 ze znamení] [1 obecný: #astrologie nebo #horoskop] [1 trendový: #fyp nebo #spiritualita]
+(Dostupná znamení: {hashtag_signs_pascal} — vyber max 2)"""
+
+    print("[*] Generuji TikTok description...")
+    return claude_call(system, user, max_tokens=400)
+
+
+def build_facebook_description(signs: list, script: str, target_date: str) -> str:
+    """Vygeneruje Facebook Reels description — delší, komunitní tón."""
+    date_obj = date.fromisoformat(target_date)
+    months_cs = ["ledna", "února", "března", "dubna", "května", "června",
+                  "července", "srpna", "září", "října", "listopadu", "prosince"]
+    date_cs = f"{date_obj.day}. {months_cs[date_obj.month - 1]}"
+
+    hashtag_signs_pascal = " ".join(f"#{s.capitalize()}" for s in signs)
+
+    system = """Jsi copywriter pro českou mystickou stránku Mystická Hvězda.
+Píšeš Facebook Reels description k horoskopu videu.
+
+PRAVIDLA:
+- Tykáš, 2. os. j.č., žádné lomené tvary (šel/šla)
+- GENDEROVÁ NEUTRALITA: Absolutní zákaz minulých příčestí (toužila, čekala, hledal, snil). VŽDY přítomný nebo budoucí čas. Místo "cesta, po které toužila" → "cesta, po které toužíš". Vyhni se klišé "ze hvězd", "od hvězd" — hledej svěžejší formulace.
+- Přesně 4 věty textu — RYTMUS: první 2 věty KRÁTKÉ (do 10 slov každá), třetí rozvíjí energii dne, čtvrtá silný závěr + CTA
+- 2–3 emoji organicky v textu, ne na konci jako blok
+- NEZMIŇUJ explicitně která 3 znamení jsou ve videu — zachovej záhadu
+- Čtvrtá věta = CTA s odkazem: "Celý výklad najdeš na mystickahvezda.cz/horoskopy.html ✨"
+- Za textem PRÁZDNÝ ŘÁDEK a pak hashtags na samostatném řádku
+- Hashtags: #mystickaHvezda + znamení s velkým počátečním písmenem + fixní FB tagy (bez #fyp)
+- Tón: komunitní, trochu osobnější než TikTok — jako by psal přítel, ne algoritmus
+- Piš POUZE česky, pouze latinkou
 - Výstup JEN samotný text, žádné komentáře"""
 
     user = f"""Datum: {date_cs}
@@ -307,12 +393,12 @@ Web: https://www.mystickahvezda.cz/horoskopy.html
 Voiceover script (pro kontext):
 {script[:600]}
 
-Napiš TikTok description ve formátu:
-[3 věty textu s emoji]
+Napiš Facebook description ve formátu:
+[4 věty textu s emoji]
 
-#mystickaHvezda {hashtag_signs_pascal} #horoskop #astrologie #dennihoroskop #fyp"""
+#mystickaHvezda {hashtag_signs_pascal} #horoskop #astrologie #dennihoroskop #mystika"""
 
-    print("[*] Generuji TikTok description...")
+    print("[*] Generuji Facebook description...")
     return claude_call(system, user, max_tokens=400)
 
 
@@ -409,9 +495,28 @@ def build_voiceover(signs_data: dict, target_date: str) -> str:
         })
 
     # Claude generuje celý script — hook, sekce znamení s bohatými tagy, outro
+    weekday_names = ["Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota", "Neděle"]
+    weekday_name = weekday_names[date_obj.weekday()]
+
     system = """Jsi copywriter pro českou mystickou stránku Mystická Hvězda.
 Píšeš voiceover script pro krátké video (Instagram Reel / TikTok).
 Tykáš, 2. os. j.č. — NIKDY žádný lomený tvar.
+GENDEROVÁ NEUTRALITA: Nepoužívej rodově zabarvená slovesa ani zájmena. Místo "jsi ten, kdo" → "jsi někdo, kdo". Místo "vykročil" → "vykročíš" nebo "jdeš". Místo "byl jsi" → "jsi". Místo "ten pravý" → "ta správná energie". Vždy přítomný čas nebo budoucí, nikdy minulý příčestí činné.
+
+ENERGIE ZNAMENÍ (použij jako základ tónu sekce, ne doslova):
+- Beran: průkopník, akce, odvaha, impulzivnost
+- Býk: stabilita, smyslovost, trpělivost, materialismus
+- Blíženci: komunikace, zvídavost, dualita, rychlost
+- Rak: emoce, domov, intuice, ochrana
+- Lev: kreativita, sebevyjádření, vedení, drama
+- Panna: analýza, detail, služba, zdraví
+- Váhy: harmonie, vztahy, krása, rozhodování
+- Štír: transformace, hloubka, tajemství, regenerace
+- Střelec: svoboda, expanze, cestování, filozofie
+- Kozoroh: disciplína, kariéra, ambice, struktura
+- Vodnář: revoluce, komunita, originalita, budoucnost
+- Ryby: sny, empatie, spiritualita, iluze
+
 Výstup JEN samotný text — žádné nadpisy, žádné labely, žádné hvězdičky."""
 
     signs_input = "\n".join(
@@ -419,7 +524,19 @@ Výstup JEN samotný text — žádné nadpisy, žádné labely, žádné hvězd
         for s in signs_raw
     )
 
-    user = f"""Datum: {date_cs}
+    # Hook rotace podle dne v týdnu
+    hook_rotace = {
+        0: 'otázka — např. "Co když to, čemu se dnes vyhýbáš, je přesně to, co tě posune?"',     # Po
+        3: 'otázka — např. "Co když to, čemu se dnes vyhýbáš, je přesně to, co tě posune?"',     # Čt
+        1: 'provokace — např. "Většina lidí tohle přehlédne. Dnes ne."',                           # Út
+        4: 'provokace — např. "Většina lidí tohle přehlédne. Dnes ne."',                           # Pá
+        2: 'tiché otevření — např. "Dnes je v energii něco, co se nedá přehlédnout."',             # St
+        5: 'tiché otevření — např. "Dnes je v energii něco, co se nedá přehlédnout."',             # So
+        6: 'poetické — např. "Mezi nocí a ránem existuje okamžik, kdy vesmír mluví."',             # Ne
+    }
+    hook_styl = hook_rotace[date_obj.weekday()]
+
+    user = f"""Datum: {date_cs} ({weekday_name})
 
 Napiš celý voiceover script ve třech částech:
 
@@ -427,7 +544,10 @@ Napiš celý voiceover script ve třech částech:
    PRAVIDLO: NIKDY nejmenuj konkrétní znamení — divák musí video dokoukat, aby zjistil která.
    Vyvolej zvědavost: naznač, že VYBRANÁ znamení dostanou speciální energii/průlom.
    NIKDY nepiš číslo znamení (ne "tři", "čtyři"). NIKDY: "Jsi mezi nimi?", "patříš mezi ně".
-   Zakončení pokaždé jiné a originální.
+   HOOK STYL PRO DNEŠNÍ DEN ({weekday_name}): {hook_styl}
+   GENDEROVÁ NEUTRALITA V HOOKU: Absolutní zákaz minulých příčestí (toužila, čekala, hledal, snil).
+   Používej POUZE přítomný nebo budoucí čas — "touží", "čeká", "hledá", "přichází".
+   Podmět hooku musí být vždy neutrální: "vybraná znamení", "hvězdy", "energie", "vesmír" — NIKDY "ty".
 
 2) SEKCE ZNAMENÍ — pro každé znamení níže napiš jeho sekci:
    - Začni oslovením: "[tag] {{vocative}},"
@@ -436,6 +556,11 @@ Napiš celý voiceover script ve třech částech:
    - Minimálně 2–3 tagy na sekci znamení, rozložené přirozeně v textu.
    - Text věrně zachovej — jen obal tagy, nepřepisuj obsah.
    - Povolené tagy pro každé znamení jsou uvedeny níže.
+   - Přizpůsob tón energii znamení (viz ENERGIE ZNAMENÍ v systémovém promptu).
+   STRUKTURA SEKCE — pro každé ze tří znamení použij JINOU z těchto forem (střídej):
+   - Forma A (výzva): "[tag] {{vocative}}, [tag] dnes přichází moment, který čekáš. [tag] Ne zítra. Dnes."
+   - Forma B (varování): "[tag] {{vocative}}, [tag] pozor na jedno — dnešní energie může svést z cesty, pokud..."
+   - Forma C (příslib): "[tag] {{vocative}}, [tag] něco se dnes mění. [tag] Tiše, ale natrvalo."
    Tagy celkově: [mysterious] [intense] [warm] [gentle] [confident] [upbeat] [commanding] [soft]
 
    Znamení:
@@ -470,7 +595,8 @@ Výstup JEN opravený text — žádné komentáře, žádné vysvětlování zm
 1. Gramatické chyby — oprav interpunkci, shodu, pádové koncovky
 2. Cizí slova → česky: Venus → Venuše, Mars → Mars (OK), Mercury → Merkur, Saturn → Saturn (OK), Jupiter → Jupiter (OK), Neptune → Neptun, Pluto → Pluto (OK)
 3. Vykání → tykání pokud ještě někde zbylo (vás/vám/vaše → tě/ti/tvé)
-4. Jinak TEXT NEMĚŇ — zachovej přesné znění, styl, délku
+4. Genderová neutralita — odstraň rodově specifické tvary: minulá příčestí jako "vykročil/vykročila", "toužila/toužil", "čekala/čekal", "hledal/hledala" → přeformuluj na přítomný/budoucí čas ("vykračuješ", "půjdeš", "toužíš", "čekáš"); "byl jsi/byla jsi" → "jsi"; "ten/ta" jako zájmeno osoby → "někdo", "člověk"; NIKDY lomené tvary. Toto platí OBZVLÁŠTĚ pro hook (první 2 věty scriptu).
+5. Jinak TEXT NEMĚŇ — zachovej přesné znění, styl, délku
 
 Script:
 {script}"""
@@ -539,6 +665,7 @@ def main():
     date_header = f"🗓️ {d.day}. {months_cs[d.month - 1]} {d.year}\n\n"
     script = date_header + script
     description = build_tiktok_description(chosen, script, target_date)
+    fb_description = build_facebook_description(chosen, script, target_date)
     suno = build_suno_prompt(chosen, script, target_date)
 
     # 5. Vystup
@@ -547,6 +674,8 @@ def main():
     print(script)
     print(f"\n{sep}\nTIKTOK / INSTAGRAM DESCRIPTION\n{sep}")
     print(description)
+    print(f"\n{sep}\nFACEBOOK REELS DESCRIPTION\n{sep}")
+    print(fb_description)
     print(f"\n{sep}\nSUNO PROMPT\n{sep}")
     print(suno)
     print(sep)
@@ -558,6 +687,7 @@ def main():
     output = (
         f"VOICEOVER SCRIPT\n{sep}\n{script}\n\n"
         f"TIKTOK / INSTAGRAM DESCRIPTION\n{sep}\n{description}\n\n"
+        f"FACEBOOK REELS DESCRIPTION\n{sep}\n{fb_description}\n\n"
         f"SUNO PROMPT\n{sep}\n{suno}\n"
     )
     out_path.write_text(output, encoding="utf-8")

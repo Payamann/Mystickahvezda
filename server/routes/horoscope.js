@@ -142,6 +142,23 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
 
         const signAcc = SIGN_ACCUSATIVE[sign] || sign;
 
+        // Sign energy profiles — inject into prompts so each sign has distinct tone
+        const SIGN_ENERGY = {
+            'Beran':    'průkopník, akce, odvaha, impulzivnost — energie ohně',
+            'Býk':      'stabilita, smyslovost, trpělivost, materialismus — energie země',
+            'Blíženci': 'komunikace, zvídavost, dualita, rychlost — energie vzduchu',
+            'Rak':      'emoce, domov, intuice, ochrana — energie vody',
+            'Lev':      'kreativita, sebevyjádření, vedení, drama — energie ohně',
+            'Panna':    'analýza, detail, služba, zdraví — energie země',
+            'Váhy':     'harmonie, vztahy, krása, rozhodování — energie vzduchu',
+            'Štír':     'transformace, hloubka, tajemství, regenerace — energie vody',
+            'Střelec':  'svoboda, expanze, cestování, filozofie — energie ohně',
+            'Kozoroh':  'disciplína, kariéra, ambice, struktura — energie země',
+            'Vodnář':   'revoluce, komunita, originalita, budoucnost — energie vzduchu',
+            'Ryby':     'sny, empatie, spiritualita, iluze — energie vody',
+        };
+        const signEnergy = SIGN_ENERGY[sign] ? `\nENERGIE ZNAMENÍ ${sign.toUpperCase()}: ${SIGN_ENERGY[sign]}. Přizpůsob tón, metafory a radu této energii.` : '';
+
         const dateLocales = { 'cs': 'cs-CZ', 'sk': 'sk-SK', 'pl': 'pl-PL' };
         const today = new Date();
         const dateStr = today.toLocaleDateString(dateLocales[targetLang]);
@@ -149,11 +166,11 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
         const genderInstruction = `\nTEXT VŽDY FORMULUJ PŘÍSNĚ GENDEROVĚ NEUTRÁLNĚ (vyhni se minulému času a slovům, která určují pohlaví čtenáře, např. místo "jsi připraven" nebo "udělal jsi" piš "je čas se připravit" nebo "došlo k pokroku"). Text piš i nadále poutavě a plynule.`;
 
         if (period === 'weekly') {
-            periodPrompt = `Jsi inspirativní astrologický průvodce. Generuješ týdenní horoskop pro ${signAcc} na týden začínající ${dateStr}.\nOdpověď MUSÍ být validní JSON objekt bez markdown formátování (žádné \`\`\`json).\nStruktura:\n{\n  "prediction": "Text horoskopu (přesně 5 vět) specifický pro ${signAcc}. Zaměř se na hlavní energii, lásku, kariéru a jednu výzvu charakteristickou pro toto znamení.",\n  "affirmation": "Osobní týdenní mantra — silná, poetická, specifická pro ${signAcc}, jeho element a vládnoucí planetu. 15–25 slov, první osoba, přítomný čas. Nesmí být generická ani klišovitá. Příklad tónu: 'Má odvaha tvoří mosty tam, kde ostatní vidí propasti.'",\n  "luckyNumbers": [číslo1, číslo2, číslo3, číslo4]\n}\nText piš ${langName}, poeticky a povzbudivě.${genderInstruction}${contextInstruction}`;
+            periodPrompt = `Jsi inspirativní astrologický průvodce. Generuješ týdenní horoskop pro ${signAcc} na týden začínající ${dateStr}.${signEnergy}\nOdpověď MUSÍ být validní JSON objekt bez markdown formátování (žádné \`\`\`json).\nStruktura:\n{\n  "prediction": "Text horoskopu (přesně 5 vět) specifický pro ${signAcc}. Zaměř se na hlavní energii, lásku, kariéru a jednu výzvu charakteristickou pro toto znamení.",\n  "affirmation": "Osobní týdenní mantra — silná, poetická, specifická pro ${signAcc}, jeho element a vládnoucí planetu. 15–25 slov, první osoba, přítomný čas. Nesmí být generická ani klišovitá. Příklad tónu: 'Má odvaha tvoří mosty tam, kde ostatní vidí propasti.'",\n  "luckyNumbers": [číslo1, číslo2, číslo3, číslo4]\n}\nText piš ${langName}, poeticky a povzbudivě.${genderInstruction}${contextInstruction}`;
         } else if (period === 'monthly') {
-            periodPrompt = `Jsi moudrý astrologický průvodce. Generuješ měsíční horoskop pro ${signAcc} na aktuální měsíc (datum: ${dateStr}).\nOdpověď MUSÍ být validní JSON objekt bez markdown formátování (žádné \`\`\`json).\nStruktura:\n{\n  "prediction": "Text horoskopu (přesně 7 vět) specifický pro ${signAcc}. Zahrň úvod, lásku, kariéru, zdraví a klíčová data s ohledem na charakter tohoto znamení.",\n  "affirmation": "Hluboká měsíční mantra — specifická pro ${signAcc} a jeho transformační energii v tomto měsíci. 20–30 slov, první osoba, přítomný čas. Poetická, osobní, bez klišé. Příklad tónu: 'Jsem průkopníkem ticha — v hloubce svého bytí nacházím sílu, která přetváří svět.'",\n  "luckyNumbers": [číslo1, číslo2, číslo3, číslo4]\n}\nText piš ${langName}, inspirativně a hluboce.${genderInstruction}${contextInstruction}`;
+            periodPrompt = `Jsi moudrý astrologický průvodce. Generuješ měsíční horoskop pro ${signAcc} na aktuální měsíc (datum: ${dateStr}).${signEnergy}\nOdpověď MUSÍ být validní JSON objekt bez markdown formátování (žádné \`\`\`json).\nStruktura:\n{\n  "prediction": "Text horoskopu (přesně 7 vět) specifický pro ${signAcc}. Zahrň úvod, lásku, kariéru, zdraví a klíčová data s ohledem na charakter tohoto znamení.",\n  "affirmation": "Hluboká měsíční mantra — specifická pro ${signAcc} a jeho transformační energii v tomto měsíci. 20–30 slov, první osoba, přítomný čas. Poetická, osobní, bez klišé. Příklad tónu: 'Jsem průkopníkem ticha — v hloubce svého bytí nacházím sílu, která přetváří svět.'",\n  "luckyNumbers": [číslo1, číslo2, číslo3, číslo4]\n}\nText piš ${langName}, inspirativně a hluboce.${genderInstruction}${contextInstruction}`;
         } else {
-            periodPrompt = `Jsi laskavý astrologický průvodce. Generuješ denní horoskop pro ${signAcc} na den ${dateStr}.\nOdpověď MUSÍ být validní JSON objekt bez markdown formátování (žádné \`\`\`json).\nStruktura:\n{\n  "prediction": "Text horoskopu (přesně 3 věty) specifický pro ${signAcc}. Hlavní energie dne a jedna konkrétní rada vycházející z vlastností tohoto znamení.",\n  "affirmation": "Osobní denní mantra — silná, poetická, specifická pro ${signAcc} a jeho element. 15–25 slov, první osoba, přítomný čas. Nesmí být generická ani klišovitá. Příklad tónu: 'Má intuice je dnes mým nejostřejším nástrojem — naslouchám jí a jednám.'",\n  "luckyNumbers": [číslo1, číslo2, číslo3, číslo4]\n}\nText piš ${langName}, poeticky a povzbudivě.${genderInstruction}${contextInstruction}`;
+            periodPrompt = `Jsi laskavý astrologický průvodce. Generuješ denní horoskop pro ${signAcc} na den ${dateStr}.${signEnergy}\nOdpověď MUSÍ být validní JSON objekt bez markdown formátování (žádné \`\`\`json).\nStruktura:\n{\n  "prediction": "Text horoskopu (přesně 3 věty) specifický pro ${signAcc}. Hlavní energie dne a jedna konkrétní rada vycházející z vlastností tohoto znamení.",\n  "affirmation": "Osobní denní mantra — silná, poetická, specifická pro ${signAcc} a jeho element. 15–25 slov, první osoba, přítomný čas. Nesmí být generická ani klišovitá. Příklad tónu: 'Má intuice je dnes mým nejostřejším nástrojem — naslouchám jí a jednám.'",\n  "luckyNumbers": [číslo1, číslo2, číslo3, číslo4]\n}\nText piš ${langName}, poeticky a povzbudivě.${genderInstruction}${contextInstruction}`;
         }
 
         const message = `Vygeneruj horoskop pro znamení ${sign} na ${dateStr}.`;
