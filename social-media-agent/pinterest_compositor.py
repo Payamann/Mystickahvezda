@@ -30,8 +30,8 @@ COLOR_GOLD_LIGHT= (230, 195, 80)
 COLOR_CTA_BG    = (201, 162, 39)
 COLOR_CTA_TEXT  = (35, 8, 75)       # tmavě fialová
 
-FONTS_DIR = Path("C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/.claude/worktrees/magical-jepsen/fonts")
-LOGO_PATH = Path("C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/.claude/worktrees/magical-jepsen/img/logo-3d.webp")
+FONTS_DIR = Path(__file__).parent.parent / "fonts"
+LOGO_PATH = Path(__file__).parent.parent / "img" / "logo-3d.webp"
 # Cinzel — oddělené weights (stejné jako na webu)
 # tbnTYo = 400 regular | gjgTYo = 600 semibold | jHgTYo = 700 bold
 CINZEL_BOLD  = [FONTS_DIR / "8vIU7ww63mVu7gtR-kwKxNvkNOjw-jHgTYo.ttf"]   # 700
