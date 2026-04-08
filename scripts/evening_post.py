@@ -847,13 +847,13 @@ STRICT RULES:
 - Background: very dark navy #050510 (almost black), faint purple nebula, scattered stars
 - Style: premium 3D CGI render, icon-art style, photorealistic, octane render
 - NO complex scenes, NO actions, NO flowing shapes, NO multiple elements, NO text, NO people, NO frames, NO borders, NO vignette, NO dark edges, NO letterboxing
-- Portrait 4:5, object centered, fills the canvas
+- Portrait 4:5, object fully visible and centered in frame, background nebula extends to all edges — NO dark strips, NO empty margins anywhere in the image
 
 FORMAT: exactly 4 sentences, structured like this example:
 1. "A single [object] floating in center frame, [specific shape/size details and what is lit/shadowed]."
 2. "The [object]'s surface is [material], rendered in [colors] with [light details]."
 3. "Background is very dark navy #050510 with visible purple and violet nebula clouds softly glowing behind the object, scattered pinpoint stars."
-4. "Premium 3D CGI render, icon-art style, octane render, portrait 4:5 ratio, object fills entire canvas edge to edge. NO waves, NO rings, NO energy effects, NO borders, NO halos, NO trails, NO vignette, NO dark edges."
+4. "Premium 3D CGI render, icon-art style, octane render, portrait 4:5 ratio, object fully visible and centered, background fills all edges. NO waves, NO rings, NO energy effects, NO borders, NO halos, NO trails, NO vignette, NO dark strips at top or bottom."
 
 Be literal and specific — describe only what you SEE, not what you FEEL. No metaphors, no abstract concepts."""
 

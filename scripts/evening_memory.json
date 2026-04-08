@@ -1,0 +1,294 @@
+{
+  "posts": [
+    {
+      "date": "2026-04-06",
+      "type": "educational",
+      "topic": "Sluneční návraty: proč je každé narozeniny jiné",
+      "category": "planety",
+      "score": null
+    },
+    {
+      "date": "2026-04-06",
+      "type": "myth_bust",
+      "topic": "Mýtus: Horoskop v novinách je astrologie",
+      "category": "mýty",
+      "score": null
+    },
+    {
+      "date": "2026-04-06",
+      "type": "myth_bust",
+      "topic": "Mýtus: Každý Beran je stejný",
+      "category": "mýty",
+      "score": null
+    },
+    {
+      "date": "2026-04-07",
+      "type": "myth_bust",
+      "topic": "Mýtus: Ascendent není důležitý",
+      "category": "mýty",
+      "score": null
+    },
+    {
+      "date": "2026-04-08",
+      "type": "myth_bust",
+      "topic": "Mýtus: Astrologie je jen pro ženy a new age",
+      "category": "mýty",
+      "score": null
+    },
+    {
+      "date": "2026-04-09",
+      "type": "engagement",
+      "topic": "Merkur retrográdní — co to skutečně znamená",
+      "category": "planety",
+      "score": null
+    },
+    {
+      "date": "2026-04-10",
+      "type": "engagement",
+      "topic": "Uran — planeta změn a revoluce",
+      "category": "planety",
+      "score": null
+    },
+    {
+      "date": "2026-04-06",
+      "type": "blog_promo",
+      "topic": "Průvodce retrográdním Merkurem",
+      "category": "planety",
+      "score": null,
+      "blog_url": "https://www.mystickahvezda.cz/blog/retrogradni-merkur-pruvodce.html"
+    },
+    {
+      "date": "2026-04-07",
+      "type": "educational",
+      "topic": "Mars — planeta akce, hněvu a energie",
+      "category": "planety",
+      "score": null
+    },
+    {
+      "date": "2026-04-08",
+      "type": "educational",
+      "topic": "Neptun — iluze, intuice a spiritualita",
+      "category": "planety",
+      "score": null
+    },
+    {
+      "date": "2026-04-09",
+      "type": "myth_bust",
+      "topic": "Mýtus: Škorpioni jsou zlí a žárliví",
+      "category": "mýty",
+      "score": null
+    },
+    {
+      "date": "2026-04-10",
+      "type": "lunar",
+      "topic": "Solární eclipse: nové kapitoly života",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-05",
+      "type": "lunar",
+      "topic": "Nov Měsíce: jak zasadit záměry správně",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-05",
+      "type": "educational",
+      "topic": "Element ohně: Beran, Lev, Střelec — co je spojuje",
+      "category": "prvky",
+      "score": null
+    },
+    {
+      "date": "2026-04-05",
+      "type": "blog_promo",
+      "topic": "Saturnův návrat: co přinese tvůj 29. rok",
+      "category": "planety",
+      "score": null,
+      "blog_url": "https://www.mystickahvezda.cz/blog/saturuv-navrat-29-rok-zivota.html"
+    },
+    {
+      "date": "2026-04-05",
+      "type": "myth_bust",
+      "topic": "Mýtus: Blíženci jsou nespolehliví",
+      "category": "mýty",
+      "score": null
+    },
+    {
+      "date": "2026-04-05",
+      "type": "engagement",
+      "topic": "Venuše a láska: jak planeta krásy ovlivňuje vztahy",
+      "category": "planety",
+      "score": null
+    },
+    {
+      "date": "2026-04-05",
+      "type": "blog_promo",
+      "topic": "Retrográdní Venuše 2026 — co čekat v lásce",
+      "category": "planety",
+      "score": null,
+      "blog_url": "https://www.mystickahvezda.cz/blog/retrograde-venus-2026-co-cekat-v-lasce.html"
+    },
+    {
+      "date": "2026-04-06",
+      "type": "lunar",
+      "topic": "Úplněk a emoce: proč spíme hůř",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-06",
+      "type": "lunar",
+      "topic": "Ubývající Měsíc — čas pustit a uvolnit",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-06",
+      "type": "lunar",
+      "topic": "Ubývající Měsíc — čas pustit a uvolnit",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-06",
+      "type": "lunar",
+      "topic": "Ubývající Měsíc — čas pustit a uvolnit",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-06",
+      "type": "educational",
+      "topic": "Saturn — karma, disciplína a životní lekce",
+      "category": "planety",
+      "score": null
+    },
+    {
+      "date": "2026-04-07",
+      "type": "blog_promo",
+      "topic": "Měsíční uzly: uzel osudu a životní směr",
+      "category": "planety",
+      "score": null,
+      "blog_url": "https://www.mystickahvezda.cz/blog/uzel-osudu-severni-jizni-uzel.html"
+    },
+    {
+      "date": "2026-04-06",
+      "type": "blog_promo",
+      "topic": "Pluto ve Vodnáři 2024–2043",
+      "category": "planety",
+      "score": null,
+      "blog_url": "https://www.mystickahvezda.cz/blog/pluto-ve-vodnari-2024-2043.html"
+    },
+    {
+      "date": "2026-04-06",
+      "type": "engagement",
+      "topic": "Jupiter — planeta štěstí a expanze",
+      "category": "planety",
+      "score": null
+    },
+    {
+      "date": "2026-04-06",
+      "type": "engagement",
+      "topic": "Střelec: síla svobody a stín nezávaznosti",
+      "category": "znamení",
+      "score": null
+    },
+    {
+      "date": "2026-04-07",
+      "type": "lunar",
+      "topic": "Měsíc v každém znamení: jak to cítíš",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-08",
+      "type": "lunar",
+      "topic": "Dorůstající Měsíc — čas budovat a jednat",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-09",
+      "type": "lunar",
+      "topic": "Lunární eclipse: průlomy a konce",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-10",
+      "type": "lunar",
+      "topic": "Lunární kalendář a zahradničení — pradávná moudrost",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-07",
+      "type": "lunar",
+      "topic": "Měsíc v každém znamení: jak to cítíš",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-07",
+      "type": "educational",
+      "topic": "Venuše a láska: jak planeta krásy ovlivňuje vztahy",
+      "category": "planety",
+      "score": null
+    },
+    {
+      "date": "2026-04-08",
+      "type": "lunar",
+      "topic": "Měsíc v každém znamení: jak to cítíš",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-08",
+      "type": "lunar",
+      "topic": "Ubývající Měsíc — čas pustit a uvolnit",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-09",
+      "type": "lunar",
+      "topic": "Ubývající Měsíc — čas pustit a uvolnit",
+      "category": "lunární",
+      "score": null
+    },
+    {
+      "date": "2026-04-05",
+      "type": "blog_promo",
+      "topic": "Merkur v retrográdě — co to znamená pro tvé znamení",
+      "category": "planety",
+      "score": null,
+      "blog_url": "https://www.mystickahvezda.cz/blog/merkur-v-retrograde-co-to-znamena-pro-vase-znameni.html"
+    },
+    {
+      "date": "2026-04-05",
+      "type": "blog_promo",
+      "topic": "Průvodce retrográdním Merkurem",
+      "category": "planety",
+      "score": null,
+      "blog_url": "https://www.mystickahvezda.cz/blog/retrogradni-merkur-pruvodce.html"
+    },
+    {
+      "date": "2026-04-05",
+      "type": "blog_promo",
+      "topic": "Průvodce retrográdním Merkurem",
+      "category": "planety",
+      "score": null,
+      "blog_url": "https://www.mystickahvezda.cz/blog/retrogradni-merkur-pruvodce.html"
+    },
+    {
+      "date": "2026-03-01",
+      "type": "educational",
+      "topic": "Element vody: Rak, Štír, Ryby — hloubka emocí",
+      "category": "prvky",
+      "score": null
+    }
+  ],
+  "category_scores": {},
+  "last_follow_cta": "Sleduj a buď první, kdo se dozví co hvězdy chystají ⭐"
+}
