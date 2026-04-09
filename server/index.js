@@ -401,6 +401,71 @@ if (process.env.NODE_ENV !== 'production') {
 // Handles /horoskop/:sign/:date and /sitemap-horoscopes.xml
 app.use('/horoskop', horoscopePagesRoutes);
 
+// OG injection pro horoskopy.html — ?znak=beran → správný og:image pro Facebook scraper
+const HOROSCOPE_SIGNS = {
+    beran:    { name: 'Beran',    symbol: '♈' },
+    byk:      { name: 'Býk',      symbol: '♉' },
+    blizenci: { name: 'Blíženci', symbol: '♊' },
+    rak:      { name: 'Rak',      symbol: '♋' },
+    lev:      { name: 'Lev',      symbol: '♌' },
+    panna:    { name: 'Panna',    symbol: '♍' },
+    vahy:     { name: 'Váhy',     symbol: '♎' },
+    stir:     { name: 'Štír',     symbol: '♏' },
+    strelec:  { name: 'Střelec',  symbol: '♐' },
+    kozoroh:  { name: 'Kozoroh',  symbol: '♑' },
+    vodnar:   { name: 'Vodnář',   symbol: '♒' },
+    ryby:     { name: 'Ryby',     symbol: '♓' },
+};
+
+app.get('/horoskopy.html', (req, res, next) => {
+    const znak = req.query.znak?.toLowerCase();
+    if (!znak || !HOROSCOPE_SIGNS[znak]) return next();
+
+    const sign = HOROSCOPE_SIGNS[znak];
+    const appUrl = process.env.APP_URL || 'https://www.mystickahvezda.cz';
+    const ogImage = `${appUrl}/img/og/horoskop-${znak}.jpg`;
+    const ogTitle = `Horoskop ${sign.symbol} ${sign.name} — Mystická Hvězda`;
+    const ogDesc  = `Přečti si dnešní horoskop pro ${sign.name}. Co ti hvězdy přináší dnes?`;
+    const ogUrl   = `${appUrl}/horoskopy.html?znak=${znak}#${znak}`;
+
+    const htmlPath = path.join(rootDir, 'horoskopy.html');
+    let html;
+    try {
+        html = fs.readFileSync(htmlPath, 'utf-8');
+    } catch {
+        return next();
+    }
+
+    // Nahraď / přidej OG tagy specifické pro znamení
+    const ogInject = `
+    <meta property="og:title" content="${ogTitle}">
+    <meta property="og:description" content="${ogDesc}">
+    <meta property="og:image" content="${ogImage}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="${ogTitle}">
+    <meta property="og:url" content="${ogUrl}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="${ogImage}">`;
+
+    // Přidej před </head> (nahradí případné existující OG tagy pro image/title/desc)
+    const replaced = html
+        .replace(/<meta property="og:image"[^>]*>/gi, '')
+        .replace(/<meta property="og:image:width"[^>]*>/gi, '')
+        .replace(/<meta property="og:image:height"[^>]*>/gi, '')
+        .replace(/<meta property="og:image:alt"[^>]*>/gi, '')
+        .replace(/<meta property="og:title"[^>]*>/gi, '')
+        .replace(/<meta property="og:description"[^>]*>/gi, '')
+        .replace(/<meta property="og:url"[^>]*>/gi, '')
+        .replace(/<meta name="twitter:card"[^>]*>/gi, '')
+        .replace(/<meta name="twitter:image"[^>]*>/gi, '')
+        .replace('</head>', ogInject + '\n</head>');
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.send(replaced);
+});
+
 // Support for /jmena/:name (redirects to /jmena/?jmeno=Name)
 app.get('/jmena/:name', (req, res) => {
     const name = req.params.name;

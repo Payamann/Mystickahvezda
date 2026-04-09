@@ -247,7 +247,7 @@
     }
 
     // ─── Aktualizace OG meta tagů pro Facebook ──────────────────────────────
-    function updateOGMeta(signName, predictionText, canonicalUrl) {
+    function updateOGMeta(signName, predictionText, canonicalUrl, slug) {
         const setMeta = (prop, val) => {
             let el = document.querySelector(`meta[property="${prop}"]`);
             if (!el) {
@@ -264,7 +264,7 @@
         setMeta('og:url',         canonicalUrl);
         setMeta('og:type',        'article');
         setMeta('og:site_name',   'Mystická Hvězda');
-        setMeta('og:image',       `${BASE_URL}/img/og-horoskop.jpg`);
+        setMeta('og:image',       `${BASE_URL}/img/og/horoskop-${slug}.jpg`);
         setMeta('og:image:width',  '1200');
         setMeta('og:image:height', '630');
         setMeta('og:image:alt',    `Horoskop ${signName} — Mystická Hvězda`);
@@ -294,7 +294,7 @@
         // Share URL — UTM + anchor (pro clipboard)
         const shareUrl = shareUrlWithUTM || canonicalUrl;
 
-        // Facebook share URL — canonická URL bez UTM (FB přidá svoje parametry)
+        // Facebook share URL — URL s ?znak= pro server-side OG injection
         const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonicalUrl)}`;
 
         // Detekuj podporu nativního sdílení s obrázkem (mobile)
@@ -492,12 +492,13 @@
                 .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
                 .replace(/\s+/g, '-');
             // Canonical URL bez hash fragmentu (FB crawler nevidí JS, hash by nefungoval)
-            const canonical = `${BASE_URL}/horoskopy.html`;
+            // Canonical s ?znak= pro server-side OG injection (FB scraper dostane správný og:image)
+            const canonical = `${BASE_URL}/horoskopy.html?znak=${encodeURIComponent(slug)}`;
             // Share URL s UTM + anchor — pro kopírování odkazu
-            const shareUrlWithUTM = `${BASE_URL}/horoskopy.html?utm_source=social&utm_medium=share&utm_campaign=horoscope&utm_content=${encodeURIComponent(slug)}#${slug}`;
+            const shareUrlWithUTM = `${BASE_URL}/horoskopy.html?znak=${encodeURIComponent(slug)}&utm_source=social&utm_medium=share&utm_campaign=horoscope#${slug}`;
 
             // Aktualizuj OG meta
-            updateOGMeta(signName, prediction, canonical);
+            updateOGMeta(signName, prediction, canonical, slug);
 
             // Vygeneruj canvas kartu
             const canvas = generateHoroscopeCard(signSymbol, signName, dateStr || '', prediction, affirmation || '');
