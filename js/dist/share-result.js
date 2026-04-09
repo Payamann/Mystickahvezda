@@ -1,6 +1,24 @@
-(function(){"use strict";const c=`
-        <button class="share-result-btn" aria-label="Sd\xEDlet v\xFDsledek" style="
-            display: inline-flex; align-items: center; gap: 0.5rem;
+/**
+ * share-result.js — Web Share API helper pro sdílení výsledků
+ * Automaticky přidá share button když najde výsledek na stránce
+ */
+
+(function () {
+    'use strict';
+
+    const SHARE_BTN_HTML = `
+        <button class="share-result-btn" aria-label="Sdílet výsledek">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Sdílet výsledek
+        </button>
+        <div class="share-toast" role="status" aria-live="polite">✅ Odkaz zkopírován do schránky!</div>
+    `;
+
+    const SHARE_BTN_STYLES = `
+        .share-result-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             padding: 0.65rem 1.4rem;
             background: transparent;
             border: 1px solid rgba(212,175,55,0.5);
@@ -8,18 +26,145 @@
             color: var(--color-mystic-gold, #d4af37);
             font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background 0.3s;
             margin-top: 1rem;
-        " onmouseover="this.style.background='rgba(212,175,55,0.1)'" onmouseout="this.style.background='transparent'">
-            <span>\u{1F517}</span> Sd\xEDlet v\xFDsledek
-        </button>
-        <div class="share-toast" style="
-            display: none; position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-            background: rgba(20,15,40,0.95); border: 1px solid rgba(212,175,55,0.4);
-            padding: 0.75rem 1.5rem; border-radius: 50px; color: white;
-            font-size: 0.9rem; z-index: 9999; backdrop-filter: blur(10px);
-            animation: fadeIn 0.3s ease;
-        ">\u2705 Odkaz zkop\xEDrov\xE1n do schr\xE1nky!</div>
-    `;function d(e,r,s){if(!e||e.querySelector(".share-result-btn"))return;const t=document.createElement("div");t.innerHTML=c;const o=e.querySelector("#detail-numbers");if(o){const n=o.closest("p")||o.parentElement;t.style.textAlign="center",t.style.marginTop="1.5rem",t.style.marginBottom="1.5rem",n.insertAdjacentElement("afterend",t)}else e.appendChild(t);const y=t.querySelector(".share-result-btn"),b=t.querySelector(".share-toast");y.addEventListener("click",async()=>{const n=s||document.querySelector(".reading-text, .result-text, [data-share-text]")?.innerText?.slice(0,200)||"",a=window.location.href,i=r||document.title;if(navigator.share)try{await navigator.share({title:i,text:n,url:a});return}catch{}try{await navigator.clipboard.writeText(`${i}
+        }
+        .share-result-btn:hover {
+            background: rgba(212,175,55,0.1);
+        }
+        .share-toast {
+            display: none;
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20,15,40,0.95);
+            border: 1px solid rgba(212,175,55,0.4);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            color: white;
+            font-size: 0.9rem;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+        .share-toast.visible {
+            display: block;
+            animation: shareToastIn 0.3s ease;
+        }
+        @keyframes shareToastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+    `;
 
-${a}`),u(b)}catch{prompt("Zkop\xEDrujte odkaz:",a)}})}function u(e){e.style.display="block",setTimeout(()=>{e.style.display="none"},3e3)}const m=[".reading-result",".ai-result",".result-section",".crystal-result",".natal-result",".numerology-result",".synastry-result",".mentor-result","#ai-reading",".oracle-response","#tarot-result","#tarot-results","#result-panel","#horoscope-result","#horoscope-detail-section","#chart-results","#numerology-results","#phaseCard","#astro-results","#answer-container","#biorhythm-results","#aura-result","#messages-container"],p=new Set(["#horoscope-detail-section"]);function l(){m.forEach(e=>{const r=document.querySelector(e);if(!(!r||r.querySelector(".share-result-btn"))&&!(p.has(e)&&!r.dataset.loaded)&&r.children.length>0){const s=document.title.replace(" | Mystick\xE1 Hv\u011Bzda","");d(r,`M\u016Fj v\xFDsledek: ${s} | Mystick\xE1 Hv\u011Bzda`)}})}function h(){l(),new MutationObserver(l).observe(document.body,{childList:!0,subtree:!0})}document.addEventListener("DOMContentLoaded",h)})();
+    function injectStyles() {
+        if (document.getElementById('share-result-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'share-result-styles';
+        style.textContent = SHARE_BTN_STYLES;
+        document.head.appendChild(style);
+    }
+
+    function buildShareUrl(utmSource) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('utm_source', utmSource);
+        url.searchParams.set('utm_medium', 'share');
+        url.searchParams.set('utm_campaign', 'result_share');
+        return url.toString();
+    }
+
+    function addShareButton(container, title, text) {
+        if (!container || container.querySelector('.share-result-btn')) return;
+
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = SHARE_BTN_HTML;
+
+        // Pro horoskop — vlož za odstavec s čísly štěstí, vycentruj
+        const luckyNumbers = container.querySelector('#detail-numbers');
+        if (luckyNumbers) {
+            const luckyParagraph = luckyNumbers.closest('p') || luckyNumbers.parentElement;
+            wrapper.style.textAlign = 'center';
+            wrapper.style.marginTop = '1.5rem';
+            wrapper.style.marginBottom = '2.5rem';
+            luckyParagraph.insertAdjacentElement('afterend', wrapper);
+        } else {
+            container.appendChild(wrapper);
+        }
+
+        const btn = wrapper.querySelector('.share-result-btn');
+        const toast = wrapper.querySelector('.share-toast');
+
+        btn.addEventListener('click', async () => {
+            const shareText = text || document.querySelector('.reading-text, .result-text, [data-share-text]')?.innerText?.slice(0, 200) || '';
+            const shareTitle = title || document.title;
+
+            // Detekce platformy pro UTM
+            const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+            const utmSource = isMobile ? 'mobile_share' : 'web_share';
+            const shareUrl = buildShareUrl(utmSource);
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+                    return;
+                } catch (e) { /* fallback */ }
+            }
+
+            // Fallback: clipboard
+            try {
+                await navigator.clipboard.writeText(`${shareTitle}\n\n${shareUrl}`);
+                showToast(toast);
+            } catch (e) {
+                prompt('Zkopírujte odkaz:', shareUrl);
+            }
+        });
+    }
+
+    function showToast(toast) {
+        toast.classList.add('visible');
+        setTimeout(() => { toast.classList.remove('visible'); }, 3000);
+    }
+
+    // Observer — čeká na zobrazení výsledků a přidá share button
+    const selectors = [
+        '.reading-result', '.ai-result', '.result-section',
+        '.crystal-result', '.natal-result', '.numerology-result',
+        '.synastry-result', '.mentor-result', '#ai-reading', '.oracle-response',
+        '#tarot-result', '#tarot-results',
+        '#result-panel',
+        '#horoscope-result', '#horoscope-detail-section',
+        '#chart-results',
+        '#numerology-results',
+        '#phaseCard',
+        '#astro-results',
+        '#answer-container',
+        '#biorhythm-results',
+        '#aura-result',
+        '#messages-container',
+    ];
+
+    const requireLoadedFlag = new Set(['#horoscope-detail-section']);
+
+    function checkAll() {
+        selectors.forEach(sel => {
+            const el = document.querySelector(sel);
+            if (!el || el.querySelector('.share-result-btn')) return;
+            if (requireLoadedFlag.has(sel) && !el.dataset.loaded) return;
+            if (el.children.length > 0) {
+                const pageTitle = document.title.replace(' | Mystická Hvězda', '');
+                addShareButton(el, `Můj výsledek: ${pageTitle} | Mystická Hvězda`);
+            }
+        });
+    }
+
+    function observeResults() {
+        checkAll();
+        const observer = new MutationObserver(checkAll);
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        injectStyles();
+        observeResults();
+    });
+})();

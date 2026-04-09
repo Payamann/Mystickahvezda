@@ -3,7 +3,7 @@
  * Provides offline caching with stale-while-revalidate strategy
  */
 
-const CACHE_NAME = 'mysticka-hvezda-v22';
+const CACHE_NAME = 'mysticka-hvezda-v23';
 const MAX_RUNTIME_CACHE_SIZE = 150;
 const STATIC_ASSETS = [
     '/',
@@ -25,6 +25,8 @@ const STATIC_ASSETS = [
     '/data/tarot-cards.json',
     '/data/runes.json',
     '/js/runes.js',
+    '/js/dist/platby-init.js',
+    '/js/dist/analytics-page-init.js',
     '/manifest.json',
     '/offline.html'
 ];

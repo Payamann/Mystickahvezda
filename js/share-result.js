@@ -7,8 +7,18 @@
     'use strict';
 
     const SHARE_BTN_HTML = `
-        <button class="share-result-btn" aria-label="Sdílet výsledek" style="
-            display: inline-flex; align-items: center; gap: 0.5rem;
+        <button class="share-result-btn" aria-label="Sdílet výsledek">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Sdílet výsledek
+        </button>
+        <div class="share-toast" role="status" aria-live="polite">✅ Odkaz zkopírován do schránky!</div>
+    `;
+
+    const SHARE_BTN_STYLES = `
+        .share-result-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             padding: 0.65rem 1.4rem;
             background: transparent;
             border: 1px solid rgba(212,175,55,0.5);
@@ -16,20 +26,52 @@
             color: var(--color-mystic-gold, #d4af37);
             font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background 0.3s;
             margin-top: 1rem;
-        " onmouseover="this.style.background='rgba(212,175,55,0.1)'" onmouseout="this.style.background='transparent'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            Sdílet výsledek
-        </button>
-        <div class="share-toast" style="
-            display: none; position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-            background: rgba(20,15,40,0.95); border: 1px solid rgba(212,175,55,0.4);
-            padding: 0.75rem 1.5rem; border-radius: 50px; color: white;
-            font-size: 0.9rem; z-index: 9999; backdrop-filter: blur(10px);
-            animation: fadeIn 0.3s ease;
-        ">✅ Odkaz zkopírován do schránky!</div>
+        }
+        .share-result-btn:hover {
+            background: rgba(212,175,55,0.1);
+        }
+        .share-toast {
+            display: none;
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20,15,40,0.95);
+            border: 1px solid rgba(212,175,55,0.4);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            color: white;
+            font-size: 0.9rem;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+        .share-toast.visible {
+            display: block;
+            animation: shareToastIn 0.3s ease;
+        }
+        @keyframes shareToastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
     `;
+
+    function injectStyles() {
+        if (document.getElementById('share-result-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'share-result-styles';
+        style.textContent = SHARE_BTN_STYLES;
+        document.head.appendChild(style);
+    }
+
+    function buildShareUrl(utmSource) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('utm_source', utmSource);
+        url.searchParams.set('utm_medium', 'share');
+        url.searchParams.set('utm_campaign', 'result_share');
+        return url.toString();
+    }
 
     function addShareButton(container, title, text) {
         if (!container || container.querySelector('.share-result-btn')) return;
@@ -54,8 +96,12 @@
 
         btn.addEventListener('click', async () => {
             const shareText = text || document.querySelector('.reading-text, .result-text, [data-share-text]')?.innerText?.slice(0, 200) || '';
-            const shareUrl = window.location.href;
             const shareTitle = title || document.title;
+
+            // Detekce platformy pro UTM
+            const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+            const utmSource = isMobile ? 'mobile_share' : 'web_share';
+            const shareUrl = buildShareUrl(utmSource);
 
             if (navigator.share) {
                 try {
@@ -75,17 +121,15 @@
     }
 
     function showToast(toast) {
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        toast.classList.add('visible');
+        setTimeout(() => { toast.classList.remove('visible'); }, 3000);
     }
 
     // Observer — čeká na zobrazení výsledků a přidá share button
     const selectors = [
-        // obecné třídy
         '.reading-result', '.ai-result', '.result-section',
         '.crystal-result', '.natal-result', '.numerology-result',
         '.synastry-result', '.mentor-result', '#ai-reading', '.oracle-response',
-        // konkrétní ID na jednotlivých stránkách
         '#tarot-result', '#tarot-results',
         '#result-panel',
         '#horoscope-result', '#horoscope-detail-section',
@@ -99,7 +143,6 @@
         '#messages-container',
     ];
 
-    // Selectors that require explicit data-loaded flag before showing share button
     const requireLoadedFlag = new Set(['#horoscope-detail-section']);
 
     function checkAll() {
@@ -115,12 +158,13 @@
     }
 
     function observeResults() {
-        // Okamžitá kontrola — pro elementy s obsahem hned při loadu
         checkAll();
-
         const observer = new MutationObserver(checkAll);
         observer.observe(document.body, { childList: true, subtree: true });
     }
 
-    document.addEventListener('DOMContentLoaded', observeResults);
+    document.addEventListener('DOMContentLoaded', () => {
+        injectStyles();
+        observeResults();
+    });
 })();
