@@ -264,11 +264,14 @@
         setMeta('og:url',         canonicalUrl);
         setMeta('og:type',        'article');
         setMeta('og:site_name',   'Mystická Hvězda');
-        setMeta('og:image',       `${BASE_URL}/img/icon-zodiac.webp`);
+        setMeta('og:image',       `${BASE_URL}/img/og-horoskop.jpg`);
+        setMeta('og:image:width',  '1200');
+        setMeta('og:image:height', '630');
+        setMeta('og:image:alt',    `Horoskop ${signName} — Mystická Hvězda`);
     }
 
     // ─── Vytvoř share panel ──────────────────────────────────────────────────
-    function createSharePanel(canvas, signName, signSymbol, canonicalUrl) {
+    function createSharePanel(canvas, signName, signSymbol, canonicalUrl, shareUrlWithUTM) {
         const existing = document.getElementById('horoscope-share-panel');
         if (existing) existing.remove();
 
@@ -288,10 +291,10 @@
             margin: 0 auto 1.5rem;
         `;
 
-        // UTM URL
-        const shareUrl = `${canonicalUrl}?utm_source=social&utm_medium=share&utm_campaign=horoscope&utm_content=${encodeURIComponent(signName.toLowerCase())}`;
+        // Share URL — UTM + anchor (pro clipboard)
+        const shareUrl = shareUrlWithUTM || canonicalUrl;
 
-        // Facebook share URL
+        // Facebook share URL — canonická URL bez UTM (FB přidá svoje parametry)
         const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonicalUrl)}`;
 
         panel.innerHTML = `
@@ -460,7 +463,10 @@
             const slug = signName.toLowerCase()
                 .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
                 .replace(/\s+/g, '-');
-            const canonical = `${BASE_URL}/horoskopy.html#${slug}`;
+            // Canonical URL bez hash fragmentu (FB crawler nevidí JS, hash by nefungoval)
+            const canonical = `${BASE_URL}/horoskopy.html`;
+            // Share URL s UTM + anchor — pro kopírování odkazu
+            const shareUrlWithUTM = `${BASE_URL}/horoskopy.html?utm_source=social&utm_medium=share&utm_campaign=horoscope&utm_content=${encodeURIComponent(slug)}#${slug}`;
 
             // Aktualizuj OG meta
             updateOGMeta(signName, prediction, canonical);
@@ -472,7 +478,7 @@
             const contentContainer = detailSection.querySelector('.horoscope-content');
             if (!contentContainer) return;
 
-            const panel = createSharePanel(canvas, signName, signSymbol, canonical);
+            const panel = createSharePanel(canvas, signName, signSymbol, canonical, shareUrlWithUTM);
 
             // Odstraň starý panel pokud existuje
             const old = contentContainer.querySelector('#horoscope-share-panel');
@@ -493,5 +499,9 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', init);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();
