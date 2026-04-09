@@ -127,10 +127,11 @@ def generate_card(slug, sign_name, symbol, sign_color):
 
     draw_gold_circle(draw, symbol_cx, symbol_cy, 160)
 
+    # Segoe UI Symbol má zodiac glyphs (Inter nemá)
     try:
-        sym_font = ImageFont.truetype(str(INTER_BOLD), 160)
+        sym_font = ImageFont.truetype('C:/Windows/Fonts/seguisym.ttf', 160)
     except:
-        sym_font = ImageFont.load_default()
+        sym_font = ImageFont.truetype(str(INTER_BOLD), 160)
 
     # Symbol — vycentrovat na kruh
     sb = sym_font.getbbox(symbol)
