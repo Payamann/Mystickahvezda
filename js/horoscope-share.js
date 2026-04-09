@@ -310,35 +310,37 @@
                     </button>
                 </div>
                 <div class="hs-options" id="hs-options" aria-hidden="true">
-                    ${canShareFiles ? `
-                    <button class="hs-opt" id="hs-native-btn">
-                        <span class="hs-opt-icon">📲</span>
-                        <span>Instagram / TikTok / WhatsApp</span>
-                    </button>` : ''}
-                    <a class="hs-opt" href="${fbUrl}" target="_blank" rel="noopener">
-                        <span class="hs-opt-icon" style="background:#1877f2">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                        </span>
-                        <span>Facebook</span>
-                    </a>
-                    <a class="hs-opt" href="${waUrl}" target="_blank" rel="noopener">
-                        <span class="hs-opt-icon" style="background:#25d366">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                        </span>
-                        <span>WhatsApp</span>
-                    </a>
-                    <button class="hs-opt" id="hs-copy-btn">
-                        <span class="hs-opt-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                        </span>
-                        <span>Kopírovat odkaz</span>
-                    </button>
-                    <button class="hs-opt" id="hs-download-btn">
-                        <span class="hs-opt-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        </span>
-                        <span>Uložit obrázek</span>
-                    </button>
+                    <div class="hs-options-inner">
+                        ${canShareFiles ? `
+                        <button class="hs-opt" id="hs-native-btn">
+                            <span class="hs-opt-icon">📲</span>
+                            <span>Instagram / TikTok / WhatsApp</span>
+                        </button>` : ''}
+                        <a class="hs-opt" href="${fbUrl}" target="_blank" rel="noopener">
+                            <span class="hs-opt-icon" style="background:#1877f2">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                            </span>
+                            <span>Facebook</span>
+                        </a>
+                        <a class="hs-opt" href="${waUrl}" target="_blank" rel="noopener">
+                            <span class="hs-opt-icon" style="background:#25d366">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                            </span>
+                            <span>WhatsApp</span>
+                        </a>
+                        <button class="hs-opt" id="hs-copy-btn">
+                            <span class="hs-opt-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </span>
+                            <span>Kopírovat odkaz</span>
+                        </button>
+                        <button class="hs-opt" id="hs-download-btn">
+                            <span class="hs-opt-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            </span>
+                            <span>Uložit obrázek</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="hs-toast" id="hs-toast" role="status" aria-live="polite">✅ Odkaz zkopírován!</div>
             </div>
@@ -443,9 +445,11 @@
                 grid-template-rows: 0fr;
                 transition: grid-template-rows 0.3s ease, margin-top 0.3s ease;
                 margin-top: 0;
-                overflow: hidden;
             }
-            .hs-options > * { min-height: 0; }
+            .hs-options-inner {
+                overflow: hidden;
+                min-height: 0;
+            }
             .hs-options--open {
                 grid-template-rows: 1fr;
                 margin-top: 0.75rem;
