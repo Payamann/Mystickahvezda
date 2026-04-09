@@ -297,15 +297,23 @@
         // Facebook share URL — canonická URL bez UTM (FB přidá svoje parametry)
         const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonicalUrl)}`;
 
+        // Detekuj podporu nativního sdílení s obrázkem (mobile)
+        const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([''], 'test.jpg', { type: 'image/jpeg' })] }));
+        const primaryBtnLabel = canShareFiles
+            ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Sdílet horoskop`
+            : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Uložit obrázek`;
+        const hintText = canShareFiles
+            ? 'Sdílej přímo do Stories, WhatsApp, TikToku nebo Messengeru'
+            : 'Ulož kartu a sdílej na Instagram, Pinterest nebo TikTok';
+
         panel.innerHTML = `
             <div class="hs-inner">
                 <p class="hs-title">✨ Sdílet horoskop ${signSymbol} ${signName}</p>
                 <div class="hs-preview-wrap"></div>
-                <p class="hs-hint">Stáhni kartu a sdílej na Instagram, Pinterest nebo TikTok</p>
+                <p class="hs-hint">${hintText}</p>
                 <div class="hs-buttons">
-                    <button class="hs-btn hs-btn--download" id="hs-download-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Stáhnout obrázek
+                    <button class="hs-btn hs-btn--primary" id="hs-share-btn">
+                        ${primaryBtnLabel}
                     </button>
                     <a class="hs-btn hs-btn--fb" href="${fbUrl}" target="_blank" rel="noopener">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
@@ -323,11 +331,31 @@
         // Vložit preview canvas
         panel.querySelector('.hs-preview-wrap').appendChild(previewCanvas);
 
-        // Download
-        panel.querySelector('#hs-download-btn').addEventListener('click', () => {
+        // Primární tlačítko — nativní share na mobilu, download na desktopu
+        panel.querySelector('#hs-share-btn').addEventListener('click', async () => {
+            const filename = `horoskop-${signName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.jpg`;
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+            if (canShareFiles) {
+                // Mobil: nativní share sheet s obrázkem → Instagram Stories, WhatsApp, TikTok, Messenger
+                try {
+                    const res  = await fetch(dataUrl);
+                    const blob = await res.blob();
+                    const file = new File([blob], filename, { type: 'image/jpeg' });
+                    const shareTitle = `Horoskop ${signName} — Mystická Hvězda`;
+                    const shareText  = `${signSymbol} Můj dnešní horoskop: ${shareUrl}`;
+                    await navigator.share({ files: [file], title: shareTitle, text: shareText });
+                    return;
+                } catch (e) {
+                    if (e.name === 'AbortError') return; // uživatel zrušil
+                    // fallback na download
+                }
+            }
+
+            // Desktop fallback: download
             const link = document.createElement('a');
-            link.download = `horoskop-${signName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.jpg`;
-            link.href = canvas.toDataURL('image/jpeg', 0.92);
+            link.download = filename;
+            link.href = dataUrl;
             link.click();
         });
 
@@ -396,7 +424,7 @@
                 border: none;
             }
             .hs-btn:hover { opacity: 0.85; transform: translateY(-1px); }
-            .hs-btn--download {
+            .hs-btn--primary {
                 background: linear-gradient(135deg, #ebc066, #c89b3c);
                 color: #0a0a1a;
             }
