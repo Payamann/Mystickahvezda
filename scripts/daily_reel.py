@@ -340,6 +340,7 @@ PRAVIDLA:
 - Vyhni se klišé jako "ze hvězd", "od hvězd", "hvězdy ti posílají" — hledej svěžejší formulace
 - NEZMIŇUJ explicitně která 3 znamení jsou ve videu — zachovej záhadu
 - Třetí věta = silná výzva k akci BEZ odkazu — např. "Sleduj nás ať ti neunikne nic." nebo "Ulož si video, budeš se k němu vracet." nebo "Označ někoho, komu to dnes sedí."
+- ZAKÁZANÁ SLOVA: "portál", "brána", "otevírá se portál/brána" — příliš vágní klišé. Místo toho popiš konkrétní pocit nebo situaci.
 - Na TikToku NESMÍ být žádný odkaz ani URL — pouze text a hashtags
 - Za textem PRÁZDNÝ ŘÁDEK a pak hashtags na samostatném řádku
 - Hashtags: MAX 6 celkem — #mystickaHvezda + VŠECHNA 3 znamení s velkým počátečním písmenem + 1 obecný (#astrologie nebo #horoskop) + 1 trendový (#fyp nebo #spiritualita)
