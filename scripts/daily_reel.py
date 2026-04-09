@@ -342,7 +342,7 @@ PRAVIDLA:
 - Třetí věta = silná výzva k akci BEZ odkazu — např. "Sleduj nás ať ti neunikne nic." nebo "Ulož si video, budeš se k němu vracet." nebo "Označ někoho, komu to dnes sedí."
 - Na TikToku NESMÍ být žádný odkaz ani URL — pouze text a hashtags
 - Za textem PRÁZDNÝ ŘÁDEK a pak hashtags na samostatném řádku
-- Hashtags: MAX 5 celkem — #mystickaHvezda + 1–2 ze znamení (ne nutně všechna, s velkým počátečním písmenem) + 1 obecný (#astrologie nebo #horoskop) + 1 trendový (#fyp nebo #spiritualita)
+- Hashtags: MAX 6 celkem — #mystickaHvezda + VŠECHNA 3 znamení s velkým počátečním písmenem + 1 obecný (#astrologie nebo #horoskop) + 1 trendový (#fyp nebo #spiritualita)
 - Piš POUZE česky, pouze latinkou, žádné cizí znaky ani kanji
 - Výstup JEN samotný text, žádné komentáře"""
 
@@ -355,8 +355,8 @@ Voiceover script (pro kontext):
 Napiš TikTok description ve formátu:
 [3 věty textu s emoji]
 
-#mystickaHvezda [1–2 ze znamení] [1 obecný: #astrologie nebo #horoskop] [1 trendový: #fyp nebo #spiritualita]
-(Dostupná znamení: {hashtag_signs_pascal} — vyber max 2)"""
+#mystickaHvezda [VŠECHNA 3 znamení] [1 obecný: #astrologie nebo #horoskop] [1 trendový: #fyp nebo #spiritualita]
+(Znamení k použití — VŠECHNA 3: {hashtag_signs_pascal})"""
 
     print("[*] Generuji TikTok description...")
     return claude_call(system, user, max_tokens=400)
@@ -551,6 +551,7 @@ Napiš celý voiceover script ve třech částech:
    GENDEROVÁ NEUTRALITA V HOOKU: Absolutní zákaz minulých příčestí (toužila, čekala, hledal, snil).
    Používej POUZE přítomný nebo budoucí čas — "touží", "čeká", "hledá", "přichází".
    Podmět hooku musí být vždy neutrální: "vybraná znamení", "hvězdy", "energie", "vesmír" — NIKDY "ty".
+   ZAKÁZANÁ SLOVA V HOOKU: "portál", "brána", "otevírá se portál" — příliš vágní klišé. Místo toho popiš konkrétní pocit, situaci nebo astrologický posun.
 
 2) SEKCE ZNAMENÍ — pro každé znamení níže napiš jeho sekci:
    - Začni oslovením: "[tag] {{vocative}},"
@@ -572,6 +573,7 @@ Napiš celý voiceover script ve třech částech:
 3) OUTRO — 3 věty s tagy, CTA na web + výzva ke sdílení.
    Vzor: "[upbeat] věta o webu. [warm] výzva ke sdílení. [gentle] důvod proč poslat dál."
    NIKDY: "Pošli to někomu komu to sedí" ani "Třeba mu to dnes změní den"
+   WEB URL V OUTRO: VŽDY "mystickahvezda.cz" — NIKDY "Mystická-Hvězda.cz", "mysticka-hvezda.cz" ani jiné varianty s pomlčkou.
 
 Výstup ve formátu (nic jiného — žádné nadpisy jako HOOK: nebo SEKCE:):
 [hook věta 1]. [hook věta 2].
