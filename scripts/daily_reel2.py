@@ -791,13 +791,27 @@ def main():
     print(f"\n[OK] Hotovo! Datum videa: {target_date}")
     print(f"[OK] Znameni: {', '.join(chosen)}")
 
+    # Captions příkaz — čistý text bez tagů a break značek
+    clean_text = re.sub(r'\[[\w]+\]', '', script)          # odstraň [tag]
+    clean_text = re.sub(r'<break[^/]*/>', '', clean_text)   # odstraň <break ... />
+    clean_text = re.sub(r'🗓️.*?\n', '', clean_text)         # odstraň datum řádek
+    clean_text = re.sub(r'\s+', ' ', clean_text).strip()    # normalizuj whitespace
+    captions_cmd = (
+        f'python "C:/Users/pavel/OneDrive/Desktop/captions-tool/captions.py" '
+        f'"VIDEO.mp4" --model small --text "{clean_text}"'
+    )
+    print(f"\n{sep}\nCAPTIONS PŘÍKAZ (nahraď VIDEO.mp4)\n{sep}")
+    print(captions_cmd)
+    print(sep)
+
     # Uloz do souboru
     out_path = Path(__file__).parent / f"voiceover2_{target_date}.txt"
     output = (
         f"VOICEOVER SCRIPT\n{sep}\n{script}\n\n"
         f"TIKTOK / INSTAGRAM DESCRIPTION\n{sep}\n{description}\n\n"
         f"FACEBOOK REELS DESCRIPTION\n{sep}\n{fb_description}\n\n"
-        f"SUNO PROMPT\n{sep}\n{suno}\n"
+        f"SUNO PROMPT\n{sep}\n{suno}\n\n"
+        f"CAPTIONS PŘÍKAZ\n{sep}\n{captions_cmd}\n"
     )
     out_path.write_text(output, encoding="utf-8")
     print(f"[OK] Ulozeno: {out_path}")
