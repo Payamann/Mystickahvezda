@@ -86,7 +86,8 @@ SIGN_VOCATIVE = {
     'Kozoroh': 'Kozorohu', 'Vodnář': 'Vodnáři', 'Ryby': 'Ryby'
 }
 
-USED_SIGNS_FILE = Path(__file__).parent / "used_signs2.json"
+USED_SIGNS_FILE  = Path(__file__).parent / "used_signs2.json"
+USED_SCENES_FILE = Path(__file__).parent / "used_scenes2.json"
 
 def load_used_signs() -> dict:
     if USED_SIGNS_FILE.exists():
@@ -95,6 +96,25 @@ def load_used_signs() -> dict:
 
 def save_used_signs(data: dict):
     USED_SIGNS_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+def load_used_scenes() -> list:
+    if USED_SCENES_FILE.exists():
+        return json.loads(USED_SCENES_FILE.read_text(encoding="utf-8"))
+    return []
+
+def save_used_scene(scene: str):
+    scenes = load_used_scenes()
+    scenes.append(scene)
+    USED_SCENES_FILE.write_text(json.dumps(scenes[-14:], ensure_ascii=False, indent=2), encoding="utf-8")
+
+def extract_scene_key(script: str) -> str:
+    """Extrahuj první větu slide 2 pro blacklist (první krátká věta bez tagu)."""
+    for line in script.splitlines():
+        clean = re.sub(r'\[[\w]+\]\s*', '', line).strip()
+        clean = re.sub(r'<break[^/]*/>', '', clean).strip()
+        if 8 < len(clean) < 70 and not clean.startswith('🗓'):
+            return clean[:60]
+    return ""
 
 def pick_signs(target_date: str) -> list:
     """Vybere 1 znamení které v daný den ještě nebylo použito."""
@@ -273,7 +293,8 @@ def build_suno_prompt(signs: list, script: str, target_date: str) -> str:
         "first rays of light touching distant galaxies",
     ]
 
-    day_seed = int(hashlib.md5(target_date.encode()).hexdigest(), 16)
+    sign_str = signs[0] if signs else ""
+    day_seed = int(hashlib.md5((target_date + sign_str).encode()).hexdigest(), 16)
     instruments = INSTRUMENT_VARIATIONS[day_seed % len(INSTRUMENT_VARIATIONS)]
     texture = TEXTURE_VARIATIONS[(day_seed // 7) % len(TEXTURE_VARIATIONS)]
 
@@ -318,6 +339,98 @@ Write a Suno song description. The music must:
 
     print("[*] Generuji Suno prompt...")
     return claude_call(system, user, max_tokens=300)
+
+
+def build_thumbnail_prompt(sign: str, target_date: str, script: str) -> str:
+    """Vygeneruje kompletní Nano Banana thumbnail prompt pro daily_reel2."""
+    date_obj = date.fromisoformat(target_date)
+    date_cs_upper = f"{date_obj.day}. DUBNA" if date_obj.month == 4 else f"{date_obj.day}. {MONTHS_CS[date_obj.month - 1].upper()}"
+
+    # Glyfy znamení
+    SIGN_GLYPHS = {
+        'Beran': '♈', 'Býk': '♉', 'Blíženci': '♊', 'Rak': '♋',
+        'Lev': '♌', 'Panna': '♍', 'Váhy': '♎', 'Štír': '♏',
+        'Střelec': '♐', 'Kozoroh': '♑', 'Vodnář': '♒', 'Ryby': '♓',
+    }
+    glyph = SIGN_GLYPHS.get(sign, '★')
+
+    # Barvy nebuly podle živlu
+    ELEMENT_COLORS = {
+        'Beran':    ('warm amber-orange stellar explosion, red fire tones', 'cool electric blue nebula with teal accents'),
+        'Býk':      ('deep emerald green nebula with gold dust', 'rich teal and forest green star clusters'),
+        'Blíženci': ('bright golden-yellow nebula with white light burst', 'cool lavender and silver star field'),
+        'Rak':      ('warm teal-green nebula with soft silver glow', 'deep ocean blue with pearl starlight'),
+        'Lev':      ('blazing gold and amber supernova', 'warm copper-orange nebula with red fire edges'),
+        'Panna':    ('soft sage-green nebula with warm ivory light', 'cool mint and silver star clusters'),
+        'Váhy':     ('soft rose-gold nebula with lavender tones', 'cool periwinkle blue with silver starlight'),
+        'Štír':     ('deep crimson-red nebula with dark purple shadows', 'near-black deep space with electric violet accents'),
+        'Střelec':  ('warm amber-orange stellar explosion with bright white light burst', 'cool electric blue nebula with teal star clusters'),
+        'Kozoroh':  ('dark charcoal nebula with cold steel-blue light', 'deep navy with icy silver star clusters'),
+        'Vodnář':   ('electric teal and cyan nebula with white core burst', 'deep indigo with aquamarine star trails'),
+        'Ryby':     ('soft violet-lavender nebula with pearl shimmer', 'deep ocean blue with silver and teal starlight'),
+    }
+    top_color, bottom_color = ELEMENT_COLORS.get(sign, ('warm amber nebula', 'cool blue nebula'))
+
+    # Generuj scroll text přes Claude — uzavřený standalone výrok
+    scroll_system = """Jsi copywriter pro českou mystickou stránku Mystická Hvězda.
+Píšeš TEXT NA SVITEK pro thumbnail astrologického videa.
+PRAVIDLA:
+- Přesně 2 krátké věty — každá MAX 7 slov
+- KRITICKÉ: obě věty tvoří JEDNU myšlenku — věta 2 je punchline nebo přímé pokračování věty 1
+- Tykáš, přítomný čas, žádné lomené tvary, žádné uvozovky, žádné emoji
+- JAZYK: pouze běžná přirozená čeština — jednoduchá slovesa, krátká slova
+- ZAKÁZÁNO: složená nebo neobvyklá slovesa ("uvázni se", "zapusť", "zakotvi"), dvě nesouvisející myšlenky
+- ZAKÁZÁNO: zájmena v druhé větě odkazující na podstatné jméno z první věty ("ji", "ho", "to", "ní") — každá věta musí být samostatně srozumitelná
+- ZAKÁZÁNO: genderová zájmena třetí osoby ("on", "ona", "jeho", "její") — piš bez pohlaví: místo "on čeká" → "druhá strana čeká" nebo přeformuluj bez osoby
+
+DOBRÉ PŘÍKLADY (přesně tenhle styl):
+"Ti uniká něco důležitého. A ty to víš."
+"Tvůj instinkt ví víc, než si myslíš. Stačí mu věřit."
+"Čekáš na správný moment. On už přišel."
+"Ostatní to nevidí. Ty to cítíš."
+"Váháš. Ale uvnitř už víš."
+"Hledáš odpověď v druhých. Je v tobě."
+
+Výstup: pouze 2 věty, každá na samostatném řádku, nic jiného."""
+
+    scroll_user = f"""Znamení: {sign}
+Voiceover (vyber nejsilnější twist a přeformuluj jako 2 spojené věty v duchu příkladů výše):
+{script[:400]}
+
+Napiš 2 věty na thumbnail svitek."""
+
+    print("[*] Generuji thumbnail scroll text...")
+    scroll_raw = claude_call(scroll_system, scroll_user, max_tokens=80)
+    scroll_lines = [l.strip() for l in scroll_raw.strip().splitlines() if l.strip()]
+    scroll_line1 = scroll_lines[0] if len(scroll_lines) > 0 else f"Tvůj instinkt ví víc, než si myslíš."
+    scroll_line2 = scroll_lines[1] if len(scroll_lines) > 1 else f"Stačí mu důvěřovat."
+
+    prompt = f"""Real deep-space Hubble-style nebula photograph background, split composition:
+top half = {top_color} with dramatic light burst from center,
+thin horizontal black band across the middle,
+bottom half = {bottom_color} and scattered starlight.
+Cinematic, high-detail, photo-realistic.
+
+All graphic elements positioned in the UPPER 80% of the frame — leave minimal space at very bottom.
+
+Center-upper area: large ornate 3D CGI {sign} zodiac symbol ({glyph}),
+dark obsidian material with intricate gold filigree engravings,
+deeply detailed ancient medallion style, soft golden glow radiating from symbol, floating centered in frame.
+
+Directly below the symbol (upper-mid frame): dark stone plaque with ornate golden decorative border,
+bold serif text (NOT cursive, NOT italic, NOT calligraphic):
+Line 1: "{date_cs_upper}"
+Line 2: "{sign.upper()}"
+Text color: warm cream/off-white, engraved look.
+
+Immediately below the plaque (mid frame, NOT at the very bottom): aged parchment scroll, curled edges, warm paper texture,
+two lines of bold serif text (NOT cursive, NOT italic, NOT calligraphic), dark brown #2a1500:
+Line 1: "{scroll_line1}"
+Line 2: "{scroll_line2}"
+
+Portrait 4:5, 1080x1350px. No watermarks, no UI, no borders."""
+
+    return prompt
 
 
 def build_tiktok_description(signs: list, script: str, target_date: str) -> str:
@@ -382,7 +495,7 @@ PRAVIDLA:
 - Přesně 4 věty textu — RYTMUS: první 2 věty KRÁTKÉ (do 10 slov každá), třetí rozvíjí energii dne, čtvrtá silný závěr + CTA
 - DATUM: Zahrň "{date_cs}" přirozeně do první nebo druhé věty
 - 2–3 emoji organicky v textu, ne na konci jako blok
-- NEZMIŇUJ explicitně která 3 znamení jsou ve videu — zachovej záhadu
+- Video je pro JEDNO konkrétní znamení — nepředstírej, že jich je víc
 - Čtvrtá věta = CTA s odkazem: "Celý výklad najdeš na mystickahvezda.cz/horoskopy.html ✨"
 - Za textem PRÁZDNÝ ŘÁDEK a pak hashtags na samostatném řádku
 - Hashtags: #mystickaHvezda + znamení s velkým počátečním písmenem + fixní FB tagy (bez #fyp)
@@ -505,7 +618,9 @@ def build_voiceover(signs_data: dict, target_date: str) -> str:
 Píšeš voiceover script pro krátké video (Instagram Reel / TikTok) — JEDNO konkrétní znamení.
 Tykáš, 2. os. j.č. — NIKDY žádný lomený tvar.
 GENDEROVÁ NEUTRALITA — ABSOLUTNÍ PRAVIDLO:
-- 2. osoba (divák): Vždy přítomný čas nebo budoucí, nikdy minulý příčestí činné. Místo "vykročil" → "vykračuješ".
+- 2. osoba (divák): ABSOLUTNÍ ZÁKAZ minulého příčestí. Toto platí pro JAKÉKOLI sloveso v minulém čase vztahující se k divákovi.
+  ❌ "rozhodla", "rozhodl", "ignorovala", "ignoroval", "udělala", "udělal", "byl", "byla" — VŠECHNY tvary jsou zakázané
+  ✅ Vždy přeformuluj do přítomného nebo budoucího času: "rozhodla pustit" → "chceš pustit", "ignorovala" → "přeskakuješ", "byl jsi" → "jsi"
 - 3. osoba (lidé ve scéně): NIKDY "němu/jí/ho/ji/on/ona" — divák může být muž, žena, jakákoliv orientace. Místo "naproti němu" → "naproti té osobě" nebo scénu postav bez lidí ("Otevřeš zprávu. Přečteš ji. Zamkneš telefon.").
 
 FILOZOFIE: Mluvíš na JEDNOHO konkrétního člověka — ne na publikum. Video musí vyvolat reakci "to jsem přesně já."
@@ -559,34 +674,166 @@ Výstup JEN samotný text — žádné nadpisy, žádné labely, žádné hvězd
     }
     hook_styl = hook_rotace[date_obj.weekday()]
 
-    # Vyber komentářový trigger podle znamení
-    komentar_trigger_map = {
-        'Beran':    f'Označ Berana, co tohle zná.',
-        'Býk':      f'Napiš, jestli to sedí — Býku, do komentáře ⬇️',
-        'Blíženci': f'Označ Blížence, co tohle dělá.',
-        'Rak':      f'Raku — napiš jedno slovo, jak se dnes cítíš ⬇️',
-        'Lev':      f'Označ Lva, co tuhle energii zná.',
-        'Panna':    f'Panno — napiš, jestli to sedí ⬇️',
-        'Váhy':     f'Označ Váhu, co tahle kalkulace zničila.',
-        'Štír':     f'Označ Štíra, co přesně tohle dělá.',
-        'Střelec':  f'Střelci — napiš, kam tě to dnes tahá ⬇️',
-        'Kozoroh':  f'Kozorohu — napiš, co dnes odkládáš ⬇️',
-        'Vodnář':   f'Označ Vodnáře, co tohle ví.',
-        'Ryby':     f'Ryby — napiš jedno slovo, co teď cítíš ⬇️',
-    }
-    komentar_trigger = komentar_trigger_map.get(sign, f'Napiš svoje znamení ⬇️')
+    # Blacklist použitých scén — posledních 14
+    used_scenes = load_used_scenes()
+    scenes_blacklist = "\n".join(f"- {s}" for s in used_scenes[-7:]) if used_scenes else "žádné"
 
-    # Follow trigger — rotace podle dne
+    # Vyber komentářový trigger podle znamení — pool variant, rotace podle data+znamení
+    komentar_trigger_pools = {
+        'Beran':    [
+            'Berane — napiš, co dnes riskuješ ⬇️',
+            'Poznáváš se? Napiš ANO nebo NE.',
+            'Označ Berana, co potřebuje tohle slyšet.',
+            'Co tě dnes brzdí? Jedno slovo ⬇️',
+            'Berane — co by ses rozhodl bez přemýšlení?',
+            'Napiš, jestli ti to sedí.',
+            'Označ Berana, co tohle právě prožívá.',
+            'Čemu se dnes bráníš? ⬇️',
+        ],
+        'Býk':      [
+            'Býku — co dnes odmítáš pustit? ⬇️',
+            'Poznáváš se v tom? Napiš jedno slovo.',
+            'Označ Býka, co si tohle nese s sebou.',
+            'Co bys dnes nejraději ignoroval? ⬇️',
+            'Napiš, co ti tohle připomíná.',
+            'Býku — jaké jedno slovo tě dnes popisuje?',
+            'Sedí ti tohle? Napiš ANO nebo víc ⬇️',
+            'Označ Býka, co tohle zná zpaměti.',
+        ],
+        'Blíženci': [
+            'Blíženci — která verze tebe dnes vyhrává? ⬇️',
+            'Napiš, co ti dnes hlava říká jako první.',
+            'Označ Blížence, co potřebuje tohle slyšet.',
+            'Dvě věci najednou — která vyhraje dnes? ⬇️',
+            'Blíženci — napiš, co dnes říkáš a co si myslíš.',
+            'Sedí to? Jedno slovo do komentáře.',
+            'Označ Blížence, co tohle přesně dělá.',
+            'Co dnes odkládáš, protože máš jiný nápad? ⬇️',
+        ],
+        'Rak':      [
+            'Raku — napiš jedno slovo, jak se dnes cítíš ⬇️',
+            'Označ Raka, co tohle drží v sobě.',
+            'Sedí to? Napiš ANO nebo NE do komentáře.',
+            'Raku — co dnes chrániš? ⬇️',
+            'Koho dnes myslíš jako prvního? ⬇️',
+            'Napiš, co by sis dnes potřeboval slyšet.',
+            'Označ Raka, co tohle zná moc dobře.',
+            'Co dnes navenek neříkáš, ale uvnitř cítíš? ⬇️',
+        ],
+        'Lev':      [
+            'Lve — napiš, co dnes chceš, aby ostatní viděli ⬇️',
+            'Poznáváš se? Jedno slovo do komentáře.',
+            'Označ Lva, co si tohle zaslouží slyšet.',
+            'Co tě dnes nenechává být průměrný? ⬇️',
+            'Lve — napiš, co dnes ukazuješ světu.',
+            'Sedí to? ANO nebo NE ⬇️',
+            'Označ Lva, co tuhle energii přesně zná.',
+            'Co dnes potřebuješ uznat sám sobě? ⬇️',
+        ],
+        'Panna':    [
+            'Panno — napiš, jestli to sedí ⬇️',
+            'Označ Pannu, co tohle analyzuje každý den.',
+            'Co dnes opravuješ znovu? Napiš to ⬇️',
+            'Sedí to? ANO nebo NE — Panno, do komentáře.',
+            'Co dnes vidíš jako chybu, ale ostatní jako detail? ⬇️',
+            'Panno — napiš, co dnes přehlíží ostatní, ale ne ty.',
+            'Označ Pannu, co tohle dělá potichu.',
+            'Napiš jedno slovo, co dnes řešíš ⬇️',
+        ],
+        'Váhy':     [
+            'Váhy — co dnes nemůžeš rozhodnout? ⬇️',
+            'Napiš jedno slovo, co dnes váháš.',
+            'Označ Váhu, co tohle přesně zná.',
+            'Označ Váhu, co tahle kalkulace vyčerpává.',
+            'Co by ses rozhodl, kdyby tě nikdo neviděl? ⬇️',
+            'Váhy — napiš, co dnes upřednostňuješ před sebou.',
+            'Sedí to? Jedno slovo ⬇️',
+            'Označ Váhu, co tohle dělá každý den.',
+        ],
+        'Štír':     [
+            'Štíre — napiš, co dnes nepouštíš ⬇️',
+            'Sedí to? Jedno slovo do komentáře.',
+            'Označ Štíra, co tohle drží hluboko v sobě.',
+            'Označ Štíra, co přesně tohle zná.',
+            'Co dnes víš, ale zatím neříkáš? ⬇️',
+            'Štíre — napiš, co dnes vidíš u druhých, ale oni to neví.',
+            'Napiš ANO, pokud tohle přesně sedí.',
+            'Označ Štíra, co si tohle nese každý den. ⬇️',
+        ],
+        'Střelec':  [
+            'Střelci — napiš, kam tě to dnes táhne ⬇️',
+            'Označ Střelce, co tohle přesně cítí.',
+            'Co dnes chceš opustit? Napiš to ⬇️',
+            'Napiš jedno místo, kam bys dnes odešel.',
+            'Střelci — co dnes omezuje tvoji svobodu? ⬇️',
+            'Označ Střelce, co si tohle říká každé ráno.',
+            'Sedí to? Jedno slovo ⬇️',
+            'Napiš, co dnes nemůžeš přestat plánovat.',
+        ],
+        'Kozoroh':  [
+            'Kozorohu — napiš, co dnes odkládáš ⬇️',
+            'Označ Kozoroha, co tohle nese každý den.',
+            'Sedí to? ANO nebo NE do komentáře.',
+            'Co dnes děláš, protože musíš, ne protože chceš? ⬇️',
+            'Kozorohu — napiš, co by ostatní vzdali, ale ty ne.',
+            'Označ Kozoroha, co tohle přesně zná.',
+            'Napiš jedno slovo, co tě dnes pohání ⬇️',
+            'Co dnes odsouváš na potom, i když víš, že je to teď? ⬇️',
+        ],
+        'Vodnář':   [
+            'Vodnáři — napiš, co dnes vidíš jinak než ostatní ⬇️',
+            'Sedí to? Jedno slovo do komentáře.',
+            'Označ Vodnáře, co tohle ví.',
+            'Co dnes ostatní nepochopí, ale ty ano? ⬇️',
+            'Vodnáři — napiš nápad, co tě dnes nepustí.',
+            'Označ Vodnáře, co tohle přesně zná.',
+            'Napiš, co by ostatní označili za divné, ale ty za správné.',
+            'Sedí to? ANO nebo NE ⬇️',
+        ],
+        'Ryby':     [
+            'Ryby — napiš jedno slovo, co teď cítíš ⬇️',
+            'Označ Ryby, co tohle nosí v sobě.',
+            'Sedí to? ANO nebo NE — Ryby, do komentáře.',
+            'Co dnes cítíš, ale neříkáš? Napiš to ⬇️',
+            'Ryby — co dnes absorbujete od ostatních? ⬇️',
+            'Označ Ryby, co tohle dělá potichu každý den.',
+            'Napiš, co by ti dnes pomohlo pustit.',
+            'Co vidíš u ostatních, co oni sami nevidí? ⬇️',
+        ],
+    }
+    komentar_pool = komentar_trigger_pools.get(sign, ['Napiš svoje znamení ⬇️'])
+    komentar_seed = int(hashlib.md5((target_date + sign + "komentar").encode()).hexdigest(), 16)
+    komentar_trigger = komentar_pool[komentar_seed % len(komentar_pool)]
+
+    # Follow trigger — rotace podle dne (různé struktury, ne jen "zítra sleduj")
     follow_triggers = [
-        f"Zítra: které znamení to dělá nejhůř. Sleduj.",
-        f"Příště odhalím {sign}ovo největší tajemství ve vztazích.",
-        f"Pokračování zítra — sleduj, ať ti to neunikne.",
-        f"Série pokračuje. Sleduj pro další znamení.",
-        f"Zítra jdeme hlouběji. Sleduj.",
-        f"Příští díl: co {sign} nikdy neřekne nahlas.",
-        f"Zítra: proč {sign} sabotuje to, co chce nejvíc.",
+        # Série — zvědavost na další díl
+        f"Příště odhalím {sign_vocative} největší tajemství ve vztazích.",
+        f"Příští díl: co {sign_vocative} nikdy neřekne nahlas.",
+        f"Příště: proč {sign_vocative} sabotuje to, co chce nejvíc.",
+        f"Příště vysvětlím, proč {sign_vocative} reaguje tak, jak reaguje.",
+        # Série — content tease bez "zítra"
+        f"Ukládej — budeš se k tomu vracet.",
+        f"Uložit a poslat někomu, kdo toto potřebuje slyšet.",
+        f"Uložit. Podívej se na to znovu večer.",
+        # Označení
+        f"Označ {sign_vocative}, co toto teď potřebuje.",
+        f"Pošli to {sign_vocative}, co si tohle ještě neuvědomuje.",
+        f"Označ kohokoliv, kdo tohle zná zpaměti.",
+        # Sdílení / engagement bez "zítra"
+        f"Sleduj profil — každý den jiné znamení.",
+        f"Sleduj, ať ti neunikne tvůj den.",
+        f"Profil pro ty, co berou astro vážně.",
+        f"Na profilu najdeš výklad pro všechna ostatní znamení.",
+        # Série — zvědavost na téma
+        f"Příště: které znamení tohle nezvládá vůbec.",
+        f"Příště: temná strana {sign}ů — co se o vás neříká.",
+        f"Příští díl: {sign} a peníze. Šokující pravda.",
+        f"Příště: proč se {sign} bojí přesně toho, po čem touží.",
+        f"Příště odhalím, co {sign_vocative} opravdu chybí ve vztahu.",
+        f"Příští díl pro {sign_vocative} bude ještě přímější.",
     ]
-    follow_seed = int(hashlib.md5(target_date.encode()).hexdigest(), 16)
+    follow_seed = int(hashlib.md5((target_date + sign).encode()).hexdigest(), 16)
     follow_trigger = follow_triggers[follow_seed % len(follow_triggers)]
 
     user = f"""Datum: {date_cs} ({weekday_name})
@@ -603,7 +850,7 @@ Hook styl pro dnešní den ({weekday_name}): {hook_styl}
 Pravidla hooku:
 - PRVNÍ věta: MAX 7 slov. Silná, přímá identifikace persony nebo nepohodlná pravda.
 - DRUHÁ věta: Musí zrcadlit KONKRÉTNÍ frázi nebo situaci, kterou tato persona reálně zažívá — ne obecné "a většina to nechápe" ani vágní "a dnes se to mění".
-- DATUM: Zahrň "{date_cs}" přirozeně do první nebo druhé věty.
+- DATUM: NEzačínej hook datem. Datum "{date_cs}" vlož nejdříve do slide 2, nebo ho vůbec nevkládej do hooku — hook musí začít silnou větou o osobě, ne o kalendáři.
 - Každá věta má svůj ElevenLabs tag: "[tag] věta."
 - Za každou větou přidej pauzu: <break time="0.5s" /> po první větě, <break time="1.0s" /> po druhé větě (přechod na slide 2).
 - BLACKLIST — NIKDY: "Hvězdy mluví/říkají/šeptají", "Stačí poslouchat", poetické popisy bez osoby, věta delší než 7 slov jako první věta.
@@ -613,22 +860,13 @@ Toto je nejdůležitější část. MUSÍ obsahovat:
 
 A) MIKROPŘÍBĚH — konkrétní vizuální scéna ze života persony:
    - Přítomný čas, 2. osoba, max 8 slov na větu
+   - Scéna musí být ORIGINÁLNÍ a SPECIFICKÁ pro toto znamení ({sign}) a jeho energii — ne generická
    - ❌ ZAKÁZÁNO: "tvá energie dostává zelenou", "Neptun ti šeptá", "cítíš to tlačení" (vnitřní pocit, ne vizuální)
-   - ❌ ZAKÁZÁNO OPAKOVAT: "Sedíš v kuchyni" — tato scéna je přetížená, NIKDY ji nepoužívej
-   - ✅ SPRÁVNĚ — různé každodenní scény (vyber jinou každý den):
-     "Díváš se na tu zprávu. Přečteš ji potřetí. A zamkneš telefon."
-     "Stojíš před zrcadlem. Zaváháš. Pak si to stejně oblečeš."
-     "Scrolluješ. Zastav se na tom příspěvku. Přejdeš dál."
-     "Otevřeš ten dokument. Zavřeš ho. Otevřeš znovu."
-     "Ležíš v posteli. Strop. Znovu strop. Vstaneš."
-     "Píšeš tu zprávu. Mažeš ji. Odložíš telefon."
-     "Stojíš na zastávce. Autobus přijede. Nenastoupíš."
-   - Scéna musí být VIDITELNÁ — konkrétní akce kterou kamera vidí (díváš se, otevřeš, zamkneš, stojíš, scrolluješ), NE vnitřní monolog (cítíš, přemýšlíš, víš)
+   - ❌ ZAKÁZANÉ SCÉNY (použité naposledy — NIKDY nepoužij žádnou z nich):
+{scenes_blacklist}
+   - ✅ SPRÁVNÝ STYL scény: přítomný čas, 2. osoba, viditelná akce (díváš se, otevřeš, zamkneš, stojíš, scrolluješ), NE vnitřní monolog (cítíš, přemýšlíš, víš). Scéna musí být JINÁ každý den — vymysli novou situaci vycházející z energie {sign}.
    - Mezi větami uvnitř slidu: <break time="0.3s" />
-   - GENDER NEUTRALITA 3. OSOBY — KRITICKÉ: Nikdy nepoužívej "němu/jí/ho/ji/on/ona" pro osoby ve scéně. Divák může být kdokoli — muž, žena, jakákoliv orientace.
-     ❌ "Sedíš naproti němu." — předpokládá mužského partnera = divák je žena
-     ❌ "Díváš se na ni." — předpokládá ženský objekt
-     ✅ "Sedíš naproti té osobě." / "Sedíš naproti svému šéfovi." (konkrétní role bez pohlaví) / "Otevřeš konverzaci." (bez osoby vůbec)
+   - GENDER NEUTRALITA 3. OSOBY — KRITICKÉ: Nikdy nepoužívej "němu/jí/ho/ji/on/ona" pro osoby ve scéně.
      ✅ Nejlepší: vybuduj scénu bez třetí osoby — objekt je věc, ne člověk: "Díváš se na tu zprávu.", "Otevřeš profil.", "Zamkneš telefon."
 
 B) TWIST — povinný moment překvapení nebo přerámování:
@@ -669,21 +907,33 @@ Tagy celkově: [mysterious] [intense] [warm] [gentle] [confident] [upbeat] [comm
     raw = claude_call(system, user, max_tokens=800)
 
     # Hook validace — zkontroluj, že hook odpovídá dennímu stylu
+    # Po (0): přímé oslovení — musí obsahovat znamení nebo vokativ
+    # Út (1): kontroverze — nesmí obsahovat "?"
+    # St (2): zrcadlo bolesti — nesmí být kratší než 5 slov
+    # Čt (3): relationship hook — musí obsahovat slovo vztah/miluj/partner/love nebo "?"
+    # Pá (4): přesný popis situace — nesmí obsahovat "?"
+    # So (5): kontroverze — nesmí obsahovat "?"
+    # Ne (6): zrcadlo bolesti — nesmí obsahovat "většina"
     hook_line = raw.strip().split("\n")[0]
     weekday = date_obj.weekday()
     needs_retry = False
-    if weekday in (0, 3):  # Po/Čt = otázka — musí obsahovat "?"
-        if "?" not in hook_line:
+    if weekday == 0:  # Po = přímé oslovení — musí obsahovat vokativ nebo jméno znamení
+        if sign not in hook_line and sign_vocative not in hook_line:
             needs_retry = True
-            print("  [!] Hook nema otazku pro Po/Ct — regeneruji...")
-    elif weekday in (1, 4):  # Út/Pá = provokace — nesmí obsahovat "?"
+            print("  [!] Hook nema osloveni znameni pro Pondeli — regeneruji...")
+    elif weekday in (1, 4, 5):  # Út/Pá/So = kontroverze/provokace — bez otázky
         if "?" in hook_line:
             needs_retry = True
-            print("  [!] Hook ma otazku misto provokace pro Ut/Pa — regeneruji...")
-    elif weekday == 6:  # Ne = poetický — nesmí obsahovat "většina" ani "?"
-        if "většina" in hook_line.lower() or "?" in hook_line:
+            print("  [!] Hook ma otazku misto provokace — regeneruji...")
+    elif weekday == 3:  # Čt = relationship hook — musí mít vztahové slovo nebo otázku
+        vztah_slova = ['vztah', 'miluj', 'partner', 'lásk', 'cit', 'blízk', '?']
+        if not any(s in hook_line.lower() for s in vztah_slova):
             needs_retry = True
-            print("  [!] Hook neni poeticky pro nedeli — regeneruji...")
+            print("  [!] Hook nema vztahovy kontext pro Ctvrtek — regeneruji...")
+    elif weekday == 6:  # Ne = zrcadlo bolesti — bez "většina"
+        if "většina" in hook_line.lower():
+            needs_retry = True
+            print("  [!] Hook obsahuje 'vetsina' misto zrcadla bolesti — regeneruji...")
 
     if needs_retry:
         raw = claude_call(system, user, max_tokens=800)
@@ -703,7 +953,10 @@ Výstup JEN opravený text — žádné komentáře, žádné vysvětlování zm
    ANGLICKÁ SLOVA → ČESKY: spreadsheet → tabulka, too much → příliš, feedback → zpětná vazba, deadline → termín, challenge → výzva, skill → dovednost, mindset → nastavení mysli, vibe → atmosféra, random → náhodný, data → údaje. Pokud najdeš JAKÉKOLI anglické slovo (kromě planet a Instagram/TikTok), přelož ho do češtiny.
 3. Vykání → tykání pokud ještě někde zbylo (vás/vám/vaše → tě/ti/tvé)
 4. Genderová neutralita — DVA TYPY:
-   a) 2. osoba (divák): minulá příčestí jako "vykročil/vykročila" → přítomný čas ("vykračuješ"); "být pravdivý/á" → "být bez masky"; "byl jsi/byla jsi" → "jsi". NIKDY lomené tvary.
+   a) 2. osoba (divák) — KRITICKÉ: JAKÉKOLI minulé příčestí vztahující se k divákovi MUSÍ být přeformulováno do přítomného času. Bez výjimky.
+      ❌ "rozhodla", "rozhodl", "ignorovala", "ignoroval", "udělala", "udělal", "byl", "byla", "vykročil", "vykročila", "pustila", "pustil" — VŠECHNO zakázané
+      ✅ Přeformuluj: "cos se rozhodla pustit" → "co chceš pustit"; "co jsi ignorovala" → "co přeskakuješ"; "byl jsi" → "jsi"; "vykročil" → "vykračuješ"
+      Hledej aktivně celý text na vzor "cos/co jsi/jsi byl/byla/udělal/udělala/rozhodl/rozhodla/ignoroval/ignorovala" a přeformuluj.
    b) 3. osoba (lidé ve scéně): "němu/jí/ho/ji" → "té osobě" nebo přeformuluj scénu bez osobního zájmena. "Sedíš naproti němu" → "Sedíš naproti té osobě" nebo "Otevřeš konverzaci." "Usmívá se na tebe" → "Vidíš ten úsměv." NIKDY předpokládat pohlaví partnera/šéfa/kamaráda.
 5. AI-blob symetrické vzorce — přeformuluj: "Nejde o X. Jde o Y." → "X? Y? Ne. [přerámování]." nebo slouč do jedné věty; "Není to X. Je to Y." → stejně přeformuluj. Nikdy nesmí zůstat struktura "[Negace]. [Pozitivní přerámování]." ve dvou větách za sebou.
 6. <break> tagy a [emotion] tagy — NIKDY neměň, nemaž, nepřesouvej. Zachovej přesně jak jsou.
@@ -769,6 +1022,10 @@ def main():
     # 4. Build voiceover + TikTok description + Suno prompt
     script = build_voiceover(horoscopes, target_date)
     script = proofread_script(script)
+    # Ulož scénu slide 2 do blacklistu
+    scene_key = extract_scene_key(script)
+    if scene_key:
+        save_used_scene(scene_key)
     # Přidej datum na začátek voiceover scriptu
     d = date.fromisoformat(target_date)
     date_header = f"🗓️ {d.day}. {MONTHS_CS[d.month - 1]} {d.year}\n\n"
@@ -776,6 +1033,7 @@ def main():
     description = build_tiktok_description(chosen, script, target_date)
     fb_description = build_facebook_description(chosen, script, target_date, tiktok_description=description)
     suno = build_suno_prompt(chosen, script, target_date)
+    thumbnail = build_thumbnail_prompt(chosen[0], target_date, script)
 
     # 5. Vystup
     sep = "=" * 60
@@ -787,6 +1045,8 @@ def main():
     print(fb_description)
     print(f"\n{sep}\nSUNO PROMPT\n{sep}")
     print(suno)
+    print(f"\n{sep}\nTHUMBNAIL PROMPT (Nano Banana)\n{sep}")
+    print(thumbnail)
     print(sep)
     print(f"\n[OK] Hotovo! Datum videa: {target_date}")
     print(f"[OK] Znameni: {', '.join(chosen)}")
@@ -805,12 +1065,14 @@ def main():
     print(sep)
 
     # Uloz do souboru
-    out_path = Path(__file__).parent / f"voiceover2_{target_date}.txt"
+    sign_slug = normalize_sign(chosen[0]) if chosen else "unknown"
+    out_path = Path(__file__).parent / f"voiceover2_{target_date}_{sign_slug}.txt"
     output = (
         f"VOICEOVER SCRIPT\n{sep}\n{script}\n\n"
         f"TIKTOK / INSTAGRAM DESCRIPTION\n{sep}\n{description}\n\n"
         f"FACEBOOK REELS DESCRIPTION\n{sep}\n{fb_description}\n\n"
         f"SUNO PROMPT\n{sep}\n{suno}\n\n"
+        f"THUMBNAIL PROMPT (Nano Banana)\n{sep}\n{thumbnail}\n\n"
         f"CAPTIONS PŘÍKAZ\n{sep}\n{captions_cmd}\n"
     )
     out_path.write_text(output, encoding="utf-8")
