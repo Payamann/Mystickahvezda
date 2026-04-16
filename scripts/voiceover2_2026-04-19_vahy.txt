@@ -1,0 +1,47 @@
+VOICEOVER SCRIPT
+============================================================
+🗓️ 19. dubna 2026
+
+[gentle] Váhy, dnes víš, co chceš. <break time="0.5s" /> [soft] Čekáš ale, až to někdo potvrdí. <break time="1.0s" />
+
+[warm] Díváš se na tu zprávu. <break time="0.3s" /> [gentle] Přečteš ji potřetí. <break time="0.3s" /> [confident] A zamkneš telefon. <break time="0.3s" /> [soft] Odpověď tu je od včerejška. <break time="0.3s" /> [warm] Jediný souhlas, který čekáš? <break time="0.3s" /> [confident] Ten vlastní. <break time="1.0s" />
+
+[inviting] Váhy — napiš, co dnes stavíš před sebe. <break time="0.3s" /> [clearly] Sleduj profil — každý den jiné znamení.
+
+TIKTOK / INSTAGRAM DESCRIPTION
+============================================================
+19. dubna 2026 Venuše vstupuje do Býka — tvé přání být milován se mění v touhu milovat sám sebe 💎 Vládkyně Vah přechází z ohně do země: už nečekáš na potvrzení, souhlas přichází zevnitř. Sleduj profil — zítra Štír a jeho stín, který dnes nikdo nevidí ✨
+
+#mystickaHvezda #Váhy #horoskop #fyp
+
+FACEBOOK REELS DESCRIPTION
+============================================================
+Dnes 19. dubna 2026 víš, co chceš — ale čekáš, až to někdo potvrdí 💎 Venuše vstupuje do Býka a tvá vládkyně opouští oheň: přání být milován se mění v touhu milovat sebe. Souhlas zvenčí ztrácí smysl — ten pravý přichází z centra tvé vlastní váhy, která už nemusí být v rovnováze s cizími hlasy. Celý výklad najdeš na mystickahvezda.cz/horoskopy.html ✨
+
+#mystickaHvezda #Váhy #horoskop #astrologie #dennihoroskop #mystika
+
+SUNO PROMPT
+============================================================
+Warm instrumental with mellow Rhodes piano and soft ambient pads, gentle steady pulse driving forward like morning light breaking through cosmic clouds, major key melodies breathing between phrases with golden hopeful energy that lifts without overpowering. Short instrumental, 60-90 seconds, loop-ready.
+
+THUMBNAIL PROMPT (Nano Banana)
+============================================================
+A mystical video thumbnail for zodiac sign Libra.
+
+BACKGROUND: deep dark space with soft subtle soft rose and lavender nebula with balanced pastel cosmic tones, delicate pink and lilac stardust, harmonious dual-color aurora in rose gold and violet hues — graceful, balanced, romantic — gentle and atmospheric, NOT aggressive. Rich dense star field with thousands of tiny stars. Dark and deep — moody and calm, serving as a backdrop without competing with the foreground. Deep navy and dark indigo tones dominate. NO harsh lightning, NO aggressive neon.
+
+COMPOSITION: Three elements stacked as one tight unified group, vertically centered in the image. The group fills roughly 80% of the image height. Minimal gap between elements — they feel like one connected unit.
+
+ELEMENT 1 — glyph: large ornate Libra symbol (♎) in solid gold — rich champagne gold with deep amber shadows — surface of each stroke covered in intricate engraved filigree scrollwork and decorative patterns. Beveled polished 3D edges catching light. Small ornamental flourishes where strokes meet. Clear 3D depth and volume. Premium, ancient — NOT plain, NOT flat, NOT simple geometry.
+
+ELEMENT 2 — immediately below, small gap: dark stone plaque with ornate gold border frame. '19. dubna' in elegant gold lettering on the first line, 'VÁHY' in bold engraved gold capitals on the second line.
+
+ELEMENT 3 — immediately below, small gap: compact parchment scroll, aged honey color. Bold serif text in dark brown (#2a1500), NOT cursive, NOT italic: 'Víš, co chceš říct.' on the first line, 'Čekáš jen na potvrzení.' on the second line.
+
+NO zodiac wheel. NO star icons. NO logos. NO borders. NO corner decorations. NO animals. NO human figures. Bottom corners completely clean.
+
+Portrait 9:16.
+
+CAPTIONS PŘÍKAZ
+============================================================
+python "C:/Users/pavel/OneDrive/Desktop/captions-tool/captions.py" "VIDEO.mp4" --model small --text "Váhy, dnes víš, co chceš. Čekáš ale, až to někdo potvrdí. Díváš se na tu zprávu. Přečteš ji potřetí. A zamkneš telefon. Odpověď tu je od včerejška. Jediný souhlas, který čekáš? Ten vlastní. Váhy — napiš, co dnes stavíš před sebe. Sleduj profil — každý den jiné znamení."

@@ -31,7 +31,7 @@ log = get_logger(__name__)
 
 # === Konfigurace ===
 BASE_DIR      = Path(__file__).parent
-BLOG_INDEX    = Path("C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/.claude/worktrees/magical-jepsen/data/blog-index.json")
+BLOG_INDEX    = BASE_DIR.parent / "data" / "blog-index.json"
 OUTPUT_DIR    = BASE_DIR / "output" / "pinterest"
 IMAGES_DIR    = OUTPUT_DIR / "images"
 CSV_PATH      = OUTPUT_DIR / "pinterest_pins.csv"

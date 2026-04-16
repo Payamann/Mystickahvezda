@@ -374,6 +374,18 @@ PRAVIDLA:
    ✅ "Plánuješ celý týden dopředu. A pak smažeš vše a začneš znovu." — "vše" je samostatně srozumitelné
 - ZAKÁZÁNO: genderová zájmena třetí osoby ("on", "ona", "jeho", "její") — piš bez pohlaví
 - ZAKÁZÁNO: "to" jako zájmeno odkazující na předchozí větu ("Ty to víš" je OK jen pokud "to" je obecné, ne odkaz na konkrétní podstatné jméno z věty 1)
+
+GENDEROVÁ NEUTRALITA — ABSOLUTNÍ ZÁKAZ (text čte žena, muž i nebinární osoba):
+- ŽÁDNÁ adjektiva v jmenném přísudku končící -á, -ý, -ou, -ého, -ým (jedná se o genderové tvary):
+   ❌ "Nejsi nerozhodnutá." ❌ "Nejsi přehnaně kritická." ❌ "Jsi jediná." ❌ "Cítíš se ztracený."
+   ❌ "Jsi krásná." ❌ "Jsi silný." ❌ "Nejsi sama." ❌ "Nejsi sám."
+- ŽÁDNÁ minulá příčestí činná (-l, -la, -li, -ly): ❌ "Čekala jsi." ❌ "Rozhodl jsi."
+- ✅ Řešení: přeformuluj přes podstatné jméno, sloveso v přítomném čase, nebo obecnou formulaci:
+   "Nejsi nerozhodnutá" → "Nerozhodnost není slabost" / "Tvé váhání má smysl"
+   "Nejsi přehnaně kritická" → "Kritika není chyba" / "Tvůj pohled vidí víc"
+   "Jsi jediná, kdo to vidí" → "Vidíš, co ostatní přehlédnou"
+   "Cítíš se ztracený" → "Cítíš se mimo" / "Ztrácíš směr"
+- TEST PŘED ZÁPISEM: Přečti každou větu a zeptej se: funguje stejně pro muže i ženu? Pokud ne, přeformuluj.
 - TEST PŘED ZÁPISEM: přečti druhou větu izolovaně — dává smysl bez první věty? Pokud ne, přeformuluj.
 
 DOBRÉ PŘÍKLADY (přesně tenhle styl):
@@ -400,7 +412,47 @@ Napiš 2 věty na thumbnail svitek."""
     scroll_line1 = scroll_lines[0] if len(scroll_lines) > 0 else "Tvůj instinkt ví víc, než si myslíš."
     scroll_line2 = scroll_lines[1] if len(scroll_lines) > 1 else "Stačí mu důvěřovat."
 
+    # Regex safety-net — detekuj feminine adj. v jmenném přísudku (jsi/nejsi X-á)
+    scroll_line1 = _strip_gendered_predicate(scroll_line1)
+    scroll_line2 = _strip_gendered_predicate(scroll_line2)
+
     return thumbnail2.build_prompt(target_date, sign, scroll_line1, scroll_line2)
+
+
+# Seznam sloves typu "být" kde za nimi adjektivum nese rod
+_GENDERED_COPULA = r"(?:jsi|nejsi|jsem|nejsem|jsou|nejsou|býváš|bývám|cítíš\s+se|cítím\s+se|připadáš\s+si|připadám\s+si|zůstáváš|zůstaneš)"
+# Adjektivum v jmenném přísudku končící genderovou koncovkou
+_GENDERED_ADJ_PRED = re.compile(
+    rf"\b{_GENDERED_COPULA}\s+(?:[a-záčďéěíňóřšťúůýž]+\s+){{0,3}}([a-záčďéěíňóřšťúůýž]+(?:á|ý|ou|ého|ému|ým|ých|ými)|sám|sama)\b",
+    re.IGNORECASE
+)
+# Participium "byl/byla/rozhodl/rozhodla" v 2. os. — čistě aktivní minulé
+_GENDERED_PARTICIPLE = re.compile(
+    r"\b(?:jsi\s+|jsem\s+)?\w+(?:l|la|li|ly)\s+jsi\b|\bjsi\s+\w+(?:l|la|li|ly)\b",
+    re.IGNORECASE
+)
+
+
+def _strip_gendered_predicate(sentence: str) -> str:
+    """Oprav genderové adj. v jmenném přísudku přes Claude. Fallback: vrať originál."""
+    if not sentence or not sentence.strip():
+        return sentence
+    m = _GENDERED_ADJ_PRED.search(sentence)
+    if not m:
+        return sentence
+    # Ignoruj bezpečná slova (přídavná jména neutrální vůči rodu v daném kontextu)
+    SAFE = {"tvojí", "tvou", "svou", "celou", "jinou", "jednou", "dlouho"}
+    if m.group(1).lower() in SAFE:
+        return sentence
+    try:
+        fixed = claude_call(
+            "Jsi editor. Výstup POUZE opravená věta — žádné komentáře, žádné uvozovky.",
+            f'Přepiš tuto větu BEZ jakéhokoliv genderového adjektiva v jmenném přísudku (žádné "jsi jediná", "nejsi kritická", "jsi ztracený" apod.). Použij podstatné jméno nebo sloveso v přítomném čase. Zachovej stejnou délku (max 7 slov) a význam.\n\nVěta: "{sentence}"',
+            max_tokens=60
+        )
+        return fixed.strip().strip('"').strip("'")
+    except Exception:
+        return sentence
 
 
 def build_tiktok_description(signs: list, script: str, target_date: str) -> str:
@@ -805,10 +857,12 @@ Výstup JEN samotný text — žádné nadpisy, žádné labely, žádné hvězd
         # Obecné teasery na další díl — bez vazby na konkrétní znamení
         "Příště: které znamení tohle nezvládá vůbec.",
         "Příště: temná strana vztahů — co si znamení neřeknou.",
-        "Příští díl: astro a peníze. Šokující pravda.",
+        "Příští díl: jak planety ovlivňují tvé peníze.",
         "Příště: proč se bojíme přesně toho, po čem toužíme.",
         "Příští díl bude ještě přímější.",
         "Příště odhalím, co hvězdy říkají o tvých vztazích.",
+        "Příště: znamení, která tvé tajemství neudrží.",
+        "Příště: jedna věta, která popíše celou tvou karmu.",
     ]
     follow_seed = int(hashlib.md5((target_date + sign).encode()).hexdigest(), 16)
     follow_trigger = follow_triggers[follow_seed % len(follow_triggers)]
@@ -1024,8 +1078,16 @@ B) 3. OSOBA — lidé ve scéně:
    VÝJIMKA: "ho/ji/to" jako zájmeno pro věci (ne lidi) je OK: "smazat ho" (= soubor) ✓
 
 C) ADJEKTIVA POHLAVÍ v přívlastku nebo jmenném přísudku:
+   OBECNÉ PRAVIDLO: JAKÉKOLI adjektivum v jmenném přísudku končící -á, -ý, -ou, -ého, -ému, -ým je ZAKÁZÁNO.
+   Detekuj vzorce: "jsi X-á/ý", "nejsi X-á/ý", "cítíš se X-á/ý", "připadáš si X-á/ý".
    ❌ "jsi šťastná/šťastný" → ✅ "máš radost" / "cítíš štěstí"
    ❌ "nejsi nerozhodná" → ✅ "nejsi bez rozhodnutí" / "tvoje váhání není slabost"
+   ❌ "jsi jediná/jediný, kdo vidí" → ✅ "vidíš, co ostatní přehlédnou"
+   ❌ "nejsi sama/sám" → ✅ "nejsi bez opory" / "máš průvodce vedle sebe"
+   ❌ "cítíš se ztracený/ztracená" → ✅ "cítíš se mimo" / "ztrácíš směr"
+   ❌ "jsi silná/silný" → ✅ "máš sílu" / "neseš to"
+   ❌ "nejsi přehnaně kritická/kritický" → ✅ "tvoje ostrost není chyba" / "tvůj pohled vidí víc"
+   TEST: u každé věty se zeptej — funguje stejně pro muže i ženu? Pokud ne, přeformuluj.
 
 D) [emotion] TAGY a <break> TAGY — NIKDY neměň.
 
@@ -1327,6 +1389,46 @@ def main():
         )
         fixed_full = f"{tag} {fixed.strip()} {brk}".strip()
         script = script.replace(bad_sentence, fixed_full, 1)
+
+    # 3) GENDER ADJ. V JMENNÉM PŘÍSUDKU — "jsi jediná", "nejsi nerozhodnutá", "cítíš se ztracený"
+    #    Regex safety-net pro případy, kdy LLM proofread přehlédne.
+    SAFE_WORDS = {"tvojí", "tvou", "svou", "celou", "jinou", "jednou", "dlouho",
+                  "samou", "sebou", "dnou", "hlavou", "stranou", "cestou"}
+    seen_sentences = set()
+    for gender_match in list(_GENDERED_ADJ_PRED.finditer(script)):
+        adj = gender_match.group(1).lower()
+        if adj in SAFE_WORDS:
+            continue
+        # Najdi celou větu kolem nálezu
+        start = gender_match.start()
+        end = gender_match.end()
+        # Rozšiř na hranice věty (., !, ?, \n\n, <break>)
+        sent_start = max(script.rfind(". ", 0, start), script.rfind("\n", 0, start),
+                         script.rfind("/>", 0, start), 0)
+        sent_start = sent_start + 2 if sent_start > 0 else 0
+        next_dot = script.find(".", end)
+        next_break = script.find("<break", end)
+        candidates = [c for c in (next_dot, next_break) if c > 0]
+        sent_end = min(candidates) + 1 if candidates else len(script)
+        bad_sentence = script[sent_start:sent_end].strip()
+        if not bad_sentence or bad_sentence in seen_sentences:
+            continue
+        seen_sentences.add(bad_sentence)
+        print(f"  [!] Genderové adjektivum: '{bad_sentence[:60]}...' — opravuji...")
+        tag_m = re.match(r'(\[[\w]+\])\s*', bad_sentence)
+        tag = tag_m.group(1) if tag_m else ""
+        clean_sent = re.sub(r'\[[\w]+\]', '', bad_sentence)
+        clean_sent = re.sub(r'<break[^/]*/>', '', clean_sent).strip()
+        try:
+            fixed = claude_call(
+                "Jsi editor. Výstup POUZE opravená věta — žádné komentáře, žádné uvozovky.",
+                f'Přepiš tuto větu BEZ jakéhokoliv genderového adjektiva v jmenném přísudku (žádné "jsi jediná", "nejsi kritická", "cítíš se ztracený"). Použij podstatné jméno nebo přítomný čas. Zachovej stejnou délku a význam.\n\nVěta: "{clean_sent}"',
+                max_tokens=80
+            )
+            fixed_full = f"{tag} {fixed.strip()}".strip()
+            script = script.replace(bad_sentence, fixed_full, 1)
+        except Exception as e:
+            print(f"  [!] Oprava selhala: {e}")
 
     # Ulož scénu slide 2 do blacklistu
     scene_key = extract_scene_key(script)

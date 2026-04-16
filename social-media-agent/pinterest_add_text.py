@@ -24,7 +24,7 @@ sys.path.append(os.path.dirname(__file__))
 from pinterest_compositor import composite_pin
 from pinterest_make_pin import PINTEREST_HOOKS
 
-BLOG_INDEX = Path("C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/.claude/worktrees/magical-jepsen/data/blog-index.json")
+BLOG_INDEX = Path(__file__).parent.parent / "data" / "blog-index.json"
 OUTPUT_DIR = Path(__file__).parent / "output" / "pinterest" / "images"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 

@@ -1,0 +1,47 @@
+VOICEOVER SCRIPT
+============================================================
+🗓️ 19. dubna 2026
+
+[serious] Panno, ty nevíš, co chceš. <break time="0.5s" /> [gentle] Když to víš, čekáš na správný signál. <break time="1.0s" />
+
+[confident] Díváš se na zprávu. <break time="0.3s" /> [soft] Přečteš ji potřetí. <break time="0.3s" /> [serious] A zavřeš telefon, protože něco nesedí. <break time="0.3s" /> [gentle] Jenže problém není ve zprávě. <break time="0.3s" /> [confident] Bříško ti říká ne — a ty to přeskakuješ a hledáš důvody hlavou. <break time="0.3s" /> [serious] Tělo ti odpovídá dřív než mysl. <break time="1.0s" />
+
+[inviting] Panno — napiš, jestli to sedí ⬇️ <break time="0.3s" /> [clearly] Označ kohokoliv, kdo tohle zná zpaměti.
+
+TIKTOK / INSTAGRAM DESCRIPTION
+============================================================
+19. dubna 2026 Merkur vstupuje do Býka — a ty najednou víš, proč jsi týden v nerozhodnosti 🧠 Panna má spojení střeva–mozek silnější než ostatní znamení: tvůj trávicí trakt je plný neuronů, které rozhodují dřív než prefrontální kortex. Sleduj profil — příště ti ukážu, které potraviny tuhle intuici zesilují ⚡
+
+#mystickaHvezda #Panna #horoskop #fyp
+
+FACEBOOK REELS DESCRIPTION
+============================================================
+Panno, 19. dubna 2026 vstupuje Merkur do Býka — a tvoje nerozhodnost má konečně jméno 🧠 Tvůj trávicí trakt je plný neuronů, které reagují dřív, než mysl stihne analyzovat. Když čteš zprávu potřetí a pořád něco nesedí — tvoje střevní inteligence mluví, ale slova ji přehlušují. Celý výklad najdeš na mystickahvezda.cz/horoskopy.html ✨
+
+#mystickaHvezda #Panna #horoskop #astrologie #dennihoroskop #mystika
+
+SUNO PROMPT
+============================================================
+Warm energizing Rhodes piano with gentle rhythmic pulse and soft ambient layers, building forward momentum like sunrise light spreading across morning dew. Major key melodic phrases breathe and flow with golden optimism, creating supportive texture that uplifts without overwhelming. Short instrumental, 60-90 seconds, loop-ready.
+
+THUMBNAIL PROMPT (Nano Banana)
+============================================================
+A mystical video thumbnail for zodiac sign Virgo.
+
+BACKGROUND: deep dark space with soft subtle deep teal and sage green nebula with cool earthy cosmic dust, forest emerald and silver stardust with precise geometric light patterns, refined cosmic clarity — cool, analytical, crystalline — gentle and atmospheric, NOT aggressive. Rich dense star field with thousands of tiny stars. Dark and deep — moody and calm, serving as a backdrop without competing with the foreground. Deep navy and dark indigo tones dominate. NO harsh lightning, NO aggressive neon.
+
+COMPOSITION: Three elements stacked as one tight unified group, vertically centered in the image. The group fills roughly 80% of the image height. Minimal gap between elements — they feel like one connected unit.
+
+ELEMENT 1 — glyph: large ornate Virgo symbol (♍) in solid gold — rich champagne gold with deep amber shadows — surface of each stroke covered in intricate engraved filigree scrollwork and decorative patterns. Beveled polished 3D edges catching light. Small ornamental flourishes where strokes meet. Clear 3D depth and volume. Premium, ancient — NOT plain, NOT flat, NOT simple geometry.
+
+ELEMENT 2 — immediately below, small gap: dark stone plaque with ornate gold border frame. '19. dubna' in elegant gold lettering on the first line, 'PANNA' in bold engraved gold capitals on the second line.
+
+ELEMENT 3 — immediately below, small gap: compact parchment scroll, aged honey color. Bold serif text in dark brown (#2a1500), NOT cursive, NOT italic: 'Čteš tu zprávu pokolikáté.' on the first line, 'Problém není v ní.' on the second line.
+
+NO zodiac wheel. NO star icons. NO logos. NO borders. NO corner decorations. NO animals. NO human figures. Bottom corners completely clean.
+
+Portrait 9:16.
+
+CAPTIONS PŘÍKAZ
+============================================================
+python "C:/Users/pavel/OneDrive/Desktop/captions-tool/captions.py" "VIDEO.mp4" --model small --text "Panno, ty nevíš, co chceš. Když to víš, čekáš na správný signál. Díváš se na zprávu. Přečteš ji potřetí. A zavřeš telefon, protože něco nesedí. Jenže problém není ve zprávě. Bříško ti říká ne — a ty to přeskakuješ a hledáš důvody hlavou. Tělo ti odpovídá dřív než mysl. Panno — napiš, jestli to sedí ⬇️ Označ kohokoliv, kdo tohle zná zpaměti."
