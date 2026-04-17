@@ -241,9 +241,27 @@ def run_once(mode: str, limit: int = 0):
         "skeptical": "empathetic", "neutral": "friendly", "off_topic": "friendly",
         "emotional": "empathetic",
     }
+    import re as _re
+    def _reply_has_issues(text: str) -> bool:
+        if _re.search(r'[А-Яа-яЁё]', text):
+            return True
+        if _re.search(r'\w+/\w{1,6}\b', text):
+            return True
+        # Anglicismy které proklouzávají
+        if any(w in text.lower() for w in ["nepassuje", "feelingovat", "neimpresionuje"]):
+            return True
+        return False
+
     new_replies: dict[str, str] = {}
     for comment in pending:
-        if comment.get("suggested_reply") or not comment.get("needs_reply"):
+        # Cached reply — zkontroluj na lomené tvary, pokud je problém přegeneruj
+        if comment.get("suggested_reply"):
+            if _reply_has_issues(comment["suggested_reply"]):
+                log.warning("Cached reply má problém, přegeneruji: %s", comment["id"])
+                comment["suggested_reply"] = None  # vymaž → bude přegenerována
+            else:
+                continue
+        if not comment.get("needs_reply"):
             continue
         if not comment.get("message", "").strip():
             continue

@@ -1666,7 +1666,7 @@ def _get_comment_system() -> list:
 
 3. URL ADRESY: Nikdy nevymýšlej URL. Odkaz použij POUZE pokud je doslova napsán v sekci "Pokud to přirozeně sedí, doporuč:" v aktuálním promptu. Jinak žádný odkaz nepíšeš.
 
-4. JAZYK: Piš výhradně česky. Žádná slovenská slova (bolesť→bolest, tichle→tiše). Žádné anglicismy — "neimpresionuje" → "neohromí", "feelingovat" → "cítit".
+4. JAZYK: Piš výhradně česky. Žádná slovenská slova (bolesť→bolest, tichle→tiše). Žádné anglicismy — "neimpresionuje"→"neohromí", "feelingovat"→"cítit", "nepassuje"→"nesedí"/"nerezonuje", "makes sense"→"dává smysl".
 
 5. DÉLKA: Max 3 věty. Kratší je lepší.
 
