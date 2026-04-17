@@ -1845,17 +1845,28 @@ Odpověz POUZE textem odpovědi."""
                             system=_get_comment_system())
     result = response.text.strip()
 
-    # Post-processing: detekuj lomené tvary a cyrilici, přegeneruj 1×
+    # Post-processing: detekuj lomené tvary a cyrilici, přegeneruj max 3×
     import re as _re
-    has_slash = _re.search(r'\w+/\w{1,4}\b', result)   # mohl/a, cítil/a, sám/sama
-    has_cyrillic = _re.search(r'[А-Яа-яЁё]', result)  # encoding bug → cyrilice
-    if has_slash or has_cyrillic:
-        log.warning("Lomený tvar detekován, přegeneruji: %s", result[:60])
-        issue = "lomený tvar (např. mohl/a)" if has_slash else "cyrilici místo češtiny"
-        stricter = prompt + f"\n\nPOZOR: Předchozí pokus obsahoval {issue}. Tentokrát ABSOLUTNĚ česky, bez lomítek, bez cizích znaků."
-        response = _call_claude(client, model_name, stricter, temperature=0.7, max_tokens=250,
+    def _has_issues(text: str) -> str | None:
+        if _re.search(r'[А-Яа-яЁё]', text):
+            return "cyrilici místo češtiny"
+        if _re.search(r'\w+/\w{1,6}\b', text):
+            return "lomený tvar (např. mohl/a, prožíval/a, měl/měla)"
+        return None
+
+    for _attempt in range(3):
+        issue = _has_issues(result)
+        if not issue:
+            break
+        log.warning("Lomený tvar/cyrilice detekována (pokus %d), přegeneruji: %s", _attempt + 1, result[:60])
+        stricter = prompt + f"\n\nPOZOR: Předchozí pokus obsahoval {issue}. Tentokrát ABSOLUTNĚ česky, BEZ LOMÍTEK (žádné /, žádné x/y tvary), bez cizích znaků. Piš výhradně přítomný čas 2. os. nebo infinitiv."
+        response = _call_claude(client, model_name, stricter, temperature=0.65, max_tokens=250,
                                 system=_get_comment_system())
         result = response.text.strip()
+    else:
+        # Fallback: hrubé odstranění lomených tvarů (vezmi část před lomítkem)
+        result = _re.sub(r'(\w+)/\w{1,6}\b', r'\1', result)
+        log.warning("Fallback nahrazení lomených tvarů po 3 pokusech")
 
     return result
 
