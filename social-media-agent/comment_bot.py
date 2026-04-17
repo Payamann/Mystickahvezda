@@ -46,7 +46,7 @@ POLL_INTERVAL    = int(os.getenv("COMMENT_POLL_INTERVAL", "900"))   # 15 min
 AUTO_REPLY_DELAY = int(os.getenv("AUTO_REPLY_DELAY", "1800"))        # 30 min v review mode
 REPLY_DELAY_MIN  = int(os.getenv("REPLY_DELAY_MIN", "45"))           # min. sekund mezi odpověďmi
 REPLY_DELAY_MAX  = int(os.getenv("REPLY_DELAY_MAX", "120"))          # max. sekund mezi odpověďmi
-DAILY_LIMIT      = int(os.getenv("DAILY_REPLY_LIMIT", "60"))         # max odpovědí za den
+DAILY_LIMIT      = int(os.getenv("DAILY_REPLY_LIMIT", "200"))        # max odpovědí za den
 
 # Soubor pro sledování denního počtu odpovědí
 _DAILY_COUNTER_FILE = Path(__file__).parent / "output" / "daily_reply_counter.json"
