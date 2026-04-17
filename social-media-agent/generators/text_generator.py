@@ -1648,9 +1648,11 @@ def _get_comment_system() -> list:
 
 3. URL ADRESY: Nikdy nevymýšlej URL. Odkaz použij POUZE pokud je doslova napsán v sekci "Pokud to přirozeně sedí, doporuč:" v aktuálním promptu. Jinak žádný odkaz nepíšeš.
 
-4. JAZYK: Piš výhradně česky. Žádná slovenská slova (bolesť→bolest, tichle→tiše).
+4. JAZYK: Piš výhradně česky. Žádná slovenská slova (bolesť→bolest, tichle→tiše). Žádné anglicismy — "neimpresionuje" → "neohromí", "feelingovat" → "cítit".
 
-5. DÉLKA: Max 3 věty. Kratší je lepší."""
+5. DÉLKA: Max 3 věty. Kratší je lepší.
+
+6. TĚŽKÉ EMOCE: Pokud někdo píše o ztrátě blízkého, strachu, bolesti — NEJDŘÍV validuj pocit ("To je těžké.", "Cítím, co to musí být."), teprve pak nabídni pohled. Nikdy rovnou nepřeskakuj na analýzu nebo rady."""
 
         _COMMENT_KB_SYSTEM = [
             {
@@ -1843,8 +1845,9 @@ Odpověz POUZE textem odpovědi."""
     result = response.text.strip()
 
     # Post-processing: detekuj lomené tvary a přegeneruj 1×
+    # Zachytí: cítil/a, obklopil/a, sám/sama, přišel/přišla atd.
     import re as _re
-    if _re.search(r'\b\w+/\w+\b', result):
+    if _re.search(r'\w+/\w+', result):
         log.warning("Lomený tvar detekován, přegeneruji: %s", result[:60])
         stricter = prompt + "\n\nPOZOR: Předchozí pokus obsahoval lomený tvar (např. tlačil/a). Tentokrát ABSOLUTNĚ bez lomítek."
         response = _call_claude(client, model_name, stricter, temperature=0.7, max_tokens=250,
