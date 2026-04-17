@@ -558,8 +558,10 @@ def get_pending_comments(
             age_hours = (now - ct.replace(tzinfo=None)).total_seconds() / 3600
         except Exception:
             age_hours = 9999
-        if age_hours < 6:
-            recency = 5      # čerstvé — největší dopad na algoritmus
+        if age_hours < 1:
+            recency = 8      # do hodiny — zlaté okno FB algoritmu
+        elif age_hours < 6:
+            recency = 5
         elif age_hours < 24:
             recency = 3
         elif age_hours < 72:
