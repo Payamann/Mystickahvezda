@@ -1640,6 +1640,18 @@ def _get_comment_system() -> list:
             include_faq=True,
             compact=True,
         )
+        _COMMENT_HARD_RULES = """PEVNÁ PRAVIDLA PRO ODPOVĚDI NA KOMENTÁŘE — BEZ VÝJIMKY:
+
+1. LOMENÉ TVARY: ABSOLUTNĚ ZAKÁZÁNY. Nikdy: cítil/a, rozhodl/a, přišel/přišla, sám/sama, měl/měla, byl/byla, udělal/a — ani žádný jiný tvar s lomítkem. Vždy přítomný čas 2. osoby (cítíš, rozhoduješ se) nebo infinitiv.
+
+2. POHLAVÍ: Nikdy nepředpokládej pohlaví. Zakázáno: "ses starala", "ses rozhodla", "byl jsi unavený". Správně: "ses staral/... " NE — správně: "jsi se staral o ostatní" NE — správně: "pečoval jsi o ostatní" NE. Správně: "péče o ostatní tě vyčerpala" nebo "starat se o ostatní tě vyčerpalo".
+
+3. URL ADRESY: Nikdy nevymýšlej URL. Odkaz použij POUZE pokud je doslova napsán v sekci "Pokud to přirozeně sedí, doporuč:" v aktuálním promptu. Jinak žádný odkaz nepíšeš.
+
+4. JAZYK: Piš výhradně česky. Žádná slovenská slova (bolesť→bolest, tichle→tiše).
+
+5. DÉLKA: Max 3 věty. Kratší je lepší."""
+
         _COMMENT_KB_SYSTEM = [
             {
                 "type": "text",
@@ -1649,6 +1661,11 @@ def _get_comment_system() -> list:
             {
                 "type": "text",
                 "text": kb,
+                "cache_control": {"type": "ephemeral"},
+            },
+            {
+                "type": "text",
+                "text": _COMMENT_HARD_RULES,
                 "cache_control": {"type": "ephemeral"},
             },
         ]
