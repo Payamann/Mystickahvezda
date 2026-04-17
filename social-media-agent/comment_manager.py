@@ -549,7 +549,26 @@ def get_pending_comments(
 
         pending.append(comment)
 
-    pending.sort(key=lambda c: (-c.get("priority", 0), c.get("created_time", "")))
+    # Recency bonus — nové komentáře mají přednost (boostuje FB engagement window)
+    now = datetime.now()
+    def _score(c: dict) -> float:
+        priority = c.get("priority", 0)
+        try:
+            ct = datetime.fromisoformat(c["created_time"].replace("Z", "+00:00").replace("+0000", "+00:00"))
+            age_hours = (now - ct.replace(tzinfo=None)).total_seconds() / 3600
+        except Exception:
+            age_hours = 9999
+        if age_hours < 6:
+            recency = 5      # čerstvé — největší dopad na algoritmus
+        elif age_hours < 24:
+            recency = 3
+        elif age_hours < 72:
+            recency = 1
+        else:
+            recency = 0
+        return -(priority + recency)   # záporné = řazení sestupně
+
+    pending.sort(key=_score)
     return pending
 
 
