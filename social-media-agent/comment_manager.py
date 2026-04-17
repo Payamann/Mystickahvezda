@@ -546,6 +546,9 @@ def get_pending_comments(
             continue
         if comment.get("should_hide", False):
             continue
+        # Přeskoč odpovědi stránky samotné (bot nesmí odpovídat sám sobě)
+        if comment.get("from_name", "") == config.BRAND_NAME:
+            continue
 
         pending.append(comment)
 

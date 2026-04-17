@@ -1813,11 +1813,11 @@ Tón: přátelský, zvídavý. Délka: 1-2 věty."""
     # Relevantní nástroj/odkaz
     tool = find_relevant_tool(original_comment) or find_relevant_tool(post_topic)
     relevant_blogs = find_relevant_blog(original_comment, max_results=1)
-    recommendation = ""
+    recommendation = "\nODKAZY: Nepoužívej žádné URL. Pokud je níže uvedena konkrétní adresa, použij POUZE tu — jinak žádný odkaz nepíšeš."
     if tool and ctx["typ"] in ("otazka", "emocionalni_stav", "prinos_znameni"):
-        recommendation = f"\nPokud to přirozeně sedí, doporuč: {tool['name']} ({config.WEBSITE_URL}{tool.get('url', '')})"
+        recommendation = f"\nODKAZ (použij POUZE tento, doslova): {config.WEBSITE_URL}{tool.get('url', '')}"
     elif relevant_blogs and ctx["typ"] == "otazka":
-        recommendation = f"\nMůžeš odkázat na: {relevant_blogs[0]['title']} ({config.WEBSITE_URL}/blog/{relevant_blogs[0]['slug']}.html)"
+        recommendation = f"\nODKAZ (použij POUZE tento, doslova): {config.WEBSITE_URL}/blog/{relevant_blogs[0]['slug']}.html"
 
     prompt = f"""Post byl o: "{post_topic}"
 {f'Kontext: {post_context[:200]}' if post_context else ''}
