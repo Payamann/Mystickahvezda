@@ -1840,7 +1840,18 @@ Odpověz POUZE textem odpovědi."""
 
     response = _call_claude(client, model_name, prompt, temperature=0.82, max_tokens=250,
                             system=_get_comment_system())
-    return response.text.strip()
+    result = response.text.strip()
+
+    # Post-processing: detekuj lomené tvary a přegeneruj 1×
+    import re as _re
+    if _re.search(r'\b\w+/\w+\b', result):
+        log.warning("Lomený tvar detekován, přegeneruji: %s", result[:60])
+        stricter = prompt + "\n\nPOZOR: Předchozí pokus obsahoval lomený tvar (např. tlačil/a). Tentokrát ABSOLUTNĚ bez lomítek."
+        response = _call_claude(client, model_name, stricter, temperature=0.7, max_tokens=250,
+                                system=_get_comment_system())
+        result = response.text.strip()
+
+    return result
 
 
 # ============================================================
