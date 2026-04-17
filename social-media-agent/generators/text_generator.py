@@ -488,6 +488,7 @@ HOOK_AFFINITY = {
     "tip": ["daily_ritual", "number_hook", "before_after", "direct_address", "micro_story"],
     "blog_promo": ["curiosity_gap", "secret_reveal", "number_hook", "bold_statement", "micro_story"],
     "daily_energy": ["moon_hook", "zodiac_hook", "season_energy", "synchronicity", "milestone"],
+    "daily_check_in": ["personal_question", "direct_address", "how_to_feel", "vulnerability", "community"],
     "myth_bust": ["contrarian", "myth_bust", "bold_statement", "secret_reveal", "pattern_interrupt"],
     "story": ["story_open", "before_after", "how_to_feel", "historic_wisdom", "micro_story"],
     "challenge": ["challenge", "personal_question", "community", "daily_ritual", "celebration"],
@@ -629,7 +630,7 @@ def generate_post(
 
     Args:
         post_type: educational | quote | question | tip | blog_promo | daily_energy |
-                   myth_bust | story | challenge | carousel_plan
+                   daily_check_in | myth_bust | story | challenge | carousel_plan
         topic: téma postu
         platform: instagram | facebook
         blog_url: URL blogu (pro blog_promo)
@@ -906,6 +907,23 @@ Tón: jemný, poetický ale konkrétní.
 DÉLKA: 600–1000 znaků. Stručná předpověď, ne astrologická přednáška.
 NEDĚLEJ: Vágní "dnes je dobrý den pro změnu". Negativní predikce bez řešení.
 ČASTÉ CHYBY: Energie dne je generická a sedí na jakýkoliv den. Chybí konkrétní rituál.
+""",
+        "daily_check_in": """
+Ranní nebo večerní check-in post — PŘÍMÁ otázka na pocit dne. Cíl: maximální komentáře.
+
+Formát:
+1. OTEVÍRAČ (1 věta): Stručný astro nebo energetický kontext dne — co dnes "visí ve vzduchu".
+   Píšeš konkrétně (dnešní datum, planeta, fáze Měsíce) — NE genericky.
+2. ZRCADLO (1–2 věty): Pojmenuj emoci nebo situaci kterou DNES mnoho lidí zažívá.
+   Vycházej z dat: únava, smutek, přetížení, radost bez důvodu — to jsou real pocity publika.
+3. OTÁZKA (1 věta): Přímá, jednoduchá, osobní. Odpověď má být maximálně 1–3 slova nebo emoji.
+   Příklady: "Jak se dnes cítíš?" / "Dnešní energie tě táhne víc k... A nebo B?" /
+   "Napiš jedním slovem jak je na tom tvoje energie dnes."
+
+Tón: přítomný, teplý, bez poučování. NE astrologická přednáška.
+DÉLKA: 300–500 znaků. Kratší = víc komentářů.
+NEDĚLEJ: Zodpovídat otázku sám/sama. Přidávat více než jednu otázku. Délku přes 500 znaků.
+HASHTAGY: #mystickaHvezda + 3–4 cílené (energie, pocity, komunita).
 """,
         "myth_bust": """
 Odhalení mýtu. Začni tím co si VĚTŠINA LIDÍ myslí (a proč je to špatně).
@@ -1785,14 +1803,19 @@ def generate_comment_reply(
     post_topic: str,
     tone: str = "friendly",
     post_context: str = "",
+    db_sentiment: str = "",
 ) -> str:
     """
     Generuje specifickou, duší nabitou odpověď na komentář.
     Rozpoznává znamení, emoce, typ komentáře a přizpůsobuje tón i obsah.
+    db_sentiment: sentiment z DB (přepíše detekci pokud je 'emotional')
     """
     client, model_name = setup_claude(use_fast=True)  # Haiku — levnější pro komentáře
 
     ctx = _detect_comment_context(original_comment)
+    # Pokud DB klasifikovala komentář jako emocionální výpověď, respektuj to
+    if db_sentiment == "emotional" and ctx["typ"] not in ("humor", "identifikace_znameni"):
+        ctx["typ"] = "emocionalni_stav"
 
     # Sestavení specifických instrukcí podle typu
     if ctx["typ"] == "identifikace_znameni":

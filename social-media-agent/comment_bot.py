@@ -239,6 +239,7 @@ def run_once(mode: str, limit: int = 0):
     _TONE_MAP = {
         "question": "educational", "positive": "friendly",
         "skeptical": "empathetic", "neutral": "friendly", "off_topic": "friendly",
+        "emotional": "empathetic",
     }
     new_replies: dict[str, str] = {}
     for comment in pending:
@@ -252,6 +253,7 @@ def run_once(mode: str, limit: int = 0):
                 original_comment=comment["message"],
                 post_topic=comment.get("post_message", "mystika"),
                 tone=tone,
+                db_sentiment=comment.get("sentiment", ""),
             )
             comment["suggested_reply"] = suggested
             new_replies[comment["id"]] = suggested

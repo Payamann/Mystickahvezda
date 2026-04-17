@@ -360,6 +360,19 @@ def analyze_comment_sentiment(message: str) -> dict:
         "nevite", "nevíte", "jak se", "co to",
     ]
 
+    # Emocionální výpovědi — lidi co se svěřují se STAVEM, ne ptají
+    EMOTIONAL_STATE_SIGNALS = [
+        "cítím se", "citim se", "cítím", "jsem unavená", "jsem unavený",
+        "jsem smutná", "jsem smutný", "jsem vyčerpaná", "je mi smutno",
+        "je mi špatně", "je mi spatne", "trápím se", "trapim se",
+        "je mi těžko", "je mi tezko", "cítím únavu", "mám špatnou náladu",
+        "jsem v depresi", "cítím bolest", "nejsem dobře", "nejsem v pořádku",
+        "chybí mi", "chybi mi", "nemám nikoho", "nemam nikoho",
+        "nevím co dál", "nevim co dal", "jsem ztracená", "jsem ztraceny",
+        "som unavená", "som smutná",  # slovenština
+        "jsem tady :(", "tady :(",    # "jsem tady" bez kontextu = signál osamělosti
+    ]
+
     # ── Klasifikace ──
 
     # 1. Spam — vždy skrýt
@@ -374,21 +387,29 @@ def analyze_comment_sentiment(message: str) -> dict:
     is_on_topic = any(s in text for s in ON_TOPIC_SIGNALS)
     is_off_topic = any(s in text for s in OFF_TOPIC_SIGNALS) and not is_on_topic
 
-    # 4. Otázka
+    # 4. Emocionální výpověď — priorita před "otázkou" (obsahuje "jak se" ale je to vyznání)
+    #    Podmínka: >20 znaků nebo explicitní emocionální fraze
+    has_emotional_signal = any(s in text for s in EMOTIONAL_STATE_SIGNALS)
+    if has_emotional_signal and not is_off_topic:
+        # Delší emocionální komentáře jsou zlatý obsah — vysoká priorita
+        priority = 9 if len(message) > 40 else 7
+        return {"sentiment": "emotional", "priority": priority, "needs_reply": True, "should_hide": False, "is_off_topic": False}
+
+    # 5. Otázka (ale ne pokud je to jen "jak se cítíš" — to je emocionální)
     if any(s in text for s in QUESTION_SIGNALS):
         if is_off_topic:
             return {"sentiment": "off_topic", "priority": 2, "needs_reply": True, "should_hide": False, "is_off_topic": True}
         return {"sentiment": "question", "priority": 10, "needs_reply": True, "should_hide": False, "is_off_topic": False}
 
-    # 5. Skeptik
+    # 6. Skeptik
     if any(s in text for s in NEGATIVE_SIGNALS):
         return {"sentiment": "skeptical", "priority": 7, "needs_reply": True, "should_hide": False, "is_off_topic": is_off_topic}
 
-    # 6. Pochvala
+    # 7. Pochvala
     if any(s in text for s in POSITIVE_SIGNALS):
         return {"sentiment": "positive", "priority": 5, "needs_reply": True, "should_hide": False, "is_off_topic": False}
 
-    # 7. Off-topic bez otázky — nízká priorita
+    # 8. Off-topic bez otázky — nízká priorita
     if is_off_topic:
         return {"sentiment": "off_topic", "priority": 1, "needs_reply": False, "should_hide": False, "is_off_topic": True}
 

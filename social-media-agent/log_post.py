@@ -36,7 +36,7 @@ from generators.content_memory import (
 def main():
     parser = argparse.ArgumentParser(description="Zaznamenej post do content_memory")
     parser.add_argument("--topic", required=True, help="Téma postu")
-    parser.add_argument("--type", required=True, dest="post_type", help="Typ postu (educational, question, ...)")
+    parser.add_argument("--type", required=True, dest="post_type", help="Typ postu (educational, question, tip, story, quote, blog_promo, myth_bust, daily_energy, daily_check_in, challenge, carousel_plan)")
     parser.add_argument("--hook", default="", help="Hook formula (curiosity_gap, contrarian, ...)")
     parser.add_argument("--intent", default="pure_value", choices=["pure_value", "soft_promo", "direct_promo"])
     parser.add_argument("--score", type=float, default=7.5, help="Odhadované QG skóre (1-10)")
