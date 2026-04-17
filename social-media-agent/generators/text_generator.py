@@ -1708,7 +1708,31 @@ _ENGAGEMENT_HOOKS = [
     "Co říká tvá intuice?",
     "Poznáváš se v tom?",
     "Co pro tebe dnes znamená tohle?",
+    "Jak se s tím vyrovnáváš?",
+    "Kde to teď cítíš nejvíc?",
+    "Co na tom je pro tebe nejtěžší?",
+    "Kdy ses to uvědomil naposledy?",
 ]
+
+# Začátky odpovědí — rotujeme, aby se neopakovaly
+_REPLY_OPENERS_USED: list[str] = []
+_BANNED_OPENERS = [
+    "zajímá mě", "rozumím —", "rozumím—", "chápu —", "chápu—",
+    "to je přirozené", "to je krásné", "to je skvělé",
+]
+
+def _check_opener_variety(text: str) -> bool:
+    """Vrátí False pokud začátek byl použit v posledních 4 odpovědích."""
+    opener = text.lower()[:20]
+    for prev in _REPLY_OPENERS_USED[-4:]:
+        if opener[:12] == prev[:12]:
+            return False
+    return True
+
+def _register_opener(text: str):
+    _REPLY_OPENERS_USED.append(text.lower()[:20])
+    if len(_REPLY_OPENERS_USED) > 20:
+        _REPLY_OPENERS_USED.pop(0)
 
 import random as _random
 
@@ -1739,6 +1763,13 @@ def _detect_comment_context(message: str) -> dict:
         ctx["typ"] = "identifikace_znameni"  # "Jsem Štír 🦂"
     elif ctx["emoce"]:
         ctx["typ"] = "emocionalni_stav"
+    # Krátký negativní komentář — "Špatně", "Spatne", "Smutno", "Jsem tady :(" apod.
+    elif len(lower.replace("🫣","").replace("😞","").replace(":(","").strip()) <= 30 and any(
+        w in lower for w in ["špatně", "spatne", "špatne", "smutně", "smutn", "špatno",
+                              "je mi spatn", "je mi špatn", "jsem tady", "je mi smutno",
+                              "cítím se špatn", "citim se špatn", "unaveně", "unavene"]
+    ):
+        ctx["typ"] = "kratky_negativni"
     elif any(w in lower for w in ["díky", "dekuji", "děkuji", "super", "skvěl", "krásn", "úžasn", "přesn", "pravda", "❤", "💜", "🙏"]):
         ctx["typ"] = "pochvala"
     elif any(w in lower for w in ["nevím", "nevim", "pochyb", "nefunguje", "nevěřím", "neverim", "škoda", "zklamán"]):
@@ -1800,6 +1831,13 @@ Tón: jako průvodce který to zná zevnitř. Délka: 2-3 věty."""
 Neber to vážně, odpověz v podobném duchu — vtip, lehká ironie nebo playful komentář.
 Tón: odlehčený, lidský, spontánní. Délka: 1 věta. Nezačínaj analýzou."""
 
+    elif ctx["typ"] == "kratky_negativni":
+        instrukce = """Osoba napsal/a jen jedno slovo nebo krátkou větu vyjadřující, že se cítí špatně nebo smutně.
+PRVNÍ věta: výhradně empatie — krátce, lidsky, přítomně. Příklady: "To slyším." / "To je těžké." / "Jsem tu." / "Cítím to s tebou."
+DRUHÁ věta (volitelná): jeden malý, konkrétní dotaz nebo nabídka pohledu — bez rad, bez diagnózy, bez astro teorie.
+Tón: teplý, přítomný, žádné klišé. Délka: max 2 věty.
+ZAKÁZÁNO: začínat analýzou, astro kontextem, radami. ZAKÁZÁNO: "To je přirozené", "Chápu —", "Rozumím —"."""
+
     else:
         instrukce = """Zapoj osobu do rozhovoru. Potvrď jejich zážitek nebo pohled.
 Tón: přátelský, zvídavý. Délka: 1-2 věty.
@@ -1807,9 +1845,17 @@ DŮLEŽITÉ: Nepřidávej astrologický kontext pokud nevychází přímo z kome
 
     # Engagement hook — 60% šance na otázku na konci (boostuje diskusi)
     engagement = ""
-    if ctx["typ"] not in ("otazka", "skeptik", "humor") and _random.random() < 0.6:
+    if ctx["typ"] not in ("otazka", "skeptik", "humor", "kratky_negativni") and _random.random() < 0.6:
         hook = _random.choice(_ENGAGEMENT_HOOKS)
         engagement = f"\nNa konec přirozeně přidej tuto otázku (nebo podobnou): \"{hook}\""
+
+    # Variety hint — zakázané opakující se začátky
+    banned_now = [o for o in _BANNED_OPENERS if any(
+        p[:12] == o[:12] for p in _REPLY_OPENERS_USED[-4:]
+    )]
+    variety_hint = ""
+    if banned_now:
+        variety_hint = f"\nNEZAČÍNAJ těmito frázemi (příliš časté): {', '.join(banned_now[:3])}"
 
     # Relevantní nástroj/odkaz
     tool = find_relevant_tool(original_comment) or find_relevant_tool(post_topic)
@@ -1827,6 +1873,7 @@ Komentář: "{original_comment}"
 INSTRUKCE PRO TUTO ODPOVĚĎ:
 {instrukce}
 {engagement}
+{variety_hint}
 {recommendation}
 
 PEVNÁ PRAVIDLA — porušení není přípustné:
@@ -1868,6 +1915,7 @@ Odpověz POUZE textem odpovědi."""
         result = _re.sub(r'(\w+)/\w{1,6}\b', r'\1', result)
         log.warning("Fallback nahrazení lomených tvarů po 3 pokusech")
 
+    _register_opener(result)
     return result
 
 
