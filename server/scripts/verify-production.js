@@ -4,8 +4,8 @@
 // Check if running locally
 const isLocal = process.argv.includes('--local');
 const BASE_URL = isLocal ? 'http://localhost:3001' : 'https://mystickahvezdaoriginalantigravity-production.up.railway.app';
-const EMAIL = 'pavel.hajek1989@gmail.com';
-const PASSWORD = '123456';
+const EMAIL = process.env.VERIFY_EMAIL;
+const PASSWORD = process.env.VERIFY_PASSWORD;
 
 async function measure(name, fn) {
     const start = Date.now();
@@ -22,6 +22,10 @@ async function measure(name, fn) {
 }
 
 async function run() {
+    if (!EMAIL || !PASSWORD) {
+        throw new Error('Set VERIFY_EMAIL and VERIFY_PASSWORD before running production verification.');
+    }
+
     console.log(`🚀 Starting Production Verification on ${BASE_URL}`);
 
     // 1. Health Check

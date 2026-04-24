@@ -12,7 +12,7 @@ const TEST = {
     name: 'Pavel',
     birthDate: '1989-01-01',
     sign: 'kozoroh',
-    email: 'pavel.hajek1989@gmail.com',
+    email: process.env.TEST_EMAIL || 'test@example.com',
 };
 
 console.log('[TEST] Generuji obsah horoskopem přes Claude API...');

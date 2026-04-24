@@ -1,424 +1,201 @@
 <!DOCTYPE html>
-
 <html lang="cs">
-
-
-
 <head>
-
     <meta charset="UTF-8">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
-  <link rel="apple-touch-icon" href="../img/icon-192.webp">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-    <title>Karmick� Uzly | Ezoterick� Slovn�k Mystick� Hv�zda</title>
-
-    <meta name="description" content="Severn� a Ji�n� karmick� uzel ukazuj� va�i cestu osudu a minul�ch �ivot�.">
-
+    <title>Karmické uzly | Ezoterický slovník Mystická Hvězda</title>
+    <meta name="description" content="Severní a jižní karmický uzel ukazují cestu duše, minulé životy, opakující se vzorce a směr osobního růstu.">
     <meta name="robots" content="index, follow">
-
-
-
-    <!-- Open Graph -->
-
-    <meta property="og:title" content="Karmick� Uzly | Ezoterick� Slovn�k">
-
-    <meta property="og:description" content="Severn� a Ji�n� karmick� uzel ukazuj� va�i cestu osudu a minul�ch �ivot�.">
-
+    <meta property="og:title" content="Karmické uzly | Ezoterický slovník">
+    <meta property="og:description" content="Severní a jižní karmický uzel ukazují cestu duše, minulé životy a směr osobního růstu.">
     <meta property="og:image" content="../img/hero-3d.webp">
-
-
-
-    <!-- Fonts & Styles -->
-
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☊</text></svg>">
+    <link rel="apple-touch-icon" href="../img/icon-192.webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-
-        rel="stylesheet"  >
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
-
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.v2.min.css?v=4">
-
-
-
     <style>
-
         .dictionary-header {
-
             padding: 4rem 0 2rem;
-
             text-align: center;
-
         }
-
-
 
         .dictionary-badge {
-
             display: inline-block;
-
             background: rgba(155, 89, 182, 0.2);
-
             color: #d4af37;
-
             padding: 0.5rem 1rem;
-
             border-radius: 50px;
-
             font-size: 0.9rem;
-
             margin-bottom: 1rem;
-
             border: 1px solid rgba(212, 175, 55, 0.3);
-
         }
-
-
 
         .dictionary-content {
-
             max-width: 800px;
-
             margin: 0 auto;
-
             background: rgba(10, 10, 26, 0.8);
-
             border: 1px solid rgba(255, 255, 255, 0.1);
-
             padding: 3rem;
-
             border-radius: 20px;
-
             backdrop-filter: blur(10px);
-
             line-height: 1.8;
-
             color: var(--color-text-light);
-
             font-size: 1.1rem;
-
         }
-
-
 
         .dictionary-content h2,
-
         .dictionary-content h3 {
-
             color: var(--color-mystic-gold);
-
             margin-top: 2rem;
-
             margin-bottom: 1rem;
-
         }
 
-
-
-        .dictionary-content p {
-
-            margin-bottom: 1.5rem;
-
-        }
-
-
-
-        .dictionary-content ul,
-
-        .dictionary-content ol {
-
-            margin-bottom: 1.5rem;
-
-            padding-left: 1.5rem;
-
-        }
-
-
-
+        .dictionary-content p,
         .dictionary-content li {
-
-            margin-bottom: 0.5rem;
-
+            margin-bottom: 1rem;
         }
-
-
 
         .related-features {
-
             margin-top: 4rem;
-
             padding-top: 2rem;
-
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-
         }
-
-
 
         .related-features h3 {
-
             text-align: center;
-
             margin-bottom: 1.5rem;
-
         }
-
-
 
         .features-grid {
-
             display: grid;
-
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-
             gap: 1.5rem;
-
         }
-
-
 
         .feature-card {
-
             background: rgba(255, 255, 255, 0.05);
-
             border: 1px solid rgba(255, 255, 255, 0.1);
-
             padding: 1.5rem;
-
             border-radius: 12px;
-
             text-align: center;
-
             transition: all 0.3s ease;
-
             text-decoration: none;
-
             color: white;
-
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
             gap: 1rem;
-
         }
-
-
 
         .feature-card:hover {
-
             transform: translateY(-5px);
-
             border-color: var(--color-primary);
-
             background: rgba(155, 89, 182, 0.1);
-
             box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
-
         }
-
-
 
         .feature-icon {
-
             font-size: 2.5rem;
-
         }
-
-
 
         .feature-title {
-
             font-weight: 600;
-
             color: var(--color-mystic-gold);
-
         }
-
-
 
         .breadcrumb {
-
             margin-bottom: 2rem;
-
             font-size: 0.9rem;
-
-            color: var(--color-text-mutated);
-
+            color: var(--color-text-muted);
         }
-
-
 
         .breadcrumb a {
-
             color: var(--color-mystic-gold);
-
             text-decoration: none;
-
         }
-
-
 
         .breadcrumb a:hover {
-
             text-decoration: underline;
-
         }
-
-
 
         @media (max-width: 768px) {
-
             .dictionary-content {
-
                 padding: 1.5rem;
-
             }
-
         }
-
     </style>
-
-
-
-    <!-- Structured Data -->
-
     <script type="application/ld+json">
-
-        {
-
-    "@context": "https://schema.org",
-
-    "@type": "Article",
-
-    "headline": "Karmick� Uzly",
-
-    "description": "Severn� a Ji�n� karmick� uzel ukazuj� va�i cestu osudu a minul�ch �ivot�.",
-
-    "author": {
-
-        "@type": "Organization",
-
-        "name": "Mystick� Hv�zda"
-
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "Karmické uzly",
+        "description": "Severní a jižní karmický uzel ukazují cestu duše, minulé životy a směr osobního růstu.",
+        "author": {
+            "@type": "Organization",
+            "name": "Mystická Hvězda"
+        }
     }
-
-}
-
     </script>
-
     <script src="/js/dist/analytics-init.js" defer></script>
 </head>
-
-
-
 <body>
-
     <div class="stars" aria-hidden="true"></div>
-
-
-
     <div id="header-placeholder"></div>
 
-
-
     <main>
-
         <section class="dictionary-header">
-
             <div class="container" style="max-width: 800px; margin: 0 auto; text-align: left;">
-
                 <div class="breadcrumb">
-
-                    <a href="../index.html">Dom�</a> &raquo; <a href="../slovnik.html">Ezoterick� Slovn�k</a> &raquo;
-
-                    Karmick� Uzly
-
+                    <a href="../index.html">Domů</a> &raquo; <a href="../slovnik.html">Ezoterický slovník</a> &raquo;
+                    Karmické uzly
                 </div>
-
-                <div class="dictionary-badge">Karmick� Astrologie</div>
-
-                <h1 class="hero__title"
-
-                    style="text-align: left; font-size: 2.5rem; margin-top: 0.5rem; margin-bottom: 0;">Karmick� Uzly</h1>
-
+                <div class="dictionary-badge">Karmická astrologie</div>
+                <h1 class="hero__title" style="text-align: left; font-size: 2.5rem; margin-top: 0.5rem; margin-bottom: 0;">Karmické uzly</h1>
             </div>
-
         </section>
-
-
 
         <section class="section" style="padding-top: 0;">
-
             <div class="container">
+                <article class="dictionary-content" data-animate>
+                    <h2>Karmické uzly: Dračí hlava a Dračí ocas</h2>
+                    <p>Severní a jižní karmický uzel nejsou planety, ale body, kde se dráha Měsíce protíná s ekliptikou. V astrologii ukazují napětí mezi tím, co už duše zná, a směrem, kterým má v tomto životě růst.</p>
+                    <p><strong>Jižní uzel</strong> popisuje známé vzorce, talenty, instinkty a témata minulosti. Často působí pohodlně, protože je umíte používat automaticky. Když se jich ale držíte příliš pevně, mohou vás brzdit.</p>
+                    <p><strong>Severní uzel</strong> ukazuje vývojový směr. Neznamená jednoduchou cestu, ale oblast, ve které postupně získáváte odvahu, zralost a hlubší smysl. Právě tady často cítíte největší nejistotu i největší potenciál.</p>
 
-                <div class="dictionary-content" data-animate>
+                    <h3>Co karmické uzly znamenají v praxi?</h3>
+                    <ul>
+                        <li>Ukazují opakující se životní vzorce, které už není potřeba slepě opakovat.</li>
+                        <li>Pomáhají pochopit, proč vás určité vztahy, situace nebo rozhodnutí silně přitahují.</li>
+                        <li>Dávají jazyk tomu, kam vás život dlouhodobě vede.</li>
+                    </ul>
 
-                    <h2>Karmick� Uzly (Dra�� Hlava a Ocas)</h2><p>Severn� uzel ukazuje n� �ivotn� c�l, na�i nezn�mou cestu k napln�n�. Ji�n� uzel naopak symbolizuje to, s ��m jsme do tohoto sv�ta ji� p�i�li � minul� �ivoty a zvyky.</p>
-
-
+                    <p>Karmické uzly nejsou rozsudek. Jsou mapa. Jižní uzel říká: „Toto už znáš.“ Severní uzel dodává: „Tady začíná tvůj další krok.“</p>
 
                     <div class="related-features">
-
-                        <h3>Zjist�te v�ce v na�ich aplikac�ch:</h3>
-
+                        <h3>Zjistěte více v našich aplikacích</h3>
                         <div class="features-grid">
-
-                            
-
-                    <a href="../natalni-karta.html" class="feature-card">
-
-                        <div class="feature-icon">?</div>
-
-                        <div class="feature-title">Nat�ln� Karta</div>
-
-                    </a>
-
-                    <a href="../horoskopy.html" class="feature-card">
-
-                        <div class="feature-icon">♈</div>
-
-                        <div class="feature-title">Horoskopy</div>
-
-                    </a>
-
+                            <a href="../natalni-karta.html" class="feature-card">
+                                <div class="feature-icon">☊</div>
+                                <div class="feature-title">Natální karta</div>
+                            </a>
+                            <a href="../horoskopy.html" class="feature-card">
+                                <div class="feature-icon">♈</div>
+                                <div class="feature-title">Horoskopy</div>
+                            </a>
                         </div>
-
                     </div>
-
-                </div>
-
+                </article>
             </div>
-
         </section>
-
     </main>
 
-
-
     <div id="footer-placeholder"></div>
-
-
-
     <script src="../js/api-config.js" defer></script>
     <script src="../js/dist/templates.js" defer></script>
-
     <script src="../js/auth-client.js" defer></script>
-
     <script src="../js/components.js" defer></script>
-
     <script type="module" src="../js/main.js"></script>
-
 </body>
-
-
-
 </html>

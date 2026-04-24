@@ -7,7 +7,7 @@ async function verify() {
     const { data: user, error: userError } = await supabase
         .from('users')
         .select('*')
-        .eq('email', 'pavel.hajek1989@gmail.com')
+        .eq('email', process.env.VERIFY_EMAIL || 'test@example.com')
         .single();
 
     if (user) {
