@@ -4,6 +4,20 @@
 
 import { apiUrl, authHeaders } from './shared.js';
 
+function startProfileUpgradeCheckout(source = 'profile_subscription_card') {
+    window.MH_ANALYTICS?.trackCTA?.(source, {
+        plan_id: 'pruvodce',
+        feature: 'subscription_management'
+    });
+
+    window.Auth?.startPlanCheckout?.('pruvodce', {
+        source,
+        feature: 'subscription_management',
+        redirect: '/cenik.html',
+        authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register'
+    });
+}
+
 export function initSettingsForm() {
     const user = window.Auth?.user;
     if (!user) return;
@@ -198,10 +212,13 @@ export async function loadSubscriptionStatus() {
                     <span class="subscription-plan__name">Poutník (zdarma)</span>
                 </div>
                 <div class="subscription-actions">
-                    <a href="cenik.html" class="btn btn--gold btn--sm">Upgradovat</a>
+                    <button id="sub-upgrade-fallback-btn" type="button" class="btn btn--gold btn--sm">Upgradovat</button>
                 </div>
             </div>
         `;
+        document.getElementById('sub-upgrade-fallback-btn')?.addEventListener('click', () => {
+            startProfileUpgradeCheckout('profile_subscription_fallback');
+        });
         return null;
     }
 }
@@ -263,7 +280,7 @@ function renderSubscriptionCard(sub) {
     html += '<div class="subscription-actions">';
 
     if (!isPremium) {
-        html += '<a href="cenik.html" class="btn btn--gold btn--sm">Upgradovat na Premium</a>';
+        html += '<button id="sub-upgrade-btn" type="button" class="btn btn--gold btn--sm">Upgradovat na Premium</button>';
     } else {
         if (sub.canCancel && sub.status !== 'cancel_pending') {
             html += '<button id="sub-cancel-btn" class="btn btn--sm btn--glass">Zrušit předplatné</button>';
@@ -277,6 +294,9 @@ function renderSubscriptionCard(sub) {
     html += '</div></div>';
     container.innerHTML = html;
 
+    document.getElementById('sub-upgrade-btn')?.addEventListener('click', () => {
+        startProfileUpgradeCheckout('profile_subscription_card');
+    });
     document.getElementById('sub-cancel-btn')?.addEventListener('click', cancelSubscription);
     document.getElementById('sub-reactivate-btn')?.addEventListener('click', reactivateSubscription);
     document.getElementById('sub-portal-btn')?.addEventListener('click', openStripePortal);

@@ -74,11 +74,89 @@ const sensitiveLimiter = rateLimit({
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
+const DEV_AUTO_LOGIN_AFTER_REGISTER = !IS_PRODUCTION && process.env.DEV_AUTO_LOGIN_AFTER_REGISTER !== 'false';
 
 const logDebug = (msg) => {
     if (IS_PRODUCTION) return; // Skip debug logging in production
     console.log(`[DEBUG] ${msg}`);
 };
+
+async function ensureUserRecordFromAuth(authUser) {
+    const { data: users, error: dbError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', authUser.id);
+
+    let user = Array.isArray(users) && users.length > 0 ? users[0] : null;
+
+    if (dbError) {
+        logDebug(`DB Error fetching user during register repair: ${JSON.stringify(dbError)}`);
+    }
+
+    if (!user) {
+        const { error: insertError } = await supabase
+            .from('users')
+            .insert({
+                id: authUser.id,
+                email: authUser.email,
+                role: 'user',
+                first_name: authUser.user_metadata?.first_name || null,
+                birth_date: authUser.user_metadata?.birth_date || null,
+                birth_time: authUser.user_metadata?.birth_time || null,
+                birth_place: authUser.user_metadata?.birth_place || null
+            });
+
+        if (insertError) {
+            throw insertError;
+        }
+
+        const { data: retryUser, error: retryError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', authUser.id)
+            .single();
+
+        if (retryError || !retryUser) {
+            throw retryError || new Error('User sync failed after register repair.');
+        }
+
+        user = retryUser;
+    }
+
+    const { data: existingSubscription, error: subError } = await supabase
+        .from('subscriptions')
+        .select('plan_type, status, credits, current_period_end')
+        .eq('user_id', authUser.id)
+        .single();
+
+    let subscription = existingSubscription;
+
+    if (subError && subError.code !== 'PGRST116') {
+        throw subError;
+    }
+
+    if (!subscription) {
+        const { data: createdSubscription, error: createSubError } = await supabase
+            .from('subscriptions')
+            .insert({ user_id: authUser.id, plan_type: 'free' })
+            .select('plan_type, status, credits, current_period_end')
+            .single();
+
+        if (createSubError && createSubError.code !== '23505') {
+            throw createSubError;
+        }
+
+        subscription = createdSubscription || {
+            plan_type: 'free',
+            status: null,
+            credits: null,
+            current_period_end: null
+        };
+    }
+
+    user.subscriptions = subscription;
+    return user;
+}
 
 
 // Premium activation removed - use Stripe payment flow instead
@@ -89,6 +167,8 @@ router.post('/activate-premium', (req, res) => {
 // Register (Supabase Auth)
 router.post('/register', authLimiter, async (req, res) => {
     const { email, password, confirm_password, first_name, birth_date, birth_time, birth_place } = req.body;
+    const clientIp = req.ip || req.connection.remoteAddress;
+    const userAgent = req.headers['user-agent'] || 'unknown';
 
     try {
         // Validate input using centralized validators
@@ -137,11 +217,38 @@ router.post('/register', authLimiter, async (req, res) => {
             throw error;
         }
 
+        if (DEV_AUTO_LOGIN_AFTER_REGISTER && data?.user?.id) {
+            const user = await ensureUserRecordFromAuth(data.user);
+            const token = await generateToken(user.id);
+            const status = user.subscriptions?.plan_type || 'free';
+
+            res.cookie('auth_token', token, COOKIE_OPTIONS);
+            res.cookie('logged_in', '1', INDICATOR_COOKIE_OPTIONS);
+
+            await recordSuccessfulLogin(user.email, clientIp, userAgent);
+
+            return res.json({
+                success: true,
+                devAutoLogin: true,
+                message: 'Registrace uspela. V lokalnim vyvoji jste byli rovnou prihlaseni.',
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    subscription_status: status,
+                    first_name: user.first_name,
+                    birth_date: user.birth_date,
+                    birth_time: user.birth_time,
+                    birth_place: user.birth_place,
+                    avatar: user.avatar || null
+                }
+            });
+        }
+
         // 2. Success - Tell user to check email
         // We DO NOT return a token here anymore. Login is blocked until verification.
         res.json({
             success: true,
-            message: 'Registrace úspěšná. Zkontrolujte prosím svůj email pro potvrzení účtu.',
+            message: 'Registrace ?sp??n?. Zkontrolujte pros?m sv?j email pro potvrzen? ??tu.',
             requireEmailVerification: true
         });
 

@@ -2,6 +2,7 @@
     const API_URL = window.API_CONFIG?.BASE_URL || '/api';
     const PENDING_PLAN_KEY = 'pending_plan';
     const PENDING_CONTEXT_KEY = 'pending_checkout_context';
+    const POST_AUTH_ACTIVATION_KEY = 'post_auth_activation';
 
 
     const Auth = {
@@ -23,6 +24,7 @@
             this.updateUI();
             this.setupListeners();
             this.handleRedirect();
+            this.maybeShowPostAuthActivation();
             this.refreshSession(); // Auto-sync profile on load
             // Auto-refresh token every 15 minutes (faster detection of trial expiration)
             setInterval(() => this.refreshSession(), 900000);
@@ -171,12 +173,8 @@
                     return { success: true, verificationRequired: true };
                 }
 
-                this.loginSuccess(data);
+                this.loginSuccess(data, { mode: 'register' });
                 this.showToast('Vítejte!', 'Registrace proběhla úspěšně. 🌟', 'success');
-                // Redirect new users to onboarding
-                if (!localStorage.getItem('mh_onboarded')) {
-                    setTimeout(() => { window.location.href = 'onboarding.html'; }, 800);
-                }
                 return { success: true };
             } catch (e) {
                 return { success: false, error: e.message };
@@ -238,14 +236,14 @@
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error);
 
-                this.loginSuccess(data);
+                this.loginSuccess(data, { mode: 'login' });
                 return { success: true };
             } catch (e) {
                 return { success: false, error: e.message };
             }
         },
 
-        loginSuccess(data) {
+        loginSuccess(data, options = {}) {
             // Token is now in HttpOnly cookie (set by server)
             // We only store user data in localStorage
             const pendingPlan = this.getPendingCheckoutPlan();
@@ -257,7 +255,199 @@
             // After login/register success: check for pending plan redirect
             if (pendingPlan) {
                 this._startCheckout(pendingPlan, this.getPendingCheckoutContext());
+                return;
             }
+
+            const postAuthRedirect = this.resolvePostAuthRedirect(options);
+            if (postAuthRedirect) {
+                setTimeout(() => {
+                    window.location.href = postAuthRedirect;
+                }, 500);
+            }
+        },
+
+        getStandaloneAuthContext() {
+            if (!this.isStandaloneAuthPage()) return null;
+
+            const params = new URLSearchParams(window.location.search);
+            const mode = params.get('mode') === 'register' ? 'register' : 'login';
+            const redirect = params.get('redirect') || '/profil.html';
+            const source = params.get('source') || null;
+            const feature = params.get('feature') || null;
+            const plan = params.get('plan') || null;
+
+            return {
+                mode,
+                redirect,
+                source,
+                feature,
+                plan
+            };
+        },
+
+        getPostAuthActivationConfig(context = {}) {
+            const feature = context.feature || '';
+            const source = context.source || '';
+
+            const featureMap = {
+                partnerska_detail: {
+                    path: '/partnerska-shoda.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'ZaÄŤnÄ›te partnerskou shodou. PrvnĂ­ vĂ˝sledek vĂˇm rychle ukĂˇĹľe osobnĂ­ hodnotu.'
+                },
+                synastry: {
+                    path: '/partnerska-shoda.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'ZaÄŤnÄ›te partnerskou shodou. PrvnĂ­ vĂ˝sledek vĂˇm rychle ukĂˇĹľe osobnĂ­ hodnotu.'
+                },
+                natalni_interpretace: {
+                    path: '/natalni-karta.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'NatĂˇlnĂ­ karta je jeden z nejsilnÄ›jĹˇĂ­ch prvnĂ­ch momentĹŻ. ZaÄŤnÄ›te prĂˇvÄ› tady.'
+                },
+                numerologie_vyklad: {
+                    path: '/numerologie.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'V numerologii nejrychleji uvidĂ­te, jak osobnĂ­ umĂ­ bĂ˝t vaĹˇe prvnĂ­ vedenĂ­.'
+                },
+                tarot: {
+                    path: '/tarot.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'VyzkouĹˇejte hned prvnĂ­ tarotovĂ˝ vĂ˝klad. Je to nejrychlejĹˇĂ­ cesta k prvnĂ­ hodnotÄ›.'
+                },
+                horoskopy: {
+                    path: '/horoskopy.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'ZaÄŤnÄ›te osobnĂ­m horoskopem a zĂ­skejte rychlĂ˝ prvnĂ­ vhled.'
+                },
+                weekly_horoscope: {
+                    path: '/horoskopy.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'ZaÄŤnÄ›te osobnĂ­m horoskopem a zĂ­skejte rychlĂ˝ prvnĂ­ vhled.'
+                },
+                monthly_horoscope: {
+                    path: '/horoskopy.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'ZaÄŤnÄ›te osobnĂ­m horoskopem a zĂ­skejte rychlĂ˝ prvnĂ­ vhled.'
+                },
+                mentor: {
+                    path: '/mentor.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'PoloĹľte hned prvnĂ­ otĂˇzku HvÄ›zdnĂ©mu PrĹŻvodci a zĂ­skejte osobnĂ­ kontakt s produktem.'
+                },
+                hvezdny_mentor: {
+                    path: '/mentor.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'PoloĹľte hned prvnĂ­ otĂˇzku HvÄ›zdnĂ©mu PrĹŻvodci a zĂ­skejte osobnĂ­ kontakt s produktem.'
+                },
+                runy_hluboky_vyklad: {
+                    path: '/runy.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'Runy jsou silnĂ˝ prvnĂ­ krok, pokud chcete okamĹľitĂ˝ osobnĂ­ vĂ˝klad.'
+                },
+                shamanske_kolo_plne_cteni: {
+                    path: '/shamanske-kolo.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'Ĺ amanskĂ© kolo vĂˇs rychle dostane k hlubĹˇĂ­mu prvnĂ­mu zĂˇĹľitku.'
+                },
+                minuly_zivot: {
+                    path: '/minuly-zivot.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'MinulĂ˝ Ĺľivot je silnĂ˝ vstupnĂ­ zĂˇĹľitek, pokud chcete zaÄŤĂ­t nÄ›ÄŤĂ­m hlubokĂ˝m.'
+                },
+                kristalova_koule: {
+                    path: '/kristalova-koule.html',
+                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
+                    message: 'KĹ™iĹˇĹĄĂˇlovĂˇ koule je rychlĂ˝ prvnĂ­ moment, kterĂ˝ ukĂˇĹľe osobnĂ­ vedenĂ­ v praxi.'
+                }
+            };
+
+            const sourceMap = {
+                newsletter_form: {
+                    path: '/horoskopy.html',
+                    title: 'Registrace je hotovĂˇ',
+                    message: 'KdyĹľ uĹľ jste uvnitĹ™, vezmÄ›te si hned prvnĂ­ hodnotu pĹ™es osobnĂ­ horoskop.'
+                }
+            };
+
+            return featureMap[feature] || sourceMap[source] || null;
+        },
+
+        setPostAuthActivation(context = {}) {
+            if (!context?.path) return;
+
+            sessionStorage.setItem(POST_AUTH_ACTIVATION_KEY, JSON.stringify({
+                path: context.path,
+                title: context.title || 'VĂ­tejte',
+                message: context.message || '',
+                source: context.source || null,
+                feature: context.feature || null
+            }));
+        },
+
+        maybeShowPostAuthActivation() {
+            try {
+                const raw = sessionStorage.getItem(POST_AUTH_ACTIVATION_KEY);
+                if (!raw) return;
+
+                const activation = JSON.parse(raw);
+                if (!activation?.path || window.location.pathname !== activation.path) {
+                    return;
+                }
+
+                sessionStorage.removeItem(POST_AUTH_ACTIVATION_KEY);
+
+                if (activation.title || activation.message) {
+                    this.showToast(
+                        activation.title || 'VĂ­tejte',
+                        activation.message || 'ZaÄŤnÄ›te prvnĂ­m osobnĂ­m vĂ˝kladem.',
+                        'success'
+                    );
+                }
+
+                window.MH_ANALYTICS?.trackEvent?.('signup_activation_landed', {
+                    source: activation.source || 'direct',
+                    feature: activation.feature || null,
+                    destination: activation.path
+                });
+            } catch (error) {
+                console.warn('Post-auth activation handling failed:', error);
+                sessionStorage.removeItem(POST_AUTH_ACTIVATION_KEY);
+            }
+        },
+
+        resolvePostAuthRedirect(options = {}) {
+            const context = this.getStandaloneAuthContext();
+            if (!context) return null;
+
+            const safeRedirect = typeof context.redirect === 'string' && context.redirect.startsWith('/') && !context.redirect.startsWith('//')
+                ? context.redirect
+                : '/profil.html';
+
+            if (options.mode === 'register') {
+                const activation = this.getPostAuthActivationConfig(context);
+                if (activation?.path) {
+                    this.setPostAuthActivation({
+                        ...activation,
+                        source: context.source,
+                        feature: context.feature
+                    });
+
+                    window.MH_ANALYTICS?.trackEvent?.('signup_activation_redirected', {
+                        source: context.source || 'register',
+                        feature: context.feature || null,
+                        destination: activation.path
+                    });
+
+                    return activation.path;
+                }
+
+                if (safeRedirect === '/profil.html' && !localStorage.getItem('mh_onboarded')) {
+                    return '/onboarding.html';
+                }
+            }
+
+            return safeRedirect;
         },
 
         getPendingCheckoutPlan() {

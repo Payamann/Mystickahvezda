@@ -10,6 +10,8 @@ import { loadFavorites } from './favorites.js';
 let currentReadingId = null;
 let currentReadingIsFavorite = false;
 let previousFocus = null;
+let activeModal = null;
+let focusTrapHandler = null;
 
 export async function viewReading(id) {
     const modal = document.getElementById('reading-modal');
@@ -140,15 +142,63 @@ function updateFavoriteButton() {
 
 function trapFocus(modal) {
     previousFocus = document.activeElement;
-    const closeBtn = modal.querySelector('.modal__close');
-    if (closeBtn) closeBtn.focus();
+    activeModal = modal;
+
+    const focusable = getFocusableElements(modal);
+    const initialFocus = modal.querySelector('.modal__close') || focusable[0] || modal;
+    initialFocus.focus();
+
+    focusTrapHandler = (event) => {
+        if (!activeModal) return;
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeReadingModal();
+            return;
+        }
+
+        if (event.key !== 'Tab') return;
+
+        const currentFocusable = getFocusableElements(activeModal);
+        if (!currentFocusable.length) {
+            event.preventDefault();
+            activeModal.focus();
+            return;
+        }
+
+        const first = currentFocusable[0];
+        const last = currentFocusable[currentFocusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    };
+
+    document.addEventListener('keydown', focusTrapHandler);
 }
 
 function releaseFocus() {
+    if (focusTrapHandler) {
+        document.removeEventListener('keydown', focusTrapHandler);
+        focusTrapHandler = null;
+    }
+
+    activeModal = null;
+
     if (previousFocus) {
         previousFocus.focus();
         previousFocus = null;
     }
+}
+
+function getFocusableElements(modal) {
+    return Array.from(modal.querySelectorAll(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter((element) => element.offsetParent !== null);
 }
 
 function renderReadingContent(reading) {

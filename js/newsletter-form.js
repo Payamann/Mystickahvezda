@@ -5,15 +5,18 @@
             e.preventDefault();
             const email = document.getElementById('email-subscribe').value;
             if (!email || !email.includes('@')) return;
-            if (window.Auth) {
-                window.Auth.openModal('register');
-                setTimeout(() => {
-                    const emailInput = document.querySelector('#login-form input[name="email"]');
-                    if (emailInput) emailInput.value = email;
-                }, 300);
-            } else {
-                window.location.href = 'prihlaseni.html?email=' + encodeURIComponent(email);
-            }
+
+            window.MH_ANALYTICS?.trackCTA?.('newsletter_form_submit', {
+                destination: '/prihlaseni.html',
+                auth_mode: 'register'
+            });
+
+            const authUrl = new URL('/prihlaseni.html', window.location.origin);
+            authUrl.searchParams.set('mode', 'register');
+            authUrl.searchParams.set('source', 'newsletter_form');
+            authUrl.searchParams.set('redirect', '/profil.html');
+            authUrl.searchParams.set('email', email);
+            window.location.href = `${authUrl.pathname}${authUrl.search}`;
         });
     }
 })();

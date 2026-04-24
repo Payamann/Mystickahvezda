@@ -16,7 +16,33 @@
         document.getElementById('pl-error').style.display = 'none';
     }
 
+    function startPastLifeCheckout(source, authMode) {
+        window.Auth?.startPlanCheckout?.('pruvodce', {
+            source: source || 'past_life_premium_wall',
+            feature: 'minuly_zivot',
+            redirect: '/cenik.html',
+            authMode: authMode || 'register'
+        });
+    }
+
     function init() {
+        var upgradeBtn = document.getElementById('past-life-upgrade-btn');
+        var registerBtn = document.getElementById('past-life-register-btn');
+
+        if (upgradeBtn) {
+            upgradeBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                startPastLifeCheckout('past_life_premium_wall', 'register');
+            });
+        }
+
+        if (registerBtn) {
+            registerBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                startPastLifeCheckout('past_life_register_gate', 'register');
+            });
+        }
+
         // Gender buttons
         document.querySelectorAll('.gender-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {

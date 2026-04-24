@@ -468,7 +468,12 @@ async function generateNatalChart(planetsGroup) {
             aiResultsDiv.style.display = 'block';
             const contentDiv = aiResultsDiv.querySelector('.ai-content');
             if (window.Premium) {
-                window.Premium.showLoginGate(contentDiv, '⭐ Přihlaste se zdarma a odhalte svůj vesmírný plán');
+                window.Premium.showLoginGate(
+                    contentDiv,
+                    '\u2B50 P\u0159ihlaste se zdarma a odhalte sv\u016Fj vesm\u00EDrn\u00FD pl\u00E1n',
+                    'natalni_interpretace',
+                    'natal_teaser_gate'
+                );
             }
             return;
         }

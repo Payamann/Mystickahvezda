@@ -36,12 +36,12 @@ window.Premium = {
         }
     },
 
-    startUpgradeFlow(planId, featureName, source = 'paywall') {
+    startUpgradeFlow(planId, featureName, source = 'paywall', authMode = null) {
         window.Auth?.startPlanCheckout?.(planId, {
             source,
             feature: featureName || null,
             redirect: '/cenik.html',
-            authMode: 'register'
+            authMode: authMode || (window.Auth?.isLoggedIn?.() ? 'login' : 'register')
         });
     },
 
@@ -135,7 +135,7 @@ window.Premium = {
         this.bindOverlayActions(overlay, () => this.startUpgradeFlow('osviceni', featureName, 'exclusive_paywall'));
     },
 
-    showLoginGate(container, message = null) {
+    showLoginGate(container, message = null, featureName = null, source = 'inline_login_gate') {
         const defaultMsg = '⭐ Přihlaste se zdarma a získejte plný osobní výklad';
         const safeMsg = this._escapeHTML(message || defaultMsg);
 
@@ -150,7 +150,7 @@ window.Premium = {
 
         container.appendChild(gate);
         gate.querySelector('.login-gate-btn').addEventListener('click', () => {
-            window.Auth?.openModal('login');
+            this.startUpgradeFlow('pruvodce', featureName, source, 'register');
         });
     },
 
@@ -255,7 +255,11 @@ window.Premium = {
                     upgradeCTA.id = 'upgrade-cta';
                     upgradeCTA.href = '/cenik.html';
                     upgradeCTA.className = 'btn btn--sm btn--gold upgrade-cta-btn';
-                    upgradeCTA.innerHTML = '✨ Vyzkoušet Premium';
+                    upgradeCTA.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        this.startUpgradeFlow('pruvodce', 'premium_membership', 'header_upgrade_cta');
+                    });
+                    upgradeCTA.innerHTML = '\u2728 Vyzkou\u0161et Premium';
                     header.appendChild(upgradeCTA);
                 }
             };

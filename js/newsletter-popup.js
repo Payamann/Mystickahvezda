@@ -7,10 +7,20 @@
     'use strict';
 
     const STORAGE_KEY = 'mh_newsletter_dismissed';
+    const SESSION_KEY = 'mh_newsletter_popup_shown';
+    const EXIT_INTENT_STORAGE_KEY = 'mh_exit_shown';
     const DISMISS_DAYS = 7;
+    const SKIP_PATHS = ['/prihlaseni', '/onboarding', '/profil'];
     let triggered = false;
 
     function shouldShow() {
+        if (SKIP_PATHS.some((path) => window.location.pathname.includes(path))) return false;
+        if (sessionStorage.getItem(EXIT_INTENT_STORAGE_KEY)) return false;
+        if (sessionStorage.getItem(SESSION_KEY)) return false;
+        if (document.getElementById('exit-intent-modal')) return false;
+        if (document.querySelector('.paywall-overlay')) return false;
+        if (document.getElementById('mh-newsletter-popup') || document.getElementById('mh-popup-overlay')) return false;
+
         const val = localStorage.getItem(STORAGE_KEY);
         if (!val) return true;
         const dismissedAt = parseInt(val, 10);
@@ -75,6 +85,7 @@
     function createPopup() {
         if (triggered || !shouldShow()) return;
         triggered = true;
+        sessionStorage.setItem(SESSION_KEY, '1');
 
         // Overlay
         const overlay = document.createElement('div');

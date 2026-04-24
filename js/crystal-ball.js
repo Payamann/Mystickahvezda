@@ -18,11 +18,28 @@ function initCrystalBall() {
     const resetBtn = document.getElementById('reset-btn');
     const questionInput = document.getElementById('question-input');
     const askBtn = document.getElementById('ask-btn');
+    const bannerUpgradeBtn = document.getElementById('crystal-banner-upgrade');
 
     if (!ballContainer) return;
 
     let isThinking = false;
     let cooldownTimer = null;
+
+    function startCrystalCheckout(source, authMode = 'register') {
+        window.Auth?.startPlanCheckout?.('pruvodce', {
+            source,
+            feature: 'kristalova_koule',
+            redirect: '/cenik.html',
+            authMode
+        });
+    }
+
+    if (bannerUpgradeBtn) {
+        bannerUpgradeBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            startCrystalCheckout('crystal_ball_banner_upgrade', 'register');
+        });
+    }
 
     // Check availability based on last usage
     function getRemainingCooldown() {
@@ -67,7 +84,7 @@ function initCrystalBall() {
         // Restriction: Must be logged in
         if (!window.Auth || !window.Auth.isLoggedIn()) {
             window.Auth?.showToast?.('Přihlášení vyžadováno', 'Pro radu od křišťálové koule se prosím přihlaste.', 'info');
-            window.Auth?.openModal?.('login');
+            startCrystalCheckout('crystal_ball_auth_gate', 'login');
             return;
         }
 
@@ -155,7 +172,7 @@ function initCrystalBall() {
                 if (response.status === 402 || response.status === 403 || (data.error && data.error.toLowerCase().includes('limit'))) {
                     if (answerContainer) answerContainer.classList.remove('visible');
                     window.Auth?.showToast?.('Limit dosažen', 'Chceš neomezené odpovědi? Aktivuj si Hvězdného Průvodce.', 'info');
-                    window.Auth?.openModal?.('register');
+                    startCrystalCheckout('crystal_ball_limit_gate', 'register');
                 } else {
                     if (answerContainer) answerContainer.classList.add('visible');
                     if (answerText) answerText.textContent = data.error || 'Hvězdy mlčí...';

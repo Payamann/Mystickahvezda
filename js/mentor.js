@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Používáme window.Auth.isLoggedIn() které čte user data z localStorage.
     if (!window.Auth?.isLoggedIn()) {
         window.Auth?.showToast?.('Přihlášení vyžadováno', 'Pro vstup do Hvězdného Průvodce se prosím přihlaste.', 'info');
-        window.location.href = '/prihlaseni.html?redirect=/mentor.html';
+        startMentorUpgradeFlow('mentor_entry_auth_gate');
 
         document.addEventListener('auth:changed', () => {
             if (window.Auth?.isLoggedIn()) window.location.reload();
@@ -160,7 +160,7 @@ async function sendMessage() {
     // 0. Auth Check (token je HttpOnly cookie, kontrolujeme přes Auth objekt)
     if (!window.Auth?.isLoggedIn()) {
         window.Auth?.showToast?.('Přihlášení vyžadováno', 'Pro konverzaci s Průvodcem se prosím přihlaste.', 'info');
-        window.location.href = '/prihlaseni.html?redirect=/mentor.html';
+        startMentorUpgradeFlow('mentor_chat_auth_gate');
         document.addEventListener('auth:changed', () => {
             if (window.Auth?.isLoggedIn()) window.location.reload();
         }, { once: true });

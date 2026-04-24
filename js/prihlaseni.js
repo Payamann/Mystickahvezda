@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
         natalni_interpretace: 'Interpretace natální karty',
         runy_hluboky_vyklad: 'Hloubkový výklad run',
         shamanske_kolo_plne_cteni: 'Plné čtení šamanského kola',
+        minuly_zivot: 'Minulý život',
+        kristalova_koule: 'Křišťálová koule',
         rituals: 'Lunární rituály',
         mentor: 'Hvězdný průvodce'
     };
@@ -51,11 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const hash = window.location.hash;
     let isRegisterMode = urlParams.get('mode') === 'register' || urlParams.get('registrace') === '1';
     const redirectTarget = urlParams.get('redirect') || '/profil.html';
-    const pendingPlan = window.Auth?.getPendingCheckoutPlan?.() || sessionStorage.getItem('pending_plan') || null;
-    const pendingContext = window.Auth?.getPendingCheckoutContext?.() || {};
+    const hasExplicitCheckoutContext = urlParams.has('plan') || urlParams.has('feature') || urlParams.has('source');
+    const pendingPlan = !hasExplicitCheckoutContext
+        ? (window.Auth?.getPendingCheckoutPlan?.() || sessionStorage.getItem('pending_plan') || null)
+        : null;
+    const pendingContext = !hasExplicitCheckoutContext
+        ? (window.Auth?.getPendingCheckoutContext?.() || {})
+        : {};
     const requestedPlan = urlParams.get('plan') || pendingPlan;
     const requestedFeature = urlParams.get('feature') || pendingContext.feature || null;
     const requestedSource = urlParams.get('source') || pendingContext.source || null;
+    const requestedEmail = urlParams.get('email') || '';
 
     const renderCheckoutContext = () => {
         if (!checkoutContextBanner || !requestedPlan || !PLAN_COPY[requestedPlan]) {
@@ -123,6 +131,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             authSubmitBtn.textContent = 'Přihlásit se';
             if (toggleBtn) toggleBtn.textContent = 'Nemáte účet? Zaregistrujte se zdarma →';
+        }
+
+        const emailInput = document.getElementById('email');
+        if (emailInput && requestedEmail && !emailInput.value) {
+            emailInput.value = requestedEmail;
         }
     };
 
