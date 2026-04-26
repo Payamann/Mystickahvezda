@@ -93,6 +93,23 @@ const PRICING_PAGE_PLAN_MAP = Object.freeze({
     }),
 });
 
+export const FEATURE_PLAN_MAP = Object.freeze({
+    astrocartography: 'osviceni',
+    journal_insights: 'pruvodce',
+    mentor: 'pruvodce',
+    monthly_horoscope: 'pruvodce',
+    natal_chart: 'pruvodce',
+    natalni_interpretace: 'pruvodce',
+    numerologie_vyklad: 'pruvodce',
+    partnerska_detail: 'pruvodce',
+    premium_membership: 'pruvodce',
+    rituals: 'pruvodce',
+    synastry: 'pruvodce',
+    tarot_celtic_cross: 'vip-majestrat',
+    tarot_multi_card: 'pruvodce',
+    weekly_horoscope: 'pruvodce',
+});
+
 const priceFormatter = new Intl.NumberFormat('cs-CZ', {
     style: 'currency',
     currency: 'CZK',
@@ -112,6 +129,7 @@ function toBillingInterval(interval) {
 export function getPublicPlanManifest() {
     return {
         currency: 'CZK',
+        featurePlanMap: FEATURE_PLAN_MAP,
         pricingPage: PRICING_PAGE_PLAN_MAP,
         plans: PUBLIC_PLAN_ORDER
             .filter(planId => SUBSCRIPTION_PLANS[planId])

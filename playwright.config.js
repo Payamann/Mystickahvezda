@@ -64,6 +64,9 @@ export default defineConfig({
         env: {
             NODE_ENV: 'test',
             PORT: '3001',
+            DISABLE_SCHEDULED_JOBS: 'true',
+            MOCK_AI: 'true',
+            MOCK_SUPABASE: 'true',
             // Testovací secrets — žádné reálné klíče
             JWT_SECRET: 'e2e-test-jwt-secret-do-not-use-in-prod',
             CSRF_SECRET: 'e2e-test-csrf-secret-do-not-use-in-prod',

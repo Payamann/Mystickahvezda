@@ -6,7 +6,7 @@ info:
 servers:
   - url: http://localhost:3001/api
     description: Lokální vývojový server
-  - url: https://mystickahvezda.cz/api
+  - url: https://www.mystickahvezda.cz/api
     description: Produkční server
 
 paths:
@@ -70,9 +70,256 @@ paths:
         '401':
           description: Neautorizováno
 
+  /admin/funnel:
+    get:
+      summary: Admin funnel report
+      description: Monetization funnel report with daily buckets, source comparison and source + feature conversion segments. Requires admin access.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: days
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 365
+            default: 30
+          description: Number of days in the current reporting period.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 100
+            maximum: 5000
+            default: 1000
+          description: Maximum number of funnel events used for the report.
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum: [json, csv]
+          description: Use `csv` to export the daily funnel table.
+        - in: query
+          name: view
+          schema:
+            type: string
+            enum: [daily, segments]
+            default: daily
+          description: CSV export view. `segments` exports source + feature conversion rows.
+      responses:
+        '200':
+          description: Funnel report or CSV export.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  report:
+                    $ref: '#/components/schemas/FunnelReport'
+            text/csv:
+              schema:
+                type: string
+        '401':
+          description: Authentication required.
+        '403':
+          description: Admin privileges required.
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  schemas:
+    FunnelMetricSummary:
+      type: object
+      properties:
+        paywallViewed:
+          type: integer
+        checkoutStarted:
+          type: integer
+        subscriptionCompleted:
+          type: integer
+        oneTimeCompleted:
+          type: integer
+        invoicePaid:
+          type: integer
+        failures:
+          type: integer
+        refunds:
+          type: integer
+        cancelRequests:
+          type: integer
+        conversionRate:
+          type: number
+        paywallToCheckoutRate:
+          type: number
+        estimatedValueCzk:
+          type: integer
+    FunnelCounterRow:
+      type: object
+      properties:
+        key:
+          type: string
+        count:
+          type: integer
+    FunnelDailyRow:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        paywallViewed:
+          type: integer
+        checkoutStarted:
+          type: integer
+        subscriptionCompleted:
+          type: integer
+        oneTimeCompleted:
+          type: integer
+        failures:
+          type: integer
+        refunds:
+          type: integer
+    FunnelSourceComparisonRow:
+      type: object
+      properties:
+        key:
+          type: string
+        current:
+          type: integer
+        previous:
+          type: integer
+        delta:
+          type: integer
+        deltaPercent:
+          type: number
+          nullable: true
+    FunnelSourceFeaturePreviousSegment:
+      type: object
+      properties:
+        totalEvents:
+          type: integer
+        paywallViewed:
+          type: integer
+        checkoutStarted:
+          type: integer
+        purchaseCompleted:
+          type: integer
+        failures:
+          type: integer
+        paywallToCheckoutRate:
+          type: number
+        checkoutToPurchaseRate:
+          type: number
+    FunnelSourceFeatureSegment:
+      type: object
+      properties:
+        source:
+          type: string
+        feature:
+          type: string
+        totalEvents:
+          type: integer
+        paywallViewed:
+          type: integer
+        checkoutStarted:
+          type: integer
+        purchaseCompleted:
+          type: integer
+        failures:
+          type: integer
+        paywallToCheckoutRate:
+          type: number
+        checkoutToPurchaseRate:
+          type: number
+        previous:
+          $ref: '#/components/schemas/FunnelSourceFeaturePreviousSegment'
+        paywallToCheckoutRateDelta:
+          type: number
+          nullable: true
+        checkoutToPurchaseRateDelta:
+          type: number
+          nullable: true
+    FunnelRecentEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        eventName:
+          type: string
+        source:
+          type: string
+          nullable: true
+        feature:
+          type: string
+          nullable: true
+        planId:
+          type: string
+          nullable: true
+        planType:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+    FunnelReport:
+      type: object
+      properties:
+        generatedAt:
+          type: string
+          format: date-time
+        days:
+          type: integer
+        since:
+          type: string
+          format: date-time
+          nullable: true
+        previousSince:
+          type: string
+          format: date-time
+          nullable: true
+        periodEnd:
+          type: string
+          format: date-time
+          nullable: true
+        limit:
+          type: integer
+        totalEvents:
+          type: integer
+        metrics:
+          $ref: '#/components/schemas/FunnelMetricSummary'
+        byEvent:
+          type: object
+          additionalProperties:
+            type: integer
+        topSources:
+          type: array
+          items:
+            $ref: '#/components/schemas/FunnelCounterRow'
+        sourceComparison:
+          type: array
+          items:
+            $ref: '#/components/schemas/FunnelSourceComparisonRow'
+        sourceFeatureSegments:
+          type: array
+          items:
+            $ref: '#/components/schemas/FunnelSourceFeatureSegment'
+        topFeatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/FunnelCounterRow'
+        topPlans:
+          type: array
+          items:
+            $ref: '#/components/schemas/FunnelCounterRow'
+        daily:
+          type: array
+          items:
+            $ref: '#/components/schemas/FunnelDailyRow'
+        recentEvents:
+          type: array
+          items:
+            $ref: '#/components/schemas/FunnelRecentEvent'

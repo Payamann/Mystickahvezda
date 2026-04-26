@@ -86,6 +86,178 @@ function getEventDate(value) {
     return date.toISOString().slice(0, 10);
 }
 
+function getEventTime(value) {
+    if (!value) return null;
+    const time = new Date(value).getTime();
+    return Number.isNaN(time) ? null : time;
+}
+
+function splitComparisonEvents(events, { since, previousSince, periodEnd } = {}) {
+    const sinceTime = getEventTime(since);
+    const previousSinceTime = getEventTime(previousSince);
+    const periodEndTime = getEventTime(periodEnd);
+    const hasComparison = Number.isFinite(sinceTime) && Number.isFinite(previousSinceTime);
+
+    if (!hasComparison) {
+        return {
+            hasComparison: false,
+            currentEvents: events,
+            previousEvents: []
+        };
+    }
+
+    const currentEvents = [];
+    const previousEvents = [];
+
+    for (const event of events) {
+        const eventTime = getEventTime(event.created_at);
+        if (!Number.isFinite(eventTime)) continue;
+
+        if (eventTime >= sinceTime && (!Number.isFinite(periodEndTime) || eventTime < periodEndTime)) {
+            currentEvents.push(event);
+            continue;
+        }
+
+        if (eventTime >= previousSinceTime && eventTime < sinceTime) {
+            previousEvents.push(event);
+        }
+    }
+
+    return {
+        hasComparison: true,
+        currentEvents,
+        previousEvents
+    };
+}
+
+function sourceCounter(events) {
+    const counter = {};
+
+    for (const event of events) {
+        incrementCounter(counter, normalizeDimension(event.source) || '(direct)');
+    }
+
+    return counter;
+}
+
+function buildSourceComparison(currentEvents, previousEvents, limit = 8) {
+    const current = sourceCounter(currentEvents);
+    const previous = sourceCounter(previousEvents);
+    const keys = new Set([...Object.keys(current), ...Object.keys(previous)]);
+
+    return [...keys]
+        .map(key => {
+            const currentCount = current[key] || 0;
+            const previousCount = previous[key] || 0;
+            const delta = currentCount - previousCount;
+
+            return {
+                key,
+                current: currentCount,
+                previous: previousCount,
+                delta,
+                deltaPercent: previousCount > 0
+                    ? Math.round((delta / previousCount) * 1000) / 10
+                    : null
+            };
+        })
+        .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta)
+            || b.current - a.current
+            || b.previous - a.previous
+            || a.key.localeCompare(b.key))
+        .slice(0, limit);
+}
+
+function createSourceFeatureSegment(source, feature) {
+    return {
+        source,
+        feature,
+        totalEvents: 0,
+        paywallViewed: 0,
+        checkoutStarted: 0,
+        purchaseCompleted: 0,
+        failures: 0,
+        paywallToCheckoutRate: 0,
+        checkoutToPurchaseRate: 0
+    };
+}
+
+function getSourceFeatureSegmentKey(source, feature) {
+    return `${source}\u0000${feature}`;
+}
+
+function addSourceFeatureEvent(segments, event) {
+    const eventName = normalizeDimension(event.event_name) || 'unknown';
+    const source = normalizeDimension(event.source) || '(direct)';
+    const feature = normalizeDimension(event.feature) || '(nezadano)';
+    const key = getSourceFeatureSegmentKey(source, feature);
+
+    if (!segments.has(key)) {
+        segments.set(key, createSourceFeatureSegment(source, feature));
+    }
+
+    const segment = segments.get(key);
+    segment.totalEvents += 1;
+
+    if (eventName === 'paywall_viewed' || eventName === 'login_gate_viewed') segment.paywallViewed += 1;
+    if (eventName === 'checkout_session_created') segment.checkoutStarted += 1;
+    if (eventName === 'subscription_checkout_completed' || eventName === 'one_time_purchase_completed') segment.purchaseCompleted += 1;
+    if (FUNNEL_FAILURE_EVENTS.has(eventName)) segment.failures += 1;
+}
+
+function buildSourceFeatureSegmentMap(events) {
+    const segments = new Map();
+
+    for (const event of events) {
+        addSourceFeatureEvent(segments, event);
+    }
+
+    return segments;
+}
+
+function applySourceFeatureRates(segment) {
+    return {
+        ...segment,
+        paywallToCheckoutRate: segment.paywallViewed > 0
+            ? Math.round((segment.checkoutStarted / segment.paywallViewed) * 1000) / 10
+            : 0,
+        checkoutToPurchaseRate: segment.checkoutStarted > 0
+            ? Math.round((segment.purchaseCompleted / segment.checkoutStarted) * 1000) / 10
+            : 0
+    };
+}
+
+function buildSourceFeatureSegments(events, previousEvents = [], limit = 10) {
+    const currentSegments = buildSourceFeatureSegmentMap(events);
+    const previousSegments = buildSourceFeatureSegmentMap(previousEvents);
+
+    return [...currentSegments.values()]
+        .map(applySourceFeatureRates)
+        .map(segment => ({
+            ...segment,
+            previous: applySourceFeatureRates(
+                previousSegments.get(getSourceFeatureSegmentKey(segment.source, segment.feature))
+                    || createSourceFeatureSegment(segment.source, segment.feature)
+            )
+        }))
+        .map(segment => ({
+            ...segment,
+            paywallToCheckoutRateDelta: segment.previous.paywallViewed > 0
+                ? Math.round((segment.paywallToCheckoutRate - segment.previous.paywallToCheckoutRate) * 10) / 10
+                : null,
+            checkoutToPurchaseRateDelta: segment.previous.checkoutStarted > 0
+                ? Math.round((segment.checkoutToPurchaseRate - segment.previous.checkoutToPurchaseRate) * 10) / 10
+                : null
+        }))
+        .sort((a, b) => b.purchaseCompleted - a.purchaseCompleted
+            || b.checkoutStarted - a.checkoutStarted
+            || b.paywallViewed - a.paywallViewed
+            || b.totalEvents - a.totalEvents
+            || a.source.localeCompare(b.source)
+            || a.feature.localeCompare(b.feature))
+        .slice(0, limit);
+}
+
 export function normalizeFunnelDays(value) {
     const parsed = Number.parseInt(value, 10);
     if (!Number.isFinite(parsed)) return DEFAULT_FUNNEL_DAYS;
@@ -98,7 +270,12 @@ export function normalizeFunnelLimit(value) {
     return Math.min(MAX_FUNNEL_LIMIT, Math.max(100, parsed));
 }
 
-export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, since = null, limit = DEFAULT_FUNNEL_LIMIT } = {}) {
+export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, since = null, previousSince = null, periodEnd = null, limit = DEFAULT_FUNNEL_LIMIT } = {}) {
+    const {
+        hasComparison,
+        currentEvents,
+        previousEvents
+    } = splitComparisonEvents(events, { since, previousSince, periodEnd });
     const byEvent = {};
     const bySource = {};
     const byFeature = {};
@@ -106,7 +283,7 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
     const byDay = {};
     let estimatedMinorValue = 0;
 
-    for (const event of events) {
+    for (const event of currentEvents) {
         const eventName = normalizeDimension(event.event_name) || 'unknown';
         incrementCounter(byEvent, eventName);
 
@@ -148,8 +325,10 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
         generatedAt: new Date().toISOString(),
         days,
         since,
+        previousSince: hasComparison ? previousSince : null,
+        periodEnd: hasComparison ? periodEnd : null,
         limit,
-        totalEvents: events.length,
+        totalEvents: currentEvents.length,
         metrics: {
             paywallViewed,
             checkoutStarted,
@@ -165,10 +344,14 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
         },
         byEvent,
         topSources: topCounter(bySource),
+        sourceComparison: hasComparison
+            ? buildSourceComparison(currentEvents, previousEvents)
+            : [],
+        sourceFeatureSegments: buildSourceFeatureSegments(currentEvents, hasComparison ? previousEvents : []),
         topFeatures: topCounter(byFeature),
         topPlans: topCounter(byPlan),
         daily: Object.values(byDay).sort((a, b) => a.date.localeCompare(b.date)),
-        recentEvents: events.slice(0, 50).map(event => ({
+        recentEvents: currentEvents.slice(0, 50).map(event => ({
             id: event.id,
             eventName: event.event_name,
             source: event.source,
@@ -178,6 +361,75 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
             createdAt: event.created_at
         }))
     };
+}
+
+function csvCell(value) {
+    const text = value == null ? '' : String(value);
+    return `"${text.replace(/"/g, '""')}"`;
+}
+
+export function buildFunnelDailyCsv(report) {
+    const header = [
+        'date',
+        'paywall_viewed',
+        'checkout_started',
+        'subscription_completed',
+        'one_time_completed',
+        'failures',
+        'refunds'
+    ];
+
+    const rows = (report.daily || []).map(row => [
+        row.date,
+        row.paywallViewed,
+        row.checkoutStarted,
+        row.subscriptionCompleted,
+        row.oneTimeCompleted,
+        row.failures,
+        row.refunds
+    ]);
+
+    return [header, ...rows]
+        .map(row => row.map(csvCell).join(','))
+        .join('\n');
+}
+
+export function buildFunnelSegmentsCsv(report) {
+    const header = [
+        'source',
+        'feature',
+        'total_events',
+        'paywall_viewed',
+        'checkout_started',
+        'purchase_completed',
+        'failures',
+        'paywall_to_checkout_rate',
+        'checkout_to_purchase_rate',
+        'previous_paywall_to_checkout_rate',
+        'previous_checkout_to_purchase_rate',
+        'paywall_to_checkout_rate_delta',
+        'checkout_to_purchase_rate_delta'
+    ];
+
+    const rows = (report.sourceFeatureSegments || []).map(row => [
+        row.source,
+        row.feature,
+        row.totalEvents,
+        row.paywallViewed,
+        row.checkoutStarted,
+        row.purchaseCompleted,
+        row.failures,
+        row.paywallToCheckoutRate,
+        row.checkoutToPurchaseRate,
+        row.previous?.paywallToCheckoutRate ?? 0,
+        row.previous?.checkoutToPurchaseRate ?? 0,
+        row.paywallToCheckoutRateDelta,
+        row.checkoutToPurchaseRateDelta
+    ]);
+
+    return [header, ...rows]
+        .map(row => row.map(csvCell).join(','))
+        .join('\n');
 }
 
 // Get all users with their subscriptions (with pagination)
@@ -227,8 +479,13 @@ router.get('/funnel', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const days = normalizeFunnelDays(req.query.days);
         const limit = normalizeFunnelLimit(req.query.limit);
-        const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+        const queryLimit = Math.min(MAX_FUNNEL_LIMIT, limit * 2);
+        const periodEndDate = new Date();
+        const sinceDate = new Date(periodEndDate.getTime() - days * 24 * 60 * 60 * 1000);
+        const previousSinceDate = new Date(periodEndDate.getTime() - days * 2 * 24 * 60 * 60 * 1000);
         const since = sinceDate.toISOString();
+        const previousSince = previousSinceDate.toISOString();
+        const periodEnd = periodEndDate.toISOString();
 
         const { data: events, error } = await supabase
             .from('funnel_events')
@@ -245,15 +502,26 @@ router.get('/funnel', authenticateToken, requireAdmin, async (req, res) => {
                 metadata,
                 created_at
             `)
-            .gte('created_at', since)
+            .gte('created_at', previousSince)
             .order('created_at', { ascending: false })
-            .limit(limit);
+            .limit(queryLimit);
 
         if (error) throw error;
 
+        const report = buildFunnelReport(events || [], { days, since, previousSince, periodEnd, limit });
+
+        if (req.query.format === 'csv') {
+            const csvView = req.query.view === 'segments' ? 'segments' : 'daily';
+            res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+            res.setHeader('Content-Disposition', `attachment; filename="funnel-${csvView}-${days}d.csv"`);
+            return res.send(csvView === 'segments'
+                ? buildFunnelSegmentsCsv(report)
+                : buildFunnelDailyCsv(report));
+        }
+
         res.json({
             success: true,
-            report: buildFunnelReport(events || [], { days, since, limit })
+            report
         });
     } catch (error) {
         console.error('Admin Funnel Error:', error);

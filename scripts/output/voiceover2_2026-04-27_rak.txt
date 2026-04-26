@@ -1,0 +1,48 @@
+VOICEOVER SCRIPT
+============================================================
+🗓️ 27. dubna 2026
+
+[gentle] Raku, pořád chráníš ostatní. <break time="0.5s" /> [soft] Nikdo se neptá, co potřebuješ ty. <break time="1.0s" />
+
+[warm] Stojíš večer v obchodě před regálem. <break time="0.3s" /> [soft] Bereš, co chce ta druhá osoba — ne to, co chceš ty. <break time="0.3s" /> [mysterious] Ta ochrana tě možná drží na místě, kde dávno nechceš být. <break time="1.0s" />
+
+[inviting] Napiš do komentáře: co jako první pustíš. <break time="0.3s" /> [clearly] Příště: proč se bojíme přesně toho, po čem nejvíc toužíme.
+
+TIKTOK / INSTAGRAM DESCRIPTION
+============================================================
+27. dubna 2026 přináší Saturn v Beranu a karma se nezajímá o tvé výmluvy — každá role, kterou hraješ kvůli druhým místo sebe, teď dostává účet. 🪐 Dnes si všimni, kdy říkáš „to nevadí“ a přitom vadí — tohle je ten moment, ne zítra.
+Sleduj profil — příště odhalím: proč se nejvíc bojíme přesně toho, po čem toužíme. 🌊
+
+#mystickaHvezda #Rak #dennihoroskop #astrologie #horoskop
+
+FACEBOOK REELS DESCRIPTION
+============================================================
+27. dubna 2026 a Saturn v Beranu nepočká. 🪐 Raku, pořád chráníš ostatní — ale kdo chrání tebe? Dnes si všimni každého momentu, kdy říkáš „to nevadí“ a přitom uvnitř cítíš, že vadí — Saturn právě teď posílá účet za každou roli, kterou hraješ kvůli druhým místo sebe. Napiš do komentáře, co jako první pustíš, a celý výklad najdeš na mystickahvezda.cz/horoskopy.html ✨
+
+#mystickaHvezda #Rak #horoskop #astrologie #dennihoroskop #mystika
+
+SUNO PROMPT
+============================================================
+Warm instrumental background with gentle rhythmic pulse, acoustic guitar harmonics sparkling like morning dew catching first light, supported by a tender cello weaving soft melodic phrases with quiet forward momentum. Bright major key with a hopeful, sunrise energy that breathes and moves, creating golden space for a voiceover to sit naturally above the music without competition. Short instrumental, 60-90 seconds, loop-ready.
+
+THUMBNAIL PROMPT (Nano Banana)
+============================================================
+A mystical video thumbnail for zodiac sign Cancer.
+
+BACKGROUND: deep dark space with soft subtle silver and pale blue lunar nebula with moonlit cosmic mist, soft silver-white stardust glowing like reflected moonlight, deep indigo void with cool silver light trails — gentle, lunar, oceanic — gentle and atmospheric, NOT aggressive. Rich dense star field with thousands of tiny stars. Dark and deep — moody and calm, serving as a backdrop without competing with the foreground. Deep navy and dark indigo tones dominate. NO harsh lightning, NO aggressive neon.
+
+COMPOSITION: Three elements stacked as one tight unified group, vertically centered in the image. The group fills roughly 80% of the image height. Minimal gap between elements — they feel like one connected unit.
+
+ELEMENT 1 — glyph: large ornate Cancer symbol (♋) in solid gold — rich champagne gold with deep amber shadows — surface of each stroke covered in intricate engraved filigree scrollwork and decorative patterns. Beveled polished 3D edges catching light. Small ornamental flourishes where strokes meet. Clear 3D depth and volume. Premium, ancient — NOT plain, NOT flat, NOT simple geometry.
+
+ELEMENT 2 — immediately below, small gap: dark stone plaque with ornate gold border frame. '27. dubna' in elegant gold lettering on the first line, 'RAK' in bold engraved gold capitals on the second line.
+
+ELEMENT 3 — immediately below, small gap: compact parchment scroll, aged honey color. Bold serif text in dark brown (#2a1500), NOT cursive, NOT italic: 'Chráníš ostatní.' on the first line, 'Ale kdo chrání tebe?' on the second line.
+
+NO zodiac wheel. NO star icons. NO logos. NO borders. NO corner decorations. NO animals. NO human figures. Bottom corners completely clean.
+
+Portrait 9:16.
+
+CAPTIONS PŘÍKAZ
+============================================================
+python "C:\Users\pavel\OneDrive\Desktop\captions-tool\captions.py" "VIDEO.mp4" --model small --text "Raku, pořád chráníš ostatní. Nikdo se neptá, co potřebuješ ty. Stojíš večer v obchodě před regálem. Bereš, co chce ta druhá osoba — ne to, co chceš ty. Ta ochrana tě možná drží na místě, kde dávno nechceš být. Napiš do komentáře: co jako první pustíš. Příště: proč se bojíme přesně toho, po čem nejvíc toužíme."

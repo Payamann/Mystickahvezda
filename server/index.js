@@ -31,6 +31,11 @@ import crypto from 'crypto';
 import { initializeEmailQueueJob } from './jobs/email-queue.js';
 import schedule from 'node-schedule';
 import { globalLimiter, staticLimiter, aiLimiter, sensitiveLimiter } from './middleware.js';
+import {
+    setBaseContentSecurityPolicy,
+    setHtmlContentSecurityPolicy,
+    setHtmlFileContentSecurityPolicy,
+} from './utils/csp.js';
 
 // Route modules
 import oracleRoutes from './routes/oracle.js';
@@ -39,6 +44,7 @@ import horoscopePagesRoutes from './routes/horoscope-pages.js';
 import numerologyRoutes from './routes/numerology.js';
 import userRoutes from './routes/user.js';
 import angelPostRoutes from './routes/angel-post.js';
+import docsRoutes from './routes/docs.js';
 import briefingRoutes from './routes/briefing.js';
 import horoscopeSubscribeRoutes from './routes/horoscope-subscribe.js';
 import pastLifeRoutes from './routes/past-life.js';
@@ -57,31 +63,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 const PORT = process.env.PORT || 3001;
-
-function buildInlineScriptHashes() {
-    const hashes = new Set();
-    const scriptBlockPattern = /<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi;
-
-    for (const fileName of fs.readdirSync(rootDir)) {
-        if (!fileName.endsWith('.html')) continue;
-
-        const filePath = path.join(rootDir, fileName);
-        const html = fs.readFileSync(filePath, 'utf8');
-        let match;
-
-        while ((match = scriptBlockPattern.exec(html)) !== null) {
-            const scriptBody = match[1];
-            if (!scriptBody.trim()) continue;
-
-            const hash = crypto.createHash('sha256').update(scriptBody, 'utf8').digest('base64');
-            hashes.add(`'sha256-${hash}'`);
-        }
-    }
-
-    return [...hashes].sort();
-}
-
-const inlineScriptHashes = buildInlineScriptHashes();
+const SHOULD_RUN_SCHEDULED_JOBS = process.env.DISABLE_SCHEDULED_JOBS !== 'true' && process.env.NODE_ENV !== 'test';
 
 // Middleware - Restrict CORS to same-origin by default
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
@@ -196,67 +178,10 @@ app.use(staticLimiter);
 // Gzip Compression
 app.use(compression());
 
-// Security headers. Inline script blocks are allowed only by exact SHA-256 hashes
-// generated from current HTML files, mostly for JSON-LD structured data.
+// Security headers. CSP is assembled separately so HTML pages can get page-specific
+// hashes for inline JSON-LD without bloating API and asset responses.
 app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'", "https://cdnjs.cloudflare.com"],
-            baseUri: ["'self'"],
-            formAction: ["'self'", 'https://checkout.stripe.com'],
-            scriptSrc: [
-                "'self'",
-                ...inlineScriptHashes,
-                'https://js.stripe.com',
-                'https://cdn.jsdelivr.net',
-                'https://cdnjs.cloudflare.com',
-                'https://unpkg.com',
-                'https://www.googletagmanager.com',
-                'https://browser.sentry-cdn.com',
-                '*.sentry.io',
-            ],
-            styleSrc: [
-                "'self'",
-                'https://fonts.googleapis.com',
-                'https://cdnjs.cloudflare.com',
-                'https://cdn.jsdelivr.net',
-            ],
-            fontSrc: [
-                "'self'",
-                'https://fonts.gstatic.com',
-                'https://cdnjs.cloudflare.com',
-                'data:',
-            ],
-            imgSrc: [
-                "'self'",
-                'data:',             // Base64 images (natal chart canvas)
-                'blob:',
-                'https:',            // Allow HTTPS images
-                'https://cdn.jsdelivr.net',
-            ],
-            connectSrc: [
-                "'self'",
-                process.env.SUPABASE_URL ? `https://${process.env.SUPABASE_URL.replace(/^https?:\/\//, '')}` : '',
-                'https://api.stripe.com',
-                'https://generativelanguage.googleapis.com',
-                'https://cdnjs.cloudflare.com',
-                'https://fonts.googleapis.com',
-                'https://fonts.gstatic.com',
-                'https://cdn.jsdelivr.net',
-                'https://unpkg.com',
-
-                'https://www.google-analytics.com',
-                'https://region1.google-analytics.com',
-                'https://analytics.google.com',
-                'https://region1.analytics.google.com',
-                'https://stats.g.doubleclick.net',
-                'https://www.googletagmanager.com',
-            ].filter(Boolean),
-            frameSrc: ["'self'", 'https://js.stripe.com', 'https://checkout.stripe.com'], // Allow Stripe iframe/checkout
-            objectSrc: ["'none'"],
-            upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
-        },
-    },
+    contentSecurityPolicy: false,
     hsts: {
         maxAge: 31536000, // 1 year in seconds
         includeSubDomains: true,
@@ -274,6 +199,7 @@ app.use(helmet({
     noSniff: true, // X-Content-Type-Options: nosniff
     xssFilter: true, // X-XSS-Protection
 }));
+app.use(setBaseContentSecurityPolicy);
 
 // Force HTTPS in production (early, before any routes)
 if (process.env.NODE_ENV === 'production') {
@@ -442,7 +368,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Programmatic SEO pages — must be before static middleware
-// Handles /horoskop/:sign/:date and /sitemap-horoscopes.xml
+// Handles /horoskop/:sign/:date and /horoskop/sitemap-horoscopes.xml
 app.use('/horoskop', horoscopePagesRoutes);
 
 // OG injection pro horoskopy.html — ?znak=beran → správný og:image pro Facebook scraper
@@ -507,6 +433,7 @@ app.get('/horoskopy.html', (req, res, next) => {
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    setHtmlContentSecurityPolicy(res, replaced);
     res.send(replaced);
 });
 
@@ -525,23 +452,30 @@ app.get('/jmena/:name', (req, res, next) => {
 // Serve static files from the parent directory (MystickaHvezda root)
 console.warn(`📂 Serving static files from: ${rootDir}`);
 
-const staticOptions = process.env.NODE_ENV === 'production'
-    ? {
-        maxAge: '1y',
-        immutable: true,
-        setHeaders: (res, filePath) => {
-            // HTML pages and service worker must not be cached immutably
-            // so deployments are reflected immediately
-            if (filePath.endsWith('.html') || filePath.endsWith('service-worker.js')) {
-                res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-            } else if (filePath.endsWith('manifest.json')) {
-                res.setHeader('Cache-Control', 'public, max-age=86400');
-            }
-            // Tell caches that responses vary by encoding (gzip/br)
-            res.setHeader('Vary', 'Accept-Encoding');
-        }
+function setStaticHeaders(res, filePath) {
+    // HTML pages and service worker must not be cached immutably
+    // so deployments are reflected immediately
+    if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        setHtmlFileContentSecurityPolicy(res, filePath);
+    } else if (filePath.endsWith('service-worker.js')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    } else if (filePath.endsWith('manifest.json')) {
+        res.setHeader('Cache-Control', 'public, max-age=86400');
     }
-    : {};
+    // Tell caches that responses vary by encoding (gzip/br)
+    res.setHeader('Vary', 'Accept-Encoding');
+}
+
+const staticOptions = {
+    ...(process.env.NODE_ENV === 'production'
+        ? {
+            maxAge: '1y',
+            immutable: true,
+        }
+        : {}),
+    setHeaders: setStaticHeaders,
+};
 
 app.use(express.static(rootDir, staticOptions));
 
@@ -583,6 +517,7 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/mentor', mentorRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/docs', docsRoutes);
 
 // Public config endpoint — safely exposes only client-safe env vars
 app.get('/api/config', (req, res) => {
@@ -680,6 +615,11 @@ if (isMain || process.env.NODE_ENV === 'production') {
         console.warn(`✨ Mystická Hvězda API running on port ${PORT}`);
         console.warn(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
 
+        if (!SHOULD_RUN_SCHEDULED_JOBS) {
+            console.warn('[JOBS] Scheduled jobs skipped in test mode.');
+            return;
+        }
+
         // Initialize email queue job processor
         try {
             initializeEmailQueueJob();
@@ -735,7 +675,7 @@ if (isMain || process.env.NODE_ENV === 'production') {
             for (const date of dates) {
                 for (const sign of signs) {
                     try {
-                        await fetch(`https://mystickahvezda.cz/horoskop/${sign}/${date}`);
+                        await fetch(`https://www.mystickahvezda.cz/horoskop/${sign}/${date}`);
                     } catch (e) {
                         console.error(`[CRON] Prefill failed for ${sign}/${date}: ${e.message}`);
                     }

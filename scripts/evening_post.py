@@ -31,6 +31,9 @@ import math
 from datetime import date, timedelta
 from pathlib import Path
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+OUTPUT_DIR = SCRIPT_DIR / "output"
+
 # ─── Env loading ──────────────────────────────────────────────────────────────
 
 def _load_env():
@@ -217,7 +220,7 @@ def _sun_sign_fallback(d: date) -> str:
 
 # ─── Paměť ────────────────────────────────────────────────────────────────────
 
-MEMORY_FILE = Path(__file__).parent / "evening_memory.json"
+MEMORY_FILE = OUTPUT_DIR / "evening_memory.json"
 
 def load_memory() -> dict:
     if MEMORY_FILE.exists():
@@ -225,6 +228,7 @@ def load_memory() -> dict:
     return {"posts": [], "category_scores": {}}
 
 def save_memory(mem: dict):
+    MEMORY_FILE.parent.mkdir(parents=True, exist_ok=True)
     MEMORY_FILE.write_text(json.dumps(mem, ensure_ascii=False, indent=2), encoding="utf-8")
 
 # ─── Zásobník témat ───────────────────────────────────────────────────────────
@@ -970,7 +974,8 @@ def main():
     save_memory(mem)
 
     # Ulož do souboru
-    out_path = Path(__file__).parent / f"evening_{target_date}.txt"
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_path = OUTPUT_DIR / f"evening_{target_date}.txt"
     file_content = (
         f"📅 {date_cs} | večerní post\n"
         f"Typ: {post_type} | Kategorie: {category}\n\n"

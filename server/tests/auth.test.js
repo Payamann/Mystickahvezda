@@ -205,23 +205,22 @@ describe('🔐 Auth Endpoint Tests', () => {
             expect(res.status).toBe(403);
         });
 
-        test('POST /api/auth/logout without auth returns 401 or 403', async () => {
+        test('POST /api/auth/logout without auth returns 401', async () => {
             const csrfToken = await getCsrfToken();
             const res = await request(app)
                 .post('/api/auth/logout')
                 .set('x-csrf-token', csrfToken);
 
-            // Either 401 (no token) or 403 (invalid token) — auth required
-            expect([401, 403]).toContain(res.status);
+            expect(res.status).toBe(401);
         });
 
-        test('POST /api/auth/refresh-token without auth returns 401 or 403', async () => {
+        test('POST /api/auth/refresh-token without auth returns 401', async () => {
             const csrfToken = await getCsrfToken();
             const res = await request(app)
                 .post('/api/auth/refresh-token')
                 .set('x-csrf-token', csrfToken);
 
-            expect([401, 403]).toContain(res.status);
+            expect(res.status).toBe(401);
         });
     });
 

@@ -6,7 +6,7 @@
  * Vstup: JSON na stdin s toolInput.file_path
  * Výstup: JSON s hookSpecificOutput pokud nalezeny problémy
  */
-const fs = require('fs');
+import fs from 'node:fs';
 
 let input = '';
 process.stdin.on('data', d => input += d);

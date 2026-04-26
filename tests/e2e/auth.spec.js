@@ -11,6 +11,55 @@
 import { test, expect } from '@playwright/test';
 import { waitForPageReady, getCsrfToken } from './helpers.js';
 
+async function expectNoHorizontalOverflow(page) {
+    const horizontalOverflow = await page.evaluate(() => (
+        document.documentElement.scrollWidth - document.documentElement.clientWidth
+    ));
+    expect(horizontalOverflow).toBeLessThanOrEqual(2);
+}
+
+async function expectLocatorsWithinViewport(page, locators) {
+    const viewport = page.viewportSize();
+    expect(viewport).toBeTruthy();
+
+    await expectNoHorizontalOverflow(page);
+
+    for (const locator of locators) {
+        await expect(locator).toBeVisible();
+        const box = await locator.boundingBox();
+        expect(box).toBeTruthy();
+        expect(box.x).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width).toBeLessThanOrEqual(viewport.width + 2);
+    }
+}
+
+async function mockSuccessfulRegister(page, email = 'activation@example.com') {
+    await page.route('**/api/auth/register', async (route) => {
+        await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+                success: true,
+                user: {
+                    id: `e2e-${email}`,
+                    email,
+                    role: 'user',
+                    subscription_status: 'free'
+                }
+            })
+        });
+    });
+}
+
+async function submitRegisterForm(page, email = 'activation@example.com') {
+    await expect(page.locator('#confirm-password-field-wrapper')).toBeVisible();
+    await page.locator('#email').fill(email);
+    await page.locator('#password').fill('TestPassword123!');
+    await page.locator('#confirm-password-reg').fill('TestPassword123!');
+    await page.locator('#gdpr-consent').check();
+    await page.locator('#auth-submit').click();
+}
+
 test.describe('Login stránka', () => {
 
     test.beforeEach(async ({ page }) => {
@@ -63,6 +112,95 @@ test.describe('Login stránka', () => {
         await expect(submitBtn).toBeVisible();
         const text = await submitBtn.innerText();
         expect(text.trim().length).toBeGreaterThan(0);
+    });
+
+    test('formular a hlavni ovladaci prvky nepreteka mimo viewport', async ({ page }) => {
+        await expectLocatorsWithinViewport(page, [
+            page.locator('.login-section #login-form, #login-form').first(),
+            page.locator('#email').first(),
+            page.locator('#password').first(),
+            page.locator('#auth-submit').first(),
+        ]);
+    });
+
+    test('registracni formular nepreteka mimo viewport', async ({ page }) => {
+        await page.locator('#auth-mode-toggle').click();
+        await expect(page.locator('#confirm-password-field-wrapper')).toBeVisible();
+        await expect(page.locator('#gdpr-consent-wrapper')).toBeVisible();
+
+        await expectLocatorsWithinViewport(page, [
+            page.locator('.login-section #login-form, #login-form').first(),
+            page.locator('#email').first(),
+            page.locator('#password').first(),
+            page.locator('#confirm-password-reg').first(),
+            page.locator('#gdpr-consent-wrapper').first(),
+            page.locator('#auth-submit').first(),
+        ]);
+    });
+
+    test('pending checkout banner nepreteka mimo viewport', async ({ page }) => {
+        await page.goto('/prihlaseni.html?mode=register&redirect=/cenik.html&plan=pruvodce&source=inline_paywall&feature=numerologie_vyklad');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect(page.locator('#checkout-context-title')).toContainText('Pr');
+
+        await expectLocatorsWithinViewport(page, [
+            page.locator('#checkout-context-banner').first(),
+            page.locator('#checkout-context-title').first(),
+            page.locator('#checkout-context-copy').first(),
+            page.locator('#email').first(),
+            page.locator('#auth-submit').first(),
+        ]);
+    });
+
+    test('registrace s feature kontextem presmeruje na aktivacni stranku', async ({ page }) => {
+        await mockSuccessfulRegister(page);
+
+        await page.goto('/prihlaseni.html?mode=register&redirect=/profil.html&source=inline_paywall&feature=tarot');
+        await waitForPageReady(page);
+
+        await Promise.all([
+            page.waitForURL(/tarot\.html/, { timeout: 7000 }),
+            submitRegisterForm(page),
+        ]);
+        await waitForPageReady(page);
+
+        expect(new URL(page.url()).pathname).toBe('/tarot.html');
+        const activationFlag = await page.evaluate(() => sessionStorage.getItem('post_auth_activation'));
+        expect(activationFlag).toBeNull();
+    });
+
+    test('registrace s newsletter zdrojem presmeruje na horoskopy', async ({ page }) => {
+        await mockSuccessfulRegister(page, 'newsletter-activation@example.com');
+
+        await page.goto('/prihlaseni.html?mode=register&redirect=/profil.html&source=newsletter_form');
+        await waitForPageReady(page);
+
+        await Promise.all([
+            page.waitForURL(/horoskopy\.html/, { timeout: 7000 }),
+            submitRegisterForm(page, 'newsletter-activation@example.com'),
+        ]);
+        await waitForPageReady(page);
+
+        expect(new URL(page.url()).pathname).toBe('/horoskopy.html');
+        const activationFlag = await page.evaluate(() => sessionStorage.getItem('post_auth_activation'));
+        expect(activationFlag).toBeNull();
+    });
+
+    test('registrace bez aktivacniho kontextu presmeruje do onboardingu', async ({ page }) => {
+        await mockSuccessfulRegister(page, 'onboarding@example.com');
+
+        await page.goto('/prihlaseni.html?mode=register&redirect=/profil.html');
+        await waitForPageReady(page);
+
+        await Promise.all([
+            page.waitForURL(/onboarding\.html/, { timeout: 7000 }),
+            submitRegisterForm(page, 'onboarding@example.com'),
+        ]);
+        await waitForPageReady(page);
+
+        expect(new URL(page.url()).pathname).toBe('/onboarding.html');
     });
 
     // ── Klientská validace ────────────────────────────────────────────────────

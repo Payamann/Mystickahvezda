@@ -66,6 +66,14 @@ function normalizeAssetContent(asset, content) {
 }
 
 describe('Service worker cache manifest', () => {
+    test('STATIC_ASSETS only contains unique root-relative paths', () => {
+        const assets = readStaticAssets();
+
+        expect(new Set(assets).size).toBe(assets.length);
+        expect(assets.every((asset) => asset === '/' || asset.startsWith('/'))).toBe(true);
+        expect(assets.every((asset) => asset.trim() !== '')).toBe(true);
+    });
+
     test('STATIC_ASSETS references existing local files', () => {
         const assets = readStaticAssets();
 

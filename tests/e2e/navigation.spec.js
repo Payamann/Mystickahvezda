@@ -178,13 +178,12 @@ test.describe('404 handling', () => {
 
     test('neexistující stránka vrátí 404', async ({ page }) => {
         const res = await page.goto('/tato-stranka-neexistuje-xyz.html');
-        // Server by měl vrátit 404, nebo přesměrovat — ne 500
-        expect([404, 301, 302]).toContain(res.status());
+        expect(res.status()).toBe(404);
     });
 
-    test('neexistující API endpoint nevrátí 500', async ({ page }) => {
+    test('neexistující API endpoint vrátí 404', async ({ page }) => {
         const res = await page.request.get('/api/neexistujici-endpoint');
-        expect(res.status()).not.toBe(500);
+        expect(res.status()).toBe(404);
     });
 });
 

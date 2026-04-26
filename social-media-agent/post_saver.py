@@ -13,6 +13,53 @@ from logger import get_logger
 
 log = get_logger(__name__)
 
+PREVIEW_JS = """/* Preview interactions for Mysticka Hvezda post previews */
+
+function getPreviewData() {
+  return document.getElementById('post-preview')?.dataset || {};
+}
+
+function copyText(text, successMessage) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      alert(successMessage);
+    }).catch(function() {
+      fallbackCopy(text);
+    });
+    return;
+  }
+
+  fallbackCopy(text);
+}
+
+function fallbackCopy(text) {
+  var textarea = document.createElement('textarea');
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textarea);
+  alert('Zkopirovano.');
+}
+
+function copyCaption() {
+  var data = getPreviewData();
+  copyText((data.caption || '') + '\\n\\n' + (data.hashtags || ''), 'Caption + hashtags zkopirovany.');
+}
+
+function copyHashtags() {
+  var data = getPreviewData();
+  copyText(data.hashtags || '', 'Hashtags zkopirovany.');
+}
+
+function selectVariant(index) {
+  var cards = document.querySelectorAll('.variant-card');
+  cards.forEach(function(card, cardIndex) {
+    card.style.borderColor = cardIndex === index ? '#c9a227' : '#3a1a5e';
+  });
+}
+"""
+
 
 def save_post(
     post_data: dict,
@@ -45,6 +92,7 @@ def save_post(
     }
 
     config.POSTS_DIR.mkdir(parents=True, exist_ok=True)
+    _ensure_preview_assets()
     json_path = config.POSTS_DIR / f"{filename}.json"
 
     with open(json_path, 'w', encoding='utf-8') as f:
@@ -56,6 +104,13 @@ def save_post(
     log.info("Náhled vytvořen: %s", html_path)
 
     return json_path
+
+
+def _ensure_preview_assets() -> None:
+    """Write local assets required by generated HTML previews."""
+    preview_js_path = config.POSTS_DIR / "preview.js"
+    if not preview_js_path.exists() or preview_js_path.read_text(encoding='utf-8') != PREVIEW_JS:
+        preview_js_path.write_text(PREVIEW_JS, encoding='utf-8')
 
 
 def _create_instagram_preview(post_record: dict, image_path: Path, filename: str) -> Path:

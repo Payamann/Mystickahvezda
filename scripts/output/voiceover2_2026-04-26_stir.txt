@@ -1,0 +1,49 @@
+VOICEOVER SCRIPT
+============================================================
+🗓️ 26. dubna 2026
+
+[intense] Snaha tě vyčerpala. <break time="0.5s" /> [commanding] Stále nevíš, zda je to slabost nebo signál. <break time="1.0s" />
+
+[mysterious] Jdeš ven. Osamělý krok, osamělý dech, žádná hudba. <break time="0.3s" /> [intense] Uprostřed procházky tě zastaví jedna myšlenka — tahle cesta nemá kam dojít. <break time="0.3s" /> [commanding] Vytrvání bez směru tě nezachrání. Jasný směr tě podrží. <break time="1.0s" />
+
+[inviting] Napiš ANO, pokud tohle přesně sedí. <break time="0.3s" /> [clearly] Příští díl bude ještě přímější — sleduj, ať ho nezmeškáš.
+
+TIKTOK / INSTAGRAM DESCRIPTION
+============================================================
+26. dubna 2026 přináší Saturn v Beranu jedno jasné pravidlo: karma nepočká a každá zkratka, do které teď vstoupíš, se ti vrátí rychleji než kdykoli předtím. ⚖️
+Dnes si proto všimni, kde vlastně jedeš setrvačností — držíš se toho, protože změna se zdá příliš těžká.
+Sleduj profil — příště se podíváme přímo na to, jak Štír pozná rozdíl mezi vzdáním se a přesměrováním. 🦂
+
+#mystickaHvezda #Štír #dennihoroskop #astrologie #horoskop
+
+FACEBOOK REELS DESCRIPTION
+============================================================
+Snaha bez směru tě nevede dál — jen unaví. 🦂 Saturn v Beranu 26. dubna 2026 nepřehlédne ani jeden krok, který děláš jen ze zvyku. Dnes si proto polož jednu otázku: vytrváváš proto, že to dává smysl, nebo jen proto, že zastavit se zdá těžší než pokračovat? Celý výklad najdeš na mystickahvezda.cz/horoskopy.html ✨
+
+#mystickaHvezda #Štír #horoskop #astrologie #dennihoroskop #mystika
+
+SUNO PROMPT
+============================================================
+Warm orchestral background with brooding strings lifting gently into golden light, a distant piano tracing bright melodic phrases that breathe and settle, leaving space for a voice to move through. A soft rhythmic pulse drives quiet forward momentum, like first rays of sunrise spreading across an open sky, hopeful and steady without urgency. Energizing yet restrained, major key warmth with gentle intensity underneath every phrase. Short instrumental, 60-90 seconds, loop-ready.
+
+THUMBNAIL PROMPT (Nano Banana)
+============================================================
+A mystical video thumbnail for zodiac sign Scorpio.
+
+BACKGROUND: deep dark space with soft subtle deep crimson and obsidian black nebula with dark violet undertones, intense blood-red plasma in a near-total cosmic darkness, smoldering maroon and deep purple void — mysterious, intense, transformative — gentle and atmospheric, NOT aggressive. Rich dense star field with thousands of tiny stars. Dark and deep — moody and calm, serving as a backdrop without competing with the foreground. Deep navy and dark indigo tones dominate. NO harsh lightning, NO aggressive neon.
+
+COMPOSITION: Three elements stacked as one tight unified group, vertically centered in the image. The group fills roughly 80% of the image height. Minimal gap between elements — they feel like one connected unit.
+
+ELEMENT 1 — glyph: large ornate Scorpio symbol (♏) in solid gold — rich champagne gold with deep amber shadows — surface of each stroke covered in intricate engraved filigree scrollwork and decorative patterns. Beveled polished 3D edges catching light. Small ornamental flourishes where strokes meet. Clear 3D depth and volume. Premium, ancient — NOT plain, NOT flat, NOT simple geometry.
+
+ELEMENT 2 — immediately below, small gap: dark stone plaque with ornate gold border frame. '26. dubna' in elegant gold lettering on the first line, 'ŠTÍR' in bold engraved gold capitals on the second line.
+
+ELEMENT 3 — immediately below, small gap: compact parchment scroll, aged honey color. Bold serif text in dark brown (#2a1500), NOT cursive, NOT italic: 'Vyčerpání ukazuje směr.' on the first line, 'Něco už nejde stejně.' on the second line.
+
+NO zodiac wheel. NO star icons. NO logos. NO borders. NO corner decorations. NO animals. NO human figures. Bottom corners completely clean.
+
+Portrait 9:16.
+
+CAPTIONS PŘÍKAZ
+============================================================
+python "C:\Users\pavel\OneDrive\Desktop\captions-tool\captions.py" "VIDEO.mp4" --model small --text "Snaha tě vyčerpala. Stále nevíš, zda je to slabost nebo signál. Jdeš ven. Osamělý krok, osamělý dech, žádná hudba. Uprostřed procházky tě zastaví jedna myšlenka — tahle cesta nemá kam dojít. Vytrvání bez směru tě nezachrání. Jasný směr tě podrží. Napiš ANO, pokud tohle přesně sedí. Příští díl bude ještě přímější — sleduj, ať ho nezmeškáš."

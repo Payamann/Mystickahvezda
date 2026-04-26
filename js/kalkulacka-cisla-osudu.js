@@ -238,7 +238,7 @@
 
             const text = `Moje Číslo Osudu je ${currentNumber} – ${data.name}! Zjistěte vaše na Mystické Hvězdě 🌟`;
 
-            const url = 'https://mystickahvezda.cz/kalkulacka-cisla-osudu.html';
+            const url = 'https://www.mystickahvezda.cz/kalkulacka-cisla-osudu.html';
 
 
 

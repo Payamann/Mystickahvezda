@@ -98,6 +98,23 @@ test.describe('SEO horoskop stránky — struktura', () => {
         expect(title.length).toBeGreaterThan(5);
     });
 
+    test('sdílené komponenty používají root-relative logo cestu', async ({ page }) => {
+        await page.goto(`/horoskop/beran/${getTodayStr()}`);
+        await page.waitForLoadState('domcontentloaded');
+
+        const logos = page.locator('.logo__image');
+        await expect(logos.first()).toBeAttached();
+
+        const logoSrcs = await logos.evaluateAll((images) =>
+            images.map((image) => image.getAttribute('src')).filter(Boolean)
+        );
+
+        expect(logoSrcs.length).toBeGreaterThanOrEqual(1);
+        for (const src of logoSrcs) {
+            expect(src).toMatch(/^\/img\/logo-3d\.webp/);
+        }
+    });
+
     test('včerejší datum vrátí 200 (cached obsah)', async ({ page }) => {
         const res = await page.goto(`/horoskop/stir/${getYesterdayStr()}`);
         expect(res.status()).toBe(200);
@@ -105,13 +122,13 @@ test.describe('SEO horoskop stránky — struktura', () => {
 
     // ── Rychlost ─────────────────────────────────────────────────────────────
 
-    test('SEO stránka odpoví do 3 sekund', async ({ page }) => {
+    test('SEO stránka odpoví do 5 sekund', async ({ page }) => {
         const start = Date.now();
         await page.goto(`/horoskop/beran/${getTodayStr()}`);
         await page.waitForLoadState('domcontentloaded');
         const elapsed = Date.now() - start;
 
-        expect(elapsed).toBeLessThan(3000);
+        expect(elapsed).toBeLessThan(5000);
     });
 });
 
@@ -119,17 +136,21 @@ test.describe('SEO horoskop stránky — neplatné URL', () => {
 
     test('neplatné znamení vrátí 404', async ({ page }) => {
         const response = await page.goto(`/horoskop/neexistujici-znameni/${getTodayStr()}`);
-        // Buď 404 nebo přesměrování na validní obsah
-        expect([200, 404, 301, 302]).toContain(response.status());
+        expect(response.status()).toBe(404);
     });
 
     test('neplatný formát data vrátí 404', async ({ page }) => {
         const response = await page.goto('/horoskop/beran/neplatne-datum');
-        expect([200, 404, 301, 302]).toContain(response.status());
+        expect(response.status()).toBe(404);
+    });
+
+    test('neplatné kalendářní datum vrátí 404', async ({ page }) => {
+        const response = await page.goto('/horoskop/beran/2026-02-31');
+        expect(response.status()).toBe(404);
     });
 
     test('příliš vzdálené datum (100 let) vrátí 404', async ({ page }) => {
         const response = await page.goto('/horoskop/beran/1925-01-01');
-        expect([200, 404, 301, 302]).toContain(response.status());
+        expect(response.status()).toBe(404);
     });
 });

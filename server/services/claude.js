@@ -12,6 +12,7 @@ const CLAUDE_MODEL = 'claude-sonnet-4-5';
 
 const REQUEST_TIMEOUT_MS = 30000;
 const MAX_RETRIES = 2;
+const USE_MOCK_AI = process.env.MOCK_AI === 'true' || process.env.NODE_ENV === 'test';
 
 const API_KEY = (() => {
     const key = process.env.ANTHROPIC_API_KEY;
@@ -26,6 +27,10 @@ const API_KEY = (() => {
  * Drop-in replacement for callGemini.
  */
 export async function callClaude(systemPrompt, messageOrHistory, contextData = null) {
+    if (USE_MOCK_AI) {
+        return buildMockClaudeResponse(systemPrompt);
+    }
+
     if (!API_KEY) {
         throw new Error('ANTHROPIC_API_KEY is not defined in environment variables.');
     }
@@ -118,4 +123,16 @@ export async function callClaude(systemPrompt, messageOrHistory, contextData = n
     }
 
     throw lastError;
+}
+
+function buildMockClaudeResponse(systemPrompt = '') {
+    if (systemPrompt.includes('"prediction"') && systemPrompt.includes('"affirmation"')) {
+        return JSON.stringify({
+            prediction: 'Testovaci horoskop prinasi klidnou energii, jasne priority a jeden prakticky krok pro dnesni den.',
+            affirmation: 'Dnes postupuji klidne, jasne a duveruji vlastnimu vnitrnimu vedeni.',
+            luckyNumbers: [3, 7, 12, 21]
+        });
+    }
+
+    return 'Testovaci AI odpoved pro izolovane automatizovane testy.';
 }

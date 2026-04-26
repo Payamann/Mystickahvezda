@@ -3,7 +3,7 @@
  * Provides offline caching with stale-while-revalidate strategy
  */
 
-const CACHE_NAME = 'mysticka-hvezda-213a4d26f10e';
+const CACHE_NAME = 'mysticka-hvezda-09f923c98026';
 const MAX_RUNTIME_CACHE_SIZE = 150;
 const STATIC_ASSETS = [
     '/',
@@ -34,6 +34,7 @@ const STATIC_ASSETS = [
     '/img/bg-cosmic-hd.webp',
     '/img/bg-cosmic-mobile.webp',
     '/img/icon-192.webp',
+    '/img/icon-192.png',
     '/data/tarot-cards.json',
     '/data/runes.json',
     '/js/dist/runes.js',

@@ -25,16 +25,7 @@ router.post('/', contactLimiter, async (req, res) => {
         const validatedSubject = validateString(subject, 'Subject', 5, 200);
         const validatedMessage = validateString(message, 'Message', 10, 2000);
 
-        // Validated inputs are ready to use
-
-        // Log contact form submission (you can later integrate email service)
-        console.log('[Contact Form]', {
-            name: validatedName,
-            email: validatedEmail,
-            subject: validatedSubject,
-            message: validatedMessage,
-            timestamp: new Date().toISOString()
-        });
+        // Validated inputs are ready to use; do not log contact details or message bodies.
 
         // Send notification to admin (fire-and-forget)
         const adminEmail = process.env.ADMIN_EMAIL || process.env.FROM_EMAIL || 'support@mystickahvezda.cz';

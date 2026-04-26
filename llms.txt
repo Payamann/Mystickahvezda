@@ -5,12 +5,12 @@ A premium Czech platform for astrology, tarot, and AI-driven esoteric insights.
 Mystická Hvězda provides professional tools for self-discovery, spiritual growth, and future forecasting using a blend of ancient wisdom (astrology, runes, tarot) and modern AI interpretation.
 
 ## Key Services
-- **Tarot Online:** AI-augmented tarot readings. [tarot.html](https://mystickahvezda.cz/tarot.html)
-- **Horoscopes:** Daily, weekly, and monthly zodiac forecasts. [horoskopy.html](https://mystickahvezda.cz/horoskopy.html)
-- **Numerology:** Detailed path of life and soul calculations. [numerologie.html](https://mystickahvezda.cz/numerologie.html)
-- **AI Oracle:** Real-time answers from a mystical crystal ball. [kristalova-koule.html](https://mystickahvezda.cz/kristalova-koule.html)
-- **Astrocartography:** Planetary lines and strength places mapping. [astro-mapa.html](https://mystickahvezda.cz/astro-mapa.html)
-- **Names Database:** Esoteric meanings, origin, and numerology for 280+ Czech names. [jmena/](https://mystickahvezda.cz/jmena/)
+- **Tarot Online:** AI-augmented tarot readings. [tarot.html](https://www.mystickahvezda.cz/tarot.html)
+- **Horoscopes:** Daily, weekly, and monthly zodiac forecasts. [horoskopy.html](https://www.mystickahvezda.cz/horoskopy.html)
+- **Numerology:** Detailed path of life and soul calculations. [numerologie.html](https://www.mystickahvezda.cz/numerologie.html)
+- **AI Oracle:** Real-time answers from a mystical crystal ball. [kristalova-koule.html](https://www.mystickahvezda.cz/kristalova-koule.html)
+- **Astrocartography:** Planetary lines and strength places mapping. [astro-mapa.html](https://www.mystickahvezda.cz/astro-mapa.html)
+- **Names Database:** Esoteric meanings, origin, and numerology for 280+ Czech names. [jmena/](https://www.mystickahvezda.cz/jmena/)
 
 ## Full Documentation
-For a deep dive into our methodology and extended context, visit [llms-full.txt](https://mystickahvezda.cz/llms-full.txt)
+For a deep dive into our methodology and extended context, visit [llms-full.txt](https://www.mystickahvezda.cz/llms-full.txt)

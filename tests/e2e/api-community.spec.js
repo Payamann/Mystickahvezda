@@ -27,15 +27,14 @@ async function postWithCsrf(page, path, data) {
 
 test.describe('API: /api/angel-post — čtení', () => {
 
-    test('GET /api/angel-post vrátí 200 nebo 404', async ({ page }) => {
+    test('GET /api/angel-post vrátí 200', async ({ page }) => {
         const res = await page.request.get('/api/angel-post');
-        // 200 = zprávy existují, 404 = endpoint jiný název
-        expect([200, 404]).toContain(res.status());
+        expect(res.status()).toBe(200);
     });
 
-    test('GET /api/angel-post nevrátí 500', async ({ page }) => {
+    test('GET /api/angel-post opakovaně vrátí 200', async ({ page }) => {
         const res = await page.request.get('/api/angel-post');
-        expect(res.status()).not.toBe(500);
+        expect(res.status()).toBe(200);
     });
 
     test('GET /api/angel-post vrátí JSON když 200', async ({ page }) => {
@@ -46,9 +45,9 @@ test.describe('API: /api/angel-post — čtení', () => {
         }
     });
 
-    test('GET /api/angel-post s limit param vrátí 200 nebo 404', async ({ page }) => {
+    test('GET /api/angel-post s limit param vrátí 200', async ({ page }) => {
         const res = await page.request.get('/api/angel-post?limit=5');
-        expect([200, 404]).toContain(res.status());
+        expect(res.status()).toBe(200);
     });
 });
 
@@ -71,7 +70,7 @@ test.describe('API: /api/angel-post — zápis', () => {
             message: '',
             category: 'laska',
         });
-        expect([400, 404, 429]).toContain(res.status());
+        expect([400, 429]).toContain(res.status());
     });
 
     test('POST /api/angel-post s příliš dlouhou zprávou vrátí 400', async ({ page }) => {
@@ -80,7 +79,7 @@ test.describe('API: /api/angel-post — zápis', () => {
             message: 'x'.repeat(5001),
             category: 'laska',
         });
-        expect([400, 404, 429]).toContain(res.status());
+        expect([400, 429]).toContain(res.status());
     });
 
     test('POST /api/angel-post s XSS pokusem je sanitizován', async ({ page }) => {
@@ -99,8 +98,7 @@ test.describe('API: /api/angel-post — zápis', () => {
             // Script tagy by měly být odstraněny
             expect(body).not.toContain('<script>');
         }
-        // 400 (validace odmítla) nebo 500 (AI chyba v test env) je akceptovatelné
-        expect([200, 201, 400, 404, 429, 500]).toContain(res.status());
+        expect([200, 201, 400, 429]).toContain(res.status());
     });
 });
 
@@ -111,12 +109,12 @@ test.describe('API: /api/angel-post/:id/like', () => {
         expect(res.status()).toBe(403);
     });
 
-    test('POST /api/angel-post/neexistujici/like vrátí 400 nebo 404', async ({ page }) => {
+    test('POST /api/angel-post/neexistujici/like vrátí 400', async ({ page }) => {
         const csrf = await getCsrfToken(page);
         const res = await page.request.post('/api/angel-post/neexistujici-id/like', {
             headers: { 'x-csrf-token': csrf },
         });
-        expect([400, 404]).toContain(res.status());
+        expect(res.status()).toBe(400);
     });
 });
 
@@ -181,7 +179,7 @@ test.describe('API: /api/subscribe/horoscope', () => {
 
     test('POST bez CSRF vrátí 403', async ({ page }) => {
         const res = await page.request.post('/api/subscribe/horoscope', {
-            data: { email: 'test@example.com', sign: 'Beran' },
+            data: { email: 'test@example.com', zodiac_sign: 'Beran' },
         });
         expect(res.status()).toBe(403);
     });
@@ -189,17 +187,17 @@ test.describe('API: /api/subscribe/horoscope', () => {
     test('POST s neplatným emailem vrátí 400', async ({ page }) => {
         const res = await postWithCsrf(page, '/api/subscribe/horoscope', {
             email: 'neni-email',
-            sign: 'Beran',
+            zodiac_sign: 'Beran',
         });
-        expect([400, 404]).toContain(res.status());
+        expect(res.status()).toBe(400);
     });
 
     test('POST s neplatným znamením vrátí 400', async ({ page }) => {
         const res = await postWithCsrf(page, '/api/subscribe/horoscope', {
             email: 'test@example.com',
-            sign: 'NeplatnéZnaméní',
+            zodiac_sign: 'NeplatnéZnaméní',
         });
-        expect([400, 404]).toContain(res.status());
+        expect(res.status()).toBe(400);
     });
 });
 

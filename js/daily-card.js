@@ -124,8 +124,10 @@
                 navigator.share({
                     title: 'Mystická Hvězda - Moje Karta Dne',
                     text: `Moje dnešní karta je ${card.name} (${card.emoji}). Zjisti, jakou zprávu mají hvězdy připravenou pro tebe!`,
-                    url: 'https://mystickahvezda.cz'
-                }).catch(err => console.log('Share error:', err));
+                    url: 'https://www.mystickahvezda.cz'
+                }).catch(err => {
+                    if (window.MH_DEBUG) console.debug('Share error:', err);
+                });
             });
         }
 

@@ -67,7 +67,7 @@ async function generateBlog() {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": post.title,
-            "image": post.featured_image || "https://mystickahvezda.cz/img/hero-3d.png",
+            "image": post.featured_image || "https://www.mystickahvezda.cz/img/hero-3d.png",
             "author": {
                 "@type": "Person",
                 "name": post.author || "Mystická Hvězda"

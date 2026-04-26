@@ -16,6 +16,9 @@ global.console = {
 
 // Set test environment variables
 process.env.NODE_ENV = 'test';
+process.env.DISABLE_SCHEDULED_JOBS = 'true';
+process.env.MOCK_AI = 'true';
+process.env.MOCK_SUPABASE = 'true';
 process.env.JWT_SECRET = 'test-secret-key-12345';
 process.env.CSRF_SECRET = 'test-csrf-secret-key-12345';
 process.env.SUPABASE_URL = 'https://test.supabase.co';

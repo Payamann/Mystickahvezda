@@ -47,7 +47,7 @@ async function loadTarotData() {
         if (!response.ok) throw new Error('Failed to load tarot data');
         TAROT_CARDS = await response.json();
         TAROT_CARDS_ARRAY = Object.keys(TAROT_CARDS);
-        console.log('🃏 Tarot Data Loaded:', TAROT_CARDS_ARRAY.length, 'cards');
+        if (window.MH_DEBUG) console.debug('Tarot data loaded:', TAROT_CARDS_ARRAY.length, 'cards');
     } catch (error) {
         console.error('CRITICAL: Failed to load tarot cards:', error);
         const container = document.querySelector('.tarot-deck');

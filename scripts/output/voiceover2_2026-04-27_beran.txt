@@ -1,0 +1,49 @@
+VOICEOVER SCRIPT
+============================================================
+🗓️ 27. dubna 2026
+
+[intense] Berane, jsi na startu. <break time="0.5s" /> [commanding] A přemýšlíš, kdo tě brzdí. <break time="1.0s" />
+
+[confident] Říkáš: „Nechám jim to.“ <break time="0.3s" /> [intense] Myslíš: Bojím se, že nemám pravdu. <break time="0.3s" /> [commanding] Říkáš: „Počkám na ostatní.“ <break time="0.3s" /> [intense] Myslíš: Váhání přichází od tebe, ne od nich. <break time="1.0s" />
+
+[inviting] Berane — napiš, co dnes riskuješ ⬇️ <break time="0.3s" /> [clearly] Sleduj, ať ti neunikne tvůj den.
+
+TIKTOK / INSTAGRAM DESCRIPTION
+============================================================
+27. dubna 2026 přináší Beranu ojedinělou kombinaci: Neptun v tvém znamení rozkládá iluze, ale Saturn vedle něj okamžitě přichází s účtem 🪐 — žádná zkratka dnes neprojde bez povšimnutí.
+Pokud dnes váháš u rozhodnutí, zkontroluj, jestli tě skutečně brzdí někdo druhý, nebo jen čekáš na jistotu, která nikdy nepřijde.
+Napiš do komentáře, co tě dnes drží na místě — a sleduj profil ✨, příště odhalíme, jak Saturn v Beranu přepisuje tvé priority.
+
+#mystickaHvezda #Beran #dennihoroskop #astrologie #horoskop
+
+FACEBOOK REELS DESCRIPTION
+============================================================
+27. dubna 2026 je den, kdy ti Neptun v Beranu boří iluze — a Saturn hned vzápětí přichází s účtem 🪐 Dnes si polož otázku, jestli to váhání vůbec pochází od někoho jiného. Všimni si, kdy říkáš „čekám na ostatní“ — protože Saturn každou takovou zkratku vidí a vrátí ji zpět s úroky. Celý výklad najdeš na mystickahvezda.cz/horoskopy.html ✨
+
+#mystickaHvezda #Beran #horoskop #astrologie #dennihoroskop #mystika
+
+SUNO PROMPT
+============================================================
+Warm orchestral underscore with energetic strings carrying a bright, forward-moving melodic line in a confident major key, layered over a steady rhythmic pulse that gently drives the pace without overpowering. Golden tones radiate outward like first light catching the edge of a distant horizon, hopeful and expansive yet grounded and purposeful. Uplifting momentum builds softly through the piece, breathing naturally between phrases to support spoken voice with bold, sunrise energy. Short instrumental, 60-90 seconds, loop-ready.
+
+THUMBNAIL PROMPT (Nano Banana)
+============================================================
+A mystical video thumbnail for zodiac sign Aries.
+
+BACKGROUND: deep dark space with soft subtle blazing crimson and scarlet nebula with intense orange plasma bursts, fiery red cosmic energy surging like solar flares, deep red void with streaks of hot amber light — powerful, ignited, unstoppable — gentle and atmospheric, NOT aggressive. Rich dense star field with thousands of tiny stars. Dark and deep — moody and calm, serving as a backdrop without competing with the foreground. Deep navy and dark indigo tones dominate. NO harsh lightning, NO aggressive neon.
+
+COMPOSITION: Three elements stacked as one tight unified group, vertically centered in the image. The group fills roughly 80% of the image height. Minimal gap between elements — they feel like one connected unit.
+
+ELEMENT 1 — glyph: large ornate Aries symbol (♈) in solid gold — rich champagne gold with deep amber shadows — surface of each stroke covered in intricate engraved filigree scrollwork and decorative patterns. Beveled polished 3D edges catching light. Small ornamental flourishes where strokes meet. Clear 3D depth and volume. Premium, ancient — NOT plain, NOT flat, NOT simple geometry.
+
+ELEMENT 2 — immediately below, small gap: dark stone plaque with ornate gold border frame. '27. dubna' in elegant gold lettering on the first line, 'BERAN' in bold engraved gold capitals on the second line.
+
+ELEMENT 3 — immediately below, small gap: compact parchment scroll, aged honey color. Bold serif text in dark brown (#2a1500), NOT cursive, NOT italic: 'Říkáš, že čekáš na ostatní.' on the first line, 'Váhání ale přichází od tebe.' on the second line.
+
+NO zodiac wheel. NO star icons. NO logos. NO borders. NO corner decorations. NO animals. NO human figures. Bottom corners completely clean.
+
+Portrait 9:16.
+
+CAPTIONS PŘÍKAZ
+============================================================
+python "C:\Users\pavel\OneDrive\Desktop\captions-tool\captions.py" "VIDEO.mp4" --model small --text "Berane, jsi na startu. A přemýšlíš, kdo tě brzdí. Říkáš: „Nechám jim to.“ Myslíš: Bojím se, že nemám pravdu. Říkáš: „Počkám na ostatní.“ Myslíš: Váhání přichází od tebe, ne od nich. Berane — napiš, co dnes riskuješ ⬇️ Sleduj, ať ti neunikne tvůj den."

@@ -20,13 +20,16 @@ import colorsys
 from datetime import date, timedelta
 from pathlib import Path
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+OUTPUT_DIR = SCRIPT_DIR / "output"
+
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 # ─── Konstanty ────────────────────────────────────────────────────────────────
 
-HISTORY_FILE  = Path(__file__).parent / "thumbnail_history.json"
-USED_SIGNS_FILE = Path(__file__).parent / "used_signs.json"
+HISTORY_FILE  = OUTPUT_DIR / "thumbnail_history.json"
+USED_SIGNS_FILE = OUTPUT_DIR / "used_signs.json"
 
 DEFAULT_COLOR_DESC  = "deep space with swirling fuchsia, teal, orange and purple nebulae"
 DEFAULT_WHEEL_COLOR = "deep navy and cosmic purple tones"
@@ -135,6 +138,7 @@ def load_history() -> dict:
     return {"plaques": [], "scrolls": []}
 
 def save_history(history: dict):
+    HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
     HISTORY_FILE.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8")
 
 def pick_fresh(pool: list, used: list, fallback_key: str) -> any:
@@ -357,7 +361,8 @@ def main():
         print(prompt)
         print(sep)
 
-        out_path = Path(__file__).parent / f"thumbnail_{current}.txt"
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        out_path = OUTPUT_DIR / f"thumbnail_{current}.txt"
         out_path.write_text(prompt, encoding="utf-8")
         print(f"[OK] Uloženo: {out_path}")
 

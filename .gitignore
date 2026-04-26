@@ -4,6 +4,7 @@
 *.local
 server/.env
 server/.env.*
+!server/.env.example
 
 # Dependencies
 node_modules/
@@ -38,6 +39,7 @@ tmp/
 .claude/*
 !.claude/commands/
 !.claude/settings.json
+.claire/
 _agent/
 
 # Python
@@ -54,3 +56,4 @@ social-media-agent/.pytest-tmp/
 *.lcov
 playwright-report/
 test-results/
+tmp_email_previews/

@@ -83,7 +83,7 @@ function generate() {
             "inDefinedTermSet": {
                 "@type": "DefinedTermSet",
                 "name": "Ezoterický Slovník – Mystická Hvězda",
-                "url": "https://mystickahvezda.cz/slovnik.html"
+                "url": "https://www.mystickahvezda.cz/slovnik.html"
             }
         }, null, 2);
 

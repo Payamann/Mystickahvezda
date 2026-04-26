@@ -59,6 +59,23 @@ describe('💳 Payment Checkout Session', () => {
         });
     });
 
+    describe('Legacy endpoint', () => {
+        test('authenticated /api/payment/process returns 410 Gone', async () => {
+            const csrf = await getCsrfToken();
+            const token = makeTestToken();
+            const res = await request(app)
+                .post('/api/payment/process')
+                .set('Authorization', `Bearer ${token}`)
+                .set('x-csrf-token', csrf);
+
+            expect(res.status).toBe(410);
+            expect(res.body).toEqual({
+                success: false,
+                error: 'Tento endpoint byl nahrazen Stripe Checkout.'
+            });
+        });
+    });
+
     // ── Validace planId ──────────────────────────────────────────────────────
 
     describe('Validace planId', () => {

@@ -15,7 +15,7 @@ async function smokeTest(page, path, titleContains) {
     const res = await page.request.get(path);
     expect(res.status(), `${path} by měla vrátit 200`).toBe(200);
 
-    await page.goto(path);
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
     await waitForPageReady(page);
 
     const title = await page.title().then(t => t.toLowerCase());
@@ -46,7 +46,8 @@ test.describe('Blog', () => {
     test('blog karty jsou přítomné', async ({ page }) => {
         await page.goto('/blog.html');
         await waitForPageReady(page);
-        const cards = page.locator('.blog-card, .card[class*="blog"]');
+        const cards = page.locator('.blog-card, .featured-post, .card[class*="blog"]');
+        await expect(cards.first()).toBeAttached();
         const count = await cards.count();
         expect(count).toBeGreaterThanOrEqual(1);
     });
@@ -74,7 +75,7 @@ test.describe('Blog', () => {
 test.describe('Ceník', () => {
 
     test('stránka se načte s 200 a má h1', async ({ page }) => {
-        await smokeTest(page, '/cenik.html', 'plán');
+        await smokeTest(page, '/cenik.html', 'cen');
     });
 
     test('pricing karty jsou přítomné', async ({ page }) => {
@@ -157,13 +158,13 @@ test.describe('Kontakt', () => {
     });
 
     test('#contact-form existuje', async ({ page }) => {
-        await page.goto('/kontakt.html');
+        await page.goto('/kontakt.html', { waitUntil: 'domcontentloaded' });
         await waitForPageReady(page);
         await expect(page.locator('#contact-form')).toBeAttached();
     });
 
     test('kontaktní pole existují', async ({ page }) => {
-        await page.goto('/kontakt.html');
+        await page.goto('/kontakt.html', { waitUntil: 'domcontentloaded' });
         await waitForPageReady(page);
         await expect(page.locator('#contact-name, input[name="name"]').first()).toBeAttached();
         await expect(page.locator('#contact-email, input[type="email"]').first()).toBeAttached();
@@ -171,7 +172,7 @@ test.describe('Kontakt', () => {
     });
 
     test('kontaktní formulář přijímá vstup', async ({ page }) => {
-        await page.goto('/kontakt.html');
+        await page.goto('/kontakt.html', { waitUntil: 'domcontentloaded' });
         await waitForPageReady(page);
 
         const nameInput = page.locator('#contact-name, input[name="name"]').first();
@@ -185,6 +186,43 @@ test.describe('Kontakt', () => {
             await emailInput.fill('test@example.com');
             await expect(emailInput).toHaveValue('test@example.com');
         }
+    });
+
+    test('kontaktni formular odesila na /api/contact s CSRF', async ({ page }) => {
+        await page.route('**/api/contact', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true, message: 'OK' }),
+            });
+        });
+
+        page.on('dialog', dialog => dialog.accept());
+
+        await page.goto('/kontakt.html', { waitUntil: 'domcontentloaded' });
+        await waitForPageReady(page);
+
+        await page.fill('#contact-name', 'Test User');
+        await page.fill('#contact-email', 'test@example.com');
+        await page.fill('#contact-subject', 'Test subject');
+        await page.fill('#contact-message', 'This is a test message');
+
+        const contactRequestPromise = page.waitForRequest(request =>
+            request.url().endsWith('/api/contact') && request.method() === 'POST'
+        );
+
+        await page.click('#contact-form button[type="submit"]');
+        const request = await contactRequestPromise;
+
+        expect(request.url()).toContain('/api/contact');
+        expect(request.url()).not.toContain('/api/contact/contact');
+        expect(request.headers()['x-csrf-token']).toBeTruthy();
+        expect(request.postDataJSON()).toEqual({
+            name: 'Test User',
+            email: 'test@example.com',
+            subject: 'Test subject',
+            message: 'This is a test message',
+        });
     });
 
     // API
@@ -261,14 +299,14 @@ test.describe('Ostatní stránky — smoke testy (200 + h1)', () => {
         });
 
         test(`${path} má h1 v DOM`, async ({ page }) => {
-            await page.goto(path);
+            await page.goto(path, { waitUntil: 'domcontentloaded' });
             await waitForPageReady(page);
             await expect(page.locator('h1').first()).toBeAttached();
         });
 
         test(`${path} nemá horizontální scroll na mobilu`, async ({ page }) => {
             await page.setViewportSize(MOBILE_VIEWPORT);
-            await page.goto(path);
+            await page.goto(path, { waitUntil: 'domcontentloaded' });
             await waitForPageReady(page);
             const overflow = await page.evaluate(() =>
                 document.documentElement.scrollWidth > document.documentElement.clientWidth

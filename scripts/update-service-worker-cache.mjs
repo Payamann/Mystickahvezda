@@ -29,6 +29,23 @@ function extractStaticAssets(source) {
     return [...match[1].matchAll(/'([^']+)'/g)].map((asset) => asset[1]);
 }
 
+function validateStaticAssets(assets) {
+    const duplicates = assets.filter((asset, index) => assets.indexOf(asset) !== index);
+    if (duplicates.length > 0) {
+        throw new Error(`STATIC_ASSETS contains duplicate entries: ${[...new Set(duplicates)].join(', ')}`);
+    }
+
+    const invalidAssets = assets.filter((asset) => asset !== '/' && !asset.startsWith('/'));
+    if (invalidAssets.length > 0) {
+        throw new Error(`STATIC_ASSETS entries must be root-relative paths: ${invalidAssets.join(', ')}`);
+    }
+
+    const emptyAssets = assets.filter((asset) => asset.trim() === '');
+    if (emptyAssets.length > 0) {
+        throw new Error('STATIC_ASSETS contains empty entries');
+    }
+}
+
 async function buildCacheName(assets) {
     const hash = createHash('sha256');
 
@@ -57,6 +74,7 @@ function normalizeAssetContent(asset, content) {
 
 const source = await readFile(serviceWorkerPath, 'utf8');
 const assets = extractStaticAssets(source);
+validateStaticAssets(assets);
 const cacheName = await buildCacheName(assets);
 const nextSource = source.replace(
     /const CACHE_NAME = 'mysticka-hvezda-[^']+';/,

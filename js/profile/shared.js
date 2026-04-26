@@ -33,6 +33,99 @@ export function authFetchOptions(opts = {}) {
     };
 }
 
+const PLAN_TYPE_ALIASES = {
+    vip: 'vip_majestrat'
+};
+
+const FALLBACK_PLAN_LABELS = {
+    free: 'Poutn\u00edk',
+    premium_monthly: 'Hv\u011bzdn\u00fd Pr\u016fvodce',
+    exclusive_monthly: 'Osv\u00edcen\u00ed',
+    vip_majestrat: 'VIP Majest\u00e1t'
+};
+
+const FALLBACK_PLAN_PRICES_CZK = {
+    pruvodce: 199,
+    'pruvodce-rocne': 1990,
+    osviceni: 499,
+    'osviceni-rocne': 4990,
+    'vip-majestrat': 999
+};
+
+let planManifestPromise = null;
+let plansById = new Map();
+let plansByType = new Map();
+
+export function normalizePlanType(planType) {
+    return PLAN_TYPE_ALIASES[planType] || planType || 'free';
+}
+
+function readablePlanName(name) {
+    return String(name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+}
+
+function indexPlanManifest(manifest) {
+    const plans = Array.isArray(manifest?.plans) ? manifest.plans : [];
+    plansById = new Map(plans.map(plan => [plan.id, plan]));
+    plansByType = new Map();
+
+    for (const plan of plans) {
+        const planType = normalizePlanType(plan.planType);
+        if (!planType) continue;
+
+        if (!plansByType.has(planType) || plan.billingInterval === 'monthly') {
+            plansByType.set(planType, plan);
+        }
+    }
+
+    return manifest;
+}
+
+export async function loadPlanManifest() {
+    if (planManifestPromise) return planManifestPromise;
+
+    planManifestPromise = fetch(`${apiUrl()}/plans`, { credentials: 'same-origin' })
+        .then(async response => {
+            if (!response.ok) throw new Error(`Plan manifest returned ${response.status}`);
+            const manifest = await response.json();
+            if (!manifest.success || !Array.isArray(manifest.plans)) {
+                throw new Error('Plan manifest has invalid shape');
+            }
+            return indexPlanManifest(manifest);
+        })
+        .catch(error => {
+            console.warn('[Plans] Using fallback plan labels:', error.message);
+            plansById = new Map();
+            plansByType = new Map();
+            return null;
+        });
+
+    return planManifestPromise;
+}
+
+export function formatPlanLabel(planType, options = {}) {
+    const normalizedPlanType = normalizePlanType(planType);
+    const manifestPlan = plansByType.get(normalizedPlanType);
+    const baseLabel = readablePlanName(manifestPlan?.name) || FALLBACK_PLAN_LABELS[normalizedPlanType] || normalizedPlanType || FALLBACK_PLAN_LABELS.free;
+
+    if (normalizedPlanType === 'free' && options.freeSuffix) {
+        return `${baseLabel} (zdarma)`;
+    }
+
+    return baseLabel;
+}
+
+export function getPlanPriceCzk(planId) {
+    const manifestPlan = plansById.get(planId);
+    const manifestPrice = Number(manifestPlan?.priceCzk);
+
+    if (Number.isFinite(manifestPrice)) {
+        return manifestPrice;
+    }
+
+    return FALLBACK_PLAN_PRICES_CZK[planId] || null;
+}
+
 // Get icon for reading type
 export function getReadingIcon(type) {
     const icons = {

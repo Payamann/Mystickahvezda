@@ -140,7 +140,7 @@ function shareAffirmation() {
     const raw = document.getElementById('affirmation-text').textContent;
     const text = raw.replace(/^"|"$/g, '').trim();
     if (navigator.share) {
-        navigator.share({ title: 'Moje dnešní afirmace', text, url: 'https://mystickahvezda.cz/afirmace.html' });
+        navigator.share({ title: 'Moje dnešní afirmace', text, url: 'https://www.mystickahvezda.cz/afirmace.html' });
     } else {
         copyAffirmation();
     }

@@ -35,11 +35,15 @@
 
                 try {
 
-                    const response = await fetch('/api/contact/contact', {
+                    const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+                    const response = await fetch('/api/contact', {
 
                         method: 'POST',
 
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+                        },
 
                         body: JSON.stringify({ name, email, subject, message })
 

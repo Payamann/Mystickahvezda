@@ -3,6 +3,7 @@
     const PENDING_PLAN_KEY = 'pending_plan';
     const PENDING_CONTEXT_KEY = 'pending_checkout_context';
     const POST_AUTH_ACTIVATION_KEY = 'post_auth_activation';
+    const POST_AUTH_REDIRECT_PENDING_KEY = 'post_auth_redirect_pending';
 
     function setHidden(element, hidden) {
         if (element) element.hidden = hidden;
@@ -261,6 +262,13 @@
             // Token is now in HttpOnly cookie (set by server)
             // We only store user data in localStorage
             const pendingPlan = this.getPendingCheckoutPlan();
+            const pendingContext = pendingPlan ? this.getPendingCheckoutContext() : null;
+            const postAuthRedirect = pendingPlan ? null : this.resolvePostAuthRedirect(options);
+            if (postAuthRedirect) {
+                sessionStorage.setItem(POST_AUTH_REDIRECT_PENDING_KEY, postAuthRedirect);
+            } else {
+                sessionStorage.removeItem(POST_AUTH_REDIRECT_PENDING_KEY);
+            }
             this.user = data.user;
             localStorage.setItem('auth_user', JSON.stringify(data.user));
             this.updateUI();
@@ -268,13 +276,14 @@
 
             // After login/register success: check for pending plan redirect
             if (pendingPlan) {
-                this._startCheckout(pendingPlan, this.getPendingCheckoutContext());
+                sessionStorage.removeItem(POST_AUTH_REDIRECT_PENDING_KEY);
+                this._startCheckout(pendingPlan, pendingContext);
                 return;
             }
 
-            const postAuthRedirect = this.resolvePostAuthRedirect(options);
             if (postAuthRedirect) {
                 setTimeout(() => {
+                    sessionStorage.removeItem(POST_AUTH_REDIRECT_PENDING_KEY);
                     window.location.href = postAuthRedirect;
                 }, 500);
             }
@@ -306,81 +315,81 @@
             const featureMap = {
                 partnerska_detail: {
                     path: '/partnerska-shoda.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'ZaÄŤnÄ›te partnerskou shodou. PrvnĂ­ vĂ˝sledek vĂˇm rychle ukĂˇĹľe osobnĂ­ hodnotu.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Začněte partnerskou shodou. První výsledek vám rychle ukáže osobní hodnotu.'
                 },
                 synastry: {
                     path: '/partnerska-shoda.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'ZaÄŤnÄ›te partnerskou shodou. PrvnĂ­ vĂ˝sledek vĂˇm rychle ukĂˇĹľe osobnĂ­ hodnotu.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Začněte partnerskou shodou. První výsledek vám rychle ukáže osobní hodnotu.'
                 },
                 natalni_interpretace: {
                     path: '/natalni-karta.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'NatĂˇlnĂ­ karta je jeden z nejsilnÄ›jĹˇĂ­ch prvnĂ­ch momentĹŻ. ZaÄŤnÄ›te prĂˇvÄ› tady.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Natální karta je jeden z nejsilnějších prvních momentů. Začněte právě tady.'
                 },
                 numerologie_vyklad: {
                     path: '/numerologie.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'V numerologii nejrychleji uvidĂ­te, jak osobnĂ­ umĂ­ bĂ˝t vaĹˇe prvnĂ­ vedenĂ­.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'V numerologii nejrychleji uvidíte, jak osobní umí být vaše první vedení.'
                 },
                 tarot: {
                     path: '/tarot.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'VyzkouĹˇejte hned prvnĂ­ tarotovĂ˝ vĂ˝klad. Je to nejrychlejĹˇĂ­ cesta k prvnĂ­ hodnotÄ›.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Vyzkoušejte hned první tarotový výklad. Je to nejrychlejší cesta k první hodnotě.'
                 },
                 horoskopy: {
                     path: '/horoskopy.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'ZaÄŤnÄ›te osobnĂ­m horoskopem a zĂ­skejte rychlĂ˝ prvnĂ­ vhled.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Začněte osobním horoskopem a získejte rychlý první vhled.'
                 },
                 weekly_horoscope: {
                     path: '/horoskopy.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'ZaÄŤnÄ›te osobnĂ­m horoskopem a zĂ­skejte rychlĂ˝ prvnĂ­ vhled.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Začněte osobním horoskopem a získejte rychlý první vhled.'
                 },
                 monthly_horoscope: {
                     path: '/horoskopy.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'ZaÄŤnÄ›te osobnĂ­m horoskopem a zĂ­skejte rychlĂ˝ prvnĂ­ vhled.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Začněte osobním horoskopem a získejte rychlý první vhled.'
                 },
                 mentor: {
                     path: '/mentor.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'PoloĹľte hned prvnĂ­ otĂˇzku HvÄ›zdnĂ©mu PrĹŻvodci a zĂ­skejte osobnĂ­ kontakt s produktem.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Položte hned první otázku Hvězdnému Průvodci a získejte osobní kontakt s produktem.'
                 },
                 hvezdny_mentor: {
                     path: '/mentor.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'PoloĹľte hned prvnĂ­ otĂˇzku HvÄ›zdnĂ©mu PrĹŻvodci a zĂ­skejte osobnĂ­ kontakt s produktem.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Položte hned první otázku Hvězdnému Průvodci a získejte osobní kontakt s produktem.'
                 },
                 runy_hluboky_vyklad: {
                     path: '/runy.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'Runy jsou silnĂ˝ prvnĂ­ krok, pokud chcete okamĹľitĂ˝ osobnĂ­ vĂ˝klad.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Runy jsou silný první krok, pokud chcete okamžitý osobní výklad.'
                 },
                 shamanske_kolo_plne_cteni: {
                     path: '/shamanske-kolo.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'Ĺ amanskĂ© kolo vĂˇs rychle dostane k hlubĹˇĂ­mu prvnĂ­mu zĂˇĹľitku.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Šamanské kolo vás rychle dostane k hlubšímu prvnímu zážitku.'
                 },
                 minuly_zivot: {
                     path: '/minuly-zivot.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'MinulĂ˝ Ĺľivot je silnĂ˝ vstupnĂ­ zĂˇĹľitek, pokud chcete zaÄŤĂ­t nÄ›ÄŤĂ­m hlubokĂ˝m.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Minulý život je silný vstupní zážitek, pokud chcete začít něčím hlubokým.'
                 },
                 kristalova_koule: {
                     path: '/kristalova-koule.html',
-                    title: 'VĂ­tejte v MystickĂ© HvÄ›zdÄ›',
-                    message: 'KĹ™iĹˇĹĄĂˇlovĂˇ koule je rychlĂ˝ prvnĂ­ moment, kterĂ˝ ukĂˇĹľe osobnĂ­ vedenĂ­ v praxi.'
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Křišťálová koule je rychlý první moment, který ukáže osobní vedení v praxi.'
                 }
             };
 
             const sourceMap = {
                 newsletter_form: {
                     path: '/horoskopy.html',
-                    title: 'Registrace je hotovĂˇ',
-                    message: 'KdyĹľ uĹľ jste uvnitĹ™, vezmÄ›te si hned prvnĂ­ hodnotu pĹ™es osobnĂ­ horoskop.'
+                    title: 'Registrace je hotová',
+                    message: 'Když už jste uvnitř, vezměte si hned první hodnotu přes osobní horoskop.'
                 }
             };
 
@@ -392,7 +401,7 @@
 
             sessionStorage.setItem(POST_AUTH_ACTIVATION_KEY, JSON.stringify({
                 path: context.path,
-                title: context.title || 'VĂ­tejte',
+                title: context.title || 'Vítejte',
                 message: context.message || '',
                 source: context.source || null,
                 feature: context.feature || null
@@ -413,8 +422,8 @@
 
                 if (activation.title || activation.message) {
                     this.showToast(
-                        activation.title || 'VĂ­tejte',
-                        activation.message || 'ZaÄŤnÄ›te prvnĂ­m osobnĂ­m vĂ˝kladem.',
+                        activation.title || 'Vítejte',
+                        activation.message || 'Začněte prvním osobním výkladem.',
                         'success'
                     );
                 }
@@ -892,7 +901,6 @@
             if (!this.isLoggedIn()) return null;
 
             try {
-                // console.log(`💾 Saving reading (${type})...`);
                 const res = await fetch(`${API_URL}/user/readings`, {
                     method: 'POST',
                     credentials: 'include', // Send auth_token cookie
@@ -908,7 +916,6 @@
                     return null;
                 } else {
                     const savedData = await res.json();
-                    // console.log('✅ Reading saved successfully', savedData);
                     return savedData; // Return saved reading with ID
                 }
             } catch (e) {

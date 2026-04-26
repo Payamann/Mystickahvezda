@@ -146,8 +146,7 @@ test.describe('Chráněné user API endpointy', () => {
 
     test('GET /api/user/readings bez auth vrátí 401', async ({ page }) => {
         const res = await page.request.get('/api/user/readings');
-        // 401 nebo 404 (pokud endpoint neexistuje pod tímto názvem)
-        expect([401, 404]).toContain(res.status());
+        expect(res.status()).toBe(401);
     });
 
     test('GET /api/payment/subscription/status bez auth vrátí 401', async ({ page }) => {

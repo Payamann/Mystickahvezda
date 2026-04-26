@@ -15,6 +15,13 @@ import { waitForPageReady, getCsrfToken, MOBILE_VIEWPORT } from './helpers.js';
 test.describe('Mentor — Hvězdný průvodce', () => {
 
     test.beforeEach(async ({ page }) => {
+        await page.addInitScript(() => {
+            localStorage.setItem('auth_user', JSON.stringify({
+                id: 'e2e-mentor-user',
+                email: 'mentor-e2e@example.com',
+                subscription_status: 'free'
+            }));
+        });
         await page.goto('/mentor.html');
         await waitForPageReady(page);
     });

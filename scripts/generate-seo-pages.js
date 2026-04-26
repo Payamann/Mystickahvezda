@@ -122,17 +122,17 @@ function generateSchema(sign1, sign2, result) {
                     "@type": "ListItem",
                     "position": 1,
                     "name": "Domů",
-                    "item": "https://mystickahvezda.cz"
+                    "item": "https://www.mystickahvezda.cz"
                 }, {
                     "@type": "ListItem",
                     "position": 2,
                     "name": "Partnerská shoda",
-                    "item": "https://mystickahvezda.cz/partnerska-shoda"
+                    "item": "https://www.mystickahvezda.cz/partnerska-shoda"
                 }, {
                     "@type": "ListItem",
                     "position": 3,
                     "name": `${sign1.name} a ${sign2.name}`,
-                    "item": `https://mystickahvezda.cz/partnerska-shoda/${sign1.id}-${sign2.id}.html`
+                    "item": `https://www.mystickahvezda.cz/partnerska-shoda/${sign1.id}-${sign2.id}.html`
                 }]
             }
         ]

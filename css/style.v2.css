@@ -8,13 +8,13 @@
 
    DIVI KOMPATIBILITA:
 
-   - CSS Custom Properties â†’ Divi Theme Customizer
+   - CSS Custom Properties -> Divi Theme Customizer
 
-   - Sekce â†’ Divi Sections
+   - Sekce -> Divi Sections
 
-   - .row â†’ Divi Rows
+   - .row -> Divi Rows
 
-   - Komponenty â†’ Divi Modules
+   - Komponenty -> Divi Modules
 
    ============================================ */
 
@@ -22,7 +22,7 @@
 
 /* ============================================
 
-   1. CSS CUSTOM PROPERTIES (DIVI: Theme Options â†’ General)
+   1. CSS CUSTOM PROPERTIES (DIVI: Theme Options -> General)
 
    ============================================ */
 
@@ -2089,7 +2089,7 @@ body.page-mentor .header {
 
 
 
-/* Hamburger â†’ X animation */
+/* Hamburger -> X animation */
 
 .nav__toggle.active span:nth-child(1) {
 
@@ -4636,6 +4636,201 @@ body.page-mentor .header {
 
   color: var(--color-silver-mist);
 
+}
+
+.horoscope-day-hero {
+  min-height: 50vh;
+}
+
+.horoscope-day-breadcrumb {
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.horoscope-day-breadcrumb__link,
+.horoscope-day-nav__today {
+  color: var(--color-mystic-gold);
+  text-decoration: none;
+}
+
+.horoscope-day-breadcrumb__separator {
+  margin: 0 0.5rem;
+}
+
+.horoscope-day-symbol {
+  margin: 0;
+  font-size: 5rem;
+  line-height: 1;
+}
+
+.horoscope-day-title {
+  font-size: 2.6rem;
+}
+
+.horoscope-day-subtitle {
+  font-size: 1.1rem;
+}
+
+.horoscope-day-pill {
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 20px;
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--color-mystic-gold);
+  font-size: 0.85rem;
+}
+
+.horoscope-day-content-container {
+  max-width: 800px;
+}
+
+.horoscope-day-card {
+  padding: 2.5rem;
+}
+
+.horoscope-day-heading {
+  margin: 1rem 0 1.5rem;
+  color: var(--color-starlight);
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+}
+
+.horoscope-day-prediction {
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.15rem;
+  line-height: 1.8;
+}
+
+.horoscope-day-affirmation {
+  margin-bottom: 2rem;
+  padding: 1.25rem 1.5rem;
+  border-left: 3px solid var(--color-mystic-gold);
+  border-radius: 0 12px 12px 0;
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.horoscope-day-affirmation__label {
+  margin-bottom: 0.5rem;
+  color: var(--color-mystic-gold);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.horoscope-day-affirmation__text {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.05rem;
+  font-style: italic;
+}
+
+.horoscope-day-lucky {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.horoscope-day-lucky__label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+.horoscope-day-lucky__number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--color-mystic-gold);
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+.horoscope-day-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.horoscope-day-nav__link {
+  font-size: 0.9rem;
+}
+
+.horoscope-day-nav__today {
+  font-size: 0.85rem;
+}
+
+.horoscope-day-section--flush {
+  padding-top: 0;
+}
+
+.horoscope-day-other-title {
+  margin-bottom: 1.5rem;
+  color: var(--color-mystic-gold);
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.horoscope-day-cta-container {
+  max-width: 700px;
+}
+
+.unsubscribe-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  background: #0a0a1a;
+  color: #fff;
+}
+
+.unsubscribe-page__box {
+  padding: 2rem;
+  text-align: center;
+}
+
+.unsubscribe-page__box h1,
+.unsubscribe-page__box a {
+  color: #d4af37;
+}
+
+.api-docs-page {
+  margin: 0;
+  background: #0a0a1a;
+}
+
+.api-docs-page .swagger-ui .topbar {
+  background: #1a1a3e;
+}
+
+.api-docs-page .swagger-ui .topbar .download-url-wrapper {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .horoscope-day-title {
+    font-size: 1.9rem;
+  }
+
+  .horoscope-day-card {
+    padding: 1.5rem;
+  }
 }
 
 
@@ -9831,7 +10026,7 @@ body.cookie-banner-active {
 
 
 
-/* ManifestaÄŤnĂ­ DenĂ­k - Elegant Dark Glass with Gold Border */
+/* Manifestacni Denik - Elegant Dark Glass with Gold Border */
 
 .glass-card {
 

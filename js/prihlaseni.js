@@ -65,6 +65,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const requestedSource = urlParams.get('source') || pendingContext.source || null;
     const requestedEmail = urlParams.get('email') || '';
 
+    const hasPendingAuthRedirect = () => Boolean(
+        sessionStorage.getItem('pending_plan')
+        || sessionStorage.getItem('post_auth_activation')
+        || sessionStorage.getItem('post_auth_redirect_pending')
+    );
+
     const setBlockVisible = (element, visible) => {
         if (!element) return;
         element.hidden = !visible;
@@ -341,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
         if (window.Auth?.isLoggedIn()) {
-            if (sessionStorage.getItem('pending_plan')) {
+            if (hasPendingAuthRedirect()) {
                 return;
             }
 
@@ -357,7 +363,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('auth:changed', () => {
     if (window.Auth?.isLoggedIn()) {
-        if (sessionStorage.getItem('pending_plan')) {
+        if (sessionStorage.getItem('pending_plan')
+            || sessionStorage.getItem('post_auth_activation')
+            || sessionStorage.getItem('post_auth_redirect_pending')) {
             return;
         }
 

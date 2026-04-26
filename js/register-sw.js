@@ -1,7 +1,11 @@
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js')
-            .then(() => console.log('✨ Service Worker registered'))
-            .catch(err => console.log('SW registration failed:', err));
+            .then(() => {
+                if (window.MH_DEBUG) console.debug('Service Worker registered');
+            })
+            .catch(err => {
+                if (window.MH_DEBUG) console.warn('SW registration failed:', err);
+            });
     });
 }

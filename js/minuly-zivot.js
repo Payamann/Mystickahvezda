@@ -138,7 +138,7 @@
     }
 
     function setupShare(name, r) {
-        var pageUrl = 'https://mystickahvezda.cz/minuly-zivot.html';
+        var pageUrl = 'https://www.mystickahvezda.cz/minuly-zivot.html';
         var firstName = name.split(' ')[0];
         var shareText = '\uD83D\uDD2E ' + firstName + ' odhalil/a sv\u016Fj minul\u00FD \u017Eivot: ' +
             (r.era ? 'V \u00E9\u0159e \u201E' + r.era + '\u201C ' : '') +

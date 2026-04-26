@@ -44,20 +44,39 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
       - name: Install dependencies
         run: npm ci
+
+      - name: Run encoding check
+        run: npm run check:encoding
 
       - name: Run tests
         run: npm test -- --coverage --passWithNoTests
         env:
           NODE_OPTIONS: --experimental-vm-modules
 
+      - name: Run site audit
+        run: npm run audit:site
+
+      - name: Run sitemap canonical check
+        run: npm run sitemap:check
+
   e2e:
     runs-on: ubuntu-latest
-    name: E2E Tests (Playwright)
+    name: E2E (${{ matrix.project }} / ${{ matrix.section }})
     # Do not block Railway production deploys on the full browser suite.
     # E2E remains available for nightly and manual runs.
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, mobile-chrome]
+        section: [api, core, content, tools, checkout]
 
     steps:
       - uses: actions/checkout@v4
@@ -74,10 +93,18 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run E2E tests
-        run: npm run test:e2e -- --project=chromium
+      - name: Run E2E section
+        run: |
+          if [ "${{ matrix.section }}" = "core" ]; then
+            npm run test:e2e:sections -- --project=${{ matrix.project }} --section=${{ matrix.section }}
+          else
+            npm run test:e2e:sections -- --project=${{ matrix.project }} --section=${{ matrix.section }} --workers=2
+          fi
         env:
           NODE_ENV: test
+          DISABLE_SCHEDULED_JOBS: 'true'
+          MOCK_AI: 'true'
+          MOCK_SUPABASE: 'true'
           JWT_SECRET: test-secret-key-for-ci-only
           CSRF_SECRET: test-csrf-secret-for-ci-only
           SUPABASE_URL: https://placeholder.supabase.co
@@ -90,7 +117,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.project }}-${{ matrix.section }}
           path: playwright-report/
           retention-days: 7
 
@@ -104,15 +131,17 @@ jobs:
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `🚨 E2E testy selhaly — ${date}`,
+              title: `E2E testy selhaly - ${{ matrix.project }} / ${{ matrix.section }} - ${date}`,
               body: [
                 '## Playwright E2E testy selhaly při nočním běhu',
                 '',
                 `**Datum:** ${date}`,
+                `**Projekt:** ${{ matrix.project }}`,
+                `**Sekce:** ${{ matrix.section }}`,
                 `**Workflow run:** [Zobraz výsledky a report](${runUrl})`,
                 '',
                 '### Co udělat',
-                '1. Klikni na odkaz výše a stáhni **playwright-report** artefakt',
+                '1. Klikni na odkaz výše a stáhni odpovídající **playwright-report** artefakt',
                 '2. Spusť `npm run test:e2e:report` pro vizuální přehled',
                 '3. Oprav chyby a zavři tento issue',
                 '',
@@ -205,7 +234,6 @@ jobs:
 
       - name: Build JavaScript
         run: npm run build:js
-        continue-on-error: true
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

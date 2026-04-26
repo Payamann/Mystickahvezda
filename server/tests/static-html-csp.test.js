@@ -7,10 +7,6 @@ import path from 'path';
 
 const ROOT_DIR = path.resolve(process.cwd());
 const DIST_JS_DIR = path.join(ROOT_DIR, 'js', 'dist');
-const NON_PRODUCT_INLINE_FIXTURES = new Set([
-    'GA-HTML-SNIPPET.html',
-    'GA4-IMPLEMENTATION-CODE.html'
-]);
 const JS_INLINE_STYLE_VENDOR_EXCEPTIONS = new Set([
     'js/three.min.js',
     'js/dist/three.min.js'
@@ -20,6 +16,7 @@ const NON_PRODUCT_DIRS = new Set([
     '.claude',
     '.pytest_cache',
     'coverage',
+    'docs',
     'node_modules',
     'playwright-report',
     'social-media-agent',
@@ -101,6 +98,33 @@ function readBuiltJsFiles(dir = DIST_JS_DIR) {
     return jsFiles;
 }
 
+function readServerRouteFiles(dir = path.join(ROOT_DIR, 'server', 'routes')) {
+    const routeFiles = dir.endsWith(path.join('server', 'routes'))
+        ? [{
+            file: 'server/index.js',
+            js: fs.readFileSync(path.join(ROOT_DIR, 'server', 'index.js'), 'utf8')
+        }]
+        : [];
+
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const fullPath = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+            routeFiles.push(...readServerRouteFiles(fullPath));
+            continue;
+        }
+
+        if (!entry.isFile() || !entry.name.endsWith('.js')) continue;
+
+        routeFiles.push({
+            file: path.relative(ROOT_DIR, fullPath).replace(/\\/g, '/'),
+            js: fs.readFileSync(fullPath, 'utf8')
+        });
+    }
+
+    return routeFiles;
+}
+
 function expectNoInlineStyleWrites(files) {
     for (const { file, js } of files) {
         if (JS_INLINE_STYLE_VENDOR_EXCEPTIONS.has(file)) continue;
@@ -153,24 +177,58 @@ function toLocalAssetPath(assetUrl, sourcePath) {
 describe('Static HTML CSP hygiene', () => {
     test('product HTML files do not use inline event handlers', () => {
         for (const { file, html } of readProductHtmlFiles()) {
-            if (NON_PRODUCT_INLINE_FIXTURES.has(file)) continue;
-
             expect(html).not.toMatch(/\son[a-z]+\s*=/i);
         }
     });
 
     test('product HTML files do not contain duplicate class attributes', () => {
         for (const { file, html } of readProductHtmlFiles()) {
-            if (NON_PRODUCT_INLINE_FIXTURES.has(file)) continue;
-
             expect(html).not.toMatch(/<[^>]*\sclass=["'][^"']*["'][^>]*\sclass=/i);
         }
     });
 
+    test('product HTML label for attributes reference existing ids', () => {
+        const brokenLabels = [];
+        const labelPattern = /<label\b[^>]*\bfor=["']([^"']+)["'][^>]*>/gi;
+        const idPattern = /\bid=["']([^"']+)["']/gi;
+
+        for (const { file, html } of readProductHtmlFiles()) {
+            const ids = new Set([...html.matchAll(idPattern)].map(match => match[1]));
+            let match;
+
+            while ((match = labelPattern.exec(html)) !== null) {
+                if (!ids.has(match[1])) {
+                    brokenLabels.push(`${file}: label for="${match[1]}"`);
+                }
+            }
+        }
+
+        expect(brokenLabels).toEqual([]);
+    });
+
+    test('product HTML files do not contain duplicate ids', () => {
+        const duplicateIds = [];
+        const idPattern = /\bid=["']([^"']+)["']/gi;
+
+        for (const { file, html } of readProductHtmlFiles()) {
+            const counts = new Map();
+
+            for (const match of html.matchAll(idPattern)) {
+                counts.set(match[1], (counts.get(match[1]) || 0) + 1);
+            }
+
+            for (const [id, count] of counts) {
+                if (count > 1) {
+                    duplicateIds.push(`${file}: id="${id}" appears ${count} times`);
+                }
+            }
+        }
+
+        expect(duplicateIds).toEqual([]);
+    });
+
     test('product HTML files do not contain inline style blocks or attributes', () => {
         for (const { file, html } of readProductHtmlFiles()) {
-            if (NON_PRODUCT_INLINE_FIXTURES.has(file)) continue;
-
             expect(html).not.toMatch(/<style\b/i);
             expect(html).not.toMatch(/\sstyle\s*=/i);
         }
@@ -180,8 +238,6 @@ describe('Static HTML CSP hygiene', () => {
         const inlineScriptPattern = /<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/gi;
 
         for (const { file, html } of readProductHtmlFiles()) {
-            if (NON_PRODUCT_INLINE_FIXTURES.has(file)) continue;
-
             let match;
             while ((match = inlineScriptPattern.exec(html)) !== null) {
                 const attrs = match[1];
@@ -199,8 +255,6 @@ describe('Static HTML CSP hygiene', () => {
         const linkPattern = /<link\b([^>]*)>/gi;
 
         for (const { file, fullPath, html } of readProductHtmlFiles()) {
-            if (NON_PRODUCT_INLINE_FIXTURES.has(file)) continue;
-
             let match;
             while ((match = scriptPattern.exec(html)) !== null) {
                 const src = getAttribute(match[1], 'src');
@@ -231,8 +285,6 @@ describe('Static HTML CSP hygiene', () => {
         const scriptPattern = /<script\b([^>]*)>/gi;
 
         for (const { file, html } of readProductHtmlFiles()) {
-            if (NON_PRODUCT_INLINE_FIXTURES.has(file)) continue;
-
             let match;
             while ((match = scriptPattern.exec(html)) !== null) {
                 const attrs = match[1];
@@ -252,13 +304,67 @@ describe('Static HTML CSP hygiene', () => {
         expect(sourceScriptRefs).toEqual([]);
     });
 
+    test('server-rendered HTML routes use built JavaScript assets when dist output exists', () => {
+        const sourceScriptRefs = [];
+        const scriptPattern = /<script\b([^>]*)>/gi;
+
+        for (const { file, js } of readServerRouteFiles()) {
+            let match;
+            while ((match = scriptPattern.exec(js)) !== null) {
+                const attrs = match[1];
+                const src = getAttribute(attrs, 'src');
+                const fileName = getTopLevelJsFile(src);
+                if (!fileName) continue;
+                if (/\/js\/vendor\//i.test(src)) continue;
+
+                const distPath = path.join(DIST_JS_DIR, fileName);
+                const isModule = getAttribute(attrs, 'type') === 'module';
+                if (fs.existsSync(distPath) && (isModule || !jsDistHasExports(fileName))) {
+                    sourceScriptRefs.push(`${file}: ${src}`);
+                }
+            }
+        }
+
+        expect(sourceScriptRefs).toEqual([]);
+    });
+
+    test('server-rendered HTML routes reference existing local script and stylesheet assets', () => {
+        const missingAssets = [];
+        const scriptPattern = /<script\b([^>]*)>/gi;
+        const linkPattern = /<link\b([^>]*)>/gi;
+
+        for (const { file, js } of readServerRouteFiles()) {
+            const sourcePath = path.join(ROOT_DIR, file);
+            let match;
+            while ((match = scriptPattern.exec(js)) !== null) {
+                const src = getAttribute(match[1], 'src');
+                const assetPath = toLocalAssetPath(src, sourcePath);
+                if (assetPath && !fs.existsSync(assetPath)) {
+                    missingAssets.push(`${file}: ${src}`);
+                }
+            }
+
+            while ((match = linkPattern.exec(js)) !== null) {
+                const attrs = match[1];
+                const rel = getAttribute(attrs, 'rel');
+                if (!rel || !/\bstylesheet\b/i.test(rel)) continue;
+
+                const href = getAttribute(attrs, 'href');
+                const assetPath = toLocalAssetPath(href, sourcePath);
+                if (assetPath && !fs.existsSync(assetPath)) {
+                    missingAssets.push(`${file}: ${href}`);
+                }
+            }
+        }
+
+        expect(missingAssets).toEqual([]);
+    });
+
     test('built JavaScript assets with module syntax are loaded as modules', () => {
         const classicModuleScripts = [];
         const scriptPattern = /<script\b([^>]*)>/gi;
 
         for (const { file, html } of readProductHtmlFiles()) {
-            if (NON_PRODUCT_INLINE_FIXTURES.has(file)) continue;
-
             let match;
             while ((match = scriptPattern.exec(html)) !== null) {
                 const attrs = match[1];
@@ -286,9 +392,61 @@ describe('Static HTML CSP hygiene', () => {
         expectNoInlineStyleWrites(readBuiltJsFiles());
     });
 
+    test('server-rendered HTML routes do not emit inline styles', () => {
+        for (const { file, js } of readServerRouteFiles()) {
+            expect(`${file}\n${js}`).not.toMatch(/<style\b/i);
+            expect(`${file}\n${js}`).not.toMatch(/\bstyle\s*=/i);
+        }
+    });
+
     test('source JavaScript uses root-relative data fetch paths', () => {
         for (const { file, js } of readJsSourceFiles()) {
             expect(`${file}\n${js}`).not.toMatch(/fetch\(\s*["'`](?:\.\.\/)?data\//i);
+        }
+    });
+
+    test('public JavaScript avoids production console.log noise', () => {
+        const offenders = [...readJsSourceFiles(), ...readBuiltJsFiles()]
+            .filter(({ file }) => !JS_INLINE_STYLE_VENDOR_EXCEPTIONS.has(file))
+            .filter(({ js }) => /\bconsole\.log\b/.test(js))
+            .map(({ file }) => file);
+
+        expect(offenders).toEqual([]);
+    });
+
+    test('public JavaScript does not reference obsolete API aliases', () => {
+        const offenders = [...readJsSourceFiles(), ...readBuiltJsFiles()]
+            .filter(({ js }) => js.includes('/api/contact/contact'))
+            .map(({ file }) => file);
+
+        expect(offenders).toEqual([]);
+    });
+
+    test('admin page data-action buttons have JavaScript handlers', () => {
+        const adminHtml = fs.readFileSync(path.join(ROOT_DIR, 'admin.html'), 'utf8');
+        const adminJs = fs.readFileSync(path.join(ROOT_DIR, 'js', 'admin.js'), 'utf8');
+        const actions = [...adminHtml.matchAll(/\bdata-action=["']([^"']+)["']/g)]
+            .map(match => match[1]);
+
+        expect(actions.length).toBeGreaterThan(0);
+
+        for (const action of actions) {
+            expect(adminJs).toContain(`action === '${action}'`);
+        }
+    });
+
+    test('CI E2E workflow preserves stable core worker defaults', () => {
+        const workflow = fs.readFileSync(path.join(ROOT_DIR, '.github', 'workflows', 'ci.yml'), 'utf8');
+
+        expect(workflow).toContain('if [ "${{ matrix.section }}" = "core" ]; then');
+        expect(workflow).toMatch(/--section=\$\{\{\s*matrix\.section\s*\}\}\s*\n\s*else\s*\n\s*npm run test:e2e:sections -- --project=\$\{\{\s*matrix\.project\s*\}\} --section=\$\{\{\s*matrix\.section\s*\}\} --workers=2/);
+    });
+
+    test('bootstrap scripts avoid production console.log noise', () => {
+        for (const file of ['js/register-sw.js', 'js/analytics-page-init.js']) {
+            const source = fs.readFileSync(path.join(ROOT_DIR, file), 'utf8');
+            expect(`${file}\n${source}`).not.toMatch(/\bconsole\.log\b/);
+            expect(`${file}\n${source}`).toContain('window.MH_DEBUG');
         }
     });
 });

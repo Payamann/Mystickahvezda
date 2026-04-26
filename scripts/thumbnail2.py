@@ -21,13 +21,16 @@ import random
 from datetime import date
 from pathlib import Path
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+OUTPUT_DIR = SCRIPT_DIR / "output"
+
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 # ─── Soubory ──────────────────────────────────────────────────────────────────
 
-USED_SIGNS2_FILE  = Path(__file__).parent / "used_signs2.json"
-HISTORY2_FILE     = Path(__file__).parent / "thumbnail2_history.json"
+USED_SIGNS2_FILE  = OUTPUT_DIR / "used_signs2.json"
+HISTORY2_FILE     = OUTPUT_DIR / "thumbnail2_history.json"
 
 # ─── Znamení ──────────────────────────────────────────────────────────────────
 
@@ -155,6 +158,7 @@ def load_history() -> dict:
     return {"scrolls": []}
 
 def save_history(history: dict):
+    HISTORY2_FILE.parent.mkdir(parents=True, exist_ok=True)
     HISTORY2_FILE.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8")
 
 def pick_fresh(pool: list, used: list) -> any:
@@ -181,7 +185,7 @@ def get_scroll_from_voiceover(date_str: str, sign: str) -> tuple[str, str] | Non
     Vrátí (line1, line2) nebo None pokud soubor neexistuje.
     """
     slug = sign_to_slug(sign)
-    path = Path(__file__).parent / f"voiceover2_{date_str}_{slug}.txt"
+    path = OUTPUT_DIR / f"voiceover2_{date_str}_{slug}.txt"
     if not path.exists():
         print(f"[!] Voiceover soubor nenalezen: {path.name} — použiji záložní text")
         return None
@@ -318,7 +322,8 @@ def main():
     print(prompt)
     print(sep)
 
-    out_path = Path(__file__).parent / f"thumbnail2_{args.date}.txt"
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_path = OUTPUT_DIR / f"thumbnail2_{args.date}.txt"
     out_path.write_text(prompt, encoding="utf-8")
     print(f"[OK] Uloženo: {out_path}")
 

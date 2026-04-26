@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 4. Filtering
     function filterByLetter(letter, btnTarget = null) {
-        console.log(`[snar.js] Filtering by letter: ${letter}`);
+        if (window.MH_DEBUG) console.debug('[snar.js] Filtering by letter:', letter);
         // Reset limit when changing filter
         currentlyVisibleCount = INITIAL_VISIBLE_COUNT;
 
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             card.onclick = (e) => {
                 e.preventDefault();
                 const term = card.getAttribute('data-search');
-                console.log(`[snar.js] Popular card clicked: ${term}`);
+                if (window.MH_DEBUG) console.debug('[snar.js] Popular card clicked:', term);
                 if (term) {
                     searchInput.value = term;
                     // Reset letters

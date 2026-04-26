@@ -18,6 +18,17 @@ const subscribeLimiter = rateLimit({
 
 const VALID_SIGNS = ['Beran', 'Býk', 'Blíženci', 'Rak', 'Lev', 'Panna', 'Váhy', 'Štír', 'Střelec', 'Kozoroh', 'Vodnář', 'Ryby'];
 
+function renderUnsubscribePage({ title, message }) {
+    return `<!DOCTYPE html><html lang="cs"><head><meta charset="utf-8">
+            <title>${title} — Mystická Hvězda</title>
+            <link rel="stylesheet" href="/css/style.v2.min.css?v=11">
+            </head><body class="unsubscribe-page"><div class="unsubscribe-page__box">
+            <h1>${title}</h1>
+            <p>${message}</p>
+            <a href="/">← Zpět na Mystickou Hvězdu</a>
+            </div></body></html>`;
+}
+
 // POST /api/subscribe/horoscope
 router.post('/', subscribeLimiter, async (req, res) => {
     const { email, zodiac_sign } = req.body;
@@ -64,29 +75,39 @@ router.post('/', subscribeLimiter, async (req, res) => {
 router.get('/unsubscribe', async (req, res) => {
     const { token } = req.query;
     if (!token) {
-        return res.status(400).send('<h2>Neplatný odkaz pro odhlášení.</h2>');
+        return res.status(400).send(renderUnsubscribePage({
+            title: 'Neplatný odkaz',
+            message: 'Odkaz pro odhlášení není kompletní.'
+        }));
     }
 
     try {
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('horoscope_subscriptions')
             .update({ active: false, unsubscribed_at: new Date().toISOString() })
-            .eq('unsubscribe_token', token);
+            .eq('unsubscribe_token', token)
+            .eq('active', true)
+            .select('id')
+            .maybeSingle();
 
         if (error) throw error;
+        if (!data) {
+            return res.status(404).send(renderUnsubscribePage({
+                title: 'Odkaz neexistuje',
+                message: 'Odkaz pro odhlášení neexistuje nebo už byl použit.'
+            }));
+        }
 
-        res.send(`<!DOCTYPE html><html lang="cs"><head><meta charset="utf-8">
-            <title>Odhlášení — Mystická Hvězda</title>
-            <style>body{font-family:sans-serif;background:#0a0a1a;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
-            .box{text-align:center;padding:2rem;} h1{color:#d4af37;} a{color:#d4af37;}</style>
-            </head><body><div class="box">
-            <h1>✅ Odhlášení úspěšné</h1>
-            <p>Byl jsi odhlášen z denního horoskopu.</p>
-            <a href="/">← Zpět na Mystickou Hvězdu</a>
-            </div></body></html>`);
+        res.send(renderUnsubscribePage({
+            title: 'Odhlášení úspěšné',
+            message: 'Byl jsi odhlášen z denního horoskopu.'
+        }));
     } catch (err) {
         console.error('[HoroscopeSub] Unsubscribe error:', err);
-        res.status(500).send('<h2>Chyba serveru. Zkuste to prosím znovu.</h2>');
+        res.status(500).send(renderUnsubscribePage({
+            title: 'Chyba serveru',
+            message: 'Zkuste to prosím znovu.'
+        }));
     }
 });
 

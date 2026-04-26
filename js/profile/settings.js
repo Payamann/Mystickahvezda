@@ -2,7 +2,7 @@
  * Settings: Avatar picker, subscription management, profile & password update
  */
 
-import { apiUrl, authHeaders } from './shared.js';
+import { apiUrl, authHeaders, loadPlanManifest, normalizePlanType, formatPlanLabel } from './shared.js';
 
 function startProfileUpgradeCheckout(source = 'profile_subscription_card') {
     window.MH_ANALYTICS?.trackCTA?.(source, {
@@ -198,6 +198,8 @@ export async function loadSubscriptionStatus() {
     if (!container) return null;
 
     try {
+        await loadPlanManifest();
+
         const res = await fetch(`${apiUrl()}/payment/subscription/status`, {
             credentials: 'include',
             headers: authHeaders()
@@ -230,14 +232,7 @@ export async function loadSubscriptionStatus() {
 function renderSubscriptionCard(sub) {
     const container = document.getElementById('subscription-details');
     if (!container) return;
-    const normalizedPlanType = sub.planType === 'vip' ? 'vip_majestrat' : (sub.planType || 'free');
-
-    const planNames = {
-        free: 'Poutník (zdarma)',
-        premium_monthly: 'Hvězdný Průvodce',
-        exclusive_monthly: 'Exclusive',
-        vip_majestrat: 'VIP Majestát'
-    };
+    const normalizedPlanType = normalizePlanType(sub.planType);
 
     const statusLabels = {
         active: { text: 'Aktivní', class: 'badge--success' },
@@ -247,7 +242,7 @@ function renderSubscriptionCard(sub) {
         cancelled: { text: 'Zrušeno', class: 'badge--danger' }
     };
 
-    const planName = planNames[normalizedPlanType] || normalizedPlanType || 'Poutník (zdarma)';
+    const planName = formatPlanLabel(normalizedPlanType, { freeSuffix: true });
     const statusInfo = statusLabels[sub.status] || { text: sub.status, class: '' };
     const isPremium = normalizedPlanType !== 'free';
     const periodEnd = sub.currentPeriodEnd ? new Date(sub.currentPeriodEnd) : null;

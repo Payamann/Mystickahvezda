@@ -2,7 +2,7 @@
 
 Comprehensive astrology web application with AI-powered horoscopes, tarot readings, numerology, and personalized insights.
 
-**Live:** https://mystickahvezda.cz
+**Live:** https://www.mystickahvezda.cz
 
 ## Features
 
@@ -102,15 +102,55 @@ npm start
 # Run tests
 npm test
 
+# Run lint, unit tests, static site audit and sitemap canonical check
+npm run test:verify
+
+# Check robots.txt, sitemap/canonical coverage, JSON-LD, manifest icons and local links
+npm run audit:site
+
+# Check or preview sitemap entries derived from canonical HTML pages
+npm run sitemap:check
+npm run sitemap:generate
+
+# Check active source files for mojibake/encoding regressions
+npm run check:encoding
+
+# Check Claude hook validators
+npm run check:hooks
+
+# Run sectioned desktop E2E tests with stable defaults
+npm run test:e2e:sections
+
+# Run one E2E section
+npm run test:e2e:content -- --workers=6
+
 # Build CSS (minification)
 npm run build:css
 
 # Build JavaScript (minification)
 npm run build:js
 
+# Regenerate PWA icons and update the service worker cache hash
+npm run build:pwa-icons
+
 # Run ESLint linter
 npm run lint
 ```
+
+E2E sections: `api`, `core`, `content`, `tools`, `checkout`.
+Use `npm run test:e2e:sections -- --section=tools --workers=6` to run a
+parallel-friendly named section, or add `--project=mobile-chrome` for the mobile project.
+The auth-heavy `core` section uses a stable default `--workers=1` unless you
+override it explicitly.
+Use `npm run test:e2e:sections -- --list-sections` to print the section map.
+Do not start two E2E section commands in the same workspace at once; the runner
+uses a lock file so parallel invocations fail fast instead of racing for port
+`3001`.
+CI keeps the `core` default workers and only passes `--workers=2` to the more
+parallel-friendly sections.
+
+API docs are served at `/api/docs` in development. In production the route
+requires `DOCS_TOKEN`; the raw OpenAPI spec is available at `/api/docs/openapi.yaml`.
 
 ### Project Structure
 
@@ -243,7 +283,7 @@ Tests use Jest with supertest for API endpoint testing.
 ```bash
 # Production
 NODE_ENV=production
-ALLOWED_ORIGINS=https://mystickahvezda.cz
+ALLOWED_ORIGINS=https://www.mystickahvezda.cz,https://mystickahvezda.cz
 ```
 
 ### Database Migrations
@@ -283,7 +323,7 @@ npm install
 
 1. Create a feature branch: `git checkout -b feature/your-feature`
 2. Run linter: `npm run lint`
-3. Run tests: `npm test`
+3. Run verification: `npm run test:verify`
 4. Commit changes: `git commit -am 'Add feature'`
 5. Push branch: `git push origin feature/your-feature`
 6. Create Pull Request to `main`

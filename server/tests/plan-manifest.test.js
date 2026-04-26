@@ -26,6 +26,9 @@ describe('Public plan manifest', () => {
         expect(manifest.pricingPage.yearly.pruvodce).toBe('pruvodce-rocne');
         expect(manifest.pricingPage.monthly.osviceni).toBe('osviceni');
         expect(manifest.pricingPage.yearly.osviceni).toBe('osviceni-rocne');
+        expect(manifest.featurePlanMap.astrocartography).toBe('osviceni');
+        expect(manifest.featurePlanMap.mentor).toBe('pruvodce');
+        expect(manifest.featurePlanMap.tarot_celtic_cross).toBe('vip-majestrat');
     });
 
     test('GET /api/plans exposes only public plan fields', async () => {
@@ -35,6 +38,10 @@ describe('Public plan manifest', () => {
 
         expect(res.body.success).toBe(true);
         expect(res.body.currency).toBe('CZK');
+        expect(res.body.featurePlanMap).toEqual(expect.objectContaining({
+            astrocartography: 'osviceni',
+            mentor: 'pruvodce'
+        }));
         expect(res.body.plans).toEqual(expect.arrayContaining([
             expect.objectContaining({
                 id: 'pruvodce',

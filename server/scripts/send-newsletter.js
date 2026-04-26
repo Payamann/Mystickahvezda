@@ -17,7 +17,7 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // ── Config ──────────────────────────────────────────────────────────────────
 const FROM = process.env.FROM_EMAIL || 'Mystická Hvězda <newsletter@mystickahvezda.cz>';
-const DOMAIN = 'https://mystickahvezda.cz';
+const DOMAIN = 'https://www.mystickahvezda.cz';
 const BATCH_SIZE = 50; // Resend free tier limit per request
 
 // ── Email HTML template ──────────────────────────────────────────────────────

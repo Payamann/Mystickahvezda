@@ -280,7 +280,7 @@
     }
 
     function setupShare(name, totem) {
-        const pageUrl = 'https://mystickahvezda.cz/shamansko-kolo.html';
+        const pageUrl = 'https://www.mystickahvezda.cz/shamansko-kolo.html';
         const firstName = name.split(' ')[0];
         const shareText = '🧭 ' + firstName + ' zjistil/a své místo na Šamanském Kole! ' +
             'Totem: ' + totem.animal + ' ' + totem.name +

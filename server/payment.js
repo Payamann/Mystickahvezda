@@ -767,26 +767,6 @@ async function sendOnboardingEmails(userId, email, planType) {
 }
 
 /**
- * Schedule an email to be sent after delay
- * (Stub - requires email service integration like SendGrid/Resend)
- */
-function scheduleEmail(userId, email, emailConfig) {
-    // TODO: Integrate with email service
-    // This would call SendGrid/Resend API with delayed delivery
-    // For now, just log intent
-    console.log(`[EMAIL] Scheduled: ${emailConfig.type} for ${email} after ${emailConfig.delaySeconds}s`);
-
-    // In production, call:
-    // await emailService.scheduleEmail({
-    //     to: email,
-    //     subject: emailConfig.subject,
-    //     template: emailConfig.template,
-    //     data: emailConfig.data,
-    //     sendAfter: new Date(Date.now() + emailConfig.delaySeconds * 1000)
-    // });
-}
-
-/**
  * Get feature list based on subscription plan
  */
 function getFeaturesByPlan(planType) {

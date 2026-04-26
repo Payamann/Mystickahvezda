@@ -19,7 +19,7 @@ const __dirname = path.dirname(__filename);
 const router = express.Router();
 const SPEC_PATH = path.join(__dirname, '..', 'openapi.yaml');
 
-function isDocAllowed(req) {
+export function isDocAllowed(req) {
     if (process.env.NODE_ENV !== 'production') return true;
 
     const docsToken = process.env.DOCS_TOKEN;
@@ -47,41 +47,16 @@ router.get('/', (req, res) => {
   <title>Mystická Hvězda API Docs</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
-  <style>
-    body { margin: 0; background: #0a0a1a; }
-    .swagger-ui .topbar { background: #1a1a3e; }
-    .swagger-ui .topbar .download-url-wrapper { display: none; }
-  </style>
+  <link rel="stylesheet" href="/css/style.v2.min.css?v=11">
 </head>
-<body>
-  <div id="swagger-ui"></div>
+<body class="api-docs-page">
+  <div id="swagger-ui" data-spec-url="${specUrl}"></div>
   <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
-  <script>
-    SwaggerUIBundle({
-      url: ${JSON.stringify(specUrl)},
-      dom_id: '#swagger-ui',
-      presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
-      layout: 'BaseLayout',
-      deepLinking: true,
-      tryItOutEnabled: true,
-      requestInterceptor: (req) => {
-        // Automatically fetch and attach CSRF token for non-GET requests
-        if (req.method !== 'GET' && !req.headers['X-CSRF-Token']) {
-          return fetch('/api/csrf-token')
-            .then(r => r.json())
-            .then(data => {
-              req.headers['X-CSRF-Token'] = data.csrfToken;
-              return req;
-            });
-        }
-        return req;
-      }
-    });
-  </script>
+  <script src="/js/dist/swagger-docs.js" defer></script>
 </body>
 </html>`;
 
-    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'no-store');
     res.send(html);
 });

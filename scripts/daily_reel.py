@@ -25,6 +25,20 @@ import requests
 from datetime import date, timedelta
 from pathlib import Path
 
+from daily_common import (
+    ApiUsageStats,
+    build_qa_report,
+    existing_output_action,
+    infer_claude_purpose,
+    model_for_purpose,
+    print_api_report,
+    print_qa_report,
+    write_json_sidecar,
+)
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+OUTPUT_DIR = SCRIPT_DIR / "output"
+
 # ─── Konfigurace — klíče z prostředí nebo server/.env ─────────────────────────
 
 def _load_env():
@@ -51,6 +65,9 @@ SUPABASE_URL  = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY  = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 WEBSITE_URL   = "https://www.mystickahvezda.cz"
+CREATIVE_MODEL = os.environ.get("DAILY_REEL_CREATIVE_MODEL", "claude-sonnet-4-5")
+UTILITY_MODEL  = os.environ.get("DAILY_REEL_UTILITY_MODEL", CREATIVE_MODEL)
+API_STATS = ApiUsageStats()
 
 if not SUPABASE_URL or not SUPABASE_KEY or not ANTHROPIC_KEY:
     print("[CHYBA] Chybí proměnné prostředí: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ANTHROPIC_API_KEY")
@@ -86,7 +103,7 @@ SIGN_VOCATIVE = {
     'Kozoroh': 'Kozorohu', 'Vodnář': 'Vodnáři', 'Ryby': 'Ryby'
 }
 
-USED_SIGNS_FILE = Path(__file__).parent / "used_signs.json"
+USED_SIGNS_FILE = OUTPUT_DIR / "used_signs.json"
 
 def load_used_signs() -> dict:
     if USED_SIGNS_FILE.exists():
@@ -94,6 +111,7 @@ def load_used_signs() -> dict:
     return {}
 
 def save_used_signs(data: dict):
+    USED_SIGNS_FILE.parent.mkdir(parents=True, exist_ok=True)
     USED_SIGNS_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 def pick_signs(target_date: str) -> list:
@@ -205,11 +223,21 @@ def save_to_cache(sign: str, target_date: str, response_json: dict):
 
 # ─── Claude API ───────────────────────────────────────────────────────────────
 
-def claude_call(system: str, user: str, max_tokens: int = 1000) -> str:
+def claude_call(system: str, user: str, max_tokens: int = 1000,
+                purpose: str | None = None, model: str | None = None) -> str:
     import anthropic
+    purpose = purpose or infer_claude_purpose()
+    selected_model = model or model_for_purpose(purpose, CREATIVE_MODEL, UTILITY_MODEL)
+    API_STATS.record(
+        purpose=purpose,
+        model=selected_model,
+        system=system,
+        user=user,
+        max_tokens=max_tokens,
+    )
     client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
     msg = client.messages.create(
-        model="claude-sonnet-4-5",
+        model=selected_model,
         max_tokens=max_tokens,
         system=system,
         messages=[{"role": "user", "content": user}]
@@ -661,24 +689,40 @@ def main():
                         help="3 konkretni znameni (default: nahodny vyber)")
     parser.add_argument("--snip", default=None, help="Snip videa pro analyzu barev (PNG/JPG)")
     parser.add_argument("--color-desc", default=None, help="Manualni popis barev pozadi")
+    parser.add_argument("--quality", choices=["standard", "premium"], default="standard",
+                        help="standard = levnejsi cache jen pro vybrana znameni; premium = prefetch vsech 12")
+    parser.add_argument("--prefetch-all", action="store_true",
+                        help="Predem dogeneruje cache pro vsech 12 znameni bez ohledu na quality")
+    parser.add_argument("--skip-suno", action="store_true",
+                        help="Negeneruje Suno prompt")
+    parser.add_argument("--skip-thumbnail", action="store_true",
+                        help="Negeneruje thumbnail prompt ani neanalyzuje snip")
+    parser.add_argument("--skip-descriptions", action="store_true",
+                        help="Negeneruje TikTok/Instagram ani Facebook description")
+    parser.add_argument("--reuse-existing", action="store_true",
+                        help="Pokud vystupni soubor existuje, nepousti API a jen vypise existujici cestu")
+    parser.add_argument("--force", action="store_true",
+                        help="Povoli prepsani existujiciho vystupniho souboru")
     args = parser.parse_args()
 
+    API_STATS.reset()
     target_date = args.date or str(date.today())
-    print(f"\n=== Voiceover Generator | datum: {target_date} ===\n")
+    quality = args.quality
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_path = OUTPUT_DIR / f"voiceover_{target_date}.txt"
+    output_action = existing_output_action(out_path, force=args.force, reuse_existing=args.reuse_existing)
+    if output_action == "reuse":
+        print(f"[OK] Pouzivam existujici vystup bez API volani: {out_path}")
+        return
+    if output_action == "abort":
+        print(f"[STOP] Vystup uz existuje: {out_path}")
+        print("Pouzij --reuse-existing pro praci s existujicim souborem nebo --force pro prepsani.")
+        return
 
-    # 1. Prefetch — zajisti že všech 12 znamení je v cache
-    print("[*] Prefetch: kontroluji cache pro vsech 12 znameni...")
-    cached_all = fetch_from_cache(ALL_SIGNS, target_date)
-    missing = [s for s in ALL_SIGNS if s not in cached_all]
-    if missing:
-        print(f"  [!] Chybi v cache: {', '.join(missing)} — generuji...")
-        for sign in missing:
-            cached_all[sign] = generate_horoscope(sign, target_date)
-        print(f"[OK] Vsech 12 znameni pripraveno v cache.")
-    else:
-        print(f"[OK] Vsech 12 znameni uz v cache.")
+    print(f"\n=== Voiceover Generator | datum: {target_date} | kvalita: {quality} ===\n")
+    print(f"[*] Modely: creative={CREATIVE_MODEL} | utility={UTILITY_MODEL}")
 
-    # 2. Vyber znamení
+    # 1. Vyber znamení
     if args.signs:
         chosen = args.signs
         invalid = [s for s in chosen if s not in ALL_SIGNS]
@@ -699,7 +743,28 @@ def main():
     print(f"[*] Vybrana znameni: {', '.join(chosen)}")
     print(f"[*] Tento den celkem pouzito: {len(used_today)}/12 znameni")
 
-    # 3. Sestav horoskopy pro vybraná znamení (vše je už v cached_all)
+    # 2. Cache — standard řeší jen vybraná znamení, premium zachovává původní prefetch všech 12
+    if args.prefetch_all or quality == "premium":
+        print("[*] Prefetch: kontroluji cache pro vsech 12 znameni...")
+        cached_all = fetch_from_cache(ALL_SIGNS, target_date)
+        missing = [s for s in ALL_SIGNS if s not in cached_all]
+        if missing:
+            print(f"  [!] Chybi v cache: {', '.join(missing)} — generuji...")
+            for sign in missing:
+                cached_all[sign] = generate_horoscope(sign, target_date)
+            print(f"[OK] Vsech 12 znameni pripraveno v cache.")
+        else:
+            print(f"[OK] Vsech 12 znameni uz v cache.")
+    else:
+        print("[*] Cache rezim: usporne kontroluji/generuji jen vybrana znameni.")
+        cached_all = fetch_from_cache(chosen, target_date)
+        missing = [s for s in chosen if s not in cached_all]
+        if missing:
+            print(f"  [!] Chybi v cache: {', '.join(missing)} — generuji jen tato znameni...")
+            for sign in missing:
+                cached_all[sign] = generate_horoscope(sign, target_date)
+
+    # 3. Sestav horoskopy pro vybraná znamení
     horoscopes = {sign: cached_all[sign] for sign in chosen}
     for sign in chosen:
         print(f"  [cache] {sign}")
@@ -711,39 +776,58 @@ def main():
     d = date.fromisoformat(target_date)
     date_header = f"🗓️ {d.day}. {MONTHS_CS[d.month - 1]} {d.year}\n\n"
     script = date_header + script
-    description = build_tiktok_description(chosen, script, target_date)
-    fb_description = build_facebook_description(chosen, script, target_date)
-    suno = build_suno_prompt(chosen, script, target_date)
+    if args.skip_descriptions:
+        description = "[PRESKOCENO: --skip-descriptions]"
+        fb_description = "[PRESKOCENO: --skip-descriptions]"
+    else:
+        description = build_tiktok_description(chosen, script, target_date)
+        fb_description = build_facebook_description(chosen, script, target_date)
+
+    suno = "[PRESKOCENO: --skip-suno]" if args.skip_suno else build_suno_prompt(chosen, script, target_date)
 
     # Barvy pro thumbnail — ze snipu, manuálního popisu, nebo default
-    import thumbnail as _thumb_mod
-    if args.color_desc:
-        bg_color = args.color_desc
-        desc_lower = args.color_desc.lower()
-        warm = sum(desc_lower.count(w) for w in ["amber","orange","scarlet","golden","warm","sienna","rust"])
-        cool = sum(desc_lower.count(w) for w in ["blue","cobalt","electric","glacial","silver","ice","cyan","teal"])
-        purp = sum(desc_lower.count(w) for w in ["indigo","violet","purple"])
-        if cool >= warm and cool >= purp:
-            wheel_color = "deep navy and glacial blue tones with icy silver-gold filigree"
-        elif purp > warm:
-            wheel_color = "deep indigo and cosmic violet tones with silver-gold filigree"
-        elif warm > 0:
-            wheel_color = "warm deep amber and burnt sienna tones with golden filigree"
-        else:
-            wheel_color = _thumb_mod.DEFAULT_WHEEL_COLOR
-    elif args.snip:
-        from pathlib import Path as _Path
-        snip_path = _Path(args.snip)
-        if snip_path.exists():
-            bg_color, wheel_color = _thumb_mod.analyze_colors(str(snip_path))
-        else:
-            print(f"[!] Snip nenalezen: {args.snip} — defaultni barvy")
-            bg_color, wheel_color = _thumb_mod.DEFAULT_COLOR_DESC, _thumb_mod.DEFAULT_WHEEL_COLOR
+    if args.skip_thumbnail:
+        bg_color = ""
+        wheel_color = ""
+        thumbnail = "[PRESKOCENO: --skip-thumbnail]"
     else:
-        print("[*] Zadny snip — defaultni barvy thumbnailem")
-        bg_color, wheel_color = _thumb_mod.DEFAULT_COLOR_DESC, _thumb_mod.DEFAULT_WHEEL_COLOR
+        import thumbnail as _thumb_mod
+        if args.color_desc:
+            bg_color = args.color_desc
+            desc_lower = args.color_desc.lower()
+            warm = sum(desc_lower.count(w) for w in ["amber","orange","scarlet","golden","warm","sienna","rust"])
+            cool = sum(desc_lower.count(w) for w in ["blue","cobalt","electric","glacial","silver","ice","cyan","teal"])
+            purp = sum(desc_lower.count(w) for w in ["indigo","violet","purple"])
+            if cool >= warm and cool >= purp:
+                wheel_color = "deep navy and glacial blue tones with icy silver-gold filigree"
+            elif purp > warm:
+                wheel_color = "deep indigo and cosmic violet tones with silver-gold filigree"
+            elif warm > 0:
+                wheel_color = "warm deep amber and burnt sienna tones with golden filigree"
+            else:
+                wheel_color = _thumb_mod.DEFAULT_WHEEL_COLOR
+        elif args.snip:
+            from pathlib import Path as _Path
+            snip_path = _Path(args.snip)
+            if snip_path.exists():
+                bg_color, wheel_color = _thumb_mod.analyze_colors(str(snip_path))
+            else:
+                print(f"[!] Snip nenalezen: {args.snip} — defaultni barvy")
+                bg_color, wheel_color = _thumb_mod.DEFAULT_COLOR_DESC, _thumb_mod.DEFAULT_WHEEL_COLOR
+        else:
+            print("[*] Zadny snip — defaultni barvy thumbnailem")
+            bg_color, wheel_color = _thumb_mod.DEFAULT_COLOR_DESC, _thumb_mod.DEFAULT_WHEEL_COLOR
 
-    thumbnail = build_thumbnail_prompt(target_date, chosen, bg_color, wheel_color)
+        thumbnail = build_thumbnail_prompt(target_date, chosen, bg_color, wheel_color)
+
+    qa_report = build_qa_report(
+        voiceover=script,
+        tiktok_description="" if args.skip_descriptions else description,
+        facebook_description="" if args.skip_descriptions else fb_description,
+        suno="" if args.skip_suno else suno,
+        thumbnail="" if args.skip_thumbnail else thumbnail,
+        signs=chosen,
+    )
 
     # 5. Vystup
     sep = "=" * 60
@@ -758,11 +842,13 @@ def main():
     print(f"\n{sep}\nTHUMBNAIL PROMPT (Nano Banana)\n{sep}")
     print(thumbnail)
     print(sep)
+    print_qa_report(qa_report)
+    api_summary = API_STATS.summary()
+    print_api_report(API_STATS)
     print(f"\n[OK] Hotovo! Datum videa: {target_date}")
     print(f"[OK] Znameni: {', '.join(chosen)}")
 
     # Uloz do souboru
-    out_path = Path(__file__).parent / f"voiceover_{target_date}.txt"
     output = (
         f"VOICEOVER SCRIPT\n{sep}\n{script}\n\n"
         f"TIKTOK / INSTAGRAM DESCRIPTION\n{sep}\n{description}\n\n"
@@ -772,6 +858,37 @@ def main():
     )
     out_path.write_text(output, encoding="utf-8")
     print(f"[OK] Ulozeno: {out_path}")
+    json_path = write_json_sidecar(out_path, {
+        "script": "daily_reel.py",
+        "date": target_date,
+        "quality": quality,
+        "signs": chosen,
+        "models": {
+            "creative": CREATIVE_MODEL,
+            "utility": UTILITY_MODEL,
+        },
+        "options": {
+            "skip_suno": args.skip_suno,
+            "skip_thumbnail": args.skip_thumbnail,
+            "skip_descriptions": args.skip_descriptions,
+            "prefetch_all": args.prefetch_all,
+            "force": args.force,
+        },
+        "outputs": {
+            "voiceover": script,
+            "tiktok_description": None if args.skip_descriptions else description,
+            "facebook_description": None if args.skip_descriptions else fb_description,
+            "suno": None if args.skip_suno else suno,
+            "thumbnail": None if args.skip_thumbnail else thumbnail,
+            "thumbnail_colors": {
+                "background": bg_color,
+                "wheel": wheel_color,
+            },
+        },
+        "qa_report": qa_report,
+        "api_usage": api_summary,
+    })
+    print(f"[OK] JSON: {json_path}")
 
 
 if __name__ == "__main__":

@@ -40,7 +40,7 @@ const PLAN_META = {
     }
 };
 
-const FEATURE_PLAN_MAP = {
+const FALLBACK_FEATURE_PLAN_MAP = {
     astrocartography: 'osviceni',
     synastry: 'pruvodce',
     partnerska_detail: 'pruvodce',
@@ -49,6 +49,7 @@ const FEATURE_PLAN_MAP = {
     rituals: 'pruvodce',
     mentor: 'pruvodce'
 };
+let featurePlanMap = FALLBACK_FEATURE_PLAN_MAP;
 
 function getApiBaseUrl() {
     return window.API_CONFIG?.BASE_URL || '/api';
@@ -99,9 +100,13 @@ async function loadPlanManifest() {
         }
 
         priceConfig = buildPriceConfigFromManifest(manifest);
+        featurePlanMap = manifest.featurePlanMap && typeof manifest.featurePlanMap === 'object'
+            ? { ...FALLBACK_FEATURE_PLAN_MAP, ...manifest.featurePlanMap }
+            : FALLBACK_FEATURE_PLAN_MAP;
     } catch (error) {
         console.warn('[Pricing] Using fallback plan config:', error.message);
         priceConfig = FALLBACK_PRICE_CONFIG;
+        featurePlanMap = FALLBACK_FEATURE_PLAN_MAP;
     }
 }
 
@@ -212,7 +217,7 @@ function resolveCheckoutContext() {
     const feature = params.get('feature') || pendingContext.feature || null;
     const explicitPlan = params.get('plan') || pendingContext.planId || null;
     const source = params.get('source') || pendingContext.source || 'pricing_page';
-    const recommendedPlan = explicitPlan || FEATURE_PLAN_MAP[feature] || 'pruvodce';
+    const recommendedPlan = explicitPlan || featurePlanMap[feature] || 'pruvodce';
 
     return {
         feature,

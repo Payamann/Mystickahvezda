@@ -2,7 +2,18 @@
  * Main dashboard controller for Profile page
  */
 
-import { escapeHtml, apiUrl, authHeaders, getZodiacSign, getZodiacIconName, getReadingTitle } from './shared.js';
+import {
+    escapeHtml,
+    apiUrl,
+    authHeaders,
+    getZodiacSign,
+    getZodiacIconName,
+    getReadingTitle,
+    loadPlanManifest,
+    normalizePlanType,
+    formatPlanLabel,
+    getPlanPriceCzk
+} from './shared.js';
 import { loadReadings, showMoreReadings, handleFilterChange } from './readings.js';
 import { loadFavorites } from './favorites.js';
 import { toggleAvatarPicker, selectAvatar, loadSubscriptionStatus, initSettingsForm, saveSettings } from './settings.js';
@@ -88,14 +99,6 @@ const DAILY_FOCUS = [
     'Dnes si zapište jednu věc, která se opakuje. Právě tam začíná váš vzorec.'
 ];
 
-const PLAN_PRICE_CZK = {
-    pruvodce: 199,
-    'pruvodce-rocne': 1990,
-    osviceni: 499,
-    'osviceni-rocne': 4990,
-    'vip-majestrat': 999
-};
-
 function setProfileBlockVisible(element, visible) {
     if (!element) return;
     element.hidden = !visible;
@@ -166,7 +169,7 @@ function handlePaymentReturnState() {
             plan_id: planId,
             session_id: sessionId
         });
-        window.MH_ANALYTICS?.trackPurchaseCompleted?.(planId || 'subscription', PLAN_PRICE_CZK[planId] || null, 'CZK', {
+        window.MH_ANALYTICS?.trackPurchaseCompleted?.(planId || 'subscription', getPlanPriceCzk(planId) || null, 'CZK', {
             product_type: 'subscription',
             transaction_id: sessionId,
             source: 'profile_return'
@@ -209,7 +212,7 @@ function renderPremiumActivation(sub, user) {
         return;
     }
 
-    const planType = sub.planType === 'vip' ? 'vip_majestrat' : (sub.planType || 'free');
+    const planType = normalizePlanType(sub.planType);
     const isPremium = planType !== 'free';
     const paymentState = new URLSearchParams(window.location.search).get('payment');
     const shouldForceShow = paymentState === 'success';
@@ -302,18 +305,6 @@ function handleLogout() {
     }
 }
 
-function formatPlanLocal(plan) {
-    const normalizedPlan = plan === 'vip' ? 'vip_majestrat' : plan;
-    const plans = {
-        free: 'Poutník',
-        premium_monthly: 'Hvězdný Průvodce',
-        exclusive_monthly: 'Exclusive',
-        vip_majestrat: 'VIP Majestát'
-    };
-
-    return plans[normalizedPlan] || 'Poutník';
-}
-
 function calculateStreak(readings) {
     if (!readings || !readings.length) return 0;
 
@@ -343,7 +334,7 @@ function calculateStreak(readings) {
 }
 
 function isPremiumSubscription(sub) {
-    const planType = sub?.planType === 'vip' ? 'vip_majestrat' : (sub?.planType || 'free');
+    const planType = normalizePlanType(sub?.planType);
     const activeStatuses = ['active', 'trialing', 'cancel_pending'];
     return planType !== 'free' && activeStatuses.includes(sub?.status || 'active');
 }
@@ -396,14 +387,14 @@ function renderDailyGuidance(user, readings, subscription) {
 
     const now = new Date();
     const sign = getProfileSign(user);
-    const planType = subscription?.planType === 'vip' ? 'vip_majestrat' : (subscription?.planType || user?.subscription_status || 'free');
+    const planType = normalizePlanType(subscription?.planType || user?.subscription_status);
     const isPremium = isPremiumSubscription(subscription) || ['premium_monthly', 'exclusive_monthly', 'vip_majestrat'].includes(planType);
     const readingKinds = getReadingKinds(readings);
     const dateLabel = now.toLocaleDateString('cs-CZ', { weekday: 'long', day: 'numeric', month: 'long' });
     const focus = DAILY_FOCUS[now.getDay()];
 
     dateEl.textContent = dateLabel;
-    planEl.textContent = formatPlanLocal(planType);
+    planEl.textContent = formatPlanLabel(planType);
     planEl.className = `badge ${isPremium ? 'badge--premium' : 'badge--secondary'}`;
     titleEl.textContent = sign
         ? `Dnešní směr pro znamení ${sign.name}`
@@ -771,6 +762,7 @@ async function initProfile() {
 
     setProfileBlockVisible(loginRequired, false);
     setProfileBlockVisible(dashboard, true);
+    await loadPlanManifest();
 
     if (user) {
         const displayName = user.first_name || user.email.split('@')[0];
@@ -780,9 +772,9 @@ async function initProfile() {
         if (emailEl) emailEl.textContent = user.email;
 
         const rawPlan = user.subscription_status || user.subscriptions?.plan_type || 'free';
-        const plan = rawPlan === 'vip' ? 'vip_majestrat' : rawPlan;
+        const plan = normalizePlanType(rawPlan);
         const planClass = plan === 'free' ? 'badge--secondary' : 'badge--premium';
-        const planLabel = formatPlanLocal(plan);
+        const planLabel = formatPlanLabel(plan);
 
         const badgesContainer = document.getElementById('user-badges');
         if (badgesContainer) {

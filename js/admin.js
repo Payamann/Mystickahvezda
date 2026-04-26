@@ -8,6 +8,12 @@ document.addEventListener('click', (event) => {
     if (action === 'loadFunnel') {
         loadFunnel();
     }
+    if (action === 'exportFunnelCsv') {
+        exportFunnelCsv();
+    }
+    if (action === 'exportFunnelSegmentsCsv') {
+        exportFunnelCsv('segments');
+    }
     if (action === 'loadAdminData') {
         loadAdminData();
     }
@@ -114,10 +120,15 @@ function renderUsers(users) {
         tdDate.textContent = new Date(user.created_at).toLocaleDateString();
 
         const tdActions = document.createElement('td');
-        ['premium_monthly', 'vip_majestrat', 'free'].forEach((nextPlan, index) => {
+        [
+            { plan: 'premium_monthly', label: 'Premium', className: 'btn-promote' },
+            { plan: 'exclusive_monthly', label: 'Osv\u00edcen\u00ed', className: 'btn-promote' },
+            { plan: 'vip_majestrat', label: 'VIP Majest\u00e1t', className: 'btn-promote' },
+            { plan: 'free', label: 'Free', className: 'btn-demote' }
+        ].forEach(({ plan: nextPlan, label, className }) => {
             const btn = document.createElement('button');
-            btn.className = `action-btn${index === 0 ? ' btn-promote' : (index === 2 ? ' btn-demote' : '')}`;
-            btn.textContent = index === 0 ? 'Premium' : (index === 1 ? 'VIP Majestát' : 'Free');
+            btn.className = `action-btn ${className}`;
+            btn.textContent = label;
             btn.addEventListener('click', () => updateSub(user.id, nextPlan));
             tdActions.appendChild(btn);
         });
@@ -131,10 +142,14 @@ async function loadFunnel() {
     const daysSelect = document.getElementById('funnel-range-days');
     const days = daysSelect ? daysSelect.value : '30';
     const summary = document.getElementById('funnel-summary');
+    const segmentTbody = document.querySelector('#funnel-segments-table tbody');
+    const dailyTbody = document.querySelector('#funnel-daily-table tbody');
     const tbody = document.querySelector('#funnel-events-table tbody');
     const errorMsg = document.getElementById('error-msg');
 
     summary.replaceChildren(createLoadingBlock('Načítám funnel...'));
+    segmentTbody.replaceChildren(createTableMessageRow(8, 'Načítám data...'));
+    dailyTbody.replaceChildren(createTableMessageRow(7, 'Načítám data...'));
     tbody.replaceChildren(createTableMessageRow(5, 'Načítám data...'));
 
     try {
@@ -144,6 +159,8 @@ async function loadFunnel() {
 
         if (response.status === 403) {
             summary.replaceChildren(createLoadingBlock('Přístup odepřen (nejste admin).'));
+            segmentTbody.replaceChildren(createTableMessageRow(8, 'Přístup odepřen.', 'admin-table-error'));
+            dailyTbody.replaceChildren(createTableMessageRow(7, 'Přístup odepřen.', 'admin-table-error'));
             tbody.replaceChildren(createTableMessageRow(5, 'Přístup odepřen.', 'admin-table-error'));
             return;
         }
@@ -156,8 +173,41 @@ async function loadFunnel() {
     } catch (error) {
         console.error(error);
         summary.replaceChildren(createLoadingBlock('Funnel se nepodařilo načíst.'));
+        segmentTbody.replaceChildren(createTableMessageRow(8, 'Segmenty nejsou dostupné.', 'admin-table-error'));
+        dailyTbody.replaceChildren(createTableMessageRow(7, 'Denní report není dostupný.', 'admin-table-error'));
         tbody.replaceChildren(createTableMessageRow(5, 'Funnel report není dostupný.', 'admin-table-error'));
         errorMsg.textContent = 'Chyba při načítání funnelu: ' + error.message;
+    }
+}
+
+async function exportFunnelCsv(view = 'daily') {
+    const daysSelect = document.getElementById('funnel-range-days');
+    const days = daysSelect ? daysSelect.value : '30';
+    const errorMsg = document.getElementById('error-msg');
+    const viewParam = view === 'segments' ? '&view=segments' : '';
+
+    try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/admin/funnel?days=${encodeURIComponent(days)}&format=csv${viewParam}`, {
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error(`Export selhal (${response.status})`);
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = view === 'segments'
+            ? `funnel-segmenty-${days}d.csv`
+            : `funnel-${days}d.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        errorMsg.textContent = '';
+    } catch (error) {
+        console.error(error);
+        errorMsg.textContent = 'CSV export se nepodařil: ' + error.message;
     }
 }
 
@@ -178,7 +228,57 @@ function renderFunnel(report) {
     renderBreakdown('funnel-sources', report.topSources);
     renderBreakdown('funnel-features', report.topFeatures);
     renderBreakdown('funnel-plans', report.topPlans);
+    renderSourceComparison(report.sourceComparison);
+    renderFunnelSegments(report.sourceFeatureSegments || []);
+    renderFunnelDaily(report.daily || []);
     renderFunnelEvents(report.recentEvents || []);
+}
+
+function renderFunnelSegments(rows) {
+    const tbody = document.querySelector('#funnel-segments-table tbody');
+    if (!tbody) return;
+
+    tbody.replaceChildren();
+
+    if (!rows || rows.length === 0) {
+        tbody.appendChild(createTableMessageRow(8, 'Zatím tu nejsou žádné source + feature segmenty.'));
+        return;
+    }
+
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        appendCell(tr, formatDimension(row.source));
+        appendCell(tr, formatDimension(row.feature));
+        appendCell(tr, formatInteger(row.paywallViewed));
+        appendCell(tr, formatInteger(row.checkoutStarted));
+        appendCell(tr, formatInteger(row.purchaseCompleted));
+        appendCell(tr, formatRatePair(row));
+        appendCell(tr, formatRatePair(row.previous));
+        appendCell(tr, `${formatRateDelta(row.paywallToCheckoutRateDelta)} / ${formatRateDelta(row.checkoutToPurchaseRateDelta)}`);
+        tbody.appendChild(tr);
+    });
+}
+
+function renderFunnelDaily(rows) {
+    const tbody = document.querySelector('#funnel-daily-table tbody');
+    tbody.replaceChildren();
+
+    if (!rows || rows.length === 0) {
+        tbody.appendChild(createTableMessageRow(7, 'Zatím tu nejsou žádná denní data.'));
+        return;
+    }
+
+    [...rows].reverse().forEach(row => {
+        const tr = document.createElement('tr');
+        appendCell(tr, row.date || '-');
+        appendCell(tr, formatInteger(row.paywallViewed));
+        appendCell(tr, formatInteger(row.checkoutStarted));
+        appendCell(tr, formatInteger(row.subscriptionCompleted));
+        appendCell(tr, formatInteger(row.oneTimeCompleted));
+        appendCell(tr, formatInteger(row.failures));
+        appendCell(tr, formatInteger(row.refunds));
+        tbody.appendChild(tr);
+    });
 }
 
 function renderBreakdown(elementId, rows) {
@@ -202,6 +302,33 @@ function renderBreakdown(elementId, rows) {
         count.textContent = formatInteger(row.count);
 
         item.append(label, count);
+        list.appendChild(item);
+    });
+}
+
+function renderSourceComparison(rows) {
+    const list = document.getElementById('funnel-source-comparison');
+    if (!list) return;
+
+    list.replaceChildren();
+
+    if (!rows || rows.length === 0) {
+        const empty = document.createElement('li');
+        empty.textContent = '\u017d\u00e1dn\u00e1 data.';
+        list.appendChild(empty);
+        return;
+    }
+
+    rows.forEach(row => {
+        const item = document.createElement('li');
+
+        const label = document.createElement('strong');
+        label.textContent = formatDimension(row.key);
+
+        const counts = document.createElement('span');
+        counts.textContent = `${formatInteger(row.current)} / ${formatInteger(row.previous)} (${formatSignedInteger(row.delta)}, ${formatDeltaPercent(row.deltaPercent)})`;
+
+        item.append(label, counts);
         list.appendChild(item);
     });
 }
@@ -280,6 +407,32 @@ function formatCurrency(value) {
 
 function formatPercent(value) {
     return `${integerFormatter.format(Number(value) || 0)} %`;
+}
+
+function formatRatePair(row = {}) {
+    return `${formatPercent(row.paywallToCheckoutRate)} / ${formatPercent(row.checkoutToPurchaseRate)}`;
+}
+
+function formatRateDelta(value) {
+    if (value == null) return 'bez srovnani';
+
+    const numericValue = Number(value) || 0;
+    const formatted = formatPercent(numericValue);
+    return numericValue > 0 ? `+${formatted}` : formatted;
+}
+
+function formatSignedInteger(value) {
+    const numericValue = Number(value) || 0;
+    const formatted = integerFormatter.format(numericValue);
+    return numericValue > 0 ? `+${formatted}` : formatted;
+}
+
+function formatDeltaPercent(value) {
+    if (value == null) return 'nov\u00fd zdroj';
+
+    const numericValue = Number(value) || 0;
+    const formatted = formatPercent(numericValue);
+    return numericValue > 0 ? `+${formatted}` : formatted;
 }
 
 function formatDimension(value) {

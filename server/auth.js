@@ -248,7 +248,7 @@ router.post('/register', authLimiter, async (req, res) => {
         // We DO NOT return a token here anymore. Login is blocked until verification.
         res.json({
             success: true,
-            message: 'Registrace ?sp??n?. Zkontrolujte pros?m sv?j email pro potvrzen? ??tu.',
+            message: 'Registrace \u00fasp\u011b\u0161n\u00e1. Zkontrolujte pros\u00edm sv\u016fj email pro potvrzen\u00ed \u00fa\u010dtu.',
             requireEmailVerification: true
         });
 

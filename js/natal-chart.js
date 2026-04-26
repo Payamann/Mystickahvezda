@@ -4,7 +4,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Natal Chart JS loaded');
+    if (window.MH_DEBUG) console.debug('Natal Chart JS loaded');
     initNatalChart();
 });
 
@@ -181,7 +181,7 @@ function renderZodiacRing(group) {
 }
 
 function generatePlanets(group, seed) {
-    console.log('Generating planets with seed:', seed);
+    if (window.MH_DEBUG) console.debug('Generating planets with seed:', seed);
     // Orbital radii - slightly compressed to make room for larger zodiac ring
     // Saturn at 165 + RingRadius(~25) = 190 max extent.
     // Inner zodiac ring will be at 195.

@@ -176,7 +176,7 @@ async function checkGreeting() {
         }
     } catch (e) {
         // Silent fail
-        console.log('No greeting today.');
+        if (window.MH_DEBUG) console.debug('No greeting today.');
     }
 }
 

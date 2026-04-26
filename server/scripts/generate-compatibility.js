@@ -10,7 +10,7 @@ import { SIGNS, generateCompatibilityData } from '../data/compatibility-data.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../../');
 const OUT_DIR = path.join(ROOT, 'kompatibilita');
-const DOMAIN = 'https://mystickahvezda.cz';
+const DOMAIN = 'https://www.mystickahvezda.cz';
 const TODAY = new Date().toISOString().split('T')[0];
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR);

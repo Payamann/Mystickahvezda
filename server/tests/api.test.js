@@ -5,6 +5,8 @@
 
 import request from 'supertest';
 import app from '../index.js';
+import { supabase } from '../db-supabase.js';
+import { isDocAllowed } from '../routes/docs.js';
 
 async function getCsrfToken() {
     const res = await request(app).get('/api/csrf-token').expect(200);
@@ -52,6 +54,80 @@ describe('API Endpoint Tests', () => {
 
             expect(res.status).not.toBe(401);
             expect(res.status).not.toBe(403);
+        });
+    });
+
+    describe('API Docs', () => {
+        const originalNodeEnv = process.env.NODE_ENV;
+        const originalDocsToken = process.env.DOCS_TOKEN;
+
+        afterEach(() => {
+            process.env.NODE_ENV = originalNodeEnv;
+            if (originalDocsToken === undefined) {
+                delete process.env.DOCS_TOKEN;
+            } else {
+                process.env.DOCS_TOKEN = originalDocsToken;
+            }
+        });
+
+        test('GET /api/docs serves the externalized Swagger shell', async () => {
+            const res = await request(app)
+                .get('/api/docs')
+                .expect(200);
+
+            expect(res.headers['content-type']).toContain('text/html');
+            expect(res.text).toContain('id="swagger-ui"');
+            expect(res.text).toContain('/js/dist/swagger-docs.js');
+            expect(res.text).not.toMatch(/<style\b/i);
+            expect(res.text).not.toMatch(/<script>\s*SwaggerUIBundle/i);
+        });
+
+        test('GET /api/docs/openapi.yaml serves the OpenAPI spec', async () => {
+            const res = await request(app)
+                .get('/api/docs/openapi.yaml')
+                .expect(200);
+
+            expect(res.headers['content-type']).toContain('application/yaml');
+            expect(res.text).toContain('openapi:');
+            expect(res.text).toContain('/admin/funnel:');
+            expect(res.text).toContain('sourceComparison:');
+            expect(res.text).toContain('sourceFeatureSegments:');
+            expect(res.text).toContain('FunnelSourceFeaturePreviousSegment:');
+            expect(res.text).toContain('paywallToCheckoutRateDelta:');
+            expect(res.text).toContain('enum: [daily, segments]');
+            expect(res.text).toContain('text/csv:');
+        });
+
+        test('docs access allows non-production without token', () => {
+            process.env.NODE_ENV = 'test';
+            delete process.env.DOCS_TOKEN;
+
+            expect(isDocAllowed({ query: {}, headers: {} })).toBe(true);
+        });
+
+        test('docs access denies production without DOCS_TOKEN', () => {
+            process.env.NODE_ENV = 'production';
+            delete process.env.DOCS_TOKEN;
+
+            expect(isDocAllowed({ query: {}, headers: {} })).toBe(false);
+        });
+
+        test('docs access allows matching production query or bearer token', () => {
+            process.env.NODE_ENV = 'production';
+            process.env.DOCS_TOKEN = 'docs-secret';
+
+            expect(isDocAllowed({
+                query: { token: 'docs-secret' },
+                headers: {}
+            })).toBe(true);
+            expect(isDocAllowed({
+                query: {},
+                headers: { authorization: 'Bearer docs-secret' }
+            })).toBe(true);
+            expect(isDocAllowed({
+                query: { token: 'wrong' },
+                headers: { authorization: 'Bearer wrong' }
+            })).toBe(false);
         });
     });
 
@@ -314,13 +390,13 @@ describe('API Endpoint Tests', () => {
             expect(res.status).toBe(401);
         });
 
-        test('POST /api/payment/process (legacy) returns 410 Gone', async () => {
+        test('POST /api/payment/process (legacy) without auth returns 401', async () => {
             const csrfToken = await getCsrfToken();
             const res = await request(app)
                 .post('/api/payment/process')
                 .set('x-csrf-token', csrfToken);
 
-            expect([401, 410]).toContain(res.status);
+            expect(res.status).toBe(401);
         });
     });
 
@@ -331,6 +407,44 @@ describe('API Endpoint Tests', () => {
                 .send({ birthDate: '1990-01-01' });
 
             expect(res.status).toBe(403);
+        });
+    });
+
+    describe('Horoscope Subscription Endpoints', () => {
+        test('GET /api/subscribe/horoscope/unsubscribe without token returns 400', async () => {
+            const res = await request(app)
+                .get('/api/subscribe/horoscope/unsubscribe')
+                .expect(400);
+
+            expect(res.text).toContain('odkaz');
+        });
+
+        test('GET /api/subscribe/horoscope/unsubscribe with unknown token returns 404', async () => {
+            const res = await request(app)
+                .get('/api/subscribe/horoscope/unsubscribe?token=unknown-token')
+                .expect(404);
+
+            expect(res.text).toContain('neexistuje');
+        });
+
+        test('GET /api/subscribe/horoscope/unsubscribe only succeeds once for active subscriptions', async () => {
+            const token = `active-token-${Date.now()}`;
+            await supabase
+                .from('horoscope_subscriptions')
+                .insert({
+                    email: `unsubscribe-${Date.now()}@example.com`,
+                    zodiac_sign: 'Beran',
+                    unsubscribe_token: token,
+                    active: true,
+                });
+
+            await request(app)
+                .get(`/api/subscribe/horoscope/unsubscribe?token=${token}`)
+                .expect(200);
+
+            await request(app)
+                .get(`/api/subscribe/horoscope/unsubscribe?token=${token}`)
+                .expect(404);
         });
     });
 
@@ -366,6 +480,32 @@ describe('API Endpoint Tests', () => {
                 .send({ message: 'Ahoj' });
 
             expect(res.status).toBe(401);
+        });
+    });
+
+    describe('Programmatic Horoscope Sitemap', () => {
+        test('GET /horoskop/sitemap-horoscopes.xml returns canonical sitemap URLs', async () => {
+            const res = await request(app)
+                .get('/horoskop/sitemap-horoscopes.xml')
+                .expect(200);
+
+            expect(res.headers['content-type']).toContain('application/xml');
+            expect(res.text).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+            expect(res.text).toContain('<loc>https://www.mystickahvezda.cz/horoskop/beran/');
+            expect(res.text).not.toContain('<loc>https://mystickahvezda.cz/horoskop/');
+        });
+
+        test('GET /horoskop/:sign/:date serves CSP-safe HTML with built assets', async () => {
+            const today = new Date().toISOString().split('T')[0];
+            const res = await request(app)
+                .get(`/horoskop/beran/${today}`)
+                .expect(200);
+
+            expect(res.headers['content-type']).toContain('text/html');
+            expect(res.headers['content-security-policy']).toContain("'sha256-");
+            expect(res.text).toContain('/js/dist/main.js');
+            expect(res.text).not.toMatch(/<style\b/i);
+            expect(res.text).not.toMatch(/\sstyle\s*=/i);
         });
     });
 

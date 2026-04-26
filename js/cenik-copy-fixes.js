@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('[data-price-plan]').forEach((el) => {
         const suffixEl = el.querySelector('.price-suffix');
-        if (suffixEl && suffixEl.textContent.includes('mÄ')) {
+        if (suffixEl && suffixEl.textContent.includes('m\u00c4')) {
             suffixEl.textContent = '/měsíc';
         }
     });

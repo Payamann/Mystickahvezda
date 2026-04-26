@@ -54,7 +54,7 @@ function buildPage(sign) {
     <meta property="og:description" content="${sign.name} (${sign.dates}): Vlastnosti, silné stránky, slabiny a partnerská kompatibilita.">
     <meta property="og:type" content="article">
     <meta property="og:image" content="../img/hero-bg-2.png">
-    <meta property="og:url" content="https://mystickahvezda.cz/horoskop/${sign.slug}.html">
+    <meta property="og:url" content="https://www.mystickahvezda.cz/horoskop/${sign.slug}.html">
 
     <!-- Fonts & Styles -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
