@@ -33,7 +33,9 @@ from daily_common import (
     model_for_purpose,
     print_api_report,
     print_qa_report,
+    render_review_markdown,
     write_json_sidecar,
+    write_review_markdown,
 )
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -2509,17 +2511,8 @@ def main():
         # Oprav případné chybějící '<' před break tagy (LLM občas vynechá)
         script = re.sub(r'(?<![<\s])break\s+time=', '<break time=', script)
 
-        # Uloz do souboru
-        output = (
-            f"VOICEOVER SCRIPT\n{sep}\n{script}\n\n"
-            f"TIKTOK / INSTAGRAM DESCRIPTION\n{sep}\n{description}\n\n"
-            f"FACEBOOK REELS DESCRIPTION\n{sep}\n{fb_description}\n\n"
-            f"SUNO PROMPT\n{sep}\n{suno}\n\n"
-            f"THUMBNAIL PROMPT (Nano Banana)\n{sep}\n{thumbnail}\n"
-        )
-        out_path.write_text(output, encoding="utf-8")
-        print(f"[OK] Uloženo: {out_path}")
-        json_path = write_json_sidecar(out_path, {
+        # Uloz lidsky citelny vystup + strojovy JSON sidecar
+        sidecar_payload = {
             "script": "daily_reel2.py",
             "date": target_date,
             "quality": quality,
@@ -2553,8 +2546,13 @@ def main():
             },
             "qa_report": qa_report,
             "api_usage": api_summary,
-        })
+        }
+        out_path.write_text(render_review_markdown(sidecar_payload), encoding="utf-8")
+        print(f"[OK] Uloženo: {out_path}")
+        json_path = write_json_sidecar(out_path, sidecar_payload)
         print(f"[OK] JSON: {json_path}")
+        review_path = write_review_markdown(out_path, sidecar_payload)
+        print(f"[OK] Review: {review_path}")
 
 
 

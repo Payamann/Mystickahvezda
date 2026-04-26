@@ -117,7 +117,10 @@ ENGLISH_WORDS = [
 ]
 
 GENDER_PATTERNS = {
-    "split_form": re.compile(r"\b\w+/\w+\b", re.IGNORECASE),
+    "split_form": re.compile(
+        r"\b[a-záčďéěíňóřšťúůýž]{2,24}/[a-záčďéěíňóřšťúůýž]{1,4}\b",
+        re.IGNORECASE,
+    ),
     "jsi_byl_byla": re.compile(r"\bjsi\s+(?:byl|byla|slyšel|slyšela|čekal|čekala|hledal|hledala|toužil|toužila)\b", re.IGNORECASE),
     "past_second_person": re.compile(r"\b\w+(?:l|la)\s+jsi\b|\bjsi\s+\w+(?:l|la)\b", re.IGNORECASE),
     "predicate_gender": re.compile(r"\b(?:jsi|nejsi|cítíš se|připadáš si)\s+(?:\w+\s+){0,2}\w+(?:á|ý|ou|ého|ému|ým|sám|sama)\b", re.IGNORECASE),
@@ -235,3 +238,71 @@ def write_json_sidecar(txt_path: Path, payload: dict[str, Any]) -> Path:
     }
     json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     return json_path
+
+
+def _format_counter_map(data: dict[str, Any] | None) -> str:
+    if not data:
+        return "-"
+    return ", ".join(f"{key}: {value}" for key, value in data.items())
+
+
+def _markdown_code_section(title: str, text: Any) -> str:
+    if text is None:
+        text = "[PŘESKOČENO]"
+    text = str(text).strip()
+    if not text:
+        text = "[PRÁZDNÉ]"
+    return f"## {title}\n\n```text\n{text}\n```\n\n"
+
+
+def render_review_markdown(payload: dict[str, Any]) -> str:
+    """Render a human-readable review document."""
+    outputs = payload.get("outputs", {}) or {}
+    qa = payload.get("qa_report", {}) or {}
+    api = payload.get("api_usage", {}) or {}
+    signs = payload.get("signs") or ([payload.get("sign")] if payload.get("sign") else [])
+    signs_text = ", ".join(signs) if signs else "-"
+
+    lines = [
+        f"# {payload.get('script', 'daily reel')} - {payload.get('date', '-')}",
+        "",
+        f"- **Znamení:** {signs_text}",
+        f"- **Kvalita:** {payload.get('quality', '-')}",
+        f"- **QA:** {qa.get('status', '-')}",
+        f"- **API calls:** {api.get('total_calls', 0)}",
+        f"- **API účely:** {_format_counter_map(api.get('by_purpose'))}",
+        f"- **Modely:** {_format_counter_map(api.get('by_model'))}",
+        "",
+        "## QA",
+        "",
+        f"- Voiceover words: {qa.get('voiceover_word_count', '-')}",
+        f"- Hook words: {qa.get('hook_word_count', '-')}",
+        f"- Hook: {qa.get('hook', '-')}",
+        "",
+    ]
+    issues = qa.get("issues") or []
+    if issues:
+        lines.append("### Issues")
+        lines.append("")
+        lines.extend(f"- {issue}" for issue in issues)
+        lines.append("")
+    else:
+        lines.append("Bez nalezených deterministických problémů.")
+        lines.append("")
+
+    body = "\n".join(lines)
+    body += "\n"
+    body += _markdown_code_section("Voiceover", outputs.get("voiceover"))
+    body += _markdown_code_section("TikTok / Instagram Description", outputs.get("tiktok_description"))
+    body += _markdown_code_section("Facebook Reels Description", outputs.get("facebook_description"))
+    body += _markdown_code_section("Suno Prompt", outputs.get("suno"))
+    body += _markdown_code_section("Thumbnail Prompt", outputs.get("thumbnail"))
+    return body
+
+
+def write_review_markdown(txt_path: Path, payload: dict[str, Any]) -> Path:
+    """Write a human-readable review file next to the txt/json outputs."""
+    review_path = txt_path.with_name(f"{txt_path.stem}.review.md")
+    body = render_review_markdown(payload)
+    review_path.write_text(body, encoding="utf-8")
+    return review_path
