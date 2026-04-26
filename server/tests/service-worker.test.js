@@ -7,6 +7,18 @@ import path from 'path';
 import { createHash } from 'crypto';
 
 const ROOT_DIR = path.resolve(process.cwd());
+const BINARY_ASSET_EXTENSIONS = new Set([
+    '.avif',
+    '.gif',
+    '.ico',
+    '.jpeg',
+    '.jpg',
+    '.png',
+    '.svgz',
+    '.webp',
+    '.woff',
+    '.woff2'
+]);
 
 function readStaticAssets() {
     const swSource = fs.readFileSync(path.join(ROOT_DIR, 'service-worker.js'), 'utf8');
@@ -37,11 +49,20 @@ function buildExpectedCacheName(assets) {
         const filePath = path.join(ROOT_DIR, asset.replace(/^\//, ''));
         hash.update(asset);
         hash.update('\0');
-        hash.update(fs.readFileSync(filePath));
+        hash.update(normalizeAssetContent(asset, fs.readFileSync(filePath)));
         hash.update('\0');
     }
 
     return `mysticka-hvezda-${hash.digest('hex').slice(0, 12)}`;
+}
+
+function normalizeAssetContent(asset, content) {
+    const extension = path.extname(asset).toLowerCase();
+    if (BINARY_ASSET_EXTENSIONS.has(extension)) {
+        return content;
+    }
+
+    return Buffer.from(content.toString('utf8').replace(/\r\n?/g, '\n'));
 }
 
 describe('Service worker cache manifest', () => {

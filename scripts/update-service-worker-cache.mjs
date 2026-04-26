@@ -7,6 +7,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const serviceWorkerPath = path.join(rootDir, 'service-worker.js');
+const BINARY_ASSET_EXTENSIONS = new Set([
+    '.avif',
+    '.gif',
+    '.ico',
+    '.jpeg',
+    '.jpg',
+    '.png',
+    '.svgz',
+    '.webp',
+    '.woff',
+    '.woff2'
+]);
 
 function extractStaticAssets(source) {
     const match = source.match(/const STATIC_ASSETS = \[([\s\S]*?)\];/);
@@ -27,11 +39,20 @@ async function buildCacheName(assets) {
         const content = await readFile(assetPath);
         hash.update(asset);
         hash.update('\0');
-        hash.update(content);
+        hash.update(normalizeAssetContent(asset, content));
         hash.update('\0');
     }
 
     return `mysticka-hvezda-${hash.digest('hex').slice(0, 12)}`;
+}
+
+function normalizeAssetContent(asset, content) {
+    const extension = path.extname(asset).toLowerCase();
+    if (BINARY_ASSET_EXTENSIONS.has(extension)) {
+        return content;
+    }
+
+    return Buffer.from(content.toString('utf8').replace(/\r\n?/g, '\n'));
 }
 
 const source = await readFile(serviceWorkerPath, 'utf8');
