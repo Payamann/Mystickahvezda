@@ -128,6 +128,7 @@ async function runPublicChecks() {
 
     await runIndexChecks();
     await runPublicPageChecks();
+    await runAstroCalculationChecks();
 }
 
 async function runIndexChecks() {
@@ -155,6 +156,40 @@ async function runPublicPageChecks() {
         if (!response.ok || !contentType.includes('text/html') || !text.includes('<html')) {
             throw new Error(`Public page check failed for ${path}.`);
         }
+    }
+}
+
+async function runAstroCalculationChecks() {
+    const coordinatePath = '/api/natal-chart/calculate?birthDate=1990-01-01&birthTime=12:00&birthPlace=Praha%20-%20souradnice&latitude=50.0755&longitude=14.4378&timeZone=Europe%2FPrague&country=CZ&name=Smoke';
+    const { response: coordinateRes, body: coordinateBody } = await measure('Natal coordinates', () => fetchJson(coordinatePath));
+    const coordinateChart = coordinateBody.chart;
+    if (
+        !coordinateRes.ok ||
+        coordinateBody.success !== true ||
+        coordinateChart?.engine?.precision !== 'birth_time_location_timezone' ||
+        coordinateChart?.location?.source !== 'coordinates' ||
+        coordinateChart?.location?.timeZoneSource !== 'input' ||
+        coordinateChart?.houses?.available !== true
+    ) {
+        throw new Error('Natal coordinate calculation did not preserve exact coordinate/time-zone precision.');
+    }
+
+    const aliasBoundaryPath = `/api/natal-chart/calculate?birthDate=1990-01-01&birthTime=12:00&birthPlace=Nepraha&name=Smoke&_=${Date.now()}`;
+    const { response: aliasRes, body: aliasBody } = await measure('Natal alias boundary', () => fetchJson(aliasBoundaryPath, {
+        headers: {
+            'Cache-Control': 'no-cache',
+            Pragma: 'no-cache'
+        }
+    }));
+    const aliasChart = aliasBody.chart;
+    if (
+        !aliasRes.ok ||
+        aliasBody.success !== true ||
+        aliasChart?.location !== null ||
+        aliasChart?.engine?.precision !== 'birth_time_utc' ||
+        aliasChart?.houses?.available !== false
+    ) {
+        throw new Error('Natal location alias boundary check failed; unknown place resolved as a supported city.');
     }
 }
 
