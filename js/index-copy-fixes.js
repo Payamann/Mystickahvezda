@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroButton = document.getElementById('hero-cta-btn');
     if (heroButton) {
         heroButton.textContent = 'Vytvořit účet zdarma →';
-        heroButton.setAttribute('href', 'prihlaseni.html?mode=register');
+        heroButton.setAttribute('href', 'prihlaseni.html?mode=register&source=homepage_hero&feature=daily_guidance');
     }
 
     const heroTrust = document.getElementById('hero-cta-trust');
@@ -135,6 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pricingText) {
             pricingText.textContent = 'Většina lidí začíná plánem Hvězdný Průvodce, protože odemyká hlavní výklady a každodenní vedení bez zbytečně vysoké ceny.';
         }
+    }
+
+    const ctaBannerButton = document.getElementById('cta-banner-btn');
+    if (ctaBannerButton) {
+        ctaBannerButton.textContent = 'Porovnat Premium plány →';
+        ctaBannerButton.setAttribute('href', 'cenik.html?plan=pruvodce&source=homepage_bottom_cta&feature=premium_membership');
     }
 
     const footerDesc = document.querySelector('.footer__desc');

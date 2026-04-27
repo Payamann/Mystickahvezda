@@ -51,6 +51,15 @@ test.describe('Homepage', () => {
         await expect(hero).toBeVisible();
     });
 
+    test('hero registrace zachovává zdroj a aktivační feature', async ({ page }) => {
+        const heroCta = page.locator('#hero-cta-btn');
+        await expect(heroCta).toBeVisible();
+        const href = await heroCta.getAttribute('href');
+        expect(href).toContain('mode=register');
+        expect(href).toContain('source=homepage_hero');
+        expect(href).toContain('feature=daily_guidance');
+    });
+
     test('h1 tag existuje a obsahuje text', async ({ page }) => {
         const h1 = page.locator('h1').first();
         await expect(h1).toBeVisible();
@@ -106,6 +115,13 @@ test.describe('Homepage', () => {
     test('stránka obsahuje odkaz na tarot', async ({ page }) => {
         const link = page.locator('a[href*="tarot"]').first();
         await expect(link).toBeAttached();
+    });
+
+    test('spodní Premium CTA vede na doporučený plán s tracking kontextem', async ({ page }) => {
+        const href = await page.locator('#cta-banner-btn').getAttribute('href');
+        expect(href).toContain('plan=pruvodce');
+        expect(href).toContain('source=homepage_bottom_cta');
+        expect(href).toContain('feature=premium_membership');
     });
 
     test('skip-link pro přístupnost existuje', async ({ page }) => {

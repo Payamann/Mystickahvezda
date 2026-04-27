@@ -343,6 +343,11 @@
                     title: 'Vítejte v Mystické Hvězdě',
                     message: 'Začněte osobním horoskopem a získejte rychlý první vhled.'
                 },
+                daily_guidance: {
+                    path: '/horoskopy.html',
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Začněte dnešním osobním horoskopem. Je to nejrychlejší cesta k první hodnotě.'
+                },
                 weekly_horoscope: {
                     path: '/horoskopy.html',
                     title: 'Vítejte v Mystické Hvězdě',
@@ -386,6 +391,11 @@
             };
 
             const sourceMap = {
+                homepage_hero: {
+                    path: '/horoskopy.html',
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Začněte dnešním horoskopem a uvidíte první osobní hodnotu hned.'
+                },
                 newsletter_form: {
                     path: '/horoskopy.html',
                     title: 'Registrace je hotová',

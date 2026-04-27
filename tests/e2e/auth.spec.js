@@ -188,6 +188,23 @@ test.describe('Login stránka', () => {
         expect(activationFlag).toBeNull();
     });
 
+    test('registrace z homepage hero CTA presmeruje na prvni denni hodnotu', async ({ page }) => {
+        await mockSuccessfulRegister(page, 'homepage-hero@example.com');
+
+        await page.goto('/prihlaseni.html?mode=register&source=homepage_hero&feature=daily_guidance');
+        await waitForPageReady(page);
+
+        await Promise.all([
+            page.waitForURL(/horoskopy\.html/, { timeout: 7000 }),
+            submitRegisterForm(page, 'homepage-hero@example.com'),
+        ]);
+        await waitForPageReady(page);
+
+        expect(new URL(page.url()).pathname).toBe('/horoskopy.html');
+        const activationFlag = await page.evaluate(() => sessionStorage.getItem('post_auth_activation'));
+        expect(activationFlag).toBeNull();
+    });
+
     test('registrace bez aktivacniho kontextu presmeruje do onboardingu', async ({ page }) => {
         await mockSuccessfulRegister(page, 'onboarding@example.com');
 
