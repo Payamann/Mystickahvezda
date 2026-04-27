@@ -1,7 +1,7 @@
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,12 +13,14 @@ async function checkFiles() {
 
     if (!fs.existsSync(jsonPath)) {
         console.error('JSON file not found!');
+        process.exitCode = 1;
         return;
     }
 
     const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
     const cards = Object.keys(data); // keys are card names
     let missingCount = 0;
+    let noImageCount = 0;
     let successCount = 0;
 
     for (const cardName of cards) {
@@ -34,6 +36,7 @@ async function checkFiles() {
             }
         } else {
             console.warn(`NO IMAGE DEFINED: [${cardName}]`);
+            noImageCount++;
         }
     }
 
@@ -41,6 +44,14 @@ async function checkFiles() {
     console.log(`Total Cards: ${cards.length}`);
     console.log(`Found: ${successCount}`);
     console.log(`Missing: ${missingCount}`);
+
+    if (noImageCount > 0) {
+        console.log(`Without image field: ${noImageCount}`);
+    }
+
+    if (missingCount > 0 || noImageCount > 0) {
+        process.exitCode = 1;
+    }
 }
 
 checkFiles();

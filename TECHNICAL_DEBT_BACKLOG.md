@@ -121,6 +121,7 @@ Aktualizace: 2026-04-27
    - Stav navic: audit kontroluje i `og:image`/`twitter:image` meta targety a opravil rozbity rocni-horoskop OG obrazek na existujici asset.
    - Stav navic: audit hlida i duplicity canonical URL mezi indexovatelnymi strankami; samostatny hub `/horoskop/` ma vlastni canonical a sitemap entry misto kanonizace na `/horoskopy.html`.
    - Stav navic: `npm run sitemap:generate` vytvari review sitemap z indexovatelnych canonical HTML stranek, zachovava existujici `lastmod`/`changefreq`/`priority` metadata a `sitemap.xml` prepise jen pri explicitnim `-- --write`; `npm run sitemap:check` porovna aktualni sitemapu se canonical zdrojem pravdy.
+   - Stav navic: `npm run audit:tarot-assets` overuje, ze vsechny obrazky z `data/tarot-cards.json` existuji; `test:verify` ho spousti a chybejici `tarot_sestka_mecu.webp` byl doplnen.
    - Stav navic: security test pro contact form uz miri na skutecnou `/api/contact` route misto tolerantniho 404 fallbacku a server prestal logovat cele kontaktni emaily a zpravy.
    - Stav navic: verejny `js/kontakt.js` uz neposila formular na zastaraly `/api/contact/contact`, ale na skutecny `/api/contact` s CSRF tokenem; staticky test hlida zdrojovy i buildovany JS proti navratu stareho aliasu.
    - Stav navic: kontaktni formular ma opravene `label for` vazby na skutecna `id` poli a staticky test hlida vsechny produktove HTML labely proti neexistujicim targetum.

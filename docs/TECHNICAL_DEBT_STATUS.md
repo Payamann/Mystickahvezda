@@ -125,6 +125,7 @@ Hotovo:
 - Kořen repozitáře je o další krok čistší: stale quick-start je v archivu a orphan server lockfile už nezkresluje dependency audit.
 - README už popisuje aktuální CSP a migrační stav: žádný neexistující `npm run migrate:up` ani neexistující `server/db/migrations/` odkaz.
 - Staré ruční Gemini probe/image test skripty jsou mimo aktivní `server/scripts/` a leží v archivu stale skriptů.
+- Tarot má doplněný chybějící asset `tarot_sestka_mecu.webp`, opravený překlep v textu Šestky mečů a nový `audit:tarot-assets` v `test:verify`.
 
 Zbývá:
 

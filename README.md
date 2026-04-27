@@ -108,6 +108,9 @@ npm run test:verify
 # Check robots.txt, sitemap/canonical coverage, JSON-LD, manifest icons and local links
 npm run audit:site
 
+# Check tarot card JSON image references
+npm run audit:tarot-assets
+
 # Check or preview sitemap entries derived from canonical HTML pages
 npm run sitemap:check
 npm run sitemap:generate
