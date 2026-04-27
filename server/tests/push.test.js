@@ -18,6 +18,14 @@ describe('Push notification API', () => {
         }, process.env.JWT_SECRET, { expiresIn: '1h' });
     }
 
+    function createUserToken() {
+        return jwt.sign({
+            id: 'push-user-test',
+            email: 'user@example.com',
+            role: 'user'
+        }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    }
+
     test('POST /api/push/subscribe rejects missing CSRF', async () => {
         const res = await request(app)
             .post('/api/push/subscribe')
@@ -121,12 +129,24 @@ describe('Push notification API', () => {
         }
     });
 
+    test('POST /api/push/send-test rejects non-admin users', async () => {
+        const csrfToken = await getCsrfToken();
+        const res = await request(app)
+            .post('/api/push/send-test')
+            .set('x-csrf-token', csrfToken)
+            .set('Authorization', `Bearer ${createUserToken()}`)
+            .send({ body: 'Test push' })
+            .expect(403);
+
+        expect(res.body.error).toContain('Přístup odepřen');
+    });
+
     test('POST /api/push/send-test loads web-push before VAPID validation', async () => {
         const originalAdminEmails = process.env.ADMIN_EMAILS;
         const originalPublicKey = process.env.VAPID_PUBLIC_KEY;
         const originalPrivateKey = process.env.VAPID_PRIVATE_KEY;
 
-        process.env.ADMIN_EMAILS = 'admin@example.com';
+        delete process.env.ADMIN_EMAILS;
         delete process.env.VAPID_PUBLIC_KEY;
         delete process.env.VAPID_PRIVATE_KEY;
 

@@ -4,7 +4,7 @@
  */
 import express from 'express';
 import { supabase } from '../db-supabase.js';
-import { authenticateToken } from '../middleware.js';
+import { authenticateToken, requireAdmin } from '../middleware.js';
 import { JWT_SECRET } from '../config/jwt.js';
 import rateLimit from 'express-rate-limit';
 import jwt from 'jsonwebtoken';
@@ -78,12 +78,7 @@ router.post('/unsubscribe', pushLimiter, async (req, res) => {
 });
 
 // POST /send-test — send test notification to all subscribers (admin only)
-router.post('/send-test', authenticateToken, async (req, res) => {
-    const adminEmails = (process.env.ADMIN_EMAILS || '').split(',');
-    if (!adminEmails.includes(req.user?.email)) {
-        return res.status(403).json({ success: false, error: 'Pouze pro administrátory.' });
-    }
-
+router.post('/send-test', authenticateToken, requireAdmin, async (req, res) => {
     const { title = '🌙 Mystická Hvězda', body, url = '/' } = req.body;
 
     try {

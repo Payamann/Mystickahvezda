@@ -121,6 +121,7 @@ Hotovo:
 - Produkční smoke test kontroluje i veřejný `/api/config` kontrakt včetně feature flagu pro push notifikace, VAPID klíče a Sentry DSN typu.
 - Veřejný `/api/config` vrací `features.pushNotifications` a `vapidPublicKey` jen při kompletním VAPID nastavení; live produkce je teď ověřená jako bezpečně vypnutá místo napůl zapnuté.
 - `web-push` je skutečná runtime dependency a regresní test hlídá, že testovací push route neskončí na chybě chybějícího balíčku.
+- Testovací odeslání push notifikací používá sdílený `requireAdmin` middleware a regresní test hlídá odmítnutí běžného uživatele.
 - Kořen repozitáře je o další krok čistší: stale quick-start je v archivu a orphan server lockfile už nezkresluje dependency audit.
 - README už popisuje aktuální CSP a migrační stav: žádný neexistující `npm run migrate:up` ani neexistující `server/db/migrations/` odkaz.
 - Staré ruční Gemini probe/image test skripty jsou mimo aktivní `server/scripts/` a leží v archivu stale skriptů.
