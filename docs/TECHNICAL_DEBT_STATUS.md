@@ -112,6 +112,7 @@ Hotovo:
 - Prompt pro astrokartografii nově obsahuje přesnost zdrojové mapy, rozpoznané místo narození a stupeň hlavní planety u doporučených destinací.
 - Prompt pro synastrii nově obsahuje celkovou i person-level přesnost a rozpoznané místo obou osob, aby AI neinterpretovala ascendent/domovou vrstvu bez podkladu.
 - Prompt pro natální kartu nově explicitně obsahuje rozpoznané místo narození vedle přesnosti výpočtu.
+- Astro endpointy už propouštějí přesné `latitude`/`longitude`/`timeZone`/`country` vstupy do natálního, tranzitního, synastrického a astrokartografického výpočtu; API klienti tak nejsou omezeni jen lokálním seznamem podporovaných měst.
 
 Zbývá:
 

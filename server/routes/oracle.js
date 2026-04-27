@@ -28,6 +28,25 @@ function isValidIsoDate(value) {
     return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
+function optionalString(value, maxLength) {
+    if (value == null) return undefined;
+    return String(value).substring(0, maxLength);
+}
+
+function buildBirthCalculationInput(source = {}, overrides = {}) {
+    const profile = source && typeof source === 'object' ? source : {};
+    return {
+        name: overrides.name ?? optionalString(profile.name, 100),
+        birthDate: overrides.birthDate ?? optionalString(profile.birthDate, 30),
+        birthTime: optionalString(profile.birthTime, 20),
+        birthPlace: optionalString(profile.birthPlace, 200),
+        latitude: profile.latitude,
+        longitude: profile.longitude,
+        timeZone: optionalString(profile.timeZone, 100),
+        country: optionalString(profile.country, 30)
+    };
+}
+
 // Rate limiter for AI-powered oracle endpoints
 const oracleLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
@@ -319,13 +338,14 @@ router.post('/tarot-summary', oracleLimiter, authenticateToken, async (req, res)
 
 router.get('/natal-chart/calculate', (req, res) => {
     try {
-        const { birthDate, birthTime, birthPlace, name } = req.query;
+        const { birthDate } = req.query;
 
         if (!birthDate || typeof birthDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(birthDate) || !isValidIsoDate(birthDate)) {
             return res.status(400).json({ success: false, error: 'Datum narození je povinné.' });
         }
 
-        const chart = calculateNatalChart({ birthDate, birthTime, birthPlace, name });
+        const chartInput = buildBirthCalculationInput(req.query);
+        const chart = calculateNatalChart(chartInput);
         return res.json({ success: true, chart });
     } catch (error) {
         console.error('Natal Chart Calculation Error:', error.message);
@@ -335,13 +355,14 @@ router.get('/natal-chart/calculate', (req, res) => {
 
 router.get('/transits/current', (req, res) => {
     try {
-        const { birthDate, birthTime, birthPlace, name } = req.query;
+        const { birthDate } = req.query;
 
         if (!birthDate || typeof birthDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(birthDate) || !isValidIsoDate(birthDate)) {
             return res.status(400).json({ success: false, error: 'Datum narození je povinné.' });
         }
 
-        const transit = calculateTransitSnapshot({ birthDate, birthTime, birthPlace, name });
+        const chartInput = buildBirthCalculationInput(req.query);
+        const transit = calculateTransitSnapshot(chartInput);
         return res.json({ success: true, transit });
     } catch (error) {
         console.error('Transit Calculation Error:', error.message);
@@ -372,7 +393,8 @@ router.post('/natal-chart', oracleLimiter, optionalPremiumCheck, async (req, res
             return res.status(400).json({ success: false, error: 'Datum narození je povinné.' });
         }
 
-        const chart = calculateNatalChart({ birthDate, birthTime, birthPlace, name });
+        const chartInput = buildBirthCalculationInput(req.body);
+        const chart = calculateNatalChart(chartInput);
 
         if (!req.isPremium) {
             trackPaywallHit(req.user?.id, 'natal-chart').catch(() => {});
@@ -436,18 +458,8 @@ router.post('/synastry/calculate', (req, res) => {
         }
 
         const synastry = calculateSynastryChart(
-            {
-                name: safeName1,
-                birthDate: safeDate1,
-                birthTime: person1?.birthTime,
-                birthPlace: person1?.birthPlace
-            },
-            {
-                name: safeName2,
-                birthDate: safeDate2,
-                birthTime: person2?.birthTime,
-                birthPlace: person2?.birthPlace
-            }
+            buildBirthCalculationInput(person1, { name: safeName1, birthDate: safeDate1 }),
+            buildBirthCalculationInput(person2, { name: safeName2, birthDate: safeDate2 })
         );
 
         return res.json({ success: true, synastry });
@@ -486,18 +498,8 @@ router.post('/synastry', oracleLimiter, authenticateToken, requirePremiumSoft, a
         }
 
         const synastry = calculateSynastryChart(
-            {
-                name: safeName1,
-                birthDate: safeDate1,
-                birthTime: person1?.birthTime,
-                birthPlace: person1?.birthPlace
-            },
-            {
-                name: safeName2,
-                birthDate: safeDate2,
-                birthTime: person2?.birthTime,
-                birthPlace: person2?.birthPlace
-            }
+            buildBirthCalculationInput(person1, { name: safeName1, birthDate: safeDate1 }),
+            buildBirthCalculationInput(person2, { name: safeName2, birthDate: safeDate2 })
         );
 
         if (!req.isPremium) {
@@ -576,9 +578,10 @@ router.post('/astrocartography', oracleLimiter, authenticateToken, requireFeatur
             return res.status(400).json({ success: false, error: 'Datum narození je povinné.' });
         }
 
-        const chart = calculateNatalChart({ birthDate, birthTime, birthPlace, name });
+        const chartInput = buildBirthCalculationInput(req.body);
+        const chart = calculateNatalChart(chartInput);
         const astrocartography = calculateAstrocartographyInsights(
-            { birthDate, birthTime, birthPlace, name },
+            chartInput,
             intention,
             chart
         );

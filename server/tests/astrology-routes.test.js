@@ -39,6 +39,33 @@ describe('Astro calculation routes', () => {
         expect(res.body.chart.summary.ascendantSign).toBeTruthy();
     });
 
+    test('GET /api/natal-chart/calculate accepts exact coordinates and time zone', async () => {
+        const res = await request(app)
+            .get('/api/natal-chart/calculate')
+            .query({
+                birthDate: '1990-01-01',
+                birthTime: '12:00',
+                birthPlace: 'Praha - souradnice',
+                latitude: '50.0755',
+                longitude: '14.4378',
+                timeZone: 'Europe/Prague',
+                country: 'CZ',
+                name: 'Test'
+            })
+            .expect(200);
+
+        expect(res.body.success).toBe(true);
+        expect(res.body.chart.engine.precision).toBe('birth_time_location_timezone');
+        expect(res.body.chart.location).toEqual(expect.objectContaining({
+            name: 'Praha - souradnice',
+            country: 'CZ',
+            source: 'coordinates',
+            timeZone: 'Europe/Prague'
+        }));
+        expect(res.body.chart.houses.available).toBe(true);
+        expect(res.body.chart.summary.ascendantSign).toBeTruthy();
+    });
+
     test('GET /api/natal-chart/calculate rejects invalid dates', async () => {
         const res = await request(app)
             .get('/api/natal-chart/calculate')
@@ -124,6 +151,41 @@ describe('Astro calculation routes', () => {
         expect(res.body.synastry.engine.precision).toBe('birth_time_location_timezone');
         expect(res.body.synastry.person1.chart.summary.ascendantSign).toBeTruthy();
         expect(res.body.synastry.person2.chart.summary.ascendantSign).toBeTruthy();
+    });
+
+    test('POST /api/synastry/calculate preserves exact coordinate birth profiles', async () => {
+        const csrfToken = await getCsrfToken();
+        const res = await request(app)
+            .post('/api/synastry/calculate')
+            .set('x-csrf-token', csrfToken)
+            .send({
+                person1: {
+                    name: 'A',
+                    birthDate: '1990-01-01',
+                    birthTime: '12:00',
+                    birthPlace: 'Praha - souradnice',
+                    latitude: 50.0755,
+                    longitude: 14.4378,
+                    timeZone: 'Europe/Prague',
+                    country: 'CZ'
+                },
+                person2: {
+                    name: 'B',
+                    birthDate: '1992-07-15',
+                    birthTime: '08:30',
+                    birthPlace: 'Brno'
+                }
+            })
+            .expect(200);
+
+        expect(res.body.success).toBe(true);
+        expect(res.body.synastry.engine.person1Precision).toBe('birth_time_location_timezone');
+        expect(res.body.synastry.person1.chart.location).toEqual(expect.objectContaining({
+            source: 'coordinates',
+            timeZone: 'Europe/Prague'
+        }));
+        expect(res.body.synastry.person1.chart.houses.available).toBe(true);
+        expect(res.body.synastry.person2.chart.location.name).toBe('Brno');
     });
 
     test('POST /api/synastry returns premium fallback when AI fails', async () => {
