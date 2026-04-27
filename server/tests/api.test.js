@@ -25,6 +25,33 @@ function createUserToken(overrides = {}) {
     }, process.env.JWT_SECRET, { expiresIn: '1h' });
 }
 
+async function withTemporaryEnv(overrides, callback) {
+    const previous = new Map();
+    Object.keys(overrides).forEach((key) => {
+        previous.set(key, {
+            exists: Object.prototype.hasOwnProperty.call(process.env, key),
+            value: process.env[key]
+        });
+        if (overrides[key] === undefined) {
+            delete process.env[key];
+        } else {
+            process.env[key] = overrides[key];
+        }
+    });
+
+    try {
+        return await callback();
+    } finally {
+        previous.forEach((entry, key) => {
+            if (entry.exists) {
+                process.env[key] = entry.value;
+            } else {
+                delete process.env[key];
+            }
+        });
+    }
+}
+
 describe('API Endpoint Tests', () => {
     describe('Health Check', () => {
         test('GET /api/health returns health structure', async () => {
@@ -41,6 +68,46 @@ describe('API Endpoint Tests', () => {
 
             expect(res.body.checks).toHaveProperty('db');
             expect(res.body.checks).toHaveProperty('ai');
+        });
+
+        test('Health check recognizes Supabase and Anthropic production config', async () => {
+            await withTemporaryEnv({
+                MOCK_SUPABASE: undefined,
+                MOCK_AI: undefined,
+                DATABASE_URL: undefined,
+                GEMINI_API_KEY: undefined,
+                SUPABASE_URL: 'https://project.supabase.co',
+                SUPABASE_SERVICE_ROLE_KEY: 'service-role-key',
+                ANTHROPIC_API_KEY: 'anthropic-key'
+            }, async () => {
+                const res = await request(app).get('/api/health');
+
+                expect(res.body.status).toBe('ok');
+                expect(res.body.checks).toEqual({
+                    db: 'ok',
+                    ai: 'ok'
+                });
+            });
+        });
+
+        test('Health check reports degraded when required runtime dependencies are missing', async () => {
+            await withTemporaryEnv({
+                MOCK_SUPABASE: undefined,
+                MOCK_AI: undefined,
+                DATABASE_URL: undefined,
+                GEMINI_API_KEY: undefined,
+                SUPABASE_URL: undefined,
+                SUPABASE_SERVICE_ROLE_KEY: undefined,
+                ANTHROPIC_API_KEY: undefined
+            }, async () => {
+                const res = await request(app).get('/api/health');
+
+                expect(res.body.status).toBe('degraded');
+                expect(res.body.checks).toEqual({
+                    db: 'unavailable',
+                    ai: 'unavailable'
+                });
+            });
         });
 
         test('Health check status is ok or degraded', async () => {

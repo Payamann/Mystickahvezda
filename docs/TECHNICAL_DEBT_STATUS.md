@@ -33,6 +33,10 @@ Dokud tato etapa není hotová, je správné držet současnou transparentní fo
 
 Hotovo:
 
+- Health check už nehlásí zastaralé `DATABASE_URL`/`GEMINI_API_KEY`, ale aktuální Supabase a Anthropic/legacy AI konfiguraci; regresní test hlídá i degradovaný stav.
+- Produkční smoke skript `npm run verify:production` míří defaultně na canonical doménu, ověřuje public manifesty, podporuje CSRF/cookie auth flow a AI volání spouští jen přes `VERIFY_RUN_AI=true`.
+- Produkční dependency audit je čistý: `npm audit --omit=dev` vrací 0 zranitelností. Plný `npm audit` je také čistý po odstranění nepoužívaného `fontmin`, upgrade `esbuild`, upgrade `express`/`express-rate-limit` a override `svix`.
+- `package.json` má explicitní Node runtime `>=20 <25`, aby Railway/Nixpacks nespadly na nepodporovanou verzi.
 - Serverový `astro-engine-v1` počítá low-precision geocentrické pozice Slunce, Měsíce, Merkuru, Venuše, Marsu, Jupiteru, Saturnu, Uranu, Neptunu a Pluta.
 - Natální karta vrací strukturovaný `chart`: planety, znamení, stupně, retrograditu, aspekty, dominantní element/modalitu a souhrn.
 - Veřejný endpoint `GET /api/natal-chart/calculate` vrací výpočet bez AI interpretace, takže klient už nemusí spoléhat na demo seed.

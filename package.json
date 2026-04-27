@@ -4,6 +4,13 @@
   "description": "Mystická Hvězda — astrology web application",
   "main": "server/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=20 <25",
+    "npm": ">=10"
+  },
+  "overrides": {
+    "svix": "1.92.2"
+  },
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
@@ -29,6 +36,7 @@
     "audit:site": "node scripts/audit-site-structure.mjs",
     "sitemap:generate": "node scripts/generate-sitemap-from-canonicals.mjs",
     "sitemap:check": "node scripts/generate-sitemap-from-canonicals.mjs --check",
+    "verify:production": "node server/scripts/verify-production.js",
     "test:verify": "npm run lint && npm run check:encoding && npm run check:hooks && npm run test:unit:server && npm run test:unit:frontend && npm run audit:site && npm run sitemap:check",
     "test:all": "npm run test:verify && npm run test:e2e:sections && npm run test:e2e:sections:mobile",
     "build:css": "cleancss -o css/style.v2.min.css css/style.v2.css && node scripts/update-service-worker-cache.mjs",
@@ -57,9 +65,8 @@
     "@playwright/test": "^1.58.2",
     "clean-css-cli": "^5.6.3",
     "cross-env": "^10.1.0",
-    "esbuild": "^0.20.2",
+    "esbuild": "^0.28.0",
     "eslint": "^8.57.0",
-    "fontmin": "^1.1.1",
     "jest": "^30.2.0",
     "supertest": "^7.2.2",
     "terser": "^5.46.1"

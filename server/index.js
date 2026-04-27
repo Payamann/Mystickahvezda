@@ -342,18 +342,32 @@ app.put('/api/*', csrfProtection);
 app.patch('/api/*', csrfProtection);
 app.delete('/api/*', csrfProtection);
 
-// Health Check Endpoint (Moved UP to bypass Rate Limiting)
-app.get('/api/health', (req, res) => {
-    const dbOk = !!process.env.DATABASE_URL;
-    const aiOk = !!process.env.GEMINI_API_KEY;
-    res.json({
-        status: 'ok',
+function hasEnvValue(name) {
+    return typeof process.env[name] === 'string' && process.env[name].trim().length > 0;
+}
+
+function getRuntimeHealth() {
+    const dbOk = process.env.MOCK_SUPABASE === 'true' ||
+        (hasEnvValue('SUPABASE_URL') && hasEnvValue('SUPABASE_SERVICE_ROLE_KEY')) ||
+        hasEnvValue('DATABASE_URL');
+    const aiOk = process.env.MOCK_AI === 'true' ||
+        hasEnvValue('ANTHROPIC_API_KEY') ||
+        hasEnvValue('GEMINI_API_KEY');
+    const status = dbOk && aiOk ? 'ok' : 'degraded';
+
+    return {
+        status,
         timestamp: new Date().toISOString(),
         checks: {
             db: dbOk ? 'ok' : 'unavailable',
             ai: aiOk ? 'ok' : 'unavailable'
         }
-    });
+    };
+}
+
+// Health Check Endpoint (Moved UP to bypass Rate Limiting)
+app.get('/api/health', (req, res) => {
+    res.json(getRuntimeHealth());
 });
 
 // ============================================
