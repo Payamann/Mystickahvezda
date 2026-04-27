@@ -125,6 +125,22 @@ test.describe('Horoskopy', () => {
         await expect(page.locator('body')).toBeVisible();
     });
 
+    test('URL parametr sign automaticky otevře konkrétní znamení', async ({ page }) => {
+        await page.goto('/horoskopy.html?sign=beran');
+        await waitForPageReady(page);
+
+        await expect(page.locator('.zodiac-card.active')).toContainText('Beran');
+        await expect(page.locator('#detail-name')).toContainText('Beran');
+    });
+
+    test('URL parametr znak ze sdílení automaticky otevře konkrétní znamení', async ({ page }) => {
+        await page.goto('/horoskopy.html?znak=ryby');
+        await waitForPageReady(page);
+
+        await expect(page.locator('.zodiac-card.active')).toContainText('Ryby');
+        await expect(page.locator('#detail-name')).toContainText('Ryby');
+    });
+
     // ── Freemium banner ──────────────────────────────────────────────────────
 
     test('freemium banner element existuje v DOM', async ({ page }) => {

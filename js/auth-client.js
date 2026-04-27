@@ -20,6 +20,12 @@
         button.append(' ', badge);
     }
 
+    function hasStandaloneAuthHref(button) {
+        const href = button?.getAttribute('href') || '';
+        const blockedScriptScheme = ['java', 'script:'].join('');
+        return href && href !== '#' && !href.startsWith('#') && !href.toLowerCase().startsWith(blockedScriptScheme);
+    }
+
     const Auth = {
         // Token is stored in HttpOnly cookie (secure, XSS-proof)
         // JS cannot read it - that's the point. We track login state via user data.
@@ -338,15 +344,50 @@
                     title: 'Vítejte v Mystické Hvězdě',
                     message: 'Vyzkoušejte hned první tarotový výklad. Je to nejrychlejší cesta k první hodnotě.'
                 },
+                tarot_multi_card: {
+                    path: '/tarot.html',
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Navážete rovnou vícekartovým tarotem a prvním hlubším vhledem.'
+                },
                 horoskopy: {
                     path: '/horoskopy.html',
                     title: 'Vítejte v Mystické Hvězdě',
                     message: 'Začněte osobním horoskopem a získejte rychlý první vhled.'
                 },
+                astrocartography: {
+                    path: '/astro-mapa.html',
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Začněte astro mapou a podívejte se, která místa s vámi rezonují.'
+                },
+                premium_membership: {
+                    path: '/cenik.html',
+                    title: 'Registrace je hotová',
+                    message: 'Můžete pokračovat k porovnání plánů a vybrat úroveň vedení, která dává smysl.'
+                },
+                subscription_management: {
+                    path: '/profil.html',
+                    title: 'Registrace je hotová',
+                    message: 'Správu předplatného najdete v profilu. Odtud můžete pokračovat k dalšímu kroku kolem plánu.'
+                },
+                vip_membership: {
+                    path: '/cenik.html',
+                    title: 'Registrace je hotová',
+                    message: 'Můžete pokračovat k VIP členství a nejvyšší úrovni osobního vedení.'
+                },
                 daily_guidance: {
                     path: '/horoskopy.html',
                     title: 'Vítejte v Mystické Hvězdě',
                     message: 'Začněte dnešním osobním horoskopem. Je to nejrychlejší cesta k první hodnotě.'
+                },
+                daily_angel_card: {
+                    path: '/andelske-karty.html',
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Vracíme vás k andělské kartě dne, aby první vhled navázal na to, kvůli čemu jste přišli.'
+                },
+                andelske_karty_hluboky_vhled: {
+                    path: '/andelske-karty.html',
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Pokračujte v andělských kartách a otevřete hlubší vhled bez ztráty kontextu.'
                 },
                 weekly_horoscope: {
                     path: '/horoskopy.html',
@@ -490,7 +531,7 @@
                     return activation.path;
                 }
 
-                if (safeRedirect === '/profil.html' && !localStorage.getItem('mh_onboarded')) {
+                if (safeRedirect === '/profil.html') {
                     return '/onboarding.html';
                 }
             }
@@ -611,15 +652,23 @@
                 setHidden(mobileProfileLink, false);
             } else {
                 // Desktop
+                if (regBtn) {
+                    regBtn.href = '/prihlaseni.html?mode=register&source=header_register&feature=account';
+                }
                 if (authBtn) {
                     authBtn.textContent = 'Přihlásit';
+                    authBtn.href = '/prihlaseni.html?source=header_login';
                 }
                 setHidden(regBtn, false);
                 setHidden(profileLink, true);
 
                 // Mobile
+                if (mobileRegBtn) {
+                    mobileRegBtn.href = '/prihlaseni.html?mode=register&source=mobile_menu&feature=account';
+                }
                 if (mobileAuthBtn) {
                     mobileAuthBtn.textContent = 'Přihlásit se';
+                    mobileAuthBtn.href = '/prihlaseni.html?source=mobile_menu_login';
                 }
                 setHidden(mobileRegBtn, false);
                 setHidden(mobileProfileLink, true);
@@ -642,6 +691,9 @@
                 // Register Button (Header or Mobile)
                 const registerBtn = e.target.closest('#auth-register-btn, #mobile-auth-register-btn');
                 if (registerBtn) {
+                    if (hasStandaloneAuthHref(registerBtn)) {
+                        return;
+                    }
                     e.preventDefault();
                     this.openModal('register');
                     return;
@@ -662,6 +714,9 @@
                 // Login/Logout Button (Header or Mobile)
                 const authBtn = e.target.closest('#auth-btn, #mobile-auth-btn');
                 if (authBtn) {
+                    if (!this.isLoggedIn() && hasStandaloneAuthHref(authBtn)) {
+                        return;
+                    }
                     e.preventDefault();
                     if (this.isLoggedIn()) {
                         this.logout();

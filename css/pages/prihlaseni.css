@@ -1,6 +1,6 @@
 /* Extracted from prihlaseni.html inline <style> block. */
 .login-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6rem 1.25rem 3rem; }
-        .login-card { width: 100%; max-width: 440px; background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.2); border-radius: 20px; padding: 2.5rem 2rem; backdrop-filter: blur(12px); box-shadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06); }
+        .login-card { width: 100%; max-width: 480px; background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.2); border-radius: 16px; padding: 2.5rem 2rem; backdrop-filter: blur(12px); box-shadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06); }
         .login-header { text-align: center; margin-bottom: 2rem; }
         .login-icon { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
         .login-card__title { font-size: 2rem; margin-bottom: 0.5rem; }
@@ -10,10 +10,168 @@
         .login-card .form-input:focus { border-color: rgba(212,175,55,0.6); background: rgba(255,255,255,0.09); }
         .login-card .form-input::placeholder { color: rgba(255,255,255,0.3); }
         .login-card .btn--primary { width: 100%; margin-top: 0.5rem; padding: 0.85rem; font-size: 0.95rem; letter-spacing: 0.05em; }
-        .login-card .btn--text { background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.9rem; padding: 0.25rem 0; }
-        #auth-mode-toggle { display: block; width: 100%; margin-top: 1.5rem; text-align: center; background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25); border-radius: 50px; padding: 0.7rem 1.5rem; color: var(--color-mystic-gold); font-size: 0.9rem; cursor: pointer; transition: background 0.2s; }
-        #auth-mode-toggle:hover { background: rgba(212,175,55,0.15); }
+         .login-card .btn--text { background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.9rem; padding: 0.25rem 0; }
+         #auth-mode-toggle { display: block; width: 100%; margin-top: 1.5rem; text-align: center; background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25); border-radius: 50px; padding: 0.7rem 1.5rem; color: var(--color-mystic-gold); font-size: 0.9rem; cursor: pointer; transition: background 0.2s; }
+         #auth-mode-toggle:hover { background: rgba(212,175,55,0.15); }
+        @media (min-width: 1000px) {
+            body.auth-register-mode .login-section { align-items: flex-start; padding-top: 6.2rem; }
+            body.auth-register-mode .login-card {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(360px, 414px);
+                gap: 0 2rem;
+                max-width: 940px;
+                padding: 2rem;
+            }
+            body.auth-register-mode .login-header {
+                grid-column: 1;
+                margin-bottom: 0;
+                text-align: left;
+            }
+            body.auth-register-mode .login-icon,
+            body.auth-register-mode .login-card__title,
+            body.auth-register-mode .login-card .hero__subtitle,
+            body.auth-register-mode #login-social-proof {
+                text-align: left;
+            }
+            body.auth-register-mode .login-card__title {
+                font-size: 2rem;
+                line-height: 1.12;
+            }
+            body.auth-register-mode #login-form {
+                grid-column: 2;
+                grid-row: 1;
+                align-self: center;
+            }
+            body.auth-register-mode .mh-inline-68221bb3c6 {
+                grid-column: 2;
+                grid-row: 2;
+                margin-top: 1rem;
+            }
+        }
+        @media (max-width: 999px) {
+            body.auth-register-mode .login-card {
+                display: flex;
+                flex-direction: column;
+                padding-top: 1.45rem;
+            }
+            body.auth-register-mode .login-header {
+                display: contents;
+            }
+            body.auth-register-mode .login-icon {
+                order: 1;
+                text-align: center;
+                display: none;
+            }
+            body.auth-register-mode .login-card__title {
+                order: 2;
+                text-align: center;
+                font-size: 1.68rem;
+                line-height: 1.12;
+            }
+            body.auth-register-mode .login-card .hero__subtitle {
+                order: 3;
+                text-align: center;
+            }
+            body.auth-register-mode #login-form {
+                order: 4;
+                margin-top: 1.25rem;
+            }
+            body.auth-register-mode .login-card .form-group {
+                margin-bottom: 0.9rem;
+            }
+            body.auth-register-mode #login-social-proof {
+                order: 5;
+                margin-top: 1rem;
+                text-align: center;
+            }
+            body.auth-register-mode #checkout-context-banner {
+                order: 6;
+            }
+            body.auth-register-mode .signup-value-panel {
+                order: 7;
+            }
+            body.auth-register-mode .mh-inline-68221bb3c6 {
+                order: 8;
+            }
+        }
         @media (max-width: 480px) { .login-card { padding: 2rem 1.25rem; } }
+
+.signup-value-panel {
+    margin-top: 1.15rem;
+    padding: 1rem 0 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: left;
+}
+
+.signup-value-panel__kicker {
+    margin-bottom: 0.75rem;
+    color: var(--color-mystic-gold);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.signup-value-panel__steps {
+    display: grid;
+    gap: 0.72rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.signup-value-panel__step {
+    display: grid;
+    grid-template-columns: 1.65rem minmax(0, 1fr);
+    gap: 0.65rem;
+    align-items: start;
+}
+
+.signup-value-panel__number {
+    display: inline-flex;
+    width: 1.45rem;
+    height: 1.45rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(212,175,55,0.42);
+    border-radius: 50%;
+    color: var(--color-mystic-gold);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.signup-value-panel__step strong {
+    display: block;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+.signup-value-panel__step small {
+    display: block;
+    margin-top: 0.18rem;
+    color: rgba(255,255,255,0.62);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.login-form-help,
+.signup-safety-note {
+    margin: 0.38rem 0 0;
+    color: rgba(255,255,255,0.55);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.signup-safety-note {
+    text-align: center;
+}
 
 /* Migrated from prihlaseni.html static style attributes. */
 html body .mh-inline-86e975967b { font-size: 1rem; }

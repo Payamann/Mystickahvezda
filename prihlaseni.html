@@ -32,6 +32,32 @@
                         <strong id="checkout-context-title" class="mh-inline-1d765838a2"></strong>
                         <p id="checkout-context-copy" class="mh-inline-8b9d667a40"></p>
                     </div>
+                    <div id="signup-value-panel" class="signup-value-panel" hidden>
+                        <div class="signup-value-panel__kicker">Co se stane po registraci</div>
+                        <ol class="signup-value-panel__steps" aria-label="Co dostanete hned po registraci">
+                            <li class="signup-value-panel__step">
+                                <span class="signup-value-panel__number">1</span>
+                                <span>
+                                    <strong>Vytvoříte účet zdarma</strong>
+                                    <small>Stačí e-mail a heslo. Bez platební karty.</small>
+                                </span>
+                            </li>
+                            <li class="signup-value-panel__step">
+                                <span class="signup-value-panel__number">2</span>
+                                <span>
+                                    <strong id="signup-next-step-title">Otevřeme první osobní vhled</strong>
+                                    <small id="signup-next-step-copy">Pošleme vás rovnou na místo, kde získáte první hodnotu.</small>
+                                </span>
+                            </li>
+                            <li class="signup-value-panel__step">
+                                <span class="signup-value-panel__number">3</span>
+                                <span>
+                                    <strong>Profil doplníte později</strong>
+                                    <small>Datum narození vyžádáme až tam, kde je potřeba pro osobní výklad.</small>
+                                </span>
+                            </li>
+                        </ol>
+                    </div>
                 </div>
 
                 <form id="login-form">
@@ -42,7 +68,8 @@
 
                     <div class="form-group">
                         <label for="password" class="form-label">Heslo</label>
-                        <input type="password" id="password" name="password" class="form-input" placeholder="********" required autocomplete="current-password">
+                        <input type="password" id="password" name="password" class="form-input" placeholder="********" required autocomplete="current-password" aria-describedby="password-help">
+                        <p id="password-help" class="login-form-help" hidden>Minimálně 8 znaků. Heslo nikomu neposíláme e-mailem.</p>
                     </div>
 
                     <div class="form-group mh-inline-59ce1fef8d" id="confirm-password-field-wrapper">
@@ -58,6 +85,7 @@
                     </div>
 
                     <button type="submit" id="auth-submit" class="btn btn--primary btn--glow mh-inline-c0b8a97c16">Přihlásit se</button>
+                    <p id="signup-safety-note" class="signup-safety-note" hidden>Registrace je zdarma a bez platební karty. Výklady slouží jako osobní inspirace a nenahrazují odbornou péči.</p>
                 </form>
 
                 <div class="mh-inline-712077614e">

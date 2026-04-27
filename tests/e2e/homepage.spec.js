@@ -61,7 +61,7 @@ test.describe('Homepage', () => {
     });
 
     test('header a pricing CTA maji funkcni fallback odkazy bez JavaScriptu', async ({ page }) => {
-        await expect(page.locator('#auth-register-btn')).toHaveAttribute('href', /prihlaseni\.html\?mode=register/);
+        await expect(page.locator('#auth-register-btn')).toHaveAttribute('href', /source=header_register/);
         await expect(page.locator('#auth-btn')).toHaveAttribute('href', /prihlaseni\.html\?source=header_login/);
         await expect(page.locator('#mobile-auth-register-btn')).toHaveAttribute('href', /source=mobile_menu/);
         await expect(page.locator('#mobile-auth-btn')).toHaveAttribute('href', /source=mobile_menu_login/);
@@ -69,6 +69,41 @@ test.describe('Homepage', () => {
         await expect(page.locator('[data-plan="poutnik"]')).toHaveAttribute('href', /homepage_pricing_free_cta/);
         await expect(page.locator('[data-plan="pruvodce"]')).toHaveAttribute('href', /plan=pruvodce/);
         await expect(page.locator('[data-plan="osviceni"]')).toHaveAttribute('href', /feature=astrocartography/);
+    });
+
+    test('header registrace neotevira stary modal a vede na dedikovanou registraci', async ({ page, isMobile }) => {
+        test.skip(isMobile, 'Desktop header CTA is hidden on mobile; mobile menu registration is covered separately.');
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/prihlaseni.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            page.locator('#auth-register-btn').click(),
+        ]);
+
+        const url = new URL(page.url());
+        expect(url.pathname).toBe('/prihlaseni.html');
+        expect(url.searchParams.get('mode')).toBe('register');
+        expect(url.searchParams.get('source')).toBe('header_register');
+        await expect(page.locator('#login-page-title')).toContainText('účet zdarma');
+    });
+
+    test('mobilni registrace z menu vede na dedikovanou registraci', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.goto('/');
+        await waitForPageReady(page);
+
+        await page.locator('.nav__toggle').click();
+        await expect(page.locator('.nav__toggle')).toHaveAttribute('aria-expanded', 'true');
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/prihlaseni.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            page.locator('#mobile-auth-register-btn').click(),
+        ]);
+
+        const url = new URL(page.url());
+        expect(url.searchParams.get('mode')).toBe('register');
+        expect(url.searchParams.get('source')).toBe('mobile_menu');
+        expect(url.searchParams.get('feature')).toBe('account');
+        await expect(page.locator('#checkout-context-title')).toContainText('Účet zdarma');
     });
 
     test('homepage vstupy na kartu dne vedou na andelskou kartu na strance, ne na tarot', async ({ page }) => {

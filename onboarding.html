@@ -65,11 +65,11 @@
 
                 <h1 class="step-title">Vítejte v Mystické Hvězdě</h1>
 
-                <p class="step-subtitle">Za chvíli připravíme váš denní přehled.<br>Jen 2 rychlé otázky.</p>
+                <p class="step-subtitle">Vyberte znamení a téma. Pak vás vezmeme rovnou na první osobní výklad.</p>
 
-                <button class="btn btn--primary btn-full" data-action="goStep" data-step="2">Začít nastavení →</button>
+                <button class="btn btn--primary btn-full" data-action="goStep" data-step="2">Vybrat znamení →</button>
 
-                <p class="mh-inline-7aedee2011"><a href="index.html" class="mh-inline-1b85280107">přeskočit</a></p>
+                <p class="mh-inline-7aedee2011"><a href="horoskopy.html?source=onboarding_skip" data-action="skipOnboarding" class="mh-inline-1b85280107">přeskočit a otevřít denní horoskop</a></p>
 
 
             </div>
@@ -90,43 +90,43 @@
 
                 <div class="zodiac-grid" id="zodiac-grid">
 
-                    <button class="zodiac-btn" data-sign="beran" data-action="selectSign"><span>♈</span>Beran</button>
+                    <button class="zodiac-btn" data-sign="beran" data-action="selectSign" aria-pressed="false"><span>♈</span>Beran</button>
 
-                    <button class="zodiac-btn" data-sign="byk" data-action="selectSign"><span>♉</span>Byk</button>
+                    <button class="zodiac-btn" data-sign="byk" data-action="selectSign" aria-pressed="false"><span>♉</span>Byk</button>
 
-                    <button class="zodiac-btn" data-sign="blizenci"
+                    <button class="zodiac-btn" data-sign="blizenci" aria-pressed="false"
 
                         data-action="selectSign"><span>♊</span>Blíženci</button>
 
-                    <button class="zodiac-btn" data-sign="rak" data-action="selectSign"><span>♋</span>Rak</button>
+                    <button class="zodiac-btn" data-sign="rak" data-action="selectSign" aria-pressed="false"><span>♋</span>Rak</button>
 
-                    <button class="zodiac-btn" data-sign="lev" data-action="selectSign"><span>♌</span>Lev</button>
+                    <button class="zodiac-btn" data-sign="lev" data-action="selectSign" aria-pressed="false"><span>♌</span>Lev</button>
 
-                    <button class="zodiac-btn" data-sign="panna" data-action="selectSign"><span>♍</span>Panna</button>
+                    <button class="zodiac-btn" data-sign="panna" data-action="selectSign" aria-pressed="false"><span>♍</span>Panna</button>
 
-                    <button class="zodiac-btn" data-sign="vahy" data-action="selectSign"><span>♎</span>Váhy</button>
+                    <button class="zodiac-btn" data-sign="vahy" data-action="selectSign" aria-pressed="false"><span>♎</span>Váhy</button>
 
-                    <button class="zodiac-btn" data-sign="stir" data-action="selectSign"><span>♏</span>Štír</button>
+                    <button class="zodiac-btn" data-sign="stir" data-action="selectSign" aria-pressed="false"><span>♏</span>Štír</button>
 
-                    <button class="zodiac-btn" data-sign="strelec"
+                    <button class="zodiac-btn" data-sign="strelec" aria-pressed="false"
 
                         data-action="selectSign"><span>♐</span>Střelec</button>
 
-                    <button class="zodiac-btn" data-sign="kozoroh"
+                    <button class="zodiac-btn" data-sign="kozoroh" aria-pressed="false"
 
                         data-action="selectSign"><span>♑</span>Kozoroh</button>
 
-                    <button class="zodiac-btn" data-sign="vodnar"
+                    <button class="zodiac-btn" data-sign="vodnar" aria-pressed="false"
 
                         data-action="selectSign"><span>♒</span>Vodnář</button>
 
-                    <button class="zodiac-btn" data-sign="ryby" data-action="selectSign"><span>♓</span>Ryby</button>
+                    <button class="zodiac-btn" data-sign="ryby" data-action="selectSign" aria-pressed="false"><span>♓</span>Ryby</button>
 
                 </div>
 
                 <button class="btn btn--primary btn-full mh-inline-8fa84d4622" id="btn-step2" data-action="goStep" data-step="3" disabled
 
-                   >Pokračovat →</button>
+                   >Pokračovat k výkladu →</button>
 
             </div>
 
@@ -142,38 +142,38 @@
 
                 <h2 class="step-title">Co vás zajímá?</h2>
 
-                <p class="step-subtitle">Tyto volby použijeme pro první doporučené kroky ve vašem profilu.</p>
+                <p class="step-subtitle">Vyberte klidně jen jedno téma. Dokončení otevře první výklad, ne prázdný profil.</p>
 
                 <div class="interest-grid">
 
-                    <button class="interest-chip" data-action="toggleInterest">🌌 Horoskopy</button>
+                    <button class="interest-chip" data-action="toggleInterest" data-interest="horoskopy" aria-pressed="false">🌌 Horoskopy</button>
 
-                    <button class="interest-chip" data-action="toggleInterest">🃏 Tarot</button>
+                    <button class="interest-chip" data-action="toggleInterest" data-interest="tarot" aria-pressed="false">🃏 Tarot</button>
 
-                    <button class="interest-chip" data-action="toggleInterest">🔢 Numerologie</button>
+                    <button class="interest-chip" data-action="toggleInterest" data-interest="numerologie" aria-pressed="false">🔢 Numerologie</button>
 
-                    <button class="interest-chip" data-action="toggleInterest">❤️ Vztahy</button>
+                    <button class="interest-chip" data-action="toggleInterest" data-interest="vztahy" aria-pressed="false">❤️ Vztahy</button>
 
-                    <button class="interest-chip" data-action="toggleInterest">⭐ Natální karta</button>
+                    <button class="interest-chip" data-action="toggleInterest" data-interest="natalni-karta" aria-pressed="false">⭐ Natální karta</button>
 
-                    <button class="interest-chip" data-action="toggleInterest">🌙 Sny</button>
+                    <button class="interest-chip" data-action="toggleInterest" data-interest="sny" aria-pressed="false">🌙 Sny</button>
 
-                    <button class="interest-chip" data-action="toggleInterest">💫 Spiritualita</button>
+                    <button class="interest-chip" data-action="toggleInterest" data-interest="spiritualita" aria-pressed="false">💫 Spiritualita</button>
 
-                    <button class="interest-chip" data-action="toggleInterest">🔮 Věštění</button>
+                    <button class="interest-chip" data-action="toggleInterest" data-interest="vesteni" aria-pressed="false">🔮 Věštění</button>
 
-                    <button class="interest-chip" data-action="toggleInterest">💼 Kariéra</button>
+                    <button class="interest-chip" data-action="toggleInterest" data-interest="kariera" aria-pressed="false">💼 Kariéra</button>
 
-                    <button class="interest-chip" data-action="toggleInterest">🌍 Astrokartografie</button>
+                    <button class="interest-chip" data-action="toggleInterest" data-interest="astrokartografie" aria-pressed="false">🌍 Astrokartografie</button>
 
                 </div>
 
-                <button class="btn btn--primary btn-full" data-action="finishOnboarding">Hotovo, vstoupit do aplikace
+                <button class="btn btn--primary btn-full" id="finish-onboarding-btn" data-action="finishOnboarding">Zobrazit denní horoskop
 
                     ✨</button>
 
-                <p class="mh-inline-9611bb8a90">
-                    Denní přehled najdete hned po dokončení v profilu.
+                <p class="mh-inline-9611bb8a90" id="finish-onboarding-copy">
+                    Po dokončení otevřeme denní horoskop podle vybraného znamení.
                 </p>
 
             </div>

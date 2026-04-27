@@ -33,7 +33,7 @@ body {
 
             border: 1px solid rgba(255, 255, 255, 0.08);
 
-            border-radius: 24px;
+            border-radius: 16px;
 
             padding: 3rem 2.5rem;
 
@@ -371,3 +371,36 @@ html body #btn-step2.onboarding-next-enabled { opacity:1;cursor:pointer; }
 /* Migrated from onboarding.html remaining static style attributes. */
 html body .mh-inline-7aedee2011 { text-align:center;margin-top:1.5rem;font-size:0.78rem; }
 html body .mh-inline-9611bb8a90 { text-align:center;margin-top:1rem;font-size:0.82rem;color:rgba(212,175,55,0.6); }
+
+html body .mh-inline-1b85280107 {
+    color: rgba(255,255,255,0.58);
+    font-family: 'Inter', sans-serif;
+}
+
+html body .mh-inline-1b85280107:hover,
+html body .mh-inline-1b85280107:focus {
+    color: var(--color-mystic-gold);
+}
+
+@media (max-width: 560px) {
+    .onboarding {
+        padding: 1rem;
+    }
+
+    .onboarding__card {
+        padding: 2rem 1.2rem;
+    }
+
+    .zodiac-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .interest-grid {
+        gap: 0.5rem;
+    }
+
+    .interest-chip {
+        max-width: 100%;
+        white-space: normal;
+    }
+}

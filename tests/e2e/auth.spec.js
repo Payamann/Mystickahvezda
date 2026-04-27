@@ -138,6 +138,79 @@ test.describe('Login stránka', () => {
         ]);
     });
 
+    test('registrace z homepage hero vysvetli prvni hodnotu pred odeslanim', async ({ page }) => {
+        await page.goto('/prihlaseni.html?mode=register&source=homepage_hero&feature=daily_guidance');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#login-page-title')).toContainText('účet zdarma');
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect(page.locator('#checkout-context-title')).toContainText('Denní vedení');
+        await expect(page.locator('#signup-value-panel')).toBeVisible();
+        await expect(page.locator('#signup-next-step-title')).toContainText('denní horoskopy');
+        await expect(page.locator('#signup-value-panel')).toContainText('Bez platební karty');
+        await expect(page.locator('#password-help')).toBeVisible();
+        await expect(page.locator('#signup-safety-note')).toContainText('bez platební karty');
+
+        await expectLocatorsWithinViewport(page, [
+            page.locator('#checkout-context-banner').first(),
+            page.locator('#signup-value-panel').first(),
+            page.locator('#password-help').first(),
+            page.locator('#signup-safety-note').first(),
+            page.locator('#auth-submit').first(),
+        ]);
+    });
+
+    test('registrace z headeru pouziva lidsky account kontext', async ({ page }) => {
+        await page.goto('/prihlaseni.html?mode=register&source=header_register&feature=account');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect(page.locator('#checkout-context-label')).toContainText('Účet zdarma');
+        await expect(page.locator('#checkout-context-title')).toContainText('Účet zdarma');
+        await expect(page.locator('#checkout-context-banner')).not.toContainText('account');
+        await expect(page.locator('#signup-next-step-title')).toContainText('první osobní krok');
+    });
+
+    test('registracni CTA je na desktopu viditelne nad foldem', async ({ page }) => {
+        await page.setViewportSize({ width: 1365, height: 900 });
+        await page.goto('/prihlaseni.html?mode=register&source=header_register&feature=account');
+        await waitForPageReady(page);
+
+        const submitBox = await page.locator('#auth-submit').boundingBox();
+        expect(submitBox).toBeTruthy();
+        expect(submitBox.y + submitBox.height).toBeLessThanOrEqual(900);
+    });
+
+    test('registracni CTA je na mobilu viditelne pred hodnotovym panelem', async ({ page }) => {
+        await page.setViewportSize({ width: 393, height: 851 });
+        await page.goto('/prihlaseni.html?mode=register&source=homepage_hero&feature=daily_guidance');
+        await waitForPageReady(page);
+
+        const submitBox = await page.locator('#auth-submit').boundingBox();
+        const valuePanelBox = await page.locator('#signup-value-panel').boundingBox();
+        expect(submitBox).toBeTruthy();
+        expect(valuePanelBox).toBeTruthy();
+        expect(submitBox.y + submitBox.height).toBeLessThanOrEqual(851);
+        expect(valuePanelBox.y).toBeGreaterThan(submitBox.y);
+        await expectNoHorizontalOverflow(page);
+    });
+
+    test('registracni rezim nastavi heslo jako nove heslo a zobrazi pravidla', async ({ page }) => {
+        await page.goto('/prihlaseni.html?mode=register');
+        await waitForPageReady(page);
+
+        const passwordInput = page.locator('#password').first();
+        await expect(passwordInput).toHaveAttribute('autocomplete', 'new-password');
+        await expect(passwordInput).toHaveAttribute('minlength', '8');
+        await expect(page.locator('#password-help')).toBeVisible();
+
+        await page.locator('#auth-mode-toggle').click();
+
+        await expect(passwordInput).toHaveAttribute('autocomplete', 'current-password');
+        await expect(passwordInput).not.toHaveAttribute('minlength', '8');
+        await expect(page.locator('#password-help')).toBeHidden();
+    });
+
     test('pending checkout banner nepreteka mimo viewport', async ({ page }) => {
         await page.goto('/prihlaseni.html?mode=register&redirect=/cenik.html&plan=pruvodce&source=inline_paywall&feature=numerologie_vyklad');
         await waitForPageReady(page);
@@ -154,6 +227,15 @@ test.describe('Login stránka', () => {
         ]);
     });
 
+    test('checkout banner neukazuje interni feature identifikatory', async ({ page }) => {
+        await page.goto('/prihlaseni.html?mode=register&redirect=/cenik.html&plan=pruvodce&source=tarot_freemium_banner&feature=tarot_multi_card');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect(page.locator('#checkout-context-copy')).toContainText('Vícekartový tarot');
+        await expect(page.locator('#checkout-context-banner')).not.toContainText('tarot_multi_card');
+    });
+
     test('registrace s feature kontextem presmeruje na aktivacni stranku', async ({ page }) => {
         await mockSuccessfulRegister(page);
 
@@ -167,6 +249,25 @@ test.describe('Login stránka', () => {
         await waitForPageReady(page);
 
         expect(new URL(page.url()).pathname).toBe('/tarot.html');
+        const activationFlag = await page.evaluate(() => sessionStorage.getItem('post_auth_activation'));
+        expect(activationFlag).toBeNull();
+    });
+
+    test('registrace z andelske karty se vraci k andelskym kartam', async ({ page }) => {
+        await mockSuccessfulRegister(page, 'angel-card@example.com');
+
+        await page.goto('/prihlaseni.html?mode=register&feature=daily_angel_card');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#checkout-context-title')).toContainText('Andělská karta');
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/andelske-karty.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            submitRegisterForm(page, 'angel-card@example.com'),
+        ]);
+        await waitForPageReady(page);
+
+        expect(new URL(page.url()).pathname).toBe('/andelske-karty.html');
         const activationFlag = await page.evaluate(() => sessionStorage.getItem('post_auth_activation'));
         expect(activationFlag).toBeNull();
     });
@@ -227,6 +328,7 @@ test.describe('Login stránka', () => {
 
         await page.goto('/prihlaseni.html?mode=register&redirect=/profil.html');
         await waitForPageReady(page);
+        await page.evaluate(() => localStorage.setItem('mh_onboarded', '1'));
 
         await Promise.all([
             page.waitForURL(url => url.pathname === '/onboarding.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),

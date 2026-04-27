@@ -371,10 +371,13 @@ function initHoroscope() {
 
     const autoSelectSign = () => {
         const hash = window.location.hash.substring(1);
-        if (hash) {
+        const params = new URLSearchParams(window.location.search);
+        const requestedSign = hash || params.get('sign') || params.get('znak');
+
+        if (requestedSign) {
             const card = Array.from(zodiacCards).find((item) => {
                 const href = item.getAttribute('href');
-                return href && href.substring(1) === hash;
+                return href && href.substring(1) === requestedSign;
             });
             if (card) {
                 selectZodiac(card, false);

@@ -100,6 +100,12 @@ test.describe('Ceník — platební tlačítka', () => {
         expect(url).not.toContain('registrace.html');
         // Musí jít na prihlaseni.html
         expect(url).toContain('prihlaseni.html');
+
+        const parsedUrl = new URL(url);
+        expect(parsedUrl.searchParams.get('mode')).toBe('register');
+        expect(parsedUrl.searchParams.get('redirect')).toBe('/cenik.html');
+        expect(parsedUrl.searchParams.get('plan')).toBe('pruvodce');
+        expect(parsedUrl.searchParams.get('source')).toBe('pricing_page');
     });
 
     test('/registrace.html vrátí 404 (stránka neexistuje — nesmíme tam přesměrovávat)', async ({ page }) => {

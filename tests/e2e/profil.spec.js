@@ -105,6 +105,16 @@ test.describe('Onboarding', () => {
         await waitForPageReady(page);
     });
 
+    async function mockOnboardingComplete(page) {
+        await page.route('**/api/auth/onboarding/complete', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+    }
+
     test('stránka vrátí 200', async ({ page }) => {
         const res = await page.request.get('/onboarding.html');
         expect(res.status()).toBe(200);
@@ -130,6 +140,74 @@ test.describe('Onboarding', () => {
             document.documentElement.scrollWidth > document.documentElement.clientWidth
         );
         expect(overflow).toBe(false);
+    });
+
+    test('preskoceni onboardingu vede rovnou na denni horoskop', async ({ page }) => {
+        await mockOnboardingComplete(page);
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/horoskopy.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            page.locator('[data-action="skipOnboarding"]').click(),
+        ]);
+
+        const url = new URL(page.url());
+        expect(url.pathname).toBe('/horoskopy.html');
+        expect(url.searchParams.get('source')).toBe('onboarding_skip');
+        const onboarded = await page.evaluate(() => localStorage.getItem('mh_onboarded'));
+        expect(onboarded).toBe('1');
+    });
+
+    test('dokonceni se znamenim otevre konkretni denni horoskop a ulozi personalizaci', async ({ page }) => {
+        await mockOnboardingComplete(page);
+
+        await page.locator('#step-1 [data-action="goStep"][data-step="2"]').click();
+        await page.locator('.zodiac-btn[data-sign="beran"]').click();
+        await expect(page.locator('.zodiac-btn[data-sign="beran"]')).toHaveAttribute('aria-pressed', 'true');
+        await page.locator('#btn-step2').click();
+
+        await expect(page.locator('#finish-onboarding-btn')).toContainText('Berana');
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/horoskopy.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            page.locator('#finish-onboarding-btn').click(),
+        ]);
+
+        const url = new URL(page.url());
+        expect(url.pathname).toBe('/horoskopy.html');
+        expect(url.searchParams.get('source')).toBe('onboarding_complete');
+        expect(url.searchParams.get('sign')).toBe('beran');
+        expect(url.hash).toBe('#beran');
+
+        const stored = await page.evaluate(() => ({
+            onboarded: localStorage.getItem('mh_onboarded'),
+            zodiac: localStorage.getItem('mh_zodiac'),
+            prefs: JSON.parse(localStorage.getItem('mh_user_prefs') || '{}')
+        }));
+
+        expect(stored.onboarded).toBe('1');
+        expect(stored.zodiac).toBe('beran');
+        expect(stored.prefs.sign).toBe('beran');
+    });
+
+    test('vybrane tema meni prvni cil po onboardingu', async ({ page }) => {
+        await mockOnboardingComplete(page);
+
+        await page.locator('#step-1 [data-action="goStep"][data-step="2"]').click();
+        await page.locator('.zodiac-btn[data-sign="beran"]').click();
+        await page.locator('#btn-step2').click();
+        await page.locator('.interest-chip[data-interest="tarot"]').click();
+
+        await expect(page.locator('.interest-chip[data-interest="tarot"]')).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.locator('#finish-onboarding-btn')).toContainText('tarotový výklad');
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/tarot.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            page.locator('#finish-onboarding-btn').click(),
+        ]);
+
+        const url = new URL(page.url());
+        expect(url.pathname).toBe('/tarot.html');
+        expect(url.searchParams.get('source')).toBe('onboarding_complete');
     });
 });
 
