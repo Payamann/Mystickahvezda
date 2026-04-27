@@ -49,6 +49,24 @@ const CONVERSION_LINK_CHECKS = [
             'source=how_it_works_cta',
             'feature=daily_guidance'
         ]
+    },
+    {
+        path: '/kristalova-koule.html',
+        name: 'Crystal ball freemium CTA',
+        snippets: [
+            'Dnes zbývá:',
+            'source=crystal_ball_banner_upgrade',
+            'Získat Premium ›'
+        ]
+    },
+    {
+        path: '/runy.html',
+        name: 'Runes freemium CTA',
+        snippets: [
+            'Dnes zbývá:',
+            'source=runes_freemium_banner',
+            'Získat Premium ›'
+        ]
     }
 ];
 
