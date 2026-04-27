@@ -493,6 +493,17 @@ app.get('/jmena/:name', (req, res, next) => {
     res.redirect(301, `/jmena/index.html?jmeno=${encodeURIComponent(capitalized)}`);
 });
 
+const STATIC_PAGE_REDIRECTS = new Map([
+    ['/shamanske-kolo.html', '/shamansko-kolo.html'],
+]);
+
+app.get(Array.from(STATIC_PAGE_REDIRECTS.keys()), (req, res) => {
+    const targetPath = STATIC_PAGE_REDIRECTS.get(req.path);
+    const queryIndex = req.originalUrl.indexOf('?');
+    const queryString = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
+    res.redirect(301, `${targetPath}${queryString}`);
+});
+
 // Serve static files from the parent directory (MystickaHvezda root)
 console.warn(`📂 Serving static files from: ${rootDir}`);
 

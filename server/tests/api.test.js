@@ -53,6 +53,17 @@ async function withTemporaryEnv(overrides, callback) {
 }
 
 describe('API Endpoint Tests', () => {
+    describe('Static page redirects', () => {
+        test('legacy social slug for shaman wheel redirects to canonical page with campaign params', async () => {
+            const res = await request(app)
+                .get('/shamanske-kolo.html?source=social_post')
+                .redirects(0)
+                .expect(301);
+
+            expect(res.headers.location).toBe('/shamansko-kolo.html?source=social_post');
+        });
+    });
+
     describe('Health Check', () => {
         test('GET /api/health returns health structure', async () => {
             const res = await request(app).get('/api/health');
