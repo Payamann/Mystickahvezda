@@ -1,5 +1,7 @@
 // Production smoke verification. Uses native fetch (Node 18+).
 
+import { readFileSync } from 'node:fs';
+
 const isLocal = process.argv.includes('--local');
 const BASE_URL = (process.env.VERIFY_BASE_URL || (isLocal
     ? 'http://localhost:3001'
@@ -22,6 +24,7 @@ const PUBLIC_PAGE_PATHS = (process.env.VERIFY_PUBLIC_PATHS || [
     .filter(Boolean);
 
 const cookieJar = new Map();
+const serviceWorkerPath = new URL('../../service-worker.js', import.meta.url);
 
 function storeCookies(response) {
     const setCookies = response.headers.getSetCookie?.() || [];
@@ -99,6 +102,19 @@ async function fetchText(path, options = {}) {
     return { response, text };
 }
 
+function extractCacheName(source) {
+    return source.match(/const CACHE_NAME = '([^']+)';/)?.[1] || null;
+}
+
+function expectedServiceWorkerCacheName() {
+    const source = readFileSync(serviceWorkerPath, 'utf8');
+    const cacheName = extractCacheName(source);
+    if (!cacheName) {
+        throw new Error('Local service-worker.js does not declare CACHE_NAME.');
+    }
+    return cacheName;
+}
+
 async function getCsrfToken() {
     const { response, body } = await fetchJson('/api/csrf-token');
     if (!response.ok || typeof body.csrfToken !== 'string') {
@@ -126,9 +142,26 @@ async function runPublicChecks() {
         throw new Error('Static birth-location hydrator is not available.');
     }
 
+    await runServiceWorkerCheck();
     await runIndexChecks();
     await runPublicPageChecks();
     await runAstroCalculationChecks();
+}
+
+async function runServiceWorkerCheck() {
+    const expectedCacheName = expectedServiceWorkerCacheName();
+    const { response, text } = await measure('Service worker', () => fetchText(`/service-worker.js?_=${Date.now()}`, {
+        headers: {
+            Accept: 'application/javascript,text/javascript,*/*',
+            'Cache-Control': 'no-cache',
+            Pragma: 'no-cache'
+        }
+    }));
+    const liveCacheName = extractCacheName(text);
+
+    if (!response.ok || liveCacheName !== expectedCacheName) {
+        throw new Error(`Service worker cache version mismatch. Expected ${expectedCacheName}, got ${liveCacheName || 'none'}.`);
+    }
 }
 
 async function runIndexChecks() {
