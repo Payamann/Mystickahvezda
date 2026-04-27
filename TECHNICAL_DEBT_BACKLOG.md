@@ -125,4 +125,5 @@ Aktualizace: 2026-04-27
    - Stav navic: staticka HTML hygiene kontrola hlida i duplicitni `id` atributy v produktovych HTML souborech, aby se nerozbijely labely, anchor odkazy a selektory.
    - Stav navic: `npm run verify:production` po deployi kontroluje i live sitemap, robots.txt a hlavni HTML vstupy na produkcni domene, nejen API health a jeden staticky asset.
    - Stav navic: `npm run verify:production` nove kontroluje i zakladni astro vypocetni cesty a vraci konkretni HTTP status pri selhani, takze produkcni regresi lze rychleji dohledat.
+   - Stav navic: produkcni smoke kontroluje i verejny `/api/config` kontrakt vcetne `features.pushNotifications`, VAPID klice a Sentry DSN typu.
    - Dalsi krok: pozdeji lze doplnit stejnou live HTTP status kontrolu proti stagingu, az bude stabilni staging URL.

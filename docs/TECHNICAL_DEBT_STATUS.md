@@ -118,6 +118,7 @@ Hotovo:
 - Astro endpointy už propouštějí přesné `latitude`/`longitude`/`timeZone`/`country` vstupy do natálního, tranzitního, synastrického a astrokartografického výpočtu; API klienti tak nejsou omezeni jen lokálním seznamem podporovaných měst a výpočet bez validního IANA `timeZone` už se transparentně značí jako UTC přesnost bez ascendentu/domů.
 - Lokální resolver míst narození používá hranice slov místo volného substring matchingu, takže podporuje `Praha 2`, `Praha-Vinohrady` nebo `New York, USA`, ale neoznačí omylem `Nepraha` jako Prahu.
 - Produkční smoke test nově porovnává živý `service-worker.js` proti lokálně očekávané `CACHE_NAME`, takže stará precache verze po deployi selže viditelně.
+- Produkční smoke test kontroluje i veřejný `/api/config` kontrakt včetně feature flagu pro push notifikace, VAPID klíče a Sentry DSN typu.
 - Veřejný `/api/config` vrací `features.pushNotifications` a `vapidPublicKey` jen při kompletním VAPID nastavení; live produkce je teď ověřená jako bezpečně vypnutá místo napůl zapnuté.
 - `web-push` je skutečná runtime dependency a regresní test hlídá, že testovací push route neskončí na chybě chybějícího balíčku.
 - Kořen repozitáře je o další krok čistší: stale quick-start je v archivu a orphan server lockfile už nezkresluje dependency audit.

@@ -132,6 +132,8 @@ async function runPublicChecks() {
         throw new Error(`Health dependencies are not ok: ${JSON.stringify(health.checks)}`);
     }
 
+    await runPublicConfigCheck();
+
     const { response: locationsRes, body: locations } = await measure('Birth locations', () => fetchJson('/api/birth-locations'));
     if (!locationsRes.ok || locations.success !== true || !Array.isArray(locations.locations) || locations.locations.length === 0) {
         throw new Error('Birth location manifest is not available.');
@@ -146,6 +148,28 @@ async function runPublicChecks() {
     await runIndexChecks();
     await runPublicPageChecks();
     await runAstroCalculationChecks();
+}
+
+async function runPublicConfigCheck() {
+    const { response, body } = await measure('Public config', () => fetchJson('/api/config'));
+    const features = body?.features;
+    const pushFlag = features?.pushNotifications;
+
+    if (!response.ok || !features || typeof pushFlag !== 'boolean') {
+        throw new Error(`Public config does not expose feature flags correctly: ${JSON.stringify(body)}`);
+    }
+
+    if (body.vapidPublicKey !== null && typeof body.vapidPublicKey !== 'string') {
+        throw new Error('Public config VAPID key must be null or a string.');
+    }
+
+    if (typeof body.vapidPublicKey === 'string' && !pushFlag) {
+        throw new Error('Public config exposes a VAPID key while pushNotifications is disabled.');
+    }
+
+    if (body.sentryDsn !== null && typeof body.sentryDsn !== 'string') {
+        throw new Error('Public config Sentry DSN must be null or a string.');
+    }
 }
 
 async function runServiceWorkerCheck() {
