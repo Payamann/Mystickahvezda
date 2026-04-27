@@ -164,6 +164,29 @@ test.describe('Homepage', () => {
         }));
     });
 
+    test('pricing preview VIP plan uklada VIP checkout kontext', async ({ page }) => {
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+        });
+        await page.locator('[data-plan="vip-majestrat"]').click();
+
+        await page.waitForURL(url => url.pathname === '/prihlaseni.html', { timeout: 10000, waitUntil: 'domcontentloaded' });
+        const url = new URL(page.url());
+        expect(url.searchParams.get('plan')).toBe('vip-majestrat');
+        expect(url.searchParams.get('source')).toBe('homepage_pricing_preview');
+        expect(url.searchParams.get('feature')).toBe('vip_membership');
+
+        const pendingContext = await page.evaluate(() => JSON.parse(sessionStorage.getItem('pending_checkout_context') || '{}'));
+        expect(pendingContext).toEqual(expect.objectContaining({
+            planId: 'vip-majestrat',
+            source: 'homepage_pricing_preview',
+            feature: 'vip_membership',
+            redirect: '/cenik.html',
+            authMode: 'register'
+        }));
+    });
+
     test('skip-link pro přístupnost existuje', async ({ page }) => {
         const skipLink = page.locator('.skip-link, a[href="#main-content"]').first();
         await expect(skipLink).toBeAttached();

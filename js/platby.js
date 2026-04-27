@@ -22,12 +22,18 @@ export function initPaymentButtons() {
 
             handlePaymentClick(planId, btn, {
                 source: 'homepage_pricing_preview',
-                feature: planId === 'osviceni' ? 'astrocartography' : 'premium_membership',
+                feature: getHomepagePricingFeature(planId),
                 redirect: '/cenik.html',
                 authMode: 'register'
             });
         });
     });
+}
+
+function getHomepagePricingFeature(planId) {
+    if (planId === 'osviceni') return 'astrocartography';
+    if (planId === 'vip-majestrat') return 'vip_membership';
+    return 'premium_membership';
 }
 
 async function handlePaymentClick(planId, btn, context = {}) {
