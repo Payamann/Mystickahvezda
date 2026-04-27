@@ -21,6 +21,10 @@ active project tooling.
   patch logic, and are not part of active project validation.
 - `bulk-html-mutators/` contains old broad HTML/CSS/SEO/performance/image
   patchers that predate the current build, CSP, and audit workflow.
+- `gemini-one-offs/` contains old manual Gemini probe/image test scripts that
+  were not referenced by package scripts or active documentation. Current server
+  AI runtime uses Anthropic; image generation helpers should be reviewed before
+  being promoted back to active tooling.
 
 They are archived for traceability so they do not appear as runnable current
 tools in `scripts/`.

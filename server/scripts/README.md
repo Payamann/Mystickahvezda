@@ -10,6 +10,9 @@ This folder contains backend maintenance and operational helper scripts.
 - Content generators such as `generate-blog.js`, `generate-dictionary.js`, and
   `generate-zodiac-pages.js` write project files. Review their diffs before
   keeping generated output.
+- AI/image generation experiments that are not wired into current operations
+  should live under `docs/archive/2026-04-stale-scripts/`, not in this active
+  helper directory.
 - Debug/verification scripts such as `db-check.js`, `debug-reading.js`, and
   `verify-production.js` may hit live services depending on your environment.
 - SQL snippets for manual Supabase setup live in `server/scripts/sql/`.
