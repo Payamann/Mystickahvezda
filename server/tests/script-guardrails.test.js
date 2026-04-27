@@ -8,6 +8,19 @@ function readScript(relativePath) {
 }
 
 describe('manual script guardrails', () => {
+    test('dry-run guarded scripts lazy-load live services', () => {
+        const guardedScripts = [
+            'server/scripts/send-newsletter.js',
+            'server/scripts/send-daily-horoscope.js',
+            'server/scripts/prefill-horoscopes.js'
+        ];
+
+        for (const script of guardedScripts) {
+            const source = readScript(script);
+            expect(`${script}\n${source}`).not.toMatch(/^import\s+.*(?:@supabase|resend|services\/claude|services\/astrology|email-service)/m);
+        }
+    });
+
     test('newsletter script requires explicit send flag', () => {
         const source = readScript('server/scripts/send-newsletter.js');
 
