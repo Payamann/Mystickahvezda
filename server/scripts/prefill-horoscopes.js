@@ -12,14 +12,32 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 import { config } from 'dotenv';
 config({ path: path.join(__dirname, '../.env') });
 
-import { createClient } from '@supabase/supabase-js';
-import { callClaude } from '../services/claude.js';
-import { SYSTEM_PROMPTS } from '../config/prompts.js';
+let runtimeDeps;
 
-const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
-);
+async function getRuntimeDeps() {
+    if (runtimeDeps) return runtimeDeps;
+
+    const [
+        { createClient },
+        { callClaude },
+        { SYSTEM_PROMPTS }
+    ] = await Promise.all([
+        import('@supabase/supabase-js'),
+        import('../services/claude.js'),
+        import('../config/prompts.js')
+    ]);
+
+    runtimeDeps = {
+        supabase: createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
+        ),
+        callClaude,
+        SYSTEM_PROMPTS
+    };
+
+    return runtimeDeps;
+}
 
 const SIGNS = ['Beran', 'Býk', 'Blíženci', 'Rak', 'Lev', 'Panna', 'Váhy', 'Štír', 'Střelec', 'Kozoroh', 'Vodnář', 'Ryby'];
 
@@ -46,6 +64,7 @@ if (!SHOULD_WRITE) {
 const genderInstruction = `\nTEXT VŽDY FORMULUJ PŘÍSNĚ GENDEROVĚ NEUTRÁLNĚ (vyhni se minulému času a slovům, která určují pohlaví čtenáře, např. místo "jsi připraven" nebo "udělal jsi" piš "je čas se připravit" nebo "došlo k pokroku"). Text piš i nadále poutavě a plynule.`;
 
 async function generateAndCache(sign) {
+    const { supabase, callClaude, SYSTEM_PROMPTS } = await getRuntimeDeps();
     const signNorm = sign.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const cacheKey = `${signNorm}_daily_${targetDate}_v3-cs-nocontext`;
 

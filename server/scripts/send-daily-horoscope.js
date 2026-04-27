@@ -19,22 +19,54 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 import { config } from 'dotenv';
 config({ path: path.join(__dirname, '../.env') });
 
-import { createClient } from '@supabase/supabase-js';
-import { Resend } from 'resend';
-import { callClaude } from '../services/claude.js';
-import { SYSTEM_PROMPTS } from '../config/prompts.js';
-import { EMAIL_TEMPLATES } from '../email-service.js';
-import { getHoroscopeCacheKey, getCachedHoroscope, saveCachedHoroscope } from '../services/astrology.js';
-
-const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
-);
-const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = process.env.FROM_EMAIL || 'noreply@mystickahvezda.cz';
+let runtimeDeps;
+
+async function getRuntimeDeps() {
+    if (runtimeDeps) return runtimeDeps;
+
+    const [
+        { createClient },
+        { Resend },
+        { callClaude },
+        { SYSTEM_PROMPTS },
+        { EMAIL_TEMPLATES },
+        astrology
+    ] = await Promise.all([
+        import('@supabase/supabase-js'),
+        import('resend'),
+        import('../services/claude.js'),
+        import('../config/prompts.js'),
+        import('../email-service.js'),
+        import('../services/astrology.js')
+    ]);
+
+    runtimeDeps = {
+        supabase: createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
+        ),
+        resend: new Resend(process.env.RESEND_API_KEY),
+        callClaude,
+        SYSTEM_PROMPTS,
+        EMAIL_TEMPLATES,
+        getHoroscopeCacheKey: astrology.getHoroscopeCacheKey,
+        getCachedHoroscope: astrology.getCachedHoroscope,
+        saveCachedHoroscope: astrology.saveCachedHoroscope
+    };
+
+    return runtimeDeps;
+}
 
 // Get or generate horoscope — uses the SAME cache table as the website
 async function getOrGenerateHoroscope(sign) {
+    const {
+        callClaude,
+        SYSTEM_PROMPTS,
+        getHoroscopeCacheKey,
+        getCachedHoroscope,
+        saveCachedHoroscope
+    } = await getRuntimeDeps();
     const cacheKey = getHoroscopeCacheKey(sign, 'daily');
 
     // Try the same cache the website uses
@@ -53,6 +85,7 @@ async function getOrGenerateHoroscope(sign) {
 }
 
 export async function run() {
+    const { supabase, resend, EMAIL_TEMPLATES } = await getRuntimeDeps();
     console.log(`[DailyHoroscope] Starting — ${new Date().toISOString()}`);
 
     const { data: subs, error } = await supabase
