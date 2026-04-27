@@ -40,7 +40,8 @@ async function measure(name, fn) {
     try {
         const res = await fn();
         const duration = Date.now() - start;
-        console.log(`[${name}] ${duration}ms -> ${res.status}`);
+        const status = res?.status ?? res?.response?.status ?? 'n/a';
+        console.log(`[${name}] ${duration}ms -> ${status}`);
         return res;
     } catch (error) {
         const duration = Date.now() - start;
