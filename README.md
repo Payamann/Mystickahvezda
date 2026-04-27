@@ -187,8 +187,8 @@ mystickahvezda/
 
 ### XSS Protection
 - DOMPurify sanitization for all user-generated HTML content
-- Content Security Policy (CSP) with nonce validation
-- No unsafe-eval or unsafe-inline script execution (except critical CSS)
+- Content Security Policy (CSP) generated server-side with page-specific JSON-LD hashes
+- No `unsafe-eval`, executable inline scripts, inline event handlers or inline styles in active public pages
 
 ### Authentication
 - JWT tokens in HttpOnly cookies
@@ -255,12 +255,12 @@ mystickahvezda/
 - current_period_end
 ```
 
-See `server/db/migrations/` for full schema details.
+See `migrations/` for versioned schema changes and `server/scripts/sql/` for older manual Supabase SQL snippets kept for operational reference.
 
 ## Testing
 
 ```bash
-# Run all tests
+# Run server unit tests
 npm test
 
 # Run tests in watch mode
@@ -270,7 +270,7 @@ npm test -- --watch
 npm test -- --coverage
 ```
 
-Tests use Jest with supertest for API endpoint testing.
+Tests use Jest with supertest for API endpoint testing. For the full local verification gate, run `npm run test:verify`.
 
 ## Deployment
 
@@ -291,11 +291,7 @@ ALLOWED_ORIGINS=https://www.mystickahvezda.cz,https://mystickahvezda.cz
 
 ### Database Migrations
 
-Migrations run automatically on startup. To manually migrate:
-
-```bash
-npm run migrate:up
-```
+Versioned schema changes live in `migrations/`. Manual operational SQL snippets live in `server/scripts/sql/`; compare them with the current migration history before applying them in Supabase.
 
 ## Troubleshooting
 

@@ -96,6 +96,7 @@ Aktualizace: 2026-04-27
    - Stav navic: stare jednorazove mojibake/content repair skripty jsou presunute do `docs/archive/2026-04-stale-scripts/encoding-repair-scripts/`, takze aktivni encoding check uz nepotrebuje souborove vyjimky a `server/scripts/` zustava pro aktualni provozni helpery.
    - Stav navic: orphan `server/package-lock.json` bez odpovidajiciho `server/package.json` byl odstranen z aktivniho repozitare a ignorovan, aby nehlasil zastarale dependency a nespletl provozni audit.
    - Stav navic: root `QUICK_START_GUIDE.md` byl presunut do `docs/archive/2026-04-root-artifacts/`, koren tak drzi jen aktivni vstupni dokumenty a runtime soubory.
+   - Stav navic: README uz neodkazuje na neexistujici `server/db/migrations/` ani `npm run migrate:up`; popisuje aktualni `migrations/`, manualni SQL snippet adresar a skutecny CSP stav.
    - Stav navic: `.gitattributes` definuje LF pro zdrojove textove soubory a binary pravidla pro assety, aby se omezil dalsi line-ending a binarni churn.
    - Stav navic: public JS uz nepise produkcni `console.log`; diagnostika v bootstrapu, premium gatech, tarotu, snari, natalni karte, mentorovi a share flow je pod `window.MH_DEBUG`/`console.debug` a staticky test hlida zdrojove i buildovane soubory mimo vendor.
    - Stav navic: `npm run audit:site` ted validuje i `manifest.json` ikony, chybici `img/icon-192.png` byl doplnen, precache seznam ho zahrnuje a duplicitni PNG-only PWA generator byl archivovan; aktivni generator je `npm run build:pwa-icons`.

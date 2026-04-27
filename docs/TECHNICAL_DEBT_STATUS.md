@@ -122,6 +122,7 @@ Hotovo:
 - Veřejný `/api/config` vrací `features.pushNotifications` a `vapidPublicKey` jen při kompletním VAPID nastavení; live produkce je teď ověřená jako bezpečně vypnutá místo napůl zapnuté.
 - `web-push` je skutečná runtime dependency a regresní test hlídá, že testovací push route neskončí na chybě chybějícího balíčku.
 - Kořen repozitáře je o další krok čistší: stale quick-start je v archivu a orphan server lockfile už nezkresluje dependency audit.
+- README už popisuje aktuální CSP a migrační stav: žádný neexistující `npm run migrate:up` ani neexistující `server/db/migrations/` odkaz.
 
 Zbývá:
 
