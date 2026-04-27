@@ -31,6 +31,8 @@ active project tooling.
 - `tarot-one-offs/` contains the old manual Gemini tarot filename audit. The
   active guard is now `npm run audit:tarot-assets`, which validates
   `data/tarot-cards.json` against actual files.
+- `angel-one-offs/` contains old one-time angel card data patchers. The current
+  `data/angel-cards.json` already contains archetype assignments.
 
 They are archived for traceability so they do not appear as runnable current
 tools in `scripts/`.

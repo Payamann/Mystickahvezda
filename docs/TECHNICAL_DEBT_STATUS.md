@@ -128,6 +128,7 @@ Hotovo:
 - Staré lokální diagnostiky `verify-horoscope.js` a `debug-reading.js` jsou mimo aktivní `server/scripts/`, protože neodpovídaly aktuálnímu CSRF/provoznímu workflow.
 - Tarot má doplněný chybějící asset `tarot_sestka_mecu.webp`, opravený překlep v textu Šestky mečů a nový `audit:tarot-assets` v `test:verify`.
 - Starý ruční tarot filename audit `check-missing-cards.js` je archivovaný; aktuální ochrana je `audit:tarot-assets`.
+- Jednorázový `.cjs` angel archetype patcher je archivovaný; aktivní `server/scripts/` už nedrží CommonJS helper.
 
 Zbývá:
 

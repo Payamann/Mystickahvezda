@@ -86,7 +86,7 @@ Aktualizace: 2026-04-27
    - Stav navic: encoding check skenuje i nove necommitnute soubory pres `git ls-files --cached --others --exclude-standard`, ne jen uz tracked soubory.
    - Stav navic: Claude hook validatory `scripts/validate-html.js` a `scripts/validate-sw-assets.js` uz bezi pod ESM modu projektu; predtim padaly na CommonJS `require(...)` jeste pred samotnou validaci.
    - Stav navic: `npm run check:hooks` smoke-testuje hook validatory pres JSON stdin a je zapojeny do `npm run test:verify`.
-   - Stav navic: posledni aktivni `.js` utility s CommonJS `require(...)` byly prevedene na ESM; CommonJS zustava jen v explicitnim `.cjs` helperu a dokumentacnim `node -e` prikladu.
+   - Stav navic: posledni aktivni `.js` utility s CommonJS `require(...)` byly prevedene na ESM a jednorazovy `.cjs` angel archetype patcher je archivovany mimo aktivni `server/scripts/`.
    - Stav navic: mrtvy `scheduleEmail(...)` stub s poznamkou na budouci integraci byl odstranen z `server/payment.js`; skutecne odlozene emaily uz resi `server/jobs/email-queue.js`.
    - Stav navic: generovane vystupy video/social helperu (`voiceover*.txt`, `thumbnail*.txt`, `evening*.txt` a jejich male state JSONy) jsou presunute do `scripts/output/`; samotny `scripts/` adresar ted drzi hlavne spustitelne helpery a konfigurace.
    - Stav navic: `daily_reel2.py` uz nema natvrdo osobni `C:/Users/pavel/...` cestu ke captions helperu; pouziva `CAPTIONS_TOOL` nebo vychozi cestu slozenou z domovskeho adresare.
