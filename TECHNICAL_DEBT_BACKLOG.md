@@ -120,4 +120,5 @@ Aktualizace: 2026-04-26
    - Stav navic: verejny `js/kontakt.js` uz neposila formular na zastaraly `/api/contact/contact`, ale na skutecny `/api/contact` s CSRF tokenem; staticky test hlida zdrojovy i buildovany JS proti navratu stareho aliasu.
    - Stav navic: kontaktni formular ma opravene `label for` vazby na skutecna `id` poli a staticky test hlida vsechny produktove HTML labely proti neexistujicim targetum.
    - Stav navic: staticka HTML hygiene kontrola hlida i duplicitni `id` atributy v produktovych HTML souborech, aby se nerozbijely labely, anchor odkazy a selektory.
-   - Dalsi krok: pozdeji lze doplnit live HTTP status check proti stagingu.
+   - Stav navic: `npm run verify:production` po deployi kontroluje i live sitemap, robots.txt a hlavni HTML vstupy na produkcni domene, nejen API health a jeden staticky asset.
+   - Dalsi krok: pozdeji lze doplnit stejnou live HTTP status kontrolu proti stagingu, az bude stabilni staging URL.

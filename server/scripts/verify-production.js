@@ -7,6 +7,19 @@ const BASE_URL = (process.env.VERIFY_BASE_URL || (isLocal
 const EMAIL = process.env.VERIFY_EMAIL;
 const PASSWORD = process.env.VERIFY_PASSWORD;
 const RUN_AI_CHECKS = process.env.VERIFY_RUN_AI === 'true';
+const EXPECTED_SITEMAP_URL = process.env.VERIFY_EXPECTED_SITEMAP_URL || 'https://www.mystickahvezda.cz/sitemap.xml';
+const PUBLIC_PAGE_PATHS = (process.env.VERIFY_PUBLIC_PATHS || [
+    '/',
+    '/horoskopy.html',
+    '/natalni-karta.html',
+    '/tarot.html',
+    '/partnerska-shoda.html',
+    '/astro-mapa.html',
+    '/cenik.html'
+].join(','))
+    .split(',')
+    .map((path) => path.trim())
+    .filter(Boolean);
 
 const cookieJar = new Map();
 
@@ -80,6 +93,12 @@ async function fetchJson(path, options = {}) {
     return { response, body };
 }
 
+async function fetchText(path, options = {}) {
+    const response = await fetchChecked(path, options);
+    const text = await response.text();
+    return { response, text };
+}
+
 async function getCsrfToken() {
     const { response, body } = await fetchJson('/api/csrf-token');
     if (!response.ok || typeof body.csrfToken !== 'string') {
@@ -105,6 +124,37 @@ async function runPublicChecks() {
     const staticRes = await measure('Static asset', () => fetchChecked('/js/birth-location-suggestions.js', { method: 'HEAD' }));
     if (!staticRes.ok) {
         throw new Error('Static birth-location hydrator is not available.');
+    }
+
+    await runIndexChecks();
+    await runPublicPageChecks();
+}
+
+async function runIndexChecks() {
+    const { response: sitemapRes, text: sitemap } = await measure('Sitemap', () => fetchText('/sitemap.xml', {
+        headers: { Accept: 'application/xml,text/xml,*/*' }
+    }));
+    if (!sitemapRes.ok || !sitemap.includes('<urlset')) {
+        throw new Error('Sitemap is not available or does not look like an XML sitemap.');
+    }
+
+    const { response: robotsRes, text: robots } = await measure('Robots', () => fetchText('/robots.txt'));
+    if (!robotsRes.ok || !robots.includes(EXPECTED_SITEMAP_URL)) {
+        throw new Error('robots.txt is not available or does not point to the canonical sitemap.');
+    }
+}
+
+async function runPublicPageChecks() {
+    for (const pagePath of PUBLIC_PAGE_PATHS) {
+        const path = pagePath.startsWith('/') ? pagePath : `/${pagePath}`;
+        const { response, text } = await measure(`Page ${path}`, () => fetchText(path, {
+            headers: { Accept: 'text/html' }
+        }));
+        const contentType = response.headers.get('content-type') || '';
+
+        if (!response.ok || !contentType.includes('text/html') || !text.includes('<html')) {
+            throw new Error(`Public page check failed for ${path}.`);
+        }
     }
 }
 

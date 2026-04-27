@@ -124,6 +124,9 @@ npm run test:e2e:sections
 # Run one E2E section
 npm run test:e2e:content -- --workers=6
 
+# Smoke-check production after deploy
+npm run verify:production
+
 # Build CSS (minification)
 npm run build:css
 
