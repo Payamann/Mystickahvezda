@@ -317,6 +317,19 @@ test.describe('Minulý život', () => {
         await expect(premiumEl).toBeAttached();
     });
 
+    test('premium wall CTA odkazy nesou tracking kontext', async ({ page }) => {
+        const upgradeHref = await page.locator('#past-life-upgrade-btn').getAttribute('href');
+        expect(upgradeHref).toContain('plan=pruvodce');
+        expect(upgradeHref).toContain('source=past_life_banner_upgrade');
+        expect(upgradeHref).toContain('feature=minuly_zivot');
+
+        const registerHref = await page.locator('#past-life-register-btn').getAttribute('href');
+        expect(registerHref).toContain('mode=register');
+        expect(registerHref).toContain('redirect=/minuly-zivot.html');
+        expect(registerHref).toContain('source=past_life_register_gate');
+        expect(registerHref).toContain('feature=minuly_zivot');
+    });
+
     test('sdílecí tlačítka existují v DOM', async ({ page }) => {
         const shareBtns = page.locator('#share-native, #share-fb, #share-x, #share-copy');
         const count = await shareBtns.count();

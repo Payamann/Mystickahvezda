@@ -56,6 +56,21 @@
         window.location.href = buildPastLifeCheckoutUrl(checkoutSource);
     }
 
+    function startPastLifeRegistration() {
+        window.MH_ANALYTICS?.trackCTA?.('past_life_register_gate', {
+            destination: '/prihlaseni.html',
+            feature: 'minuly_zivot',
+            auth_mode: 'register'
+        });
+
+        var authUrl = new URL('/prihlaseni.html', window.location.origin);
+        authUrl.searchParams.set('mode', 'register');
+        authUrl.searchParams.set('redirect', '/minuly-zivot.html');
+        authUrl.searchParams.set('source', 'past_life_register_gate');
+        authUrl.searchParams.set('feature', 'minuly_zivot');
+        window.location.href = authUrl.pathname + authUrl.search;
+    }
+
     function appendPastLifeFavoriteAction(container, readingId) {
         if (!container || !readingId) return;
 
@@ -92,7 +107,7 @@
         if (registerBtn) {
             registerBtn.addEventListener('click', function(event) {
                 event.preventDefault();
-                startPastLifeCheckout('past_life_register_gate', 'register');
+                startPastLifeRegistration();
             });
         }
 
