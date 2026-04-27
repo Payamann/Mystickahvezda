@@ -137,6 +137,7 @@ Hotovo:
 - Staré hromadné SEO/asset mutátory `update-seo.js`, `convert-images.js`, `optimize-bg.js` a `optimize-map.js` jsou archivované, aby aktivní skripty nevybízely k přepisu HTML/metadat nebo assetů mimo auditovaný workflow.
 - Historický `process-tarot-images.js` a starý PurgeCSS runner/config jsou archivované; první čekal na chybějící `temp_new_tarot/`, druhé už nemělo projektovou dependency.
 - `send-newsletter.js` už při prostém spuštění neposílá e-maily; default je dry-run a reálné odeslání vyžaduje explicitní `--send`.
+- Ruční CLI spuštění `send-daily-horoscope.js` vyžaduje `--send` a `prefill-horoscopes.js` vyžaduje `--write`; cron import `run()` zůstává beze změny.
 
 Zbývá:
 

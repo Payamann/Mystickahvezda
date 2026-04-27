@@ -22,6 +22,10 @@ This folder contains backend maintenance and operational helper scripts.
   depending on your environment.
 - `send-newsletter.js` defaults to dry-run output. Passing `--send` is required
   before it loads subscribers and sends through Resend.
+- Direct manual runs of `send-daily-horoscope.js` require `--send`; the server
+  cron imports `run()` directly and is not affected by the CLI guard.
+- `prefill-horoscopes.js` requires `--write` before it calls AI and writes the
+  horoscope cache.
 - SQL snippets for manual Supabase setup live in `server/scripts/sql/`.
 - Versioned migrations live in `server/migrations/` or top-level `migrations/`;
   prefer migrations for schema changes that must be reproducible.

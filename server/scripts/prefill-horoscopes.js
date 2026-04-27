@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
  * Pre-fill horoscope cache pro konkrétní datum
- * Usage: node server/scripts/prefill-horoscopes.js 2026-04-02
+ * Usage:
+ *   node server/scripts/prefill-horoscopes.js 2026-04-02         # dry run guard
+ *   node server/scripts/prefill-horoscopes.js 2026-04-02 --write # generate and write cache
  */
 import 'dotenv/config';
 import path from 'path';
@@ -27,11 +29,19 @@ const SIGN_ACCUSATIVE = {
     'Střelec': 'Střelce', 'Kozoroh': 'Kozoroha', 'Vodnář': 'Vodnáře', 'Ryby': 'Ryby'
 };
 
-const targetDate = process.argv[2] || new Date(Date.now() + 86400000).toISOString().split('T')[0];
+const args = process.argv.slice(2);
+const SHOULD_WRITE = args.includes('--write');
+const targetDate = args.find((arg) => !arg.startsWith('--')) || new Date(Date.now() + 86400000).toISOString().split('T')[0];
 const dateObj = new Date(targetDate + 'T12:00:00Z');
 const dateStr = dateObj.toLocaleDateString('cs-CZ');
 
 console.log(`\n🌟 Pre-filling horoscope cache pro datum: ${targetDate} (${dateStr})\n`);
+
+if (!SHOULD_WRITE) {
+    console.log('[DRY RUN] Horoskopy nebyly generovány ani zapsány do cache.');
+    console.log(`[DRY RUN] Pro skutečný zápis spusťte: node server/scripts/prefill-horoscopes.js ${targetDate} --write`);
+    process.exit(0);
+}
 
 const genderInstruction = `\nTEXT VŽDY FORMULUJ PŘÍSNĚ GENDEROVĚ NEUTRÁLNĚ (vyhni se minulému času a slovům, která určují pohlaví čtenáře, např. místo "jsi připraven" nebo "udělal jsi" piš "je čas se připravit" nebo "došlo k pokroku"). Text piš i nadále poutavě a plynule.`;
 

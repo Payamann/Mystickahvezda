@@ -108,6 +108,7 @@ Aktualizace: 2026-04-27
    - Stav navic: dalsi hromadne mutatory `update-seo.js`, `convert-images.js`, `optimize-bg.js` a `optimize-map.js` jsou archivovane; aktivni helpery uz neobsahuji stare SEO/asset prepisy mimo aktualni auditovany workflow.
    - Stav navic: historicky `process-tarot-images.js` a PurgeCSS runner/config jsou archivovane; prvni cekal na chybejici `temp_new_tarot/`, druhe uz nemelo runtime dependency.
    - Stav navic: `server/scripts/send-newsletter.js` uz defaultne neposila emaily; bez `--send` vykona jen dry-run preview a skutecne odeslani vyzaduje explicitni flag.
+   - Stav navic: manualni CLI spusteni `send-daily-horoscope.js` vyzaduje `--send` a `prefill-horoscopes.js` vyzaduje `--write`; cron import `run()` zustava beze zmeny.
    - Stav navic: public JS uz nepise produkcni `console.log`; diagnostika v bootstrapu, premium gatech, tarotu, snari, natalni karte, mentorovi a share flow je pod `window.MH_DEBUG`/`console.debug` a staticky test hlida zdrojove i buildovane soubory mimo vendor.
    - Stav navic: `npm run audit:site` ted validuje i `manifest.json` ikony, chybici `img/icon-192.png` byl doplnen, precache seznam ho zahrnuje a duplicitni PNG-only PWA generator byl archivovan; aktivni generator je `npm run build:pwa-icons`.
    - Stav navic: stary `add-pwa-support.js` HTML patcher byl archivovan, protoze by dnes znovu vnasel inline service worker skript proti CSP smeru projektu; aktivni registrace bezi pres `js/dist/register-sw.js`.

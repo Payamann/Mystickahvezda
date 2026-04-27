@@ -4,7 +4,9 @@
  * Runs every morning via Railway cron (or manually).
  * Fetches/generates today's horoscope for each zodiac sign and emails active subscribers.
  *
- * Usage: node server/scripts/send-daily-horoscope.js
+ * Usage:
+ *   node server/scripts/send-daily-horoscope.js        # dry run guard
+ *   node server/scripts/send-daily-horoscope.js --send # send manually
  * Railway cron: 0 7 * * *  (7:00 UTC = 8:00 CET / 9:00 CEST)
  */
 import 'dotenv/config';
@@ -119,8 +121,14 @@ export async function run() {
     console.log(`[DailyHoroscope] Done — sent: ${sent}, failed: ${failed}`);
 }
 
-// Allow running standalone: node server/scripts/send-daily-horoscope.js
+// Allow running standalone: node server/scripts/send-daily-horoscope.js --send
 if (process.argv[1] && process.argv[1].endsWith('send-daily-horoscope.js')) {
+    if (!process.argv.includes('--send')) {
+        console.log('[DRY RUN] Denní horoskopy nebyly odeslány.');
+        console.log('[DRY RUN] Pro ruční odeslání spusťte: node server/scripts/send-daily-horoscope.js --send');
+        process.exit(0);
+    }
+
     run().catch(e => {
         console.error('[DailyHoroscope] Fatal error:', e);
         process.exit(1);
