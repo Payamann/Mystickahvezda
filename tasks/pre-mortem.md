@@ -1,15 +1,32 @@
-# Pre-Mortem: Names Database Expansion
+# Pre-Mortem Template
 
-**Risk Level**: Medium
+Use this before larger changes that touch runtime behavior, generated content,
+payments, authentication, or SEO metadata.
 
-### Potential Failure Modes
-1. **Data Degradation**: Automated descriptions for new names might feel "hallucinated" compared to the existing 20 manual entries.
-    - *Mitigation*: I will use a multi-step generation prompt for the subagent to ensure high-quality Czech text and preserve existing entries.
-2. **Encoding Corruption**: Special Czech characters (ě, š, č, ř, ž, ý, á, í, é) could be corrupted during the JSON write.
-    - *Mitigation*: I will verify the file encoding after writing and use a diagnostic script to check for invalid characters.
-3. **Numerology Inconsistency**: If users calculate their numerology elsewhere and see a different result here, it breaks trust.
-    - *Mitigation*: I will use provide a clear mapping table in the script and document the logic.
+## Scope
 
-### "The 10-Minute Crash" Scenario
-*If this breaks in 10 minutes, the most likely culprit is...*
-A malformed JSON comma or bracket that causes the `fetch()` in `jmena/index.html` to fail, resulting in a blank page or console error.
+- Change:
+- User-facing surfaces:
+- Data touched:
+- Deployment risk:
+
+## Likely Failure Modes
+
+1. Behavior regresses silently because the change only affects a static page or
+   generated asset.
+   - Mitigation: add or extend an automated static audit, route test, or
+     Playwright smoke.
+2. Czech copy or generated content gets corrupted by encoding/tooling.
+   - Mitigation: run `npm run check:encoding` and keep generated output in UTF-8.
+3. Production differs from local behavior after Railway deploy.
+   - Mitigation: wait for GitHub/Railway status, then run
+     `npm run verify:production`.
+
+## 10-Minute Failure Check
+
+If this breaks shortly after deploy, inspect:
+
+- Latest commit status on GitHub/Railway.
+- `npm run verify:production` output.
+- Browser console and network requests for the affected page.
+- Relevant server route tests or static audit coverage.

@@ -1,38 +1,29 @@
 # Mission Control Dashboard
-**Status**: 🟡 IN PROGRESS | **Level**: 5 (Transcendental)
+
+Status: active maintenance
+
+This file is a lightweight workspace index. Canonical technical debt tracking is
+kept in `TECHNICAL_DEBT_BACKLOG.md` and `docs/TECHNICAL_DEBT_STATUS.md`.
 
 ## Active Strategy Documents
-- [Architecture Hub](file:///c:/Users/pavel/OneDrive/Desktop/MystickaHvezda/tasks/architecture.md)
-- [Lessons & Golden Rules](file:///c:/Users/pavel/OneDrive/Desktop/MystickaHvezda/tasks/lessons.md)
-- [Pre-Mortem Template](file:///c:/Users/pavel/OneDrive/Desktop/MystickaHvezda/tasks/pre-mortem.md)
-- [Technical Debt Map](file:///c:/Users/pavel/OneDrive/Desktop/MystickaHvezda/tasks/debt.md)
-- [Impact Predictions](file:///c:/Users/pavel/OneDrive/Desktop/MystickaHvezda/tasks/prediction.md)
 
-## Task Checklist
-- [/] Names Database Overhaul
-    - [x] Analyze current data & locate source
-    - [x] Fetch comprehensive Czech names list
-    - [x] Conduct Pre-Mortem
-    - [/] Draft generation script & Generate data
-    - [ ] Merge & Deploy `data/jmena.json`
-    - [ ] Verify search functionality for new names
+- `tasks/architecture.md`
+- `tasks/debt.md`
+- `tasks/lessons.md`
+- `tasks/pre-mortem.md`
+- `tasks/prediction.md`
 
-## Active Strategy Documents
-- [Architecture Hub](file:///c:/Users/pavel/OneDrive/Desktop/MystickaHvezda/tasks/architecture.md)
-- [Lessons & Golden Rules](file:///c:/Users/pavel/OneDrive/Desktop/MystickaHvezda/tasks/lessons.md)
-- [Pre-Mortem Template](file:///c:/Users/pavel/OneDrive/Desktop/MystickaHvezda/tasks/pre-mortem.md)
-- [Technical Debt Map](file:///c:/Users/pavel/OneDrive/Desktop/MystickaHvezda/tasks/debt.md)
-- [Impact Predictions](file:///c:/Users/pavel/OneDrive/Desktop/MystickaHvezda/tasks/prediction.md)
+## Current Checklist
 
-## Task Checklist
-- [x] Workflow Evolution Level 1-4
-- [x] Level 5: Transcendental Autonomy Implementation
-    - [x] Predictive Impact (Section 21)
-    - [x] Skill Synthesis (Section 22)
-    - [x] Cross-Session Learning (Section 23)
-    - [x] Aesthetic & Ethical Gates (Section 24)
-    - [x] Mission Control (Section 25)
-- [x] Final Verification & Performance Check
+- [x] Keep tests split into usable sections.
+- [x] Keep `npm run test:verify` green before production pushes.
+- [x] Verify Railway deploys with `npm run verify:production`.
+- [x] Archive stale one-off scripts outside active tooling.
+- [ ] Continue improving the astro engine only with transparent precision claims.
+- [ ] Add new guardrails as automated checks instead of manual scripts.
 
-## Project Vision
-Establish Mysticka Hvezda as the world's most premium and technically sound esoteric platform.
+## Product Direction
+
+Build Mysticka Hvezda as a technically reliable esoteric platform: transparent
+about symbolic or AI-assisted outputs, guarded by automated tests, and easy to
+operate without stale manual tools.
