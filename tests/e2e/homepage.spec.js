@@ -187,6 +187,60 @@ test.describe('Homepage', () => {
         }));
     });
 
+    test('karta dne vede do andelskych karet a sdileni funguje i bez Web Share API', async ({ page }) => {
+        await page.evaluate(() => {
+            const now = new Date();
+            const today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+            localStorage.setItem('mh_kdd_date', today);
+            localStorage.setItem('mh_kdd_index', '27');
+            localStorage.removeItem('mh_kdd_last_flip_date');
+        });
+
+        await page.reload();
+        await waitForPageReady(page);
+
+        const card = page.locator('#kdd-card');
+        await card.scrollIntoViewIfNeeded();
+        await card.click();
+
+        await expect(page.locator('#kdd-message')).toBeVisible();
+        await expect(page.locator('#kdd-name')).toHaveText('Hravost');
+
+        const detailHref = await page.locator('#kdd-lexicon-link').getAttribute('href');
+        expect(detailHref).toContain('andelske-karty.html');
+        expect(detailHref).toContain('source=homepage_daily_card_detail');
+        expect(detailHref).toContain('feature=daily_angel_card');
+        expect(detailHref).toContain('daily_card=hravost');
+        expect(detailHref).not.toContain('tarot');
+
+        const fullReadingHref = await page.locator('#kdd-full-reading-link').getAttribute('href');
+        expect(fullReadingHref).toContain('andelske-karty.html');
+        expect(fullReadingHref).toContain('source=homepage_daily_card_full_reading');
+        expect(fullReadingHref).toContain('feature=andelske_karty_hluboky_vhled');
+        expect(fullReadingHref).toContain('daily_card=hravost');
+        expect(fullReadingHref).not.toContain('tarot');
+
+        await page.evaluate(() => {
+            Object.defineProperty(navigator, 'share', {
+                configurable: true,
+                value: undefined
+            });
+            Object.defineProperty(navigator, 'clipboard', {
+                configurable: true,
+                value: {
+                    writeText: async (text) => {
+                        window.__dailyCardShareText = text;
+                    }
+                }
+            });
+        });
+
+        await page.locator('#kdd-share-btn').click();
+
+        await expect.poll(() => page.evaluate(() => window.__dailyCardShareText || '')).toContain('Hravost');
+        await expect.poll(() => page.evaluate(() => window.__dailyCardShareText || '')).toContain('andelske-karty.html');
+    });
+
     test('skip-link pro přístupnost existuje', async ({ page }) => {
         const skipLink = page.locator('.skip-link, a[href="#main-content"]').first();
         await expect(skipLink).toBeAttached();

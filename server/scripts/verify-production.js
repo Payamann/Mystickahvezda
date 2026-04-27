@@ -33,6 +33,16 @@ const CONVERSION_LINK_CHECKS = [
         ]
     },
     {
+        path: '/',
+        name: 'Homepage daily angel card CTAs',
+        snippets: [
+            'id="kdd-lexicon-link" href="andelske-karty.html?source=homepage_daily_card_detail&feature=daily_angel_card"',
+            'id="kdd-full-reading-link"',
+            'source=homepage_daily_card_full_reading',
+            'feature=andelske_karty_hluboky_vhled'
+        ]
+    },
+    {
         path: '/minuly-zivot.html',
         name: 'Past life premium/register CTAs',
         snippets: [

@@ -68,10 +68,67 @@
         'Vítěz': 'vitez'
     };
 
+    function getCardSlug(card) {
+        return CARD_IMAGES[card?.name] || '';
+    }
+
+    function buildAngelCardsUrl(source, card, feature = 'daily_angel_card') {
+        const url = new URL('/andelske-karty.html', window.location.origin);
+        const slug = getCardSlug(card);
+
+        url.searchParams.set('source', source);
+        url.searchParams.set('feature', feature);
+        if (slug) url.searchParams.set('daily_card', slug);
+
+        return `${url.pathname}${url.search}`;
+    }
+
+    function setTemporaryButtonLabel(button, label) {
+        if (!button) return;
+
+        const originalHtml = button.dataset.defaultHtml || button.innerHTML;
+        button.dataset.defaultHtml = originalHtml;
+        button.textContent = label;
+
+        window.setTimeout(() => {
+            button.innerHTML = button.dataset.defaultHtml || originalHtml;
+        }, 2200);
+    }
+
+    async function shareCard(card, button) {
+        if (!card) return;
+
+        const shareUrl = `${window.location.origin}${buildAngelCardsUrl('homepage_daily_card_share', card)}`;
+        const sharePayload = {
+            title: `Karta dne: ${card.name}`,
+            text: `Moje dnešní karta je ${card.name} (${card.keyword}). ${card.text}`,
+            url: shareUrl
+        };
+
+        window.MH_ANALYTICS?.trackCTA?.('homepage_daily_card_share', {
+            card_name: card.name,
+            feature: 'daily_angel_card',
+            destination: shareUrl
+        });
+
+        try {
+            if (navigator.share) {
+                await navigator.share(sharePayload);
+                return;
+            }
+
+            await navigator.clipboard.writeText(`${sharePayload.title}\n\n${sharePayload.text}\n${sharePayload.url}`);
+            setTemporaryButtonLabel(button, 'Zkopírováno');
+        } catch (error) {
+            if (window.MH_DEBUG) console.debug('Daily card share failed:', error);
+            setTemporaryButtonLabel(button, 'Zkuste znovu');
+        }
+    }
+
     function renderCardSymbol(target, card) {
         if (!target || !card) return;
 
-        const slug = CARD_IMAGES[card.name];
+        const slug = getCardSlug(card);
         target.textContent = '';
 
         if (!slug) {
@@ -157,8 +214,28 @@
         if (el('kdd-keyword')) el('kdd-keyword').textContent = card.keyword;
         if (el('kdd-text')) el('kdd-text').textContent = card.text;
 
-        if (el('kdd-lexicon-link')) {
-            el('kdd-lexicon-link').href = `slovnik/${card.link}`;
+        const detailLink = el('kdd-lexicon-link');
+        if (detailLink) {
+            detailLink.href = buildAngelCardsUrl('homepage_daily_card_detail', card);
+            detailLink.addEventListener('click', () => {
+                window.MH_ANALYTICS?.trackCTA?.('homepage_daily_card_detail', {
+                    card_name: card.name,
+                    feature: 'daily_angel_card',
+                    destination: detailLink.href
+                });
+            });
+        }
+
+        const fullReadingLink = el('kdd-full-reading-link');
+        if (fullReadingLink) {
+            fullReadingLink.href = buildAngelCardsUrl('homepage_daily_card_full_reading', card, 'andelske_karty_hluboky_vhled');
+            fullReadingLink.addEventListener('click', () => {
+                window.MH_ANALYTICS?.trackCTA?.('homepage_daily_card_full_reading', {
+                    card_name: card.name,
+                    feature: 'andelske_karty_hluboky_vhled',
+                    destination: fullReadingLink.href
+                });
+            });
         }
 
         // Update streak badge
@@ -171,17 +248,11 @@
 
         // Web Share API
         const shareBtn = el('kdd-share-btn');
-        if (shareBtn && navigator.share) {
+        if (shareBtn) {
             setInlineBlockVisible(shareBtn, true);
             shareBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                navigator.share({
-                    title: 'Mystická Hvězda - Moje Karta Dne',
-                    text: `Moje dnešní karta je ${card.name} (${card.emoji}). Zjisti, jakou zprávu mají hvězdy připravenou pro tebe!`,
-                    url: 'https://www.mystickahvezda.cz'
-                }).catch(err => {
-                    if (window.MH_DEBUG) console.debug('Share error:', err);
-                });
+                shareCard(card, shareBtn);
             });
         }
 
