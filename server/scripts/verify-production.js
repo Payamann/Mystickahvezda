@@ -54,18 +54,18 @@ const CONVERSION_LINK_CHECKS = [
         path: '/kristalova-koule.html',
         name: 'Crystal ball freemium CTA',
         snippets: [
-            'Dnes zbývá:',
+            'id="freemium-banner-text">Dnes zbývá:',
             'source=crystal_ball_banner_upgrade',
-            'Získat Premium ›'
+            '>Získat Premium ›</a>'
         ]
     },
     {
         path: '/runy.html',
         name: 'Runes freemium CTA',
         snippets: [
-            'Dnes zbývá:',
+            'id="freemium-banner-text">Dnes zbývá:',
             'source=runes_freemium_banner',
-            'Získat Premium ›'
+            '>Získat Premium ›</a>'
         ]
     }
 ];
