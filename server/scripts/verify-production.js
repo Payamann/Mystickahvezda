@@ -22,6 +22,35 @@ const PUBLIC_PAGE_PATHS = (process.env.VERIFY_PUBLIC_PATHS || [
     .split(',')
     .map((path) => path.trim())
     .filter(Boolean);
+const CONVERSION_LINK_CHECKS = [
+    {
+        path: '/',
+        name: 'Homepage VIP checkout CTA',
+        snippets: [
+            'plan=vip-majestrat',
+            'source=homepage_pricing_preview',
+            'feature=vip_membership'
+        ]
+    },
+    {
+        path: '/minuly-zivot.html',
+        name: 'Past life premium/register CTAs',
+        snippets: [
+            'source=past_life_banner_upgrade',
+            'source=past_life_register_gate',
+            'feature=minuly_zivot'
+        ]
+    },
+    {
+        path: '/jak-to-funguje.html',
+        name: 'How it works signup CTA',
+        snippets: [
+            'mode=register',
+            'source=how_it_works_cta',
+            'feature=daily_guidance'
+        ]
+    }
+];
 
 const cookieJar = new Map();
 const serviceWorkerPath = new URL('../../service-worker.js', import.meta.url);
@@ -147,6 +176,7 @@ async function runPublicChecks() {
     await runServiceWorkerCheck();
     await runIndexChecks();
     await runPublicPageChecks();
+    await runConversionLinkChecks();
     await runRedirectChecks();
     await runAstroCalculationChecks();
 }
@@ -213,6 +243,27 @@ async function runPublicPageChecks() {
 
         if (!response.ok || !contentType.includes('text/html') || !text.includes('<html')) {
             throw new Error(`Public page check failed for ${path}.`);
+        }
+    }
+}
+
+async function runConversionLinkChecks() {
+    for (const check of CONVERSION_LINK_CHECKS) {
+        const { response, text } = await measure(check.name, () => fetchText(check.path, {
+            headers: {
+                Accept: 'text/html',
+                'Cache-Control': 'no-cache',
+                Pragma: 'no-cache'
+            }
+        }));
+
+        if (!response.ok) {
+            throw new Error(`Conversion link check failed to load ${check.path}.`);
+        }
+
+        const missing = check.snippets.filter((snippet) => !text.includes(snippet));
+        if (missing.length > 0) {
+            throw new Error(`${check.name} is missing expected snippet(s): ${missing.join(', ')}`);
         }
     }
 }
