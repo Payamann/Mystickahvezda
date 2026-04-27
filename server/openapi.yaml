@@ -435,6 +435,11 @@ components:
         sentryDsn:
           type: string
           nullable: true
+        features:
+          type: object
+          properties:
+            pushNotifications:
+              type: boolean
     BirthLocationSuggestion:
       type: object
       properties:

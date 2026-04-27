@@ -68,6 +68,7 @@ describe('API Endpoint Tests', () => {
 
             expect(res.body.checks).toHaveProperty('db');
             expect(res.body.checks).toHaveProperty('ai');
+            expect(res.body.features).toHaveProperty('pushNotifications');
         });
 
         test('Health check recognizes Supabase and Anthropic production config', async () => {
@@ -134,6 +135,20 @@ describe('API Endpoint Tests', () => {
             expect(res.status).not.toBe(401);
             expect(res.status).not.toBe(403);
         });
+
+        test('Health check reports partial push configuration without degrading core status', async () => {
+            await withTemporaryEnv({
+                MOCK_SUPABASE: 'true',
+                MOCK_AI: 'true',
+                VAPID_PUBLIC_KEY: 'public-key',
+                VAPID_PRIVATE_KEY: undefined
+            }, async () => {
+                const res = await request(app).get('/api/health');
+
+                expect(res.body.status).toBe('ok');
+                expect(res.body.features.pushNotifications).toBe('partial');
+            });
+        });
     });
 
     describe('Public Config', () => {
@@ -145,9 +160,37 @@ describe('API Endpoint Tests', () => {
             expect(res.body).toHaveProperty('stripePublishableKey');
             expect(res.body).toHaveProperty('vapidPublicKey');
             expect(res.body).toHaveProperty('sentryDsn');
+            expect(res.body).toHaveProperty('features');
+            expect(res.body.features).toHaveProperty('pushNotifications');
             expect(res.body).not.toHaveProperty('VAPID_PRIVATE_KEY');
             expect(res.body).not.toHaveProperty('STRIPE_SECRET_KEY');
             expect(res.body).not.toHaveProperty('SENTRY_DSN');
+        });
+
+        test('GET /api/config exposes VAPID public key only when push sending is fully configured', async () => {
+            await withTemporaryEnv({
+                VAPID_PUBLIC_KEY: 'public-key',
+                VAPID_PRIVATE_KEY: undefined
+            }, async () => {
+                const partialRes = await request(app)
+                    .get('/api/config')
+                    .expect(200);
+
+                expect(partialRes.body.vapidPublicKey).toBeNull();
+                expect(partialRes.body.features.pushNotifications).toBe(false);
+            });
+
+            await withTemporaryEnv({
+                VAPID_PUBLIC_KEY: 'public-key',
+                VAPID_PRIVATE_KEY: 'private-key'
+            }, async () => {
+                const configuredRes = await request(app)
+                    .get('/api/config')
+                    .expect(200);
+
+                expect(configuredRes.body.vapidPublicKey).toBe('public-key');
+                expect(configuredRes.body.features.pushNotifications).toBe(true);
+            });
         });
     });
 
@@ -212,6 +255,7 @@ describe('API Endpoint Tests', () => {
             expect(res.text).toContain('PublicConfig:');
             expect(res.text).toContain('vapidPublicKey:');
             expect(res.text).toContain('sentryDsn:');
+            expect(res.text).toContain('pushNotifications:');
             expect(res.text).toContain('/birth-locations:');
             expect(res.text).toContain('BirthLocationSuggestion:');
             expect(res.text).toContain('/push/subscribe:');

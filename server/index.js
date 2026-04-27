@@ -346,6 +346,28 @@ function hasEnvValue(name) {
     return typeof process.env[name] === 'string' && process.env[name].trim().length > 0;
 }
 
+function getPushNotificationStatus() {
+    const hasPublicKey = hasEnvValue('VAPID_PUBLIC_KEY');
+    const hasPrivateKey = hasEnvValue('VAPID_PRIVATE_KEY');
+
+    if (hasPublicKey && hasPrivateKey) return 'configured';
+    if (!hasPublicKey && !hasPrivateKey) return 'disabled';
+    return 'partial';
+}
+
+function getPublicClientConfig() {
+    const pushNotificationStatus = getPushNotificationStatus();
+
+    return {
+        stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || null,
+        vapidPublicKey: pushNotificationStatus === 'configured' ? process.env.VAPID_PUBLIC_KEY : null,
+        sentryDsn: process.env.SENTRY_DSN || null,
+        features: {
+            pushNotifications: pushNotificationStatus === 'configured'
+        }
+    };
+}
+
 function getRuntimeHealth() {
     const dbOk = process.env.MOCK_SUPABASE === 'true' ||
         (hasEnvValue('SUPABASE_URL') && hasEnvValue('SUPABASE_SERVICE_ROLE_KEY')) ||
@@ -361,6 +383,9 @@ function getRuntimeHealth() {
         checks: {
             db: dbOk ? 'ok' : 'unavailable',
             ai: aiOk ? 'ok' : 'unavailable'
+        },
+        features: {
+            pushNotifications: getPushNotificationStatus()
         }
     };
 }
@@ -540,11 +565,7 @@ app.use('/api/docs', docsRoutes);
 
 // Public config endpoint — safely exposes only client-safe env vars
 app.get('/api/config', (req, res) => {
-    res.json({
-        stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || null,
-        vapidPublicKey: process.env.VAPID_PUBLIC_KEY || null,
-        sentryDsn: process.env.SENTRY_DSN || null,
-    });
+    res.json(getPublicClientConfig());
 });
 
 // Public birth location suggestions used by astrology tools.
