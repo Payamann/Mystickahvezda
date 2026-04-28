@@ -222,6 +222,9 @@ async function runPublicChecks() {
         if (!liveCommit || (!liveCommit.startsWith(EXPECTED_DEPLOY_SHA) && !EXPECTED_DEPLOY_SHA.startsWith(liveCommit))) {
             throw new Error(`Deployment commit mismatch. Expected ${EXPECTED_DEPLOY_SHA}, got ${liveCommit || 'none'}.`);
         }
+        console.log(`[Health] Deployment commit verified: ${liveCommit}`);
+    } else if (health.deployment?.commit) {
+        console.log(`[Health] Deployment commit: ${health.deployment.commit}`);
     }
 
     await runPublicConfigCheck();

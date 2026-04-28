@@ -73,6 +73,18 @@ describe('manual script guardrails', () => {
         expect(apiStatsIndex).toBeGreaterThan(envIndex);
     });
 
+    test('deploy verification fails loudly when expected commit metadata is missing', () => {
+        const deployGuard = readScript('scripts/deploy-guard.mjs');
+        const productionVerifier = readScript('server/scripts/verify-production.js');
+
+        expect(deployGuard).toContain('if (!liveCommit)');
+        expect(deployGuard).toContain('Health deployment metadata missing');
+        expect(deployGuard).toContain('[smoke] deployment commit ok:');
+        expect(deployGuard).toContain('const smokeExpectedSha = args.skipRemote && args.skipRailway ? null : sha;');
+        expect(productionVerifier).toContain('Deployment commit verified');
+        expect(productionVerifier).toContain("got ${liveCommit || 'none'}");
+    });
+
     test('local server does not run scheduled jobs by default', () => {
         const source = readScript('server/index.js');
         const envExample = readScript('server/.env.example');
