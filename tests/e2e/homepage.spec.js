@@ -106,8 +106,41 @@ test.describe('Homepage', () => {
         expect(analyticsPosts).toBe(0);
     });
 
+    test('bez souhlasu neposila pasivni first-party analytics eventy', async ({ page }) => {
+        await page.addInitScript(() => {
+            localStorage.removeItem('mh_cookie_prefs');
+            localStorage.removeItem('cookieConsent');
+        });
+
+        let analyticsPosts = 0;
+        await page.route('**/api/analytics/event', async (route) => {
+            analyticsPosts += 1;
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true, accepted: 1 })
+            });
+        });
+
+        await page.goto('/');
+        await waitForPageReady(page);
+        await page.evaluate(() => {
+            window.MH_ANALYTICS?.trackEvent('cta_clicked', { location: 'no_consent_regression' });
+        });
+        await page.waitForTimeout(800);
+
+        expect(analyticsPosts).toBe(0);
+    });
+
     test('first-party page view neprenasi citlive query parametry', async ({ page }) => {
         const analyticsPayloads = [];
+        await page.addInitScript(() => {
+            localStorage.setItem('mh_cookie_prefs', JSON.stringify({
+                analytics: true,
+                marketing: false,
+                ts: Date.now()
+            }));
+        });
 
         await page.route('**/api/analytics/event', async (route) => {
             analyticsPayloads.push(JSON.parse(route.request().postData() || '{}'));

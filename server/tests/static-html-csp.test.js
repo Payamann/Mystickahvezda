@@ -530,4 +530,13 @@ describe('Static HTML CSP hygiene', () => {
             expect(`${file}\n${source}`).toContain('window.MH_DEBUG');
         }
     });
+
+    test('analytics consent defaults to denied storage before opt-in', () => {
+        const source = fs.readFileSync(path.join(ROOT_DIR, 'js', 'analytics-init.js'), 'utf8');
+
+        expect(source).toContain("'analytics_storage': 'denied'");
+        expect(source).toContain("'ad_storage': 'denied'");
+        expect(source).toContain("prefs.analytics === true");
+        expect(source).toContain("prefs.marketing === true");
+    });
 });
