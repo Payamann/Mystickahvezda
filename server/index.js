@@ -69,7 +69,9 @@ const app = express();
 app.set('trust proxy', 1);
 
 const PORT = process.env.PORT || 3001;
-const SHOULD_RUN_SCHEDULED_JOBS = process.env.DISABLE_SCHEDULED_JOBS !== 'true' && process.env.NODE_ENV !== 'test';
+const SHOULD_RUN_SCHEDULED_JOBS = process.env.DISABLE_SCHEDULED_JOBS !== 'true' &&
+    process.env.NODE_ENV !== 'test' &&
+    (process.env.NODE_ENV === 'production' || process.env.ENABLE_SCHEDULED_JOBS === 'true');
 
 // Middleware - Restrict CORS to same-origin by default
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
@@ -712,7 +714,7 @@ if (isMain || process.env.NODE_ENV === 'production') {
         console.warn(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
 
         if (!SHOULD_RUN_SCHEDULED_JOBS) {
-            console.warn('[JOBS] Scheduled jobs skipped in test mode.');
+            console.warn('[JOBS] Scheduled jobs skipped for this environment.');
             return;
         }
 

@@ -57,6 +57,15 @@ describe('manual script guardrails', () => {
         expect(source).toContain('[DRY RUN]');
     });
 
+    test('local server does not run scheduled jobs by default', () => {
+        const source = readScript('server/index.js');
+        const envExample = readScript('server/.env.example');
+
+        expect(source).toContain("process.env.NODE_ENV === 'production' || process.env.ENABLE_SCHEDULED_JOBS === 'true'");
+        expect(source).toContain("process.env.DISABLE_SCHEDULED_JOBS !== 'true'");
+        expect(envExample).toContain('ENABLE_SCHEDULED_JOBS=false');
+    });
+
     test('exit intent feature map uses existing pages and covered auth features', () => {
         const source = readScript('js/exit-intent.js');
         const authContextSource = readScript('js/prihlaseni.js');
