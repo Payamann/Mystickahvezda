@@ -57,6 +57,22 @@ describe('manual script guardrails', () => {
         expect(source).toContain('[DRY RUN]');
     });
 
+    test('daily reel generator requires explicit write flag before live work', () => {
+        const source = readScript('scripts/daily_reel2.py');
+
+        expect(source).toContain('parser.add_argument("--write"');
+        expect(source).toContain('DAILY_REEL2_ALLOW_WRITE');
+        expect(source).toContain('[DRY RUN] daily_reel2.py is guarded by default.');
+
+        const guardIndex = source.indexOf('if not explicit_write_enabled(args):');
+        const envIndex = source.indexOf('require_live_environment()', guardIndex);
+        const apiStatsIndex = source.indexOf('API_STATS.reset()', guardIndex);
+
+        expect(guardIndex).toBeGreaterThan(-1);
+        expect(envIndex).toBeGreaterThan(guardIndex);
+        expect(apiStatsIndex).toBeGreaterThan(envIndex);
+    });
+
     test('local server does not run scheduled jobs by default', () => {
         const source = readScript('server/index.js');
         const envExample = readScript('server/.env.example');
