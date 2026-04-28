@@ -1,20 +1,26 @@
 /**
- * Google Analytics 4 — Consent Mode v2
- * Tag vždy přítomen (Google ho vidí), data se posílají jen po souhlasu (GDPR).
+ * Google Analytics 4 - Consent Mode v2
+ * Tag is present, but analytics and marketing storage stay denied until consent.
  */
 
 (function () {
     const GA_ID = 'G-H22CGHF34K';
 
-    // Inicializace dataLayer a gtag stub
     window.dataLayer = window.dataLayer || [];
     function gtag() { window.dataLayer.push(arguments); }
     window.gtag = gtag;
 
-    // Consent Mode v2 — analytika povolena (legitimate interest, anonymize_ip),
-    // reklamní cookies čekají na explicitní souhlas (GDPR)
+    function updateConsent(analytics, marketing) {
+        gtag('consent', 'update', {
+            'analytics_storage': analytics ? 'granted' : 'denied',
+            'ad_storage': marketing ? 'granted' : 'denied',
+            'ad_user_data': marketing ? 'granted' : 'denied',
+            'ad_personalization': marketing ? 'granted' : 'denied'
+        });
+    }
+
     gtag('consent', 'default', {
-        'analytics_storage': 'granted',
+        'analytics_storage': 'denied',
         'ad_storage': 'denied',
         'ad_user_data': 'denied',
         'ad_personalization': 'denied',
@@ -22,38 +28,27 @@
     });
 
     gtag('js', new Date());
-    gtag('config', GA_ID, { 'anonymize_ip': true });
+    gtag('config', GA_ID, { anonymize_ip: true });
 
-    // Pokud uživatel již dříve souhlasil — okamžitě povol
     try {
         const prefs = JSON.parse(localStorage.getItem('mh_cookie_prefs') || '{}');
-        if (prefs.analytics) {
-            gtag('consent', 'update', {
-                'analytics_storage': 'granted',
-                'ad_storage': 'granted',
-                'ad_user_data': 'granted',
-                'ad_personalization': 'granted'
-            });
+        if (typeof prefs.analytics === 'boolean' || typeof prefs.marketing === 'boolean') {
+            updateConsent(prefs.analytics === true, prefs.marketing === true);
+        } else if (localStorage.getItem('cookieConsent') === 'accepted') {
+            updateConsent(true, true);
         }
     } catch (e) {}
 
-    // Načti GA4 skript po načtení stránky (neblokuje render)
     window.addEventListener('load', function () {
-        var script = document.createElement('script');
+        const script = document.createElement('script');
         script.async = true;
         script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
         document.head.appendChild(script);
     }, { once: true });
 
-    // Naslouchej budoucím souhlasům (cookie banner)
     window.addEventListener('mh_cookie_consent', function (e) {
-        if (e.detail && e.detail.analytics) {
-            gtag('consent', 'update', {
-                'analytics_storage': 'granted',
-                'ad_storage': 'granted',
-                'ad_user_data': 'granted',
-                'ad_personalization': 'granted'
-            });
+        if (e.detail) {
+            updateConsent(e.detail.analytics === true, e.detail.marketing === true);
         }
     });
 })();

@@ -15,10 +15,14 @@ let mhAnalyticsPageViewTracked = false;
 
 function getAnalyticsPreference() {
     try {
-        const prefs = JSON.parse(localStorage.getItem('mh_cookie_prefs') || 'null');
-        return prefs?.analytics !== false;
+        const rawPrefs = localStorage.getItem('mh_cookie_prefs');
+        if (rawPrefs) {
+            const prefs = JSON.parse(rawPrefs);
+            return prefs?.analytics === true;
+        }
+        return localStorage.getItem('cookieConsent') === 'accepted';
     } catch {
-        return true;
+        return false;
     }
 }
 
