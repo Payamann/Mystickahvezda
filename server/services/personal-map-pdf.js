@@ -469,11 +469,14 @@ body {
 }
 
 .mh-pdf-page--intro,
+.mh-pdf-page--signature,
 .mh-pdf-page--essence,
+.mh-pdf-page--mantra,
 .mh-pdf-page--content,
 .mh-pdf-page--timeline,
 .mh-pdf-page--actions,
 .mh-pdf-page--ritual,
+.mh-pdf-page--journal,
 .mh-pdf-page--closing {
   padding: 28mm 19mm 23mm;
   background-color: #050510;
