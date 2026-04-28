@@ -53,6 +53,13 @@ __pycache__/
 social-media-agent/output/
 social-media-agent/.pytest-tmp/
 
+# Local social/video helper drafts
+scripts/output/evening_*.txt
+scripts/output/thumbnail*.txt
+scripts/output/voiceover*.txt
+scripts/output/voiceover*.json
+scripts/output/voiceover*.review.md
+
 # Test outputs
 *.lcov
 playwright-report/
