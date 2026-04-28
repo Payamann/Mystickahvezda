@@ -175,7 +175,7 @@ async function loadFunnel() {
 
     summary.replaceChildren(createLoadingBlock('Načítám funnel...'));
     segmentTbody.replaceChildren(createTableMessageRow(8, 'Načítám data...'));
-    dailyTbody.replaceChildren(createTableMessageRow(7, 'Načítám data...'));
+    dailyTbody.replaceChildren(createTableMessageRow(9, 'Načítám data...'));
     tbody.replaceChildren(createTableMessageRow(5, 'Načítám data...'));
 
     try {
@@ -186,7 +186,7 @@ async function loadFunnel() {
         if (response.status === 403) {
             summary.replaceChildren(createLoadingBlock('Přístup odepřen (nejste admin).'));
             segmentTbody.replaceChildren(createTableMessageRow(8, 'Přístup odepřen.', 'admin-table-error'));
-            dailyTbody.replaceChildren(createTableMessageRow(7, 'Přístup odepřen.', 'admin-table-error'));
+            dailyTbody.replaceChildren(createTableMessageRow(9, 'Přístup odepřen.', 'admin-table-error'));
             tbody.replaceChildren(createTableMessageRow(5, 'Přístup odepřen.', 'admin-table-error'));
             return;
         }
@@ -271,7 +271,7 @@ async function loadAnalytics() {
     } catch (error) {
         console.error(error);
         summary.replaceChildren(createLoadingBlock('Analytics se nepodařilo načíst.'));
-        dailyTbody.replaceChildren(createTableMessageRow(7, 'Denní analytics report není dostupný.', 'admin-table-error'));
+        dailyTbody.replaceChildren(createTableMessageRow(9, 'Denní analytics report není dostupný.', 'admin-table-error'));
         errorsTbody.replaceChildren(createTableMessageRow(5, 'Chyby nejsou dostupné.', 'admin-table-error'));
         errorMsg.textContent = 'Chyba při načítání analytics: ' + error.message;
     }
@@ -470,6 +470,8 @@ function renderAnalytics(report) {
     const summaryNode = document.getElementById('analytics-summary');
     const metricCards = [
         ['Eventy', formatInteger(report.total), `Za posledních ${report.periodDays} dnů`],
+        ['Návštěvníci', formatInteger(summary.visitors), 'Unikátní consentované clientId / userId'],
+        ['Návštěvy', formatInteger(summary.visits), 'Unikátní consentované visitId'],
         ['Page views', formatInteger(summary.pageViews), 'Vlastní měření návštěv'],
         ['CTA kliky', formatInteger(summary.ctaClicks), 'Primární i kontextové výzvy'],
         ['Feedback ano/ne', feedbackValue, feedbackHint],
@@ -498,7 +500,7 @@ function renderAnalyticsDaily(rows) {
     tbody.replaceChildren();
 
     if (!rows || rows.length === 0) {
-        tbody.appendChild(createTableMessageRow(7, 'Zatím tu nejsou žádná analytics data.'));
+        tbody.appendChild(createTableMessageRow(9, 'Zatím tu nejsou žádná analytics data.'));
         return;
     }
 
@@ -506,6 +508,8 @@ function renderAnalyticsDaily(rows) {
         const tr = document.createElement('tr');
         appendCell(tr, row.date || '-');
         appendCell(tr, formatInteger(row.total));
+        appendCell(tr, formatInteger(row.visitors));
+        appendCell(tr, formatInteger(row.visits));
         appendCell(tr, formatInteger(row.pageViews));
         appendCell(tr, formatInteger(row.ctaClicks));
         appendCell(tr, formatInteger(row.signups));

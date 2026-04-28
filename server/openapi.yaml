@@ -837,6 +837,10 @@ components:
     AnalyticsSummary:
       type: object
       properties:
+        visitors:
+          type: integer
+        visits:
+          type: integer
         pageViews:
           type: integer
         ctaClicks:
@@ -865,6 +869,10 @@ components:
           type: string
           format: date
         total:
+          type: integer
+        visitors:
+          type: integer
+        visits:
           type: integer
         pageViews:
           type: integer
