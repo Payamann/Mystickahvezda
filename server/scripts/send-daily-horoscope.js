@@ -19,7 +19,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 import { config } from 'dotenv';
 config({ path: path.join(__dirname, '../.env') });
 
-const FROM = process.env.FROM_EMAIL || 'noreply@mystickahvezda.cz';
 let runtimeDeps;
 
 async function getRuntimeDeps() {
@@ -27,14 +26,12 @@ async function getRuntimeDeps() {
 
     const [
         { createClient },
-        { Resend },
         { callClaude },
         { SYSTEM_PROMPTS },
-        { EMAIL_TEMPLATES },
+        { sendEmail },
         astrology
     ] = await Promise.all([
         import('@supabase/supabase-js'),
-        import('resend'),
         import('../services/claude.js'),
         import('../config/prompts.js'),
         import('../email-service.js'),
@@ -46,10 +43,9 @@ async function getRuntimeDeps() {
             process.env.SUPABASE_URL,
             process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
         ),
-        resend: new Resend(process.env.RESEND_API_KEY),
         callClaude,
         SYSTEM_PROMPTS,
-        EMAIL_TEMPLATES,
+        sendEmail,
         getHoroscopeCacheKey: astrology.getHoroscopeCacheKey,
         getCachedHoroscope: astrology.getCachedHoroscope,
         saveCachedHoroscope: astrology.saveCachedHoroscope
@@ -85,7 +81,7 @@ async function getOrGenerateHoroscope(sign) {
 }
 
 export async function run() {
-    const { supabase, resend, EMAIL_TEMPLATES } = await getRuntimeDeps();
+    const { supabase, sendEmail } = await getRuntimeDeps();
     console.log(`[DailyHoroscope] Starting — ${new Date().toISOString()}`);
 
     const { data: subs, error } = await supabase
@@ -124,19 +120,17 @@ export async function run() {
         const text = horoscopeCache[sub.zodiac_sign];
         if (!text) { failed++; continue; }
 
-        const template = EMAIL_TEMPLATES['daily_horoscope'];
-        const html = template.getHtml({
-            sign: sub.zodiac_sign,
-            date: dateStr,
-            horoscope_text: text,
-            token: sub.unsubscribe_token
-        });
-        const subject = typeof template.subject === 'function'
-            ? template.subject({ sign: sub.zodiac_sign, date: dateStr })
-            : template.subject;
-
         try {
-            await resend.emails.send({ from: FROM, to: sub.email, subject, html });
+            await sendEmail({
+                to: sub.email,
+                template: 'daily_horoscope',
+                data: {
+                    sign: sub.zodiac_sign,
+                    date: dateStr,
+                    horoscope_text: text,
+                    token: sub.unsubscribe_token
+                }
+            });
             sent++;
         } catch (e) {
             console.error(`[DailyHoroscope] ✗ Failed to send to ${sub.email}:`, e.message);

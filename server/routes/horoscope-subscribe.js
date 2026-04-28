@@ -60,7 +60,7 @@ router.post('/', subscribeLimiter, async (req, res) => {
         if (error) throw error;
 
         // Send confirmation email (non-blocking)
-        sendConfirmationEmail(email, zodiac_sign).catch(e =>
+        sendConfirmationEmail(email, zodiac_sign, token).catch(e =>
             console.error('[HoroscopeSub] Confirmation email failed:', e.message)
         );
 
@@ -111,11 +111,11 @@ router.get('/unsubscribe', async (req, res) => {
     }
 });
 
-async function sendConfirmationEmail(email, sign) {
+async function sendConfirmationEmail(email, sign, token) {
     const { sendEmail, EMAIL_TEMPLATES } = await import('../email-service.js');
     // Only send if template exists, otherwise skip silently
     if (!EMAIL_TEMPLATES['horoscope_subscription_confirm']) return;
-    await sendEmail({ to: email, template: 'horoscope_subscription_confirm', data: { sign } });
+    await sendEmail({ to: email, template: 'horoscope_subscription_confirm', data: { sign, token } });
 }
 
 export default router;

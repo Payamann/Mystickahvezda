@@ -8,6 +8,7 @@ import { getKnownBirthLocationNames } from '../services/astrology.js';
 
 const ROOT_DIR = path.resolve(process.cwd());
 const DIST_JS_DIR = path.join(ROOT_DIR, 'js', 'dist');
+const STYLE_V2_CSS = path.join(ROOT_DIR, 'css', 'style.v2.css');
 const JS_INLINE_STYLE_VENDOR_EXCEPTIONS = new Set([
     'js/three.min.js',
     'js/dist/three.min.js'
@@ -152,6 +153,10 @@ function jsDistHasExports(fileName) {
     return /\b(?:import|export)\b/.test(fs.readFileSync(distPath, 'utf8'));
 }
 
+function readStyleV2Css() {
+    return fs.readFileSync(STYLE_V2_CSS, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+}
+
 function getTopLevelJsFile(src) {
     if (!src) return null;
     if (/^(?:https?:)?\/\//i.test(src)) return null;
@@ -178,6 +183,16 @@ function toLocalAssetPath(assetUrl, sourcePath) {
 }
 
 describe('Static HTML CSP hygiene', () => {
+    test('homepage CSS avoids scroll-jank motion patterns', () => {
+        const css = readStyleV2Css();
+        const fadeInStart = css.indexOf('@keyframes fadeInUp');
+        const fadeInEnd = css.indexOf('@keyframes twinkle', fadeInStart);
+        const fadeInUp = css.slice(fadeInStart, fadeInEnd);
+
+        expect(css).not.toMatch(/background-attachment\s*:\s*fixed/i);
+        expect(fadeInUp).not.toMatch(/translateY\(\s*(?:[1-9]\d*|0?\.\d+)px\s*\)/i);
+    });
+
     test('product HTML files do not use inline event handlers', () => {
         for (const { file, html } of readProductHtmlFiles()) {
             expect(html).not.toMatch(/\son[a-z]+\s*=/i);

@@ -7,7 +7,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 let resend = null;
-const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@mystickahvezda.cz';
+const DEFAULT_FROM_EMAIL = 'noreply@mystickahvezda.cz';
+const DEFAULT_BRAND_NAME = 'Mysticka Hvezda';
+const FROM_EMAIL = formatFromEmail(process.env.FROM_EMAIL || DEFAULT_FROM_EMAIL);
+const REPLY_TO_EMAIL = sanitizeHeaderValue(process.env.REPLY_TO_EMAIL || process.env.SUPPORT_EMAIL || '');
+const APP_URL = process.env.APP_URL || 'https://www.mystickahvezda.cz';
 
 // Validate email configuration on startup
 if (!process.env.FROM_EMAIL && process.env.NODE_ENV === 'production') {
@@ -22,11 +26,139 @@ function getResend() {
   return resend;
 }
 
+function sanitizeHeaderValue(value) {
+  return String(value || '').replace(/[\r\n]+/g, ' ').trim();
+}
+
+function formatFromEmail(value) {
+  const cleaned = sanitizeHeaderValue(value);
+  if (!cleaned) return `${DEFAULT_BRAND_NAME} <${DEFAULT_FROM_EMAIL}>`;
+  if (/^[^<>\s@]+@[^<>\s@]+\.[^<>\s@]+$/.test(cleaned)) {
+    return `${DEFAULT_BRAND_NAME} <${cleaned}>`;
+  }
+  return cleaned;
+}
+
+function sanitizeHeaders(headers = {}) {
+  return Object.fromEntries(
+    Object.entries(headers)
+      .filter(([key, value]) => key && value)
+      .map(([key, value]) => [sanitizeHeaderValue(key), sanitizeHeaderValue(value)])
+      .filter(([key, value]) => key && value)
+  );
+}
+
+function toAbsoluteUrl(url) {
+  const cleaned = sanitizeHeaderValue(url);
+  if (!cleaned) return '';
+  try {
+    return new URL(cleaned, APP_URL).toString();
+  } catch {
+    return '';
+  }
+}
+
+function buildListUnsubscribeUrl(template, data = {}, explicitUrl = '') {
+  if (explicitUrl) return toAbsoluteUrl(explicitUrl);
+  if ((template === 'daily_horoscope' || template === 'horoscope_subscription_confirm') && data.token) {
+    return toAbsoluteUrl(`/api/subscribe/horoscope/unsubscribe?token=${encodeURIComponent(data.token)}`);
+  }
+  return '';
+}
+
+function buildEmailHeaders({ template, data = {}, headers = {}, unsubscribeUrl = '' }) {
+  const baseHeaders = {};
+  const listUnsubscribeUrl = buildListUnsubscribeUrl(template, data, unsubscribeUrl);
+
+  if (listUnsubscribeUrl) {
+    baseHeaders['List-Unsubscribe'] = `<${listUnsubscribeUrl}>`;
+  }
+
+  return {
+    ...baseHeaders,
+    ...sanitizeHeaders(headers)
+  };
+}
+
+export function htmlToPlainText(html = '') {
+  return String(html)
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<head[\s\S]*?<\/head>/gi, ' ')
+    .replace(/<\/(?:p|div|h[1-6]|li|tr|table|section)>/gi, '\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, '$2 ($1)')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&rarr;/g, '→')
+    .replace(/&hellip;/g, '…')
+    .replace(/\r/g, '')
+    .split('\n')
+    .map(line => line.replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+    .join('\n')
+    .slice(0, 15000);
+}
+
+function escapeHtml(value = '') {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatTextContent(value = '') {
+  const safeText = String(value)
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, '');
+
+  const paragraphs = safeText
+    .replace(/\r/g, '')
+    .split(/\n{2,}/)
+    .map(paragraph => paragraph.trim())
+    .filter(Boolean);
+
+  if (!paragraphs.length) {
+    return '<p>Dnesni vedeni se pripravuje. Zkuste prosim otevrit horoskop na webu.</p>';
+  }
+
+  return paragraphs
+    .map(paragraph => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br>')}</p>`)
+    .join('');
+}
+
+function buildResendPayload({ to, subject, html, text, replyTo, headers, attachments }) {
+  const payload = {
+    from: FROM_EMAIL,
+    to,
+    subject: sanitizeHeaderValue(subject),
+    html,
+    text: text || htmlToPlainText(html)
+  };
+
+  const resolvedReplyTo = sanitizeHeaderValue(replyTo || REPLY_TO_EMAIL);
+  if (resolvedReplyTo) payload.replyTo = resolvedReplyTo;
+  if (headers && Object.keys(headers).length) payload.headers = headers;
+  if (attachments) payload.attachments = attachments;
+
+  return payload;
+}
+
 /**
  * BASE EMAIL TEMPLATE
  * Provides a unified, premium mystical look for all emails
  */
-function getBaseTemplate(content, title = 'Mystická Hvězda') {
+function getBaseTemplate(content, title = 'Mystická Hvězda', previewText = '') {
+  const preheader = escapeHtml(previewText || title);
+
   return `
     <!DOCTYPE html>
     <html lang="cs">
@@ -142,6 +274,9 @@ function getBaseTemplate(content, title = 'Mystická Hvězda') {
         </style>
       </head>
       <body>
+        <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;line-height:1px;">
+          ${preheader}
+        </div>
         <center class="wrapper">
           <table class="main">
             <tr>
@@ -439,7 +574,7 @@ export const EMAIL_TEMPLATES = {
  */
 export async function sendEmail(emailConfig) {
   try {
-    const { to, template, data = {} } = emailConfig;
+    const { to, template, data = {}, headers = {}, replyTo, text, unsubscribeUrl } = emailConfig;
 
     if (!template || !EMAIL_TEMPLATES[template]) {
       throw new Error(`Unknown email template: ${template}`);
@@ -455,12 +590,14 @@ export async function sendEmail(emailConfig) {
       throw new Error('Resend not initialized - missing RESEND_API_KEY');
     }
 
-    const response = await resendClient.emails.send({
-      from: FROM_EMAIL,
+    const response = await resendClient.emails.send(buildResendPayload({
       to,
       subject: typeof templateConfig.subject === 'function' ? templateConfig.subject(data) : templateConfig.subject,
-      html
-    });
+      html,
+      text,
+      replyTo,
+      headers: buildEmailHeaders({ template, data, headers, unsubscribeUrl })
+    }));
 
     if (response.error) {
       throw response.error;
@@ -667,39 +804,56 @@ export async function sendTrialReminderEmails(userId, email, trialEndDate) {
 }
 
 EMAIL_TEMPLATES.horoscope_subscription_confirm = {
-  subject: '🌟 Odběr denního horoskopu potvrzen',
-  getHtml: (data) => getBaseTemplate(`
-    <h1 class="h1">Hvězdy tě vítají!</h1>
-    <p>Tvůj odběr denního horoskopu pro znamení <span class="highlight">${data.sign}</span> byl úspěšně aktivován.</p>
-    <p>Každý den ráno ti přijde tvůj osobní horoskop přímo do emailu. Začni sledovat, jak tě hvězdy vedou...</p>
+  subject: 'Odběr denního horoskopu potvrzen',
+  getHtml: (data) => {
+    const sign = escapeHtml(data.sign);
+    const horoscopeUrl = toAbsoluteUrl('/horoskopy.html');
+    const unsubscribeUrl = data.token
+      ? toAbsoluteUrl(`/api/subscribe/horoscope/unsubscribe?token=${encodeURIComponent(data.token)}`)
+      : horoscopeUrl;
+
+    return getBaseTemplate(`
+    <h1 class="h1">Odběr je aktivní</h1>
+    <p>Tvůj denní horoskop pro znamení <span class="highlight">${sign}</span> je zapnutý.</p>
+    <p>Každé ráno ti pošleme krátké vedení pro den: na co se soustředit, kde ubrat a co si pohlídat.</p>
     <div class="cta-box">
-      <a href="${process.env.APP_URL}/horoskopy.html" class="btn">Otevřít dnešní horoskop →</a>
+      <a href="${horoscopeUrl}" class="btn">Otevřít dnešní horoskop &rarr;</a>
     </div>
     <p style="font-size:13px;opacity:0.6;text-align:center;margin-top:2rem;">
-      Pokud si nepřeješ dostávat denní horoskop, můžeš se <a href="${process.env.APP_URL}/api/subscribe/horoscope/unsubscribe?token=${data.token}" style="color:#d4af37;">kdykoli odhlásit</a>.
+      Pokud si nepřeješ dostávat denní horoskop, můžeš se <a href="${unsubscribeUrl}" style="color:#d4af37;">kdykoli odhlásit</a>.
     </p>
-  `, 'Odběr potvrzen — Mystická Hvězda')
+  `, 'Odběr denního horoskopu', `Potvrzení odběru denního horoskopu pro znamení ${data.sign}.`);
+  }
 };
 
 EMAIL_TEMPLATES.daily_horoscope = {
-  subject: (data) => `🌙 Tvůj denní horoskop — ${data.sign} — ${data.date}`,
-  getHtml: (data) => getBaseTemplate(`
-    <h1 class="h1">Horoskop pro ${data.sign}</h1>
-    <p style="text-align:center;opacity:0.7;margin-top:-10px;">${data.date}</p>
+  subject: (data) => `Tvůj denní horoskop: ${data.sign}`,
+  getHtml: (data) => {
+    const sign = escapeHtml(data.sign);
+    const date = escapeHtml(data.date);
+    const horoscopeUrl = toAbsoluteUrl('/horoskopy.html');
+    const unsubscribeUrl = data.token
+      ? toAbsoluteUrl(`/api/subscribe/horoscope/unsubscribe?token=${encodeURIComponent(data.token)}`)
+      : horoscopeUrl;
+
+    return getBaseTemplate(`
+    <h1 class="h1">Horoskop pro ${sign}</h1>
+    <p style="text-align:center;opacity:0.7;margin-top:-10px;">${date}</p>
 
     <div style="background:rgba(212,175,55,0.07);border-left:3px solid #d4af37;padding:20px 25px;border-radius:0 8px 8px 0;margin:25px 0;line-height:1.8;font-size:16px;">
-      ${data.horoscope_text}
+      ${formatTextContent(data.horoscope_text)}
     </div>
 
     <div class="cta-box">
-      <a href="${process.env.APP_URL}/horoskopy.html" class="btn">Celý horoskop na webu →</a>
+      <a href="${horoscopeUrl}" class="btn">Celý horoskop na webu &rarr;</a>
     </div>
 
     <p style="font-size:12px;opacity:0.5;text-align:center;margin-top:2rem;">
       Dostáváš tento email protože jsi přihlášen k odběru denního horoskopu Mystické Hvězdy.<br>
-      <a href="${process.env.APP_URL}/api/subscribe/horoscope/unsubscribe?token=${data.token}" style="color:#d4af37;">Odhlásit se z odběru</a>
+      <a href="${unsubscribeUrl}" style="color:#d4af37;">Odhlásit se z odběru</a>
     </p>
-  `, `Denní horoskop — ${data.sign}`)
+  `, `Denní horoskop: ${data.sign}`, `Krátké ranní vedení pro znamení ${data.sign}. Otevři, co dnes podpořit a co nechat být.`);
+  }
 };
 
 const SIGN_NAMES_EMAIL = {
@@ -739,17 +893,17 @@ export async function sendHoroscopePdf({ to, name, sign, pdfBuffer }) {
 
   const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
 
-  const { data, error } = await client.emails.send({
-    from: FROM_EMAIL,
+  const { data, error } = await client.emails.send(buildResendPayload({
     to,
     subject: `✦ Tvůj Roční Horoskop na míru ${year} — ${signName}`,
     html,
+    headers: {},
     attachments: [{
       filename: `horoskop-${year}-${sign}.pdf`,
       content: pdfBase64,
       type: 'application/pdf',
     }],
-  });
+  }));
 
   if (error) {
     throw new Error(`Resend error: ${error.message} (${error.statusCode})`);
@@ -789,17 +943,17 @@ export async function sendPersonalMapPdf({ to, name, sign, pdfBuffer }) {
 
   const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
 
-  const { data, error } = await client.emails.send({
-    from: FROM_EMAIL,
+  const { data, error } = await client.emails.send(buildResendPayload({
     to,
     subject: `✦ Tvoje Osobní mapa zbytku roku ${year} — ${signName}`,
     html,
+    headers: {},
     attachments: [{
       filename: `osobni-mapa-${year}-${sign}.pdf`,
       content: pdfBase64,
       type: 'application/pdf',
     }],
-  });
+  }));
 
   if (error) {
     throw new Error(`Resend error: ${error.message} (${error.statusCode})`);

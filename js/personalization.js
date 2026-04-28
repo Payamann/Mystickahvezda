@@ -86,7 +86,7 @@ function initIndexGreeting() {
         
         greetingEl.innerHTML = `
             <span class="greeting-icon">${s.emoji}</span>
-            <span class="greeting-text">${timeGreet}${nameStr}! Váš dnešní výhled pro ${s.label} →</span>
+            <span class="greeting-text">${timeGreet}${nameStr}! Tvůj dnešní výhled pro ${s.label} →</span>
         `;
         
         greetingEl.href = `horoskopy.html#${sign}`;
@@ -118,7 +118,7 @@ function initHoroscopeHighlight() {
             // Vytvoř nový badge pouze pro zvýrazněnou kartu
             const newBadge = document.createElement('span');
             newBadge.className = 'zodiac-card__badge';
-            newBadge.textContent = 'Vaše znamení';
+            newBadge.textContent = 'Tvoje znamení';
             card.appendChild(newBadge);
 
             // Auto-scroll if hash matches (bez delay - scroll po rendu stránky)
@@ -162,7 +162,7 @@ function renderSignPickerHTML(picker) {
         const s = SIGNS_CZ[current];
         picker.innerHTML = `
             <div class="sign-picker__header">
-                <span class="sign-picker__label">Vaše znamení:</span>
+                <span class="sign-picker__label">Tvoje znamení:</span>
                 <button id="sign-picker-toggle"
                     class="sign-picker__button"
                     aria-expanded="false"
@@ -191,7 +191,7 @@ function renderSignPickerHTML(picker) {
         // Žádné znamení vybráno - zobraz všechna
         picker.innerHTML = `
             <div class="sign-picker__header">
-                <span class="sign-picker__label">Vaše znamení:</span>
+                <span class="sign-picker__label">Tvoje znamení:</span>
             </div>
             <div id="sign-picker-expanded" class="sign-picker__expanded active" role="region" aria-label="Výběr znamení">
                 ${Object.entries(SIGNS_CZ).map(([key, s]) => `

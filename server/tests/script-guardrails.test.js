@@ -49,6 +49,15 @@ describe('manual script guardrails', () => {
         expect(source).toContain('export async function run()');
     });
 
+    test('daily horoscope script uses shared email service payload', () => {
+        const source = readScript('server/scripts/send-daily-horoscope.js');
+
+        expect(source).toContain("template: 'daily_horoscope'");
+        expect(source).toContain('sendEmail({');
+        expect(source).not.toContain('resend.emails.send');
+        expect(source).not.toContain("import('resend')");
+    });
+
     test('horoscope prefill requires explicit write flag', () => {
         const source = readScript('server/scripts/prefill-horoscopes.js');
 

@@ -272,13 +272,13 @@ html {
 
   background-repeat: no-repeat;
 
-  background-attachment: fixed;
+  background-attachment: scroll;
 
 }
 
 
 
-/* Global Fixed Background (solves scroll jank from background-attachment: fixed on body) */
+/* Global fixed layer: keeps the cosmic backdrop stable without background-attachment repaint jank. */
 
 html::before {
 
@@ -5787,9 +5787,9 @@ body.page-mentor .header {
 
   from {
 
-    opacity: 0;
+    opacity: 1;
 
-    transform: translateY(30px);
+    transform: translateY(0);
 
   }
 
