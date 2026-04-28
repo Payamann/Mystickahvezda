@@ -14,6 +14,12 @@ document.addEventListener('click', (event) => {
     if (action === 'exportFunnelSegmentsCsv') {
         exportFunnelCsv('segments');
     }
+    if (action === 'loadAnalytics') {
+        loadAnalytics();
+    }
+    if (action === 'exportAnalyticsCsv') {
+        exportAnalyticsCsv();
+    }
     if (action === 'loadAdminData') {
         loadAdminData();
     }
@@ -34,6 +40,9 @@ document.addEventListener('click', (event) => {
 document.addEventListener('change', (event) => {
     if (event.target && event.target.id === 'funnel-range-days') {
         loadFunnel();
+    }
+    if (event.target && event.target.id === 'analytics-range-days') {
+        loadAnalytics();
     }
     if (event.target && event.target.id === 'angel-message-status') {
         loadAngelMessages();
@@ -67,6 +76,7 @@ async function loadAdminData() {
     await Promise.all([
         loadUsers(),
         loadFunnel(),
+        loadAnalytics(),
         loadAngelMessages()
     ]);
 }
@@ -227,6 +237,74 @@ async function exportFunnelCsv(view = 'daily') {
     }
 }
 
+async function loadAnalytics() {
+    const daysSelect = document.getElementById('analytics-range-days');
+    const days = daysSelect ? daysSelect.value : '7';
+    const summary = document.getElementById('analytics-summary');
+    const dailyTbody = document.querySelector('#analytics-daily-table tbody');
+    const errorsTbody = document.querySelector('#analytics-errors-table tbody');
+    const errorMsg = document.getElementById('error-msg');
+
+    if (!summary || !dailyTbody || !errorsTbody) return;
+
+    summary.replaceChildren(createLoadingBlock('Načítám analytics...'));
+    dailyTbody.replaceChildren(createTableMessageRow(7, 'Načítám data...'));
+    errorsTbody.replaceChildren(createTableMessageRow(5, 'Načítám data...'));
+
+    try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/admin/analytics?days=${encodeURIComponent(days)}`, {
+            credentials: 'include'
+        });
+
+        if (response.status === 403) {
+            summary.replaceChildren(createLoadingBlock('Přístup odepřen (nejste admin).'));
+            dailyTbody.replaceChildren(createTableMessageRow(7, 'Přístup odepřen.', 'admin-table-error'));
+            errorsTbody.replaceChildren(createTableMessageRow(5, 'Přístup odepřen.', 'admin-table-error'));
+            return;
+        }
+
+        const data = await response.json();
+        if (!data.success) throw new Error(data.error);
+
+        renderAnalytics(data.report);
+        errorMsg.textContent = '';
+    } catch (error) {
+        console.error(error);
+        summary.replaceChildren(createLoadingBlock('Analytics se nepodařilo načíst.'));
+        dailyTbody.replaceChildren(createTableMessageRow(7, 'Denní analytics report není dostupný.', 'admin-table-error'));
+        errorsTbody.replaceChildren(createTableMessageRow(5, 'Chyby nejsou dostupné.', 'admin-table-error'));
+        errorMsg.textContent = 'Chyba při načítání analytics: ' + error.message;
+    }
+}
+
+async function exportAnalyticsCsv() {
+    const daysSelect = document.getElementById('analytics-range-days');
+    const days = daysSelect ? daysSelect.value : '7';
+    const errorMsg = document.getElementById('error-msg');
+
+    try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/admin/analytics?days=${encodeURIComponent(days)}&format=csv`, {
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error(`Export selhal (${response.status})`);
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `analytics-${days}d.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        errorMsg.textContent = '';
+    } catch (error) {
+        console.error(error);
+        errorMsg.textContent = 'Analytics CSV export se nepodařil: ' + error.message;
+    }
+}
+
 async function loadAngelMessages() {
     const statusSelect = document.getElementById('angel-message-status');
     const status = statusSelect ? statusSelect.value : 'pending';
@@ -378,6 +456,85 @@ function renderFunnel(report) {
     renderFunnelSegments(report.sourceFeatureSegments || []);
     renderFunnelDaily(report.daily || []);
     renderFunnelEvents(report.recentEvents || []);
+}
+
+function renderAnalytics(report) {
+    const summary = report.summary || {};
+    const feedback = summary.feedback || {};
+    const feedbackValue = feedback.total
+        ? `${formatInteger(feedback.yes || 0)} / ${formatInteger(feedback.no || 0)}`
+        : '0 / 0';
+    const feedbackHint = feedback.total
+        ? `${formatInteger(feedback.total)} odpovědí, ${feedback.positiveRate ?? 0}% pozitivních`
+        : 'Zatím bez odpovědí';
+    const summaryNode = document.getElementById('analytics-summary');
+    const metricCards = [
+        ['Eventy', formatInteger(report.total), `Za posledních ${report.periodDays} dnů`],
+        ['Page views', formatInteger(summary.pageViews), 'Vlastní měření návštěv'],
+        ['CTA kliky', formatInteger(summary.ctaClicks), 'Primární i kontextové výzvy'],
+        ['Feedback ano/ne', feedbackValue, feedbackHint],
+        ['Registrace', formatInteger(summary.signups), 'Dokončené signup eventy'],
+        ['Checkouty', formatInteger(summary.checkouts), 'Zahájené platby'],
+        ['Client chyby', formatInteger(summary.clientErrors), 'Frontend chyby z browseru'],
+        ['Server chyby', formatInteger(summary.serverErrors), 'Backend error handler']
+    ];
+
+    summaryNode.replaceChildren(...metricCards.map(([label, value, hint]) => createMetric(label, value, hint)));
+
+    renderBreakdown('analytics-events', Object.entries(report.byEvent || {})
+        .map(([key, count]) => ({ key, count }))
+        .sort((a, b) => b.count - a.count || a.key.localeCompare(b.key))
+        .slice(0, 8));
+    renderBreakdown('analytics-features', report.topFeatures || []);
+    renderBreakdown('analytics-paths', report.topPaths || []);
+    renderAnalyticsDaily(report.daily || []);
+    renderAnalyticsErrors(report.recentErrors || []);
+}
+
+function renderAnalyticsDaily(rows) {
+    const tbody = document.querySelector('#analytics-daily-table tbody');
+    if (!tbody) return;
+
+    tbody.replaceChildren();
+
+    if (!rows || rows.length === 0) {
+        tbody.appendChild(createTableMessageRow(7, 'Zatím tu nejsou žádná analytics data.'));
+        return;
+    }
+
+    [...rows].reverse().forEach(row => {
+        const tr = document.createElement('tr');
+        appendCell(tr, row.date || '-');
+        appendCell(tr, formatInteger(row.total));
+        appendCell(tr, formatInteger(row.pageViews));
+        appendCell(tr, formatInteger(row.ctaClicks));
+        appendCell(tr, formatInteger(row.signups));
+        appendCell(tr, formatInteger(row.checkouts));
+        appendCell(tr, formatInteger(row.errors));
+        tbody.appendChild(tr);
+    });
+}
+
+function renderAnalyticsErrors(errors) {
+    const tbody = document.querySelector('#analytics-errors-table tbody');
+    if (!tbody) return;
+
+    tbody.replaceChildren();
+
+    if (!errors || errors.length === 0) {
+        tbody.appendChild(createTableMessageRow(5, 'Zatím tu nejsou žádné zachycené chyby.'));
+        return;
+    }
+
+    errors.forEach(error => {
+        const tr = document.createElement('tr');
+        appendCell(tr, formatDateTime(error.createdAt));
+        appendCell(tr, error.eventType || '-');
+        appendCell(tr, formatDimension(error.feature));
+        appendCell(tr, formatDimension(error.path));
+        appendCell(tr, error.message || '-');
+        tbody.appendChild(tr);
+    });
 }
 
 function renderFunnelSegments(rows) {

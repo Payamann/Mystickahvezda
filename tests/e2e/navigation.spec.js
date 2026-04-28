@@ -123,6 +123,23 @@ test.describe('Statické soubory', () => {
     });
 });
 
+test.describe('Sdilene komponenty', () => {
+
+    test('footer feedback funguje na strance se sdilenym footerem', async ({ page }) => {
+        await page.goto('/horoskopy.html');
+        await waitForPageReady(page);
+
+        const widget = page.locator('[data-feedback-widget]');
+        await widget.scrollIntoViewIfNeeded();
+        await expect(widget).toBeVisible();
+
+        await widget.locator('[data-feedback-value="no"]').click();
+
+        await expect(widget.locator('[data-feedback-status]')).toContainText('Díky');
+        await expect(widget.locator('[data-feedback-value="no"]')).toBeDisabled();
+    });
+});
+
 // ── Interní navigace ─────────────────────────────────────────────────────────
 
 test.describe('Interní navigace', () => {

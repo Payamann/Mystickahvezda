@@ -218,6 +218,7 @@ async function runPublicChecks() {
     }
 
     await runPublicConfigCheck();
+    await runAnalyticsEndpointCheck();
 
     const { response: locationsRes, body: locations } = await measure('Birth locations', () => fetchJson('/api/birth-locations'));
     if (!locationsRes.ok || locations.success !== true || !Array.isArray(locations.locations) || locations.locations.length === 0) {
@@ -235,6 +236,29 @@ async function runPublicChecks() {
     await runConversionLinkChecks();
     await runRedirectChecks();
     await runAstroCalculationChecks();
+}
+
+async function runAnalyticsEndpointCheck() {
+    const csrfToken = await getCsrfToken();
+    const { response, body } = await measure('Analytics endpoint', () => fetchJson('/api/analytics/event', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken
+        },
+        body: JSON.stringify({
+            eventName: 'production_smoke_checked',
+            feature: 'deploy_guard',
+            metadata: {
+                source: 'verify-production',
+                path: '/api/health'
+            }
+        })
+    }));
+
+    if (!response.ok || body.success !== true) {
+        throw new Error(`Analytics endpoint did not accept smoke event: ${JSON.stringify(body)}`);
+    }
 }
 
 async function runPublicConfigCheck() {

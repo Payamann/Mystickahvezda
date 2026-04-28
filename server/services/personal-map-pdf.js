@@ -6,6 +6,9 @@ import { fileURLToPath, pathToFileURL } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '../../');
+const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
+const CLAUDE_MODEL = 'claude-sonnet-4-5';
+const PERSONAL_MAP_TIMEOUT_MS = 120000;
 
 const SIGN_NAMES = {
     beran: 'Beran',
@@ -172,6 +175,89 @@ function imageDataUri(relativePath) {
     return `data:${mimeType};base64,${fs.readFileSync(imagePath).toString('base64')}`;
 }
 
+async function callClaudeForPersonalMap(systemPrompt, userPrompt) {
+    if (process.env.MOCK_AI === 'true' || process.env.NODE_ENV === 'test') {
+        return JSON.stringify(samplePersonalMapData.sections);
+    }
+
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+        throw new Error('ANTHROPIC_API_KEY not set');
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), PERSONAL_MAP_TIMEOUT_MS);
+
+    try {
+        const response = await fetch(CLAUDE_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey,
+                'anthropic-version': '2023-06-01'
+            },
+            body: JSON.stringify({
+                model: CLAUDE_MODEL,
+                max_tokens: 8192,
+                system: systemPrompt,
+                messages: [{ role: 'user', content: userPrompt }]
+            }),
+            signal: controller.signal
+        });
+
+        if (!response.ok) {
+            throw new Error(`Claude API ${response.status}: ${await response.text()}`);
+        }
+
+        const data = await response.json();
+        return data.content?.[0]?.text || '';
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+function extractJsonPayload(raw) {
+    const text = String(raw || '').trim()
+        .replace(/^```json\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/```$/i, '')
+        .trim();
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+
+    if (start === -1 || end === -1 || end <= start) {
+        throw new Error('Claude returned no JSON object.');
+    }
+
+    return text.slice(start, end + 1);
+}
+
+function normalizePersonalMapSections(value) {
+    const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+    return {
+        starSignature: {
+            ...DEFAULT_SECTIONS.starSignature,
+            ...(source.starSignature && typeof source.starSignature === 'object' ? source.starSignature : {})
+        },
+        essence: Array.isArray(source.essence) ? source.essence.slice(0, 4) : [],
+        yearMantra: {
+            ...DEFAULT_SECTIONS.yearMantra,
+            ...(source.yearMantra && typeof source.yearMantra === 'object' ? source.yearMantra : {})
+        },
+        mainTheme: typeof source.mainTheme === 'string' ? source.mainTheme : '',
+        innerMirror: typeof source.innerMirror === 'string' ? source.innerMirror : '',
+        love: typeof source.love === 'string' ? source.love : '',
+        workMoney: typeof source.workMoney === 'string' ? source.workMoney : '',
+        growth: typeof source.growth === 'string' ? source.growth : '',
+        shadowGift: typeof source.shadowGift === 'string' ? source.shadowGift : '',
+        months: Array.isArray(source.months) ? source.months.slice(0, 6) : [],
+        actionPlan: Array.isArray(source.actionPlan) ? source.actionPlan.slice(0, 5) : [],
+        ritual: typeof source.ritual === 'string' ? source.ritual : '',
+        journalPrompts: Array.isArray(source.journalPrompts) ? source.journalPrompts.slice(0, 6) : [],
+        closing: typeof source.closing === 'string' ? source.closing : ''
+    };
+}
+
 function sectionPage({
     kicker,
     title,
@@ -278,6 +364,14 @@ Pravidla kvality:
 - Jazyk: čeština, 2. osoba jednotného čísla.`;
 
     return { system, user };
+}
+
+export async function generatePersonalMapContent(input = {}) {
+    const { system, user } = buildPersonalMapGenerationPrompt(input);
+    const raw = await callClaudeForPersonalMap(system, user);
+    const parsed = JSON.parse(extractJsonPayload(raw));
+    const sections = parsed?.sections && typeof parsed.sections === 'object' ? parsed.sections : parsed;
+    return normalizePersonalMapSections(sections);
 }
 
 export function buildPersonalMapHtml(input) {

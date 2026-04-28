@@ -9,6 +9,10 @@ const DEFAULT_FUNNEL_DAYS = 30;
 const MAX_FUNNEL_DAYS = 365;
 const DEFAULT_FUNNEL_LIMIT = 1000;
 const MAX_FUNNEL_LIMIT = 5000;
+const DEFAULT_ANALYTICS_DAYS = 7;
+const MAX_ANALYTICS_DAYS = 90;
+const DEFAULT_ANALYTICS_LIMIT = 1000;
+const MAX_ANALYTICS_LIMIT = 5000;
 
 const FUNNEL_FAILURE_EVENTS = new Set([
     'checkout_validation_failed',
@@ -270,6 +274,18 @@ export function normalizeFunnelLimit(value) {
     return Math.min(MAX_FUNNEL_LIMIT, Math.max(100, parsed));
 }
 
+export function normalizeAnalyticsDays(value) {
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed)) return DEFAULT_ANALYTICS_DAYS;
+    return Math.min(MAX_ANALYTICS_DAYS, Math.max(1, parsed));
+}
+
+export function normalizeAnalyticsLimit(value) {
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed)) return DEFAULT_ANALYTICS_LIMIT;
+    return Math.min(MAX_ANALYTICS_LIMIT, Math.max(100, parsed));
+}
+
 export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, since = null, previousSince = null, periodEnd = null, limit = DEFAULT_FUNNEL_LIMIT } = {}) {
     const {
         hasComparison,
@@ -430,6 +446,112 @@ export function buildFunnelSegmentsCsv(report) {
     return [header, ...rows]
         .map(row => row.map(csvCell).join(','))
         .join('\n');
+}
+
+function analyticsPathFromEvent(event) {
+    const metadata = event?.metadata && typeof event.metadata === 'object' ? event.metadata : {};
+    return normalizeDimension(metadata.path || metadata.page) || '(unknown)';
+}
+
+function createAnalyticsDailyBucket(date) {
+    return {
+        date,
+        total: 0,
+        pageViews: 0,
+        ctaClicks: 0,
+        signups: 0,
+        checkouts: 0,
+        errors: 0
+    };
+}
+
+export function buildAnalyticsReport(events = [], { days = DEFAULT_ANALYTICS_DAYS, limit = DEFAULT_ANALYTICS_LIMIT } = {}) {
+    const byEvent = {};
+    const byFeature = {};
+    const byPath = {};
+    const byDay = {};
+    const recentErrors = [];
+    const feedback = {
+        total: 0,
+        yes: 0,
+        no: 0,
+        positiveRate: null
+    };
+
+    for (const event of events.slice(0, limit)) {
+        const eventType = normalizeDimension(event.event_type) || 'unknown';
+        const feature = normalizeDimension(event.feature) || '(none)';
+        const metadata = event?.metadata && typeof event.metadata === 'object' ? event.metadata : {};
+        const path = analyticsPathFromEvent(event);
+        const date = getEventDate(event.created_at) || 'unknown';
+
+        incrementCounter(byEvent, eventType);
+        incrementCounter(byFeature, feature);
+        incrementCounter(byPath, path);
+
+        if (!byDay[date]) byDay[date] = createAnalyticsDailyBucket(date);
+        byDay[date].total += 1;
+        if (eventType === 'page_view') byDay[date].pageViews += 1;
+        if (eventType === 'cta_clicked') byDay[date].ctaClicks += 1;
+        if (eventType === 'signup_completed') byDay[date].signups += 1;
+        if (eventType === 'begin_checkout') byDay[date].checkouts += 1;
+        if (eventType === 'feedback_submitted') {
+            const feedbackValue = normalizeDimension(metadata.value)?.toLowerCase();
+            feedback.total += 1;
+            if (feedbackValue === 'yes') feedback.yes += 1;
+            if (feedbackValue === 'no') feedback.no += 1;
+        }
+        if (eventType === 'client_error' || eventType === 'server_error' || eventType === 'error') {
+            byDay[date].errors += 1;
+            recentErrors.push({
+                id: event.id,
+                eventType,
+                feature,
+                path,
+                message: metadata.message || metadata.error || null,
+                createdAt: event.created_at
+            });
+        }
+    }
+
+    const total = events.length;
+    if (feedback.total > 0) {
+        feedback.positiveRate = Math.round((feedback.yes / feedback.total) * 100);
+    }
+
+    return {
+        periodDays: days,
+        total,
+        summary: {
+            pageViews: byEvent.page_view || 0,
+            ctaClicks: byEvent.cta_clicked || 0,
+            signups: byEvent.signup_completed || 0,
+            checkouts: byEvent.begin_checkout || 0,
+            clientErrors: byEvent.client_error || 0,
+            serverErrors: byEvent.server_error || 0,
+            feedback
+        },
+        byEvent,
+        topFeatures: topCounter(byFeature),
+        topPaths: topCounter(byPath),
+        daily: Object.values(byDay).sort((a, b) => a.date.localeCompare(b.date)),
+        recentErrors: recentErrors.slice(0, 25)
+    };
+}
+
+export function buildAnalyticsDailyCsv(report) {
+    const header = ['date', 'total', 'page_views', 'cta_clicks', 'signups', 'checkouts', 'errors'];
+    const rows = report.daily.map((day) => [
+        day.date,
+        day.total,
+        day.pageViews,
+        day.ctaClicks,
+        day.signups,
+        day.checkouts,
+        day.errors
+    ].map(csvCell).join(','));
+
+    return [header.join(','), ...rows].join('\n');
 }
 
 function normalizeModerationStatus(value) {
@@ -628,6 +750,47 @@ router.get('/funnel', authenticateToken, requireAdmin, async (req, res) => {
     } catch (error) {
         console.error('Admin Funnel Error:', error);
         res.status(500).json({ success: false, error: 'Nepodařilo se načíst funnel report.' });
+    }
+});
+
+// First-party analytics report
+router.get('/analytics', authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        const days = normalizeAnalyticsDays(req.query.days);
+        const limit = normalizeAnalyticsLimit(req.query.limit);
+        const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+        const { data: events, error } = await supabase
+            .from('analytics_events')
+            .select(`
+                id,
+                user_id,
+                event_type,
+                feature,
+                metadata,
+                created_at
+            `)
+            .gte('created_at', sinceDate.toISOString())
+            .order('created_at', { ascending: false })
+            .limit(limit);
+
+        if (error) throw error;
+
+        const report = buildAnalyticsReport(events || [], { days, limit });
+
+        if (req.query.format === 'csv') {
+            res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+            res.setHeader('Content-Disposition', `attachment; filename="analytics-daily-${days}d.csv"`);
+            return res.send(buildAnalyticsDailyCsv(report));
+        }
+
+        res.json({
+            success: true,
+            report
+        });
+    } catch (error) {
+        console.error('Admin Analytics Error:', error);
+        res.status(500).json({ success: false, error: 'Nepodařilo se načíst analytics report.' });
     }
 });
 

@@ -1,4 +1,14 @@
-import { buildFunnelDailyCsv, buildFunnelReport, buildFunnelSegmentsCsv, normalizeFunnelDays, normalizeFunnelLimit } from '../admin.js';
+import {
+    buildAnalyticsDailyCsv,
+    buildAnalyticsReport,
+    buildFunnelDailyCsv,
+    buildFunnelReport,
+    buildFunnelSegmentsCsv,
+    normalizeAnalyticsDays,
+    normalizeAnalyticsLimit,
+    normalizeFunnelDays,
+    normalizeFunnelLimit
+} from '../admin.js';
 import request from 'supertest';
 import app from '../index.js';
 import jwt from 'jsonwebtoken';
@@ -287,6 +297,81 @@ describe('Admin funnel report helpers', () => {
     });
 });
 
+describe('Admin first-party analytics helpers', () => {
+    test('normalizes analytics report query bounds', () => {
+        expect(normalizeAnalyticsDays(undefined)).toBe(7);
+        expect(normalizeAnalyticsDays('0')).toBe(1);
+        expect(normalizeAnalyticsDays('120')).toBe(90);
+        expect(normalizeAnalyticsLimit(undefined)).toBe(1000);
+        expect(normalizeAnalyticsLimit('12')).toBe(100);
+        expect(normalizeAnalyticsLimit('9000')).toBe(5000);
+    });
+
+    test('aggregates first-party analytics into daily and error summaries', () => {
+        const report = buildAnalyticsReport([
+            {
+                id: 'evt-1',
+                event_type: 'page_view',
+                feature: null,
+                metadata: { path: '/' },
+                created_at: '2026-04-28T08:00:00.000Z'
+            },
+            {
+                id: 'evt-2',
+                event_type: 'cta_clicked',
+                feature: 'daily_guidance',
+                metadata: { path: '/', label: 'Začít zdarma' },
+                created_at: '2026-04-28T08:10:00.000Z'
+            },
+            {
+                id: 'evt-3',
+                event_type: 'client_error',
+                feature: 'homepage',
+                metadata: { path: '/', message: 'Script failed' },
+                created_at: '2026-04-28T08:20:00.000Z'
+            },
+            {
+                id: 'evt-4',
+                event_type: 'feedback_submitted',
+                feature: null,
+                metadata: { path: '/', value: 'yes' },
+                created_at: '2026-04-28T08:30:00.000Z'
+            },
+            {
+                id: 'evt-5',
+                event_type: 'feedback_submitted',
+                feature: null,
+                metadata: { path: '/', value: 'no' },
+                created_at: '2026-04-28T08:40:00.000Z'
+            }
+        ], { days: 7 });
+
+        expect(report.summary).toMatchObject({
+            pageViews: 1,
+            ctaClicks: 1,
+            clientErrors: 1,
+            feedback: {
+                total: 2,
+                yes: 1,
+                no: 1,
+                positiveRate: 50
+            }
+        });
+        expect(report.topPaths[0]).toEqual({ key: '/', count: 5 });
+        expect(report.daily[0]).toMatchObject({
+            date: '2026-04-28',
+            total: 5,
+            errors: 1
+        });
+        expect(report.recentErrors[0]).toMatchObject({
+            eventType: 'client_error',
+            message: 'Script failed'
+        });
+        expect(buildAnalyticsDailyCsv(report)).toContain('page_views');
+        expect(buildAnalyticsDailyCsv(report)).toContain('2026-04-28');
+    });
+});
+
 describe('Admin funnel API access control', () => {
     test('requires authentication', async () => {
         const res = await request(app).get('/api/admin/funnel');
@@ -347,6 +432,48 @@ describe('Admin funnel API access control', () => {
         expect(res.headers['content-disposition']).toContain('funnel-segments-1d.csv');
         expect(res.text).toContain('"source","feature","total_events"');
         expect(res.text).toContain(`"${source}","tarot","3","1","1","1","0","100","100"`);
+    });
+
+    test('admin can fetch first-party analytics report and CSV', async () => {
+        const uniquePath = `/admin-analytics-test-${Date.now()}`;
+        await supabase.from('analytics_events').insert([
+            {
+                event_type: 'page_view',
+                feature: null,
+                metadata: { path: uniquePath },
+                created_at: new Date().toISOString()
+            },
+            {
+                event_type: 'feedback_submitted',
+                feature: null,
+                metadata: { path: uniquePath, value: 'yes' },
+                created_at: new Date().toISOString()
+            }
+        ]);
+
+        const token = jwt.sign(
+            { id: 'admin-1', email: 'admin@example.com', role: 'admin' },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        const jsonRes = await request(app)
+            .get('/api/admin/analytics?days=1')
+            .set('Authorization', `Bearer ${token}`)
+            .expect(200);
+
+        expect(jsonRes.body.success).toBe(true);
+        expect(jsonRes.body.report.topPaths).toContainEqual(expect.objectContaining({ key: uniquePath }));
+        expect(jsonRes.body.report.summary.feedback.total).toBeGreaterThanOrEqual(1);
+
+        const csvRes = await request(app)
+            .get('/api/admin/analytics?days=1&format=csv')
+            .set('Authorization', `Bearer ${token}`)
+            .expect(200);
+
+        expect(csvRes.headers['content-type']).toContain('text/csv');
+        expect(csvRes.headers['content-disposition']).toContain('analytics-daily-1d.csv');
+        expect(csvRes.text).toContain('date,total,page_views');
     });
 });
 

@@ -6,6 +6,7 @@ const CACHE_TABLES = Object.freeze([
     { table: 'cache_numerology', dateColumn: 'generated_at' },
     { table: 'cache_past_life', dateColumn: 'generated_at' },
     { table: 'cache_medicine_wheel', dateColumn: 'generated_at' },
+    { table: 'analytics_events', dateColumn: 'created_at', envKey: 'ANALYTICS_RETENTION_DAYS' },
 ]);
 
 export function normalizeRetentionDays(value) {
@@ -24,18 +25,22 @@ export async function prunePersonalDataCaches({ days = process.env.PERSONAL_DATA
     const cutoff = getRetentionCutoffDate(retentionDays);
     const results = [];
 
-    for (const { table, dateColumn } of CACHE_TABLES) {
+    for (const { table, dateColumn, envKey } of CACHE_TABLES) {
+        const tableRetentionDays = normalizeRetentionDays(envKey ? process.env[envKey] || retentionDays : retentionDays);
+        const tableCutoff = getRetentionCutoffDate(tableRetentionDays);
         try {
             const { error, count } = await supabase
                 .from(table)
                 .delete({ count: 'exact' })
-                .lte(dateColumn, cutoff);
+                .lte(dateColumn, tableCutoff);
 
             if (error) throw error;
 
             results.push({
                 table,
                 deleted: count || 0,
+                cutoff: tableCutoff,
+                retentionDays: tableRetentionDays,
                 ok: true
             });
         } catch (error) {
@@ -43,6 +48,8 @@ export async function prunePersonalDataCaches({ days = process.env.PERSONAL_DATA
             results.push({
                 table,
                 deleted: 0,
+                cutoff: tableCutoff,
+                retentionDays: tableRetentionDays,
                 ok: false,
                 error: error.message
             });

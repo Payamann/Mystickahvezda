@@ -10,19 +10,21 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const router = express.Router();
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
-const LIVE_ANNUAL_HOROSCOPE_PRICE_ID = 'price_1TRBSUAo8bdbnsKa4aiQhQ7J';
+const LIVE_PERSONAL_MAP_PRICE_ID = 'price_1TRAzfAo8bdbnsKa82dgiM61';
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
-const defaultAnnualHoroscopePriceId = stripeSecretKey.startsWith('sk_live_') ? LIVE_ANNUAL_HOROSCOPE_PRICE_ID : '';
+const defaultPersonalMapPriceId = stripeSecretKey.startsWith('sk_live_') ? LIVE_PERSONAL_MAP_PRICE_ID : '';
 const PRODUCT = {
-    id: 'rocni_horoskop_2026',
-    type: 'rocni_horoskop',
-    name: 'Roční horoskop na míru 2026',
-    price: 19900,
+    id: 'osobni_mapa_2026',
+    type: 'personal_map',
+    name: 'Osobní mapa zbytku roku 2026',
+    price: 29900,
     currency: 'czk',
     year: '2026',
-    stripePriceId: process.env.STRIPE_ANNUAL_HOROSCOPE_PRICE_ID || defaultAnnualHoroscopePriceId
+    stripePriceId: process.env.STRIPE_PERSONAL_MAP_PRICE_ID || defaultPersonalMapPriceId
 };
+
 const VALID_SIGNS = ['beran', 'byk', 'blizenci', 'rak', 'lev', 'panna', 'vahy', 'stir', 'strelec', 'kozoroh', 'vodnar', 'ryby'];
+const VALID_GENDERS = ['feminine', 'masculine', 'neutral'];
 const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 let stripeClient;
@@ -40,10 +42,15 @@ function getStripeClient() {
 }
 
 function cleanCheckoutSource(value) {
-    if (typeof value !== 'string') return 'annual_horoscope_page';
+    if (typeof value !== 'string') return 'personal_map_page';
     const trimmed = value.trim();
-    if (!trimmed) return 'annual_horoscope_page';
+    if (!trimmed) return 'personal_map_page';
     return trimmed.replace(/[^\w:-]/g, '_').slice(0, 80);
+}
+
+function cleanText(value, maxLength) {
+    if (typeof value !== 'string') return '';
+    return value.trim().replace(/\s+/g, ' ').slice(0, maxLength);
 }
 
 function buildLineItem(customerName) {
@@ -59,7 +66,7 @@ function buildLineItem(customerName) {
             currency: PRODUCT.currency,
             product_data: {
                 name: PRODUCT.name,
-                description: `Personalizovaný horoskop pro ${customerName} - ${PRODUCT.year}`
+                description: `Prémiový osobní PDF výklad pro ${customerName}`
             },
             unit_amount: PRODUCT.price
         },
@@ -79,29 +86,42 @@ router.get('/product', (_req, res) => {
 });
 
 router.post('/checkout', async (req, res) => {
-    const { birthDate, sign } = req.body;
-    const customerName = typeof req.body.name === 'string' ? req.body.name.trim() : '';
-    const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    const customerName = cleanText(req.body.name, 100);
+    const email = cleanText(req.body.email, 160).toLowerCase();
+    const birthDate = typeof req.body.birthDate === 'string' ? req.body.birthDate.trim() : '';
+    const birthTime = cleanText(req.body.birthTime, 20);
+    const birthPlace = cleanText(req.body.birthPlace, 120);
+    const sign = typeof req.body.sign === 'string' ? req.body.sign.trim() : '';
+    const grammaticalGender = typeof req.body.grammaticalGender === 'string' ? req.body.grammaticalGender.trim() : 'neutral';
+    const focus = cleanText(req.body.focus, 500);
     const source = cleanCheckoutSource(req.body.source);
 
-    if (!customerName || !birthDate || !sign || !email) {
-        return res.status(400).json({ error: 'Vyplňte všechna pole.' });
+    if (!customerName || !birthDate || !sign || !email || !focus) {
+        return res.status(400).json({ error: 'Vyplňte prosím všechna povinná pole.' });
     }
 
     if (!EMAIL_PATTERN.test(email)) {
         return res.status(400).json({ error: 'Neplatná e-mailová adresa.' });
     }
 
-    if (customerName.length > 100) {
-        return res.status(400).json({ error: 'Neplatné jméno.' });
-    }
-
     if (!VALID_SIGNS.includes(sign)) {
         return res.status(400).json({ error: 'Neplatné znamení.' });
     }
 
+    if (!VALID_GENDERS.includes(grammaticalGender)) {
+        return res.status(400).json({ error: 'Neplatný způsob oslovení.' });
+    }
+
     if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate) || Number.isNaN(Date.parse(birthDate)) || new Date(birthDate) >= new Date()) {
         return res.status(400).json({ error: 'Neplatné datum narození.' });
+    }
+
+    if (birthTime && !/^([01]\d|2[0-3]):[0-5]\d$/.test(birthTime)) {
+        return res.status(400).json({ error: 'Neplatný čas narození.' });
+    }
+
+    if (focus.length < 8) {
+        return res.status(400).json({ error: 'Napište prosím alespoň krátce, co teď řešíte.' });
     }
 
     try {
@@ -112,8 +132,8 @@ router.post('/checkout', async (req, res) => {
             line_items: [buildLineItem(customerName)],
             mode: 'payment',
             locale: 'cs',
-            success_url: `${APP_URL}/rocni-horoskop.html?status=success&source=${encodeURIComponent(source)}&session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${APP_URL}/rocni-horoskop.html?status=cancel&source=${encodeURIComponent(source)}`,
+            success_url: `${APP_URL}/osobni-mapa.html?status=success&source=${encodeURIComponent(source)}&session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${APP_URL}/osobni-mapa.html?status=cancel&source=${encodeURIComponent(source)}`,
             metadata: {
                 productType: PRODUCT.type,
                 productId: PRODUCT.id,
@@ -121,7 +141,11 @@ router.post('/checkout', async (req, res) => {
                 source,
                 customerName,
                 birthDate,
+                birthTime,
+                birthPlace,
                 sign,
+                grammaticalGender,
+                focus,
                 email,
                 price: String(PRODUCT.price),
                 currency: PRODUCT.currency
@@ -130,7 +154,7 @@ router.post('/checkout', async (req, res) => {
 
         return res.json({ url: session.url });
     } catch (err) {
-        console.error('[HOROSKOP] Checkout session error:', err.message);
+        console.error('[PERSONAL_MAP] Checkout session error:', err.message);
         return res.status(500).json({ error: 'Platba se nezdařila. Zkuste to prosím znovu.' });
     }
 });

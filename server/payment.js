@@ -12,13 +12,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env') });
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
+const stripe = new Stripe(stripeSecretKey);
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
 const router = express.Router();
 
 import {
     DEFAULT_PREMIUM_PLAN_TYPE,
+    LIVE_STRIPE_PRICE_IDS,
     PLAN_TYPES,
     PREMIUM_PLAN_TYPES,
     SUBSCRIPTION_PLANS,
@@ -27,6 +29,47 @@ import {
 } from './config/constants.js';
 
 const PLANS = SUBSCRIPTION_PLANS;
+const USE_LIVE_STRIPE_PRICE_IDS = stripeSecretKey.startsWith('sk_live_');
+
+const STRIPE_PRICE_ENV_KEYS = Object.freeze({
+    pruvodce: 'STRIPE_PRICE_PRUVODCE_MONTHLY',
+    'pruvodce-rocne': 'STRIPE_PRICE_PRUVODCE_YEARLY',
+    osviceni: 'STRIPE_PRICE_OSVICENI_MONTHLY',
+    'osviceni-rocne': 'STRIPE_PRICE_OSVICENI_YEARLY',
+    'vip-majestrat': 'STRIPE_PRICE_VIP_MAJESTRAT_MONTHLY',
+});
+
+function getConfiguredStripePriceId(planId) {
+    const envKey = STRIPE_PRICE_ENV_KEYS[planId];
+    const envPriceId = envKey ? process.env[envKey]?.trim() : '';
+    if (envPriceId) return envPriceId;
+
+    return USE_LIVE_STRIPE_PRICE_IDS ? LIVE_STRIPE_PRICE_IDS[planId] || '' : '';
+}
+
+function buildSubscriptionLineItem(plan, stripePriceId) {
+    if (stripePriceId) {
+        return {
+            price: stripePriceId,
+            quantity: 1,
+        };
+    }
+
+    return {
+        price_data: {
+            currency: 'czk',
+            product_data: {
+                name: plan.name,
+                description: 'Přístup ke všem prémiovým funkcím Mystické Hvězdy',
+            },
+            unit_amount: plan.price,
+            recurring: {
+                interval: plan.interval
+            }
+        },
+        quantity: 1,
+    };
+}
 
 const PUBLIC_FUNNEL_EVENTS = new Set([
     'paywall_viewed',
@@ -246,24 +289,12 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
 
         // Get or create Stripe customer to link subscriptions
         const customerId = await getOrCreateStripeCustomer(user.id, user.email);
+        const stripePriceId = getConfiguredStripePriceId(planId);
 
         const session = await stripe.checkout.sessions.create({
             customer: customerId,
             payment_method_types: ['card'],
-            line_items: [{
-                price_data: {
-                    currency: 'czk',
-                    product_data: {
-                        name: plan.name,
-                        description: 'Přístup ke všem prémiovým funkcím Mystické Hvězdy',
-                    },
-                    unit_amount: plan.price,
-                    recurring: {
-                        interval: plan.interval
-                    }
-                },
-                quantity: 1,
-            }],
+            line_items: [buildSubscriptionLineItem(plan, stripePriceId)],
             mode: 'subscription',
             payment_method_collection: 'always',
             locale: 'cs',
@@ -301,7 +332,8 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
             metadata: {
                 billingInterval: plan.interval,
                 amount: plan.price,
-                currency: 'czk'
+                currency: 'czk',
+                stripePriceId: stripePriceId || null
             }
         });
 
@@ -539,6 +571,9 @@ async function handleCheckoutCompleted(session, stripeEventId = null) {
     if (session.mode === 'payment' && session.metadata?.productType === 'rocni_horoskop') {
         return handleRocniHoroskopPurchase(session, stripeEventId);
     }
+    if (session.mode === 'payment' && session.metadata?.productType === 'personal_map') {
+        return handlePersonalMapPurchase(session, stripeEventId);
+    }
     return handleSubscriptionCheckoutCompleted(session, stripeEventId);
 }
 
@@ -593,6 +628,85 @@ async function handleRocniHoroskopPurchase(session, stripeEventId = null) {
     });
 }
 
+/**
+ * Handle one-time purchase of Osobní mapa zbytku roku.
+ * Generates PDF via Claude + Playwright, sends via Resend.
+ */
+async function handlePersonalMapPurchase(session, stripeEventId = null) {
+    const {
+        customerName,
+        birthDate,
+        birthTime = '',
+        birthPlace = '',
+        sign,
+        grammaticalGender = 'neutral',
+        focus = '',
+        email,
+        productId = 'osobni_mapa_2026',
+        productYear
+    } = session.metadata || {};
+    const customerEmail = email || session.customer_email || session.customer_details?.email;
+    const year = Number(productYear) || new Date().getFullYear();
+
+    if (!customerName || !birthDate || !sign || !customerEmail || !focus) {
+        console.error('[PERSONAL_MAP] Missing metadata in checkout session:', session.id);
+        return;
+    }
+
+    console.log(`[PERSONAL_MAP] Generating PDF for ${customerEmail} (${sign})`);
+
+    await recordOneTimePurchase(session, {
+        productType: 'personal_map',
+        productId,
+        email: customerEmail
+    });
+
+    await recordFunnelEvent('one_time_purchase_completed', {
+        source: session.metadata?.source || 'personal_map_checkout',
+        feature: productId,
+        stripeSessionId: session.id,
+        stripeEventId,
+        metadata: {
+            productType: 'personal_map',
+            productId,
+            amount: session.amount_total || Number(session.metadata?.price) || null,
+            currency: session.currency || session.metadata?.currency || 'czk'
+        }
+    });
+
+    setImmediate(async () => {
+        try {
+            const { generatePersonalMapContent, renderPersonalMapPdf } = await import('./services/personal-map-pdf.js');
+            const { sendPersonalMapPdf } = await import('./email-service.js');
+
+            const sections = await generatePersonalMapContent({
+                name: customerName,
+                birthDate,
+                birthTime,
+                birthPlace,
+                sign,
+                focus,
+                grammaticalGender,
+                year
+            });
+            const pdfBuffer = await renderPersonalMapPdf({
+                name: customerName,
+                sign,
+                birthDate,
+                focus,
+                year,
+                productName: `Osobní mapa zbytku roku ${year}`,
+                sections
+            });
+
+            await sendPersonalMapPdf({ to: customerEmail, name: customerName, sign, pdfBuffer });
+            console.log(`[PERSONAL_MAP] PDF sent to ${customerEmail}`);
+        } catch (err) {
+            console.error(`[PERSONAL_MAP] PDF generation/delivery failed for ${customerEmail}:`, err.message);
+        }
+    });
+}
+
 async function recordOneTimePurchase(session, { productType, productId, email }) {
     const { error } = await supabase
         .from('one_time_purchases')
@@ -609,7 +723,7 @@ async function recordOneTimePurchase(session, { productType, productId, email })
         });
 
     if (error) {
-        console.warn('[HOROSKOP] Could not record one-time purchase:', error.message);
+        console.warn('[PAYMENT] Could not record one-time purchase:', error.message);
     }
 }
 

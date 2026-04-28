@@ -39,6 +39,8 @@
     "sitemap:generate": "node scripts/generate-sitemap-from-canonicals.mjs",
     "sitemap:check": "node scripts/generate-sitemap-from-canonicals.mjs --check",
     "verify:production": "node server/scripts/verify-production.js",
+    "deploy:guard": "node scripts/deploy-guard.mjs",
+    "deploy:guard:local": "node scripts/deploy-guard.mjs --skip-remote --skip-railway --allow-dirty --base-url=http://localhost:3001",
     "test:verify": "npm run lint && npm run check:encoding && npm run check:hooks && npm run check:auth-feature-contexts && npm run test:unit:server && npm run test:unit:frontend && npm run audit:site && npm run audit:tarot-assets && npm run sitemap:check",
     "test:all": "npm run test:verify && npm run test:e2e:sections && npm run test:e2e:sections:mobile",
     "build:css": "cleancss -o css/style.v2.min.css css/style.v2.css && node scripts/update-service-worker-cache.mjs",

@@ -3,7 +3,7 @@
  * Provides offline caching with stale-while-revalidate strategy
  */
 
-const CACHE_NAME = 'mysticka-hvezda-85a3576ecd0e';
+const CACHE_NAME = 'mysticka-hvezda-bf8872ec9148';
 const MAX_RUNTIME_CACHE_SIZE = 150;
 const STATIC_ASSETS = [
     '/',
@@ -11,12 +11,14 @@ const STATIC_ASSETS = [
     '/cenik.html',
     '/kristalova-koule.html',
     '/rocni-horoskop.html',
+    '/osobni-mapa.html',
     '/runy.html',
     '/css/style.v2.min.css',
     '/css/profile-refresh.css',
     '/css/pages/index.css',
     '/css/pages/cenik.css',
     '/css/pages/rocni-horoskop.css',
+    '/css/pages/osobni-mapa.css',
     '/js/dist/analytics.js',
     '/js/dist/main.js',
     '/js/dist/components.js',
@@ -34,12 +36,18 @@ const STATIC_ASSETS = [
     '/js/dist/premium-gates.js',
     '/js/dist/retention.js',
     '/js/dist/rocni-horoskop.js',
+    '/js/dist/osobni-mapa.js',
     '/img/logo-3d.webp',
     '/img/hero-3d.webp',
     '/img/bg-cosmic-hd.webp',
     '/img/bg-cosmic-mobile.webp',
     '/img/icon-192.webp',
     '/img/icon-192.png',
+    '/img/personal-map/preview-cover.webp',
+    '/img/personal-map/preview-signature.webp',
+    '/img/personal-map/preview-mantra.webp',
+    '/img/personal-map/preview-actions.webp',
+    '/img/personal-map/preview-contact-sheet.webp',
     '/data/tarot-cards.json',
     '/data/runes.json',
     '/js/dist/runes.js',

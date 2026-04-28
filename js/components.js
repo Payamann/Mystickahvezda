@@ -25,6 +25,13 @@
         ch.defer = true;
         document.head.appendChild(ch);
     }
+
+    if (!window.MH_FEEDBACK_WIDGET_INIT && !document.querySelector('script[src*="feedback-widget.js"]')) {
+        const fw = document.createElement('script');
+        fw.src = basePath + 'js/dist/feedback-widget.js';
+        fw.defer = true;
+        document.head.appendChild(fw);
+    }
 })();
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -37,8 +44,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load header and footer in parallel for faster initial paint
     // Use high priority for header as it affects LCP/CLS
     await Promise.all([
-        loadComponent('header-placeholder', `${basePath}components/header.html?v=2`, basePath, true),
-        loadComponent('footer-placeholder', `${basePath}components/footer.html?v=11`, basePath, false)
+        loadComponent('header-placeholder', `${basePath}components/header.html?v=3`, basePath, true),
+        loadComponent('footer-placeholder', `${basePath}components/footer.html?v=12`, basePath, false)
     ]);
 
     // STANDALONE: Init hamburger menu + header scroll (no module dependency)

@@ -253,6 +253,93 @@
                 </section>
 
 
+                <section class="admin-panel mb-xl" aria-labelledby="analytics-title">
+
+                    <div class="admin-panel__header">
+
+                        <div>
+
+                            <h2 id="analytics-title">First-party analytics</h2>
+                            <p class="admin-panel__subtext">Vlastní no-cost měření návštěv, CTA, registrací, checkoutů a chyb.</p>
+
+                        </div>
+
+                        <div class="admin-panel__controls">
+
+                            <label class="admin-select-label" for="analytics-range-days">Období</label>
+                            <select id="analytics-range-days" class="admin-select">
+                                <option value="1">24 hodin</option>
+                                <option value="7" selected>7 dní</option>
+                                <option value="30">30 dní</option>
+                                <option value="90">90 dní</option>
+                            </select>
+                            <button class="btn btn--secondary" data-action="loadAnalytics">Obnovit analytics</button>
+                            <button class="btn btn--secondary" data-action="exportAnalyticsCsv">Export CSV</button>
+
+                        </div>
+
+                    </div>
+
+                    <div id="analytics-summary" class="admin-metrics" aria-live="polite">
+                        <div class="admin-loading">Načítám analytics...</div>
+                    </div>
+
+                    <div class="admin-funnel-grid">
+                        <div class="admin-box">
+                            <h3>Top eventy</h3>
+                            <ul id="analytics-events" class="admin-breakdown-list"></ul>
+                        </div>
+                        <div class="admin-box">
+                            <h3>Top funkce</h3>
+                            <ul id="analytics-features" class="admin-breakdown-list"></ul>
+                        </div>
+                        <div class="admin-box">
+                            <h3>Top stránky</h3>
+                            <ul id="analytics-paths" class="admin-breakdown-list"></ul>
+                        </div>
+                    </div>
+
+                    <div class="admin-table-container admin-table-container--compact">
+                        <h3>Denní analytics trend</h3>
+                        <table id="analytics-daily-table">
+                            <thead>
+                                <tr>
+                                    <th>Den</th>
+                                    <th>Eventy</th>
+                                    <th>Page views</th>
+                                    <th>CTA</th>
+                                    <th>Registrace</th>
+                                    <th>Checkouty</th>
+                                    <th>Chyby</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="7">Načítám data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="admin-table-container admin-table-container--compact">
+                        <h3>Poslední chyby</h3>
+                        <table id="analytics-errors-table">
+                            <thead>
+                                <tr>
+                                    <th>Čas</th>
+                                    <th>Typ</th>
+                                    <th>Funkce</th>
+                                    <th>Stránka</th>
+                                    <th>Zpráva</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="5">Načítám data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </section>
+
+
                 <section class="admin-panel mb-xl" aria-labelledby="angel-moderation-title">
 
                     <div class="admin-panel__header">

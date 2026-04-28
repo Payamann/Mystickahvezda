@@ -1,6 +1,6 @@
 -- ============================================================
 -- analytics_events table — run once in Supabase SQL Editor
--- Required for Task 2.3 (paywall analytics)
+-- First-party analytics, feedback, production smoke and client/server error events
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS analytics_events (
@@ -20,9 +20,11 @@ CREATE INDEX IF NOT EXISTS idx_analytics_events_created ON analytics_events(crea
 ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
 
 -- Service role (server) can do everything; end users see nothing
+DROP POLICY IF EXISTS analytics_service_role ON analytics_events;
 CREATE POLICY analytics_service_role
     ON analytics_events FOR ALL
-    USING (auth.role() = 'service_role');
+    USING (auth.role() = 'service_role')
+    WITH CHECK (auth.role() = 'service_role');
 
 -- ============================================================
 -- Verify:

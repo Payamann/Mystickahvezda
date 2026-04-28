@@ -416,6 +416,99 @@ paths:
         '403':
           description: Admin privileges required.
 
+  /analytics/event:
+    post:
+      summary: Record first-party analytics event
+      description: Records a whitelisted browser or smoke-test event. Requires CSRF token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyticsEventRequest'
+      responses:
+        '200':
+          description: Event accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsAck'
+        '400':
+          description: Invalid event name or payload.
+        '403':
+          description: CSRF token missing or invalid.
+
+  /analytics/batch:
+    post:
+      summary: Record first-party analytics batch
+      description: Records up to 10 whitelisted analytics events in one CSRF-protected request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyticsBatchRequest'
+      responses:
+        '200':
+          description: Batch accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsAck'
+        '400':
+          description: No valid analytics events.
+        '403':
+          description: CSRF token missing or invalid.
+
+  /admin/analytics:
+    get:
+      summary: Admin first-party analytics report
+      description: First-party analytics report with daily trend, feedback summary and recent errors. Requires admin access.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: days
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 90
+            default: 7
+          description: Number of days in the reporting period.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 100
+            maximum: 5000
+            default: 1000
+          description: Maximum number of analytics events used for the report.
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum: [json, csv]
+          description: Use `csv` to export the daily analytics table.
+      responses:
+        '200':
+          description: Analytics report or CSV export.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  report:
+                    $ref: '#/components/schemas/AnalyticsReport'
+            text/csv:
+              schema:
+                type: string
+        '401':
+          description: Authentication required.
+        '403':
+          description: Admin privileges required.
+
 components:
   securitySchemes:
     bearerAuth:
@@ -682,6 +775,153 @@ components:
                 type: string
               caution:
                 type: string
+    AnalyticsEventRequest:
+      type: object
+      required: [eventName]
+      properties:
+        eventName:
+          type: string
+          example: cta_clicked
+        name:
+          type: string
+          description: Legacy alias for eventName.
+        feature:
+          type: string
+          nullable: true
+        page:
+          type: string
+          nullable: true
+        path:
+          type: string
+          nullable: true
+        referrer:
+          type: string
+          nullable: true
+        clientId:
+          type: string
+          nullable: true
+        sessionId:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties: true
+    AnalyticsBatchRequest:
+      type: object
+      required: [events]
+      properties:
+        events:
+          type: array
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/AnalyticsEventRequest'
+    AnalyticsAck:
+      type: object
+      properties:
+        success:
+          type: boolean
+        accepted:
+          type: integer
+    AnalyticsFeedbackSummary:
+      type: object
+      properties:
+        total:
+          type: integer
+        yes:
+          type: integer
+        no:
+          type: integer
+        positiveRate:
+          type: integer
+          nullable: true
+    AnalyticsSummary:
+      type: object
+      properties:
+        pageViews:
+          type: integer
+        ctaClicks:
+          type: integer
+        signups:
+          type: integer
+        checkouts:
+          type: integer
+        clientErrors:
+          type: integer
+        serverErrors:
+          type: integer
+        feedback:
+          $ref: '#/components/schemas/AnalyticsFeedbackSummary'
+    AnalyticsCounterRow:
+      type: object
+      properties:
+        key:
+          type: string
+        count:
+          type: integer
+    AnalyticsDailyRow:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        total:
+          type: integer
+        pageViews:
+          type: integer
+        ctaClicks:
+          type: integer
+        signups:
+          type: integer
+        checkouts:
+          type: integer
+        errors:
+          type: integer
+    AnalyticsErrorRow:
+      type: object
+      properties:
+        id:
+          type: string
+        eventType:
+          type: string
+        feature:
+          type: string
+        path:
+          type: string
+        message:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+    AnalyticsReport:
+      type: object
+      properties:
+        periodDays:
+          type: integer
+        total:
+          type: integer
+        summary:
+          $ref: '#/components/schemas/AnalyticsSummary'
+        byEvent:
+          type: object
+          additionalProperties:
+            type: integer
+        topFeatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalyticsCounterRow'
+        topPaths:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalyticsCounterRow'
+        daily:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalyticsDailyRow'
+        recentErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalyticsErrorRow'
     FunnelMetricSummary:
       type: object
       properties:

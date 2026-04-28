@@ -29,6 +29,14 @@ export const PLAN_TYPE_RANK = Object.freeze({
     [PLAN_TYPES.VIP]: 3,
 });
 
+export const LIVE_STRIPE_PRICE_IDS = Object.freeze({
+    pruvodce: 'price_1TRBKpAo8bdbnsKapn6BM0Wj',
+    'pruvodce-rocne': 'price_1TRBKqAo8bdbnsKacSK9KoSa',
+    osviceni: 'price_1TCjhkAo8bdbnsKaBes5yjmW',
+    'osviceni-rocne': 'price_1TRBKrAo8bdbnsKaja6EEMKa',
+    'vip-majestrat': 'price_1TCjijAo8bdbnsKaAk3Km66K',
+});
+
 export const SUBSCRIPTION_PLANS = Object.freeze({
     poutnik: {
         name: 'Poutník (Základ)',

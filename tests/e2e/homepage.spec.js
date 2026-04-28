@@ -77,6 +77,35 @@ test.describe('Homepage', () => {
         }));
     });
 
+    test('odmitnute analyticke cookies neposilaji first-party analytics eventy', async ({ page }) => {
+        await page.addInitScript(() => {
+            localStorage.setItem('mh_cookie_prefs', JSON.stringify({
+                analytics: false,
+                marketing: false,
+                ts: Date.now()
+            }));
+        });
+
+        let analyticsPosts = 0;
+        await page.route('**/api/analytics/event', async (route) => {
+            analyticsPosts += 1;
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true, accepted: 1 })
+            });
+        });
+
+        await page.goto('/');
+        await waitForPageReady(page);
+        await page.evaluate(() => {
+            window.MH_ANALYTICS?.trackEvent('cta_clicked', { location: 'privacy_regression' });
+        });
+        await page.waitForTimeout(800);
+
+        expect(analyticsPosts).toBe(0);
+    });
+
     test('mobilni cookie lista na homepage nezakryva prvni dojem', async ({ page }) => {
         await page.setViewportSize({ width: 393, height: 851 });
         await page.evaluate(() => {
@@ -307,6 +336,19 @@ test.describe('Homepage', () => {
         await expect(trustLinks.locator('a[href="soukromi.html"]')).toBeVisible();
         await expect(trustLinks.locator('a[href="#cookie-banner"]')).toBeVisible();
         await expect(trustLinks.locator('a[href="kontakt.html"]')).toBeVisible();
+    });
+
+    test('footer feedback na homepage odesle signal bez registrace', async ({ page }) => {
+        const widget = page.locator('[data-feedback-widget]');
+        await widget.scrollIntoViewIfNeeded();
+        await expect(widget).toBeVisible();
+        await expect(widget.locator('[data-feedback-value="yes"]')).toBeVisible();
+        await expect(widget.locator('[data-feedback-value="no"]')).toBeVisible();
+
+        await widget.locator('[data-feedback-value="yes"]').click();
+
+        await expect(widget.locator('[data-feedback-status]')).toContainText('Díky');
+        await expect(widget.locator('[data-feedback-value="yes"]')).toBeDisabled();
     });
 
     test('odkaz sprava cookies z ceniku znovu otevre cookie banner', async ({ page }) => {

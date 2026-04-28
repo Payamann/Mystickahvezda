@@ -51,10 +51,13 @@ import horoscopeSubscribeRoutes from './routes/horoscope-subscribe.js';
 import pastLifeRoutes from './routes/past-life.js';
 import medicineWheelRoutes from './routes/medicine-wheel.js';
 import rocniHoroskopRoutes from './routes/rocni-horoskop.js';
+import osobniMapaRoutes from './routes/osobni-mapa.js';
 import pushRoutes from './routes/push.js';
+import analyticsRoutes from './routes/analytics.js';
 import { spawn } from 'child_process';
 import { getPublicPlanManifest } from './config/constants.js';
 import { getKnownBirthLocationSuggestions } from './services/astrology.js';
+import { recordServerEvent } from './services/telemetry.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -573,6 +576,7 @@ app.use('/api/mentor', mentorRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/docs', docsRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Public config endpoint — safely exposes only client-safe env vars
 app.get('/api/config', (req, res) => {
@@ -627,6 +631,9 @@ app.use('/api/medicine-wheel', aiLimiter, medicineWheelRoutes);
 // Roční Horoskop na míru — one-time paid PDF product
 app.use('/api/rocni-horoskop', rocniHoroskopRoutes);
 
+// Osobní mapa zbytku roku — premium one-time paid PDF product
+app.use('/api/osobni-mapa', osobniMapaRoutes);
+
 // Health Check - registered above rate limiter (see top of file)
 // Admin comment: duplicate route registrations removed
 
@@ -645,6 +652,17 @@ app.use((err, req, res, next) => {
         timestamp: new Date().toISOString(),
     });
 
+    recordServerEvent('server_error', {
+        userId: req.user?.id || null,
+        feature: 'express',
+        metadata: {
+            message: err.message,
+            method: req.method,
+            path: req.originalUrl || req.path,
+            statusCode: err.status || 500,
+            userAgent: req.headers['user-agent']
+        }
+    }).catch(() => {});
 
     // Return generic error to client (no internal details)
     const statusCode = err.status || 500;

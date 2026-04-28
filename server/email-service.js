@@ -758,6 +758,56 @@ export async function sendHoroscopePdf({ to, name, sign, pdfBuffer }) {
   return data;
 }
 
+/**
+ * Sends a personalized Osobní mapa PDF as an email attachment.
+ */
+export async function sendPersonalMapPdf({ to, name, sign, pdfBuffer }) {
+  const client = getResend();
+  if (!client) {
+    console.error('[EMAIL] Resend not configured — cannot send personal map PDF');
+    return;
+  }
+
+  const signName = SIGN_NAMES_EMAIL[sign] || sign;
+  const year = new Date().getFullYear();
+
+  const html = getBaseTemplate(`
+    <div style="text-align:center;padding:20px 0 10px;">
+      <p style="font-family:'Cinzel',serif;font-size:18px;color:#d4af37;letter-spacing:2px;margin:0 0 6px;">Tvoje osobní mapa je tady ✦</p>
+      <p style="font-size:15px;color:rgba(255,255,255,0.8);margin:0;">Ahoj ${name},</p>
+    </div>
+    <div style="padding:20px 0;">
+      <p>Právě ti posílám tvou <strong style="color:#d4af37;">Osobní mapu zbytku roku ${year}</strong> — prémiový výklad vytvořený pro tvoje znamení ${signName} a téma, se kterým teď přicházíš.</p>
+      <p style="margin-top:12px;">Najdeš ji v příloze jako PDF. Doporučuji ji otevřít v klidu a číst pomalu. Některé části možná nebudou působit důležitě hned, ale vrátí se ve chvíli, kdy se v běžném dni objeví přesně ten signál, o kterém mapa mluví.</p>
+      <div style="background:rgba(212,175,55,0.07);border-left:3px solid #d4af37;padding:16px 20px;margin:24px 0;border-radius:0 6px 6px 0;">
+        <p style="margin:0;font-size:14px;color:rgba(255,255,255,0.7);">Mapa obsahuje: hvězdný podpis, osobní mantru, hlavní téma období, vztahy, práci a peníze, klíčové měsíce, konkrétní kroky, rituál a otázky k zápisu.</p>
+      </div>
+      <p>Pokud máš jakékoli otázky, odpověz na tento e-mail.</p>
+      <p style="margin-top:16px;color:rgba(255,255,255,0.6);font-size:13px;">S láskou ze hvězd,<br><span style="color:#d4af37;font-family:'Cinzel',serif;">Mystická Hvězda</span></p>
+    </div>
+  `, `Tvoje Osobní mapa ${year} je tady`);
+
+  const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
+
+  const { data, error } = await client.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `✦ Tvoje Osobní mapa zbytku roku ${year} — ${signName}`,
+    html,
+    attachments: [{
+      filename: `osobni-mapa-${year}-${sign}.pdf`,
+      content: pdfBase64,
+      type: 'application/pdf',
+    }],
+  });
+
+  if (error) {
+    throw new Error(`Resend error: ${error.message} (${error.statusCode})`);
+  }
+
+  return data;
+}
+
 export default {
   sendEmail,
   sendOnboardingSequence,
@@ -768,5 +818,6 @@ export default {
   sendWeeklyFeatureEmail,
   sendTrialReminderEmails,
   sendHoroscopePdf,
+  sendPersonalMapPdf,
   EMAIL_TEMPLATES
 };
