@@ -353,15 +353,8 @@ test.describe('Homepage', () => {
         expect(bodyText).toContain('Otevřít celý ceník');
     });
 
-    test('reference ukazuji poctivy kontext bez nedolozeneho ratingu', async ({ page }) => {
-        const trustPanel = page.locator('.reviews-trust-panel');
-        await expect(trustPanel).toBeVisible();
-        await expect(trustPanel).toContainText('Zkušenosti uvádíme poctivě a s kontextem');
-        await expect(trustPanel).toContainText('Nechceme předstírat veřejné hodnocení');
-        await expect(trustPanel).toContainText('Anonymizované příběhy');
-        await expect(trustPanel).toContainText('Kontext u každé zkušenosti');
-        await expect(trustPanel).toContainText('Ověřené recenze oddělíme');
-
+    test('reference zachovavaji pribehy bez nedolozeneho ratingu', async ({ page }) => {
+        await expect(page.locator('.reviews-trust-panel')).toHaveCount(0);
         await expect(page.locator('.testimonial')).toHaveCount(9);
         await expect(page.locator('.testimonial__source')).toHaveCount(9);
         await expect(page.locator('.testimonial-summary')).toHaveCount(0);
@@ -376,7 +369,7 @@ test.describe('Homepage', () => {
         expect(bodyText).toContain('Tvůj první výklad během pár minut');
         expect(bodyText).toContain('Nenahrazují lékařskou, psychologickou, právní ani finanční pomoc');
         expect(bodyText).toContain('Než se zaregistruješ, podívej se na ukázku');
-        expect(bodyText).toContain('Zkušenosti uvádíme poctivě a s kontextem');
+        expect(bodyText).toContain('Jak lidé používají Mystickou Hvězdu');
         expect(bodyText).toContain('Co dostaneš bez placení');
         expect(bodyText).toContain('Kdy dává smysl platit');
         expect(bodyText).toContain('Jak zrušit předplatné');

@@ -52,11 +52,8 @@ const CONVERSION_LINK_CHECKS = [
         path: '/',
         name: 'Homepage trust and pricing copy',
         snippets: [
-            'Zkušenosti uvádíme poctivě a s kontextem',
-            'Nechceme předstírat veřejné hodnocení',
-            'Anonymizované příběhy',
-            'Kontext u každé zkušenosti',
-            'Ověřené recenze oddělíme',
+            'Jak lidé používají Mystickou Hvězdu',
+            'Zkrácený příběh',
             'Tvůj první výklad během pár minut',
             'Než se zaregistruješ, podívej se na ukázku',
             'Co dostaneš bez placení',
