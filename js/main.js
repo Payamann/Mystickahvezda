@@ -33,39 +33,6 @@ function initInteractiveCards() {
     });
 }
 
-function formatCzechDecimal(value) {
-    return value.toFixed(1).replace('.', ',');
-}
-
-function setReviewSummaryValue(key, value) {
-    const element = document.querySelector(`[data-review-summary="${key}"]`);
-    if (element) element.textContent = value;
-}
-
-function initReviewSummary() {
-    const ratings = Array.from(document.querySelectorAll('[data-review-rating]'))
-        .map((item) => Number(item.dataset.reviewRating))
-        .filter((rating) => Number.isFinite(rating) && rating > 0);
-
-    if (!ratings.length) return;
-
-    const total = ratings.reduce((sum, rating) => sum + rating, 0);
-    const average = total / ratings.length;
-    const fiveStarCount = ratings.filter((rating) => rating === 5).length;
-    const fourStarCount = ratings.filter((rating) => rating === 4).length;
-
-    setReviewSummaryValue('avg', `${formatCzechDecimal(average)}/5`);
-    setReviewSummaryValue('count', String(ratings.length));
-    setReviewSummaryValue('five', `${fiveStarCount}×`);
-    setReviewSummaryValue('four', `${fourStarCount}×`);
-
-    const summary = document.querySelector('.testimonial-summary');
-    if (summary) {
-        summary.dataset.reviewCount = String(ratings.length);
-        summary.dataset.reviewAverage = average.toFixed(2);
-    }
-}
-
 let deferredInitsScheduled = false;
 
 function scheduleDeferredInits() {
@@ -91,7 +58,6 @@ function initApp() {
     safeInit('MobileNav', initMobileNav);
     safeInit('EmailForms', initEmailForms);
     safeInit('InteractiveCards', initInteractiveCards);
-    safeInit('ReviewSummary', initReviewSummary);
 
     // Non-critical and visual work should stay off the critical path, but must
     // not depend on catching window.load after this module has executed.

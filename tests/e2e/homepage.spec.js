@@ -198,9 +198,18 @@ test.describe('Homepage', () => {
         await expect(page.locator('[data-plan="poutnik"]')).toHaveAttribute('href', /homepage_pricing_free_cta/);
         await expect(page.locator('[data-plan="pruvodce"]')).toHaveAttribute('href', /plan=pruvodce/);
         await expect(page.locator('[data-plan="pruvodce"]')).toHaveText(/Odemknout Průvodce/);
-        await expect(page.locator('[data-plan="osviceni"]')).toHaveAttribute('href', /feature=astrocartography/);
-        await expect(page.locator('[data-plan="osviceni"]')).toHaveText(/Odemknout Osvícení/);
-        await expect(page.locator('[data-plan="vip-majestrat"]')).toHaveText(/Zobrazit VIP plán/);
+        await expect(page.locator('a[href*="homepage_pricing_full_compare"]')).toHaveAttribute('href', /cenik\.html\?source=homepage_pricing_full_compare/);
+        await expect(page.locator('a[href*="homepage_pricing_full_compare"]')).toContainText('Otevřít celý ceník');
+    });
+
+    test('homepage viditelne propaguje Osobni mapu zbytku roku', async ({ page }) => {
+        const spotlight = page.locator('.personal-map-spotlight');
+        await expect(spotlight).toBeVisible();
+        await expect(spotlight).toContainText('Osobní mapa zbytku roku 2026');
+        await expect(spotlight).toContainText('299 Kč');
+        await expect(spotlight.locator('img[alt*="Osobní mapa"]')).toBeVisible();
+        await expect(spotlight.locator('a.btn--primary')).toHaveAttribute('href', /osobni-mapa\.html\?source=homepage_spotlight/);
+        await expect(page.locator('.nav__dropdown-link[href*="osobni-mapa.html"]').first()).toContainText('Osobní mapa');
     });
 
     test('header registrace neotevira stary modal a vede na dedikovanou registraci', async ({ page, isMobile }) => {
@@ -309,11 +318,11 @@ test.describe('Homepage', () => {
         await expect(link).toBeAttached();
     });
 
-    test('spodní Premium CTA vede na doporučený plán s tracking kontextem', async ({ page }) => {
+    test('spodní CTA vede na registraci zdarma s denním tracking kontextem', async ({ page }) => {
         const href = await page.locator('#cta-banner-btn').getAttribute('href');
-        expect(href).toContain('plan=pruvodce');
+        expect(href).toContain('mode=register');
         expect(href).toContain('source=homepage_bottom_cta');
-        expect(href).toContain('feature=premium_membership');
+        expect(href).toContain('feature=daily_guidance');
     });
 
     test('spodni newsletter vede na registraci s dennim kontextem a e-mailem', async ({ page }) => {
@@ -337,51 +346,43 @@ test.describe('Homepage', () => {
         const normalizedBodyText = bodyText.toLowerCase();
         expect(bodyText).not.toContain('efemeridami NASA');
         expect(bodyText).not.toContain('Začněte zdarma. Přechod na Premium udělejte až ve chvíli, kdy chcete víc.');
-        expect(bodyText).toContain('ověřenými astronomickými výpočty');
+        expect(bodyText).toContain('Výpočty pod povrchem');
         expect(normalizedBodyText).toContain('ceník bez překvapení');
-        expect(bodyText).toContain('Začněte zdarma, plaťte až za hlubší výklady');
-        expect(normalizedBodyText).toContain('srovnání plánů');
-        expect(bodyText).toContain('Co se odemyká v jednotlivých plánech');
+        expect(bodyText).toContain('Začni zdarma. Plať až ve chvíli, kdy chceš víc.');
+        expect(bodyText).toContain('Chceš porovnat všechny tarify');
+        expect(bodyText).toContain('Otevřít celý ceník');
     });
 
-    test('reference ukazuji transparentni souhrn hodnoceni', async ({ page }) => {
-        const summary = page.locator('.testimonial-summary');
-        await expect(summary).toBeVisible();
+    test('reference ukazuji poctivy kontext bez nedolozeneho ratingu', async ({ page }) => {
+        const trustPanel = page.locator('.reviews-trust-panel');
+        await expect(trustPanel).toBeVisible();
+        await expect(trustPanel).toContainText('Zkušenosti uvádíme poctivě a s kontextem');
+        await expect(trustPanel).toContainText('Nechceme předstírat veřejné hodnocení');
+        await expect(trustPanel).toContainText('Anonymizované příběhy');
+        await expect(trustPanel).toContainText('Kontext u každé zkušenosti');
+        await expect(trustPanel).toContainText('Ověřené recenze oddělíme');
 
-        const computedSummary = await page.evaluate(() => {
-            const ratings = Array.from(document.querySelectorAll('[data-review-rating]'))
-                .map((item) => Number(item.dataset.reviewRating))
-                .filter((rating) => Number.isFinite(rating) && rating > 0);
-            const average = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
-            return {
-                avg: `${average.toFixed(1).replace('.', ',')}/5`,
-                count: String(ratings.length),
-                five: `${ratings.filter((rating) => rating === 5).length}×`,
-                four: `${ratings.filter((rating) => rating === 4).length}×`,
-            };
-        });
-
-        await expect(summary.locator('[data-review-summary="avg"]')).toHaveText(computedSummary.avg);
-        await expect(summary.locator('[data-review-summary="count"]')).toHaveText(computedSummary.count);
-        await expect(summary.locator('[data-review-summary="five"]')).toHaveText(computedSummary.five);
-        await expect(summary.locator('[data-review-summary="four"]')).toHaveText(computedSummary.four);
-        await expect(page.locator('.testimonial-disclaimer')).toContainText('Souhrn vychází z příběhů uvedených níže');
-        await expect(page.locator('.review-verification')).toContainText('Souhrn se počítá pouze z anonymizovaných příběhů');
+        await expect(page.locator('.testimonial')).toHaveCount(9);
+        await expect(page.locator('.testimonial__source')).toHaveCount(9);
+        await expect(page.locator('.testimonial-summary')).toHaveCount(0);
+        await expect(page.locator('.review-verification')).toHaveCount(0);
+        await expect(page.locator('[data-review-rating]')).toHaveCount(0);
+        await expect(page.locator('[data-review-summary]')).toHaveCount(0);
     });
 
     test('homepage odpovida na hlavni otazky duvery pred registraci a platbou', async ({ page }) => {
         const bodyText = await page.locator('body').innerText();
 
-        expect(bodyText).toContain('Jak vzniká osobní výklad');
-        expect(bodyText).toContain('Nejde o lékařskou, právní ani finanční radu');
-        expect(bodyText).toContain('Ještě před registrací vidíte, co dostanete');
-        expect(bodyText).toContain('Jak hodnocení ověřujeme');
-        expect(bodyText).toContain('Co dostanete bez placení');
-        expect(bodyText).toContain('Za co dává smysl platit');
+        expect(bodyText).toContain('Tvůj první výklad během pár minut');
+        expect(bodyText).toContain('Nenahrazují lékařskou, psychologickou, právní ani finanční pomoc');
+        expect(bodyText).toContain('Než se zaregistruješ, podívej se na ukázku');
+        expect(bodyText).toContain('Zkušenosti uvádíme poctivě a s kontextem');
+        expect(bodyText).toContain('Co dostaneš bez placení');
+        expect(bodyText).toContain('Kdy dává smysl platit');
         expect(bodyText).toContain('Jak zrušit předplatné');
         expect(bodyText).toContain('Správa předplatného');
         expect(bodyText).toContain('Platby, soukromí a pravidla služby:');
-        expect(bodyText).toContain('Než si vytvoříte účet');
+        expect(bodyText).toContain('Než si vytvoříš účet');
         expect(bodyText).toContain('Provozovatel služby Mystická Hvězda');
 
         await expect(page.locator('.sample-output-card')).toHaveCount(3);
@@ -487,27 +488,12 @@ test.describe('Homepage', () => {
         }));
     });
 
-    test('pricing preview VIP plan uklada VIP checkout kontext', async ({ page }) => {
-        await page.evaluate(() => {
-            localStorage.clear();
-            sessionStorage.clear();
-        });
-        await page.locator('[data-plan="vip-majestrat"]').click();
-
-        await page.waitForURL(url => url.pathname === '/prihlaseni.html', { timeout: 10000, waitUntil: 'domcontentloaded' });
-        const url = new URL(page.url());
-        expect(url.searchParams.get('plan')).toBe('vip-majestrat');
-        expect(url.searchParams.get('source')).toBe('homepage_pricing_preview');
-        expect(url.searchParams.get('feature')).toBe('vip_membership');
-
-        const pendingContext = await page.evaluate(() => JSON.parse(sessionStorage.getItem('pending_checkout_context') || '{}'));
-        expect(pendingContext).toEqual(expect.objectContaining({
-            planId: 'vip-majestrat',
-            source: 'homepage_pricing_preview',
-            feature: 'vip_membership',
-            redirect: '/cenik.html',
-            authMode: 'register'
-        }));
+    test('pricing preview posila vyssi plany do celeho ceniku', async ({ page }) => {
+        const fullPricingLink = page.locator('a[href*="homepage_pricing_full_compare"]');
+        await expect(fullPricingLink).toBeVisible();
+        await expect(fullPricingLink).toHaveAttribute('href', /cenik\.html\?source=homepage_pricing_full_compare/);
+        await expect(page.locator('[data-plan="osviceni"]')).toHaveCount(0);
+        await expect(page.locator('[data-plan="vip-majestrat"]')).toHaveCount(0);
     });
 
     test('karta dne vede do andelskych karet a sdileni funguje i bez Web Share API', async ({ page }) => {

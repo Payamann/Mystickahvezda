@@ -75,6 +75,15 @@ function initIndexGreeting() {
     const greetingEl = document.getElementById('personalized-greeting');
     if (!greetingEl) return;
 
+    const hasConfirmedSession = Boolean(window.Auth?.user && window.Auth?.isLoggedIn?.()) && document.cookie.includes('logged_in=1');
+    if (!hasConfirmedSession) {
+        greetingEl.classList.remove('personalized-greeting--visible');
+        greetingEl.setAttribute('aria-hidden', 'true');
+        greetingEl.removeAttribute('href');
+        greetingEl.textContent = '';
+        return;
+    }
+
     const sign = MH_PERSONALIZATION.getSign();
     const name = MH_PERSONALIZATION.getName();
 
@@ -83,14 +92,21 @@ function initIndexGreeting() {
         const hour = new Date().getHours();
         const timeGreet = hour < 12 ? 'Dobré ráno' : hour < 18 ? 'Dobrý den' : 'Dobrý večer';
         const nameStr = name ? `, ${sanitizeText(name)}` : '';
+        const signGlyph = `${s.emoji}\uFE0E`;
         
         greetingEl.innerHTML = `
-            <span class="greeting-icon">${s.emoji}</span>
+            <span class="greeting-icon" aria-hidden="true">${signGlyph}</span>
             <span class="greeting-text">${timeGreet}${nameStr}! Tvůj dnešní výhled pro ${s.label} →</span>
         `;
         
         greetingEl.href = `horoskopy.html#${sign}`;
+        greetingEl.setAttribute('aria-hidden', 'false');
         greetingEl.classList.add('personalized-greeting--visible');
+    } else {
+        greetingEl.classList.remove('personalized-greeting--visible');
+        greetingEl.setAttribute('aria-hidden', 'true');
+        greetingEl.removeAttribute('href');
+        greetingEl.textContent = '';
     }
 }
 
@@ -376,9 +392,9 @@ const MH_STREAK = {
 // Make globally available for testing
 window.MH_STREAK = MH_STREAK;
 
-// Auto-init based on current page
-document.addEventListener('DOMContentLoaded', () => {
+function initPersonalizationRuntime() {
     initIndexGreeting();
+    document.addEventListener('auth:changed', initIndexGreeting);
 
     // Inicializuj sign picker pouze pokud existuje element
     const picker = document.getElementById('mh-sign-picker');
@@ -394,10 +410,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Also track streak on index page when user views their personalized greeting
     const greeting = document.getElementById('personalized-greeting');
-    if (greeting && greeting.classList.contains('personalized-greeting--visible')) {
+    if (greeting) {
         // Lighter tracking: only increment if they actually clicked the greeting
         greeting.addEventListener('click', () => {
+            if (!greeting.classList.contains('personalized-greeting--visible')) return;
             MH_STREAK.incrementStreak();
         });
     }
-});
+}
+
+// Auto-init based on current page
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPersonalizationRuntime, { once: true });
+} else {
+    initPersonalizationRuntime();
+}

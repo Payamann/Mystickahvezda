@@ -26,11 +26,11 @@ const PUBLIC_PAGE_PATHS = (process.env.VERIFY_PUBLIC_PATHS || [
 const CONVERSION_LINK_CHECKS = [
     {
         path: '/',
-        name: 'Homepage VIP checkout CTA',
+        name: 'Homepage premium pricing CTA',
         snippets: [
-            'plan=vip-majestrat',
+            'plan=pruvodce',
             'source=homepage_pricing_preview',
-            'feature=vip_membership'
+            'feature=premium_membership'
         ]
     },
     {
@@ -52,23 +52,25 @@ const CONVERSION_LINK_CHECKS = [
         path: '/',
         name: 'Homepage trust and pricing copy',
         snippets: [
-            '4,6/5 z 9 anonymizovaných příběhů',
-            'Soukromí na prvním místě',
-            'testimonial-summary',
-            'Jak hodnocení ověřujeme',
-            'Jak vzniká osobní výklad',
-            'Ještě před registrací vidíte, co dostanete',
-            'Co dostanete bez placení',
+            'Zkušenosti uvádíme poctivě a s kontextem',
+            'Nechceme předstírat veřejné hodnocení',
+            'Anonymizované příběhy',
+            'Kontext u každé zkušenosti',
+            'Ověřené recenze oddělíme',
+            'Tvůj první výklad během pár minut',
+            'Než se zaregistruješ, podívej se na ukázku',
+            'Co dostaneš bez placení',
+            'Kdy dává smysl platit',
             'Ceník bez překvapení',
-            'Začněte zdarma, plaťte až za hlubší výklady',
+            'Začni zdarma. Plať až ve chvíli, kdy chceš víc.',
             'Jak zrušit předplatné',
             'Platby, soukromí a pravidla služby:',
-            'Než si vytvoříte účet',
+            'Než si vytvoříš účet',
             'Provozovatel služby Mystická Hvězda',
-            'ověřenými astronomickými výpočty',
-            'Srovnání plánů',
-            'Co se odemyká v jednotlivých plánech',
-            'Prioritní 24/7 podpora (do 2 h)'
+            'Nenahrazují lékařskou, psychologickou, právní ani finanční pomoc',
+            'Výpočty pod povrchem',
+            'Chceš porovnat všechny tarify',
+            'Otevřít celý ceník'
         ]
     },
     {
