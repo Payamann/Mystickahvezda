@@ -1,4 +1,5 @@
 import {
+    buildPersonalMapFallbackSections,
     buildPersonalMapGenerationPrompt,
     buildPersonalMapHtml,
     renderPersonalMapPdf,
@@ -36,6 +37,24 @@ describe('personal map PDF service', () => {
         expect(html).toContain('láska &lt;img src=x onerror=alert(1)&gt;');
         expect(html).not.toContain('<script>alert(1)</script>');
         expect(html).not.toContain('<img src=x onerror=alert(1)>');
+    });
+
+    test('buildPersonalMapFallbackSections returns complete personalized fallback content', () => {
+        const sections = buildPersonalMapFallbackSections({
+            name: 'Pavel',
+            sign: 'rak',
+            focus: 'ověření doručení PDF',
+            year: 2026
+        });
+
+        expect(sections.starSignature.text).toContain('Pavel');
+        expect(sections.starSignature.text).toContain('2026');
+        expect(sections.starSignature.text).toContain('ověření doručení PDF');
+        expect(sections.essence).toHaveLength(4);
+        expect(sections.months).toHaveLength(5);
+        expect(sections.actionPlan).toHaveLength(5);
+        expect(sections.journalPrompts).toHaveLength(6);
+        expect(sections.closing).toContain('Pavel');
     });
 
     test('renderPersonalMapPdf returns a real PDF buffer', async () => {

@@ -258,6 +258,80 @@ function normalizePersonalMapSections(value) {
     };
 }
 
+function buildPersonalMapFallbackSections({
+    name = '',
+    sign = '',
+    focus = '',
+    year = new Date().getFullYear()
+} = {}) {
+    const signName = SIGN_NAMES[sign] || sign || 'tvoje znameni';
+    const displayName = name || 'ty';
+    const focusText = focus
+        ? `Tema, se kterym prichazis, je: ${focus}`
+        : 'Hlavni tema neni zadane, proto se mapa soustredi na smer, hranice a klid v beznem dni.';
+
+    return {
+        starSignature: {
+            title: `Tichy kompas ${signName}`,
+            text: `${displayName}, tahle mapa vznikla jako bezpecny zalozni vyklad pro pripad, kdy se AI generovani zpozdi nebo selze. Je postavena kolem znameni ${signName} a roku ${year}. Nehraje si na jistou predpoved; slouzi jako osobni zrcadlo pro dalsi kroky. ${focusText} V beznem dni si vsimej hlavne toho, kde se ti telo uvolni, kdyz neco zjednodusis, a kde se naopak stahuje, kdyz rikas ano jen ze zvyku.`,
+            keywords: ['smer', 'hranice', 'klid'],
+            guidingQuestion: 'Kde uz znam odpoved, ale porad cekam na dokonale potvrzeni?'
+        },
+        essence: [
+            {
+                title: 'Hlavni dar',
+                text: `Tvuj dar je schopnost citit, kdy je cas zpomalit a kdy je cas udelat jasny krok. U znameni ${signName} se to muze ukazovat jako citlivost na naladu prostoru, ale i jako odvaha chranit vlastni rytmus. Prakticky to poznas podle okamziku, kdy ti jednoduchost vrati vic energie nez dalsi vysvetlovani.`
+            },
+            {
+                title: 'Opakujici se vzorec',
+                text: 'Stary vzorec se muze objevit ve chvili, kdy zacnes odkladat vlastni potrebu, aby se nikdo jiny nemusel citit neprijemne. V beznem dni to poznas podle rychle omluvy, dlouhe zpravy nebo pocitu, ze musis vse uhladit driv, nez si dovolis rict pravdu.'
+            },
+            {
+                title: 'Prahove tema',
+                text: `Rok ${year} te vede k tomu, aby sis vybral jeden konkretni smer misto mnoha rozevrenych moznosti. Nejde o tlak na vykon. Jde o vycisteni prostoru, ve kterem uz dlouho drzis veci jen proto, ze jsou rozepsane, slibene nebo pro nekoho pohodlne.`
+            },
+            {
+                title: 'Co se chce zmenit',
+                text: 'Zmena zacina tam, kde prestanes brat vlastni klid jako odmenu az po splneni vsech ukolu. Dej mu misto driv. Jeden odmitnuty zavazek, jedna kratsi odpoved nebo jeden vecer bez dalsiho reseni muze ukazat, kolik energie se vrati, kdyz se neprepisujes podle okoli.'
+            }
+        ],
+        yearMantra: {
+            sentence: 'Volim krok, ktery mi vraci klid, ne jen prijatelny obraz.',
+            text: `Tahle veta je kotva pro rok ${year}. Vracej se k ni ve chvili, kdy budes chtit udelat rozhodnuti jen proto, aby bylo po napeti. Klid neni vzdy nejrychlejsi odpoved. Casto je to ta nejpravdivejsi. Poznas ho podle toho, ze po nem zustane vic prostoru v tele i v mysli.`
+        },
+        mainTheme: `${displayName}, hlavni tema teto mapy je navrat k jednodussimu smeru. ${focusText} V praxi to znamena mene dokazovani a vice presnosti. Nemusis menit cely zivot najednou. Staci najit jedno misto, kde dlouho davas vic energie, nez se ti vraci. Tam zacina skutecny posun. Poznas ho podle drobnych signalu: odkladana odpoved, unava po rozhovoru, tlak v hrudi pred slibem nebo zvlastni uleva, kdyz si dovolis rict pravdu kratce. Znameni ${signName} tu neni jako nalepka, ale jako jazyk pro zpusob, jakym se vracis k sobe. Tvuj prakticky krok je vybrat jednu vec, kterou prestanes ridit za ostatni.`,
+        innerMirror: 'Vnitrni zrcadlo ukazuje rozdil mezi zodpovednosti a prevzetim cizi vahy. Pokud se pristihnes, ze v hlave dokola skladas dokonale vysvetleni, zastav se. Mozna uz nehledas pravdu, ale bezpecnou formu, ktera nikoho nerozhodi. V beznem dni se to ukaze pri zprave, na kterou odpovidas moc rychle, nebo pri nabidce, kterou prijimas driv, nez se zeptas tela. Prakticky krok je jednoduchy: pred dulezitym ano dej deset minut ticha a napis si jednu vetu, kterou nechces zjemnovat.',
+        love: 'Ve vztazich se nejvic pocita pravdivost bez zbytecne tvrdosti. Pokud cekas, az druhy clovek pochopi vse sam, muzes ztratit spoustu sil. Pokud naopak reknes potrebu vcas, vztah dostane sanci stat na realite, ne na domnence. Poznas to podle toho, jestli se po kontaktu citis vic sebou, nebo vic ve strehu. Tvuj prakticky krok je rict jednu konkretni potrebu bez dlouhe obhajoby.',
+        workMoney: 'V praci a penezich je hlavni tema hodnota. Ne vse, co umis, ma automaticky dostat tvuj cas. Vsimni si ukolu, ktere te stoji nejvic energie proto, ze nemaji jasne hranice. Rok preje tomu, abys pojmenoval cenu, rozsah, termin nebo odpovednost. Nejde o slib rychleho zisku. Jde o to, aby tvoje energie netekla do mlhy. Jeden jasnejsi ramec muze uvolnit vic sily nez dalsi snaha.',
+        growth: 'Rust v tomto obdobi neni o dramatickem obratu. Je o opakovanem navratu k tomu, co uz vis. Vsimni si, kde se snazis ziskat povoleni pro rozhodnuti, ktere je uvnitr jasne. Prakticky krok je zapisovat si male momenty ulevy. Casto ukazuji smer presneji nez velke argumenty.',
+        shadowGift: 'Stin se muze projevit jako prehnana ochota zustat dostupny. Dar tohoto stinu je presnost: kdyz prestanes dokazovat svou hodnotu tim, kolik uneses, zacnes lepe videt, komu patri tvoje blizkost, cas a pozornost. Nejde o chlad. Jde o laskavost, ktera nezapomina na tebe.',
+        months: [
+            { month: 'Kveten', title: 'vyjasneni rytmu', text: 'Vsimni si, co ti bere klid opakovane. Jeden maly signal se muze vratit nekolikrat, aby ukazal, kde je cas zjednodusit pravidla.' },
+            { month: 'Cervenec', title: 'viditelny krok', text: 'Dobre obdobi pro jasnejsi rozhodnuti nebo verejnejsi krok. Nepotrebujes dokonalost, potrebujes smer a jednu konkretni akci.' },
+            { month: 'Zari', title: 'hranice v praxi', text: 'Zari proveri, jestli sve hranice jen citis, nebo je umis i pojmenovat. Kratka pravdiva veta bude silnejsi nez dlouhe vysvetlovani.' },
+            { month: 'Listopad', title: 'hlubsi pravda', text: 'Neco pod povrchem bude chtit dostat slova. Vyhni se dramatizaci, ale ani pravdu nezmensuj jen proto, aby byla pohodlna.' },
+            { month: 'Prosinec', title: 'uzavreni kruhu', text: 'Konec roku je vhodny pro odlozeni zavazku, ktere uz neodpovidaji tomu, kam jdes. Zapis si, co nechces prenaset dal.' }
+        ],
+        actionPlan: [
+            { title: 'Vyber jednu zatez', text: 'Napis si jednu vec, kterou drzis hlavne proto, aby mel nekdo jiny klid. Rozhodni, jestli ji ohranicis, predas nebo uzavres.' },
+            { title: 'Zkrat jednu odpoved', text: 'Tam, kde bys normalne vysvetloval dlouze, zkus jednu jasnou vetu. Sleduj, jestli prijde uleva nebo potreba se hned omlouvat.' },
+            { title: 'Over telo pred ano', text: 'Pred dulezitym souhlasem se zastav na deset minut. Vsimni si, jestli telo mekne, nebo tuhne. Ber ten signal vazne.' },
+            { title: 'Zjednodus zavazek', text: 'Vyber jeden pracovni nebo osobni zavazek a dopln mu hranici: termin, cenu, rozsah nebo jasne ne.' },
+            { title: 'Vrat se k jedne otazce', text: 'Na konci tydne si poloz otazku: kde jsem se tento tyden neopustil? Odpoved ukaze, co ma pokracovat.' }
+        ],
+        ritual: 'Vecer si nech deset minut bez telefonu. Napis tri vety: co uz nechci drzet za ostatni, kde potrebuji vic pravdy a jaky maly krok udelam do sedmi dnu. Potom jednu vetu zakrouzkuj. Nech ji na viditelnem miste. Kdykoli zacnes znovu vysvetlovat nebo odkladat jasny krok, vrat se k ni jako ke kotve.',
+        journalPrompts: [
+            'Kde si pletu klid s odkladanim pravdy?',
+            'Ktera jedna povinnost uz potrebuje hranici?',
+            'Co mi telo rika driv nez hlava?',
+            'Kde cekam na potvrzeni, ktere nepotrebuji?',
+            'Jaky maly krok mi tento tyden vrati prostor?',
+            'Co nechci prenaset do dalsiho obdobi?'
+        ],
+        closing: `${displayName}, tahle mapa neni rozsudek ani slib. Je to zrcadlo pro rok ${year}. Pokud si z ni vezmes jen jednu vec, at je to dovoleni zjednodusit tam, kde uz dlouho delas vse slozitejsi, nez musi byt. Skutecny posun se casto neohlasi velkym znamenim. Prijde jako kratka veta, klidnejsi odpoved, jasnejsi hranice nebo vecer, kdy poprve neprevezmes cizi tlak. To je dost. Odtud muze zacit dalsi krok.`
+    };
+}
+
 function sectionPage({
     kicker,
     title,
@@ -368,10 +442,15 @@ Pravidla kvality:
 
 export async function generatePersonalMapContent(input = {}) {
     const { system, user } = buildPersonalMapGenerationPrompt(input);
-    const raw = await callClaudeForPersonalMap(system, user);
-    const parsed = JSON.parse(extractJsonPayload(raw));
-    const sections = parsed?.sections && typeof parsed.sections === 'object' ? parsed.sections : parsed;
-    return normalizePersonalMapSections(sections);
+    try {
+        const raw = await callClaudeForPersonalMap(system, user);
+        const parsed = JSON.parse(extractJsonPayload(raw));
+        const sections = parsed?.sections && typeof parsed.sections === 'object' ? parsed.sections : parsed;
+        return normalizePersonalMapSections(sections);
+    } catch (error) {
+        console.error('[PERSONAL_MAP] AI generation failed, using local fallback:', error.message);
+        return normalizePersonalMapSections(buildPersonalMapFallbackSections(input));
+    }
 }
 
 export function buildPersonalMapHtml(input) {
@@ -1334,7 +1413,7 @@ export async function renderPersonalMapPagePreview(input, outputPath, selector =
     }
 }
 
-export { buildPersonalMapGenerationPrompt };
+export { buildPersonalMapFallbackSections, buildPersonalMapGenerationPrompt };
 
 export const samplePersonalMapData = {
     name: 'Jana',
