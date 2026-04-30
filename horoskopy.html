@@ -2,8 +2,6 @@
 
 <html lang="cs">
 
-
-
 <head>
 
     <meta charset="UTF-8">
@@ -17,8 +15,6 @@
     <meta name="keywords" content="horoskop, denní horoskop, znamení, zvěrokruh, astrologie">
 
     <meta name="theme-color" content="#0a0a1a">
-
-
 
     <!-- Open Graph -->
 
@@ -35,8 +31,6 @@
     <meta property="og:locale" content="cs_CZ">
 
     <meta name="twitter:card" content="summary_large_image">
-
-
 
     <!-- JSON-LD Structured Data -->
 
@@ -60,27 +54,11 @@
 
             "cssSelector": ["#main-content h1", ".hero__subtitle"]
 
-        },
-
-        "aggregateRating": {
-
-            "@type": "AggregateRating",
-
-            "ratingValue": "4.9",
-
-            "reviewCount": "2450",
-
-            "bestRating": "5",
-
-            "worstRating": "1"
-
         }
 
     }
 
     </script>
-
-
 
     
 
@@ -105,22 +83,16 @@
     }
 
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://js.stripe.com">
     <link rel="dns-prefetch" href="https://js.stripe.com">
     <link rel="preload" as="image" href="img/bg-cosmic-hd.webp">
     <title>Denní Horoskop Zdarma — Všechna Znamení Dnes | Mystická Hvězda</title>
-
-
 
     <!-- Favicon -->
 
     <link rel="icon" type="image/svg+xml"
 
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♈</text></svg>">
-
-
 
     <!-- PWA -->
 
@@ -131,19 +103,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-
-        rel="stylesheet"  >
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="/fonts/local-fonts.css">
 
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
     <link rel="stylesheet" href="css/pages/horoskopy.css">
@@ -158,11 +118,9 @@
 
     <link rel="alternate" hreflang="x-default" href="https://www.mystickahvezda.cz/horoskopy.html">
 <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/dist/analytics-init.js" defer></script>
 </head>
-
-
 
 <body>
 
@@ -170,17 +128,11 @@
 
     <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
 
-
-
     <div class="stars" aria-hidden="true"></div>
-
-
 
     <!-- HEADER (loaded dynamically) -->
 
     <div id="header-placeholder"></div>
-
-
 
     <!-- FREEMIUM LIMIT BANNER (pro nepřihlášené a free uživatele) -->
 
@@ -199,10 +151,6 @@
     </div>
 
     <script src="js/dist/freemium-horoskopy.js" defer></script>
-
-
-
-
 
     <main id="main-content">
 
@@ -230,8 +178,6 @@
 
         </section>
 
-
-
         <!-- TABS -->
 
         <section class="section mh-inline-9aa7a0fc6b">
@@ -247,8 +193,6 @@
                     <button class="tab" data-tab="monthly" role="tab" aria-selected="false">Měsíční</button>
 
                 </div>
-
-
 
                 <!-- ZODIAC GRID -->
 
@@ -437,8 +381,6 @@
 
                         </h2>
 
-
-
                         <div class="horoscope-content">
 
                             <!-- Loading state -->
@@ -450,8 +392,6 @@
                                 <p class="mh-inline-3482510637">Hvězdy promlouvají...</p>
 
                             </div>
-
-
 
                             <p class="mb-lg mh-inline-5f6c97c273"
 
@@ -506,9 +446,6 @@
             </div>
 
         </section>
-
-
-
 
     
 
@@ -646,23 +583,9 @@
 
     </main>
 
-
-
     <!-- FOOTER (loaded dynamically) -->
 
     <div id="footer-placeholder"></div>
-
-
-
-
-
-
-
-
-
-
-
-
 
     <script src="js/dist/api-config.js?v=5" defer></script>
     <script src="js/dist/templates.js?v=10" defer></script>
@@ -688,8 +611,6 @@
 
     <script type="module" src="js/dist/main.js?v=10"></script>
 
-
-
     <script src="js/dist/newsletter-popup.js" defer></script>
 
     <script src="js/dist/retention.js?v=6" defer></script>
@@ -699,7 +620,5 @@
 <script src="js/dist/horoscope-subscribe.js" defer></script>
 
 </body>
-
-
 
 </html>

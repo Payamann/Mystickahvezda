@@ -330,6 +330,13 @@ const csrfProtection = (req, res, next) => {
 // XSS Protection - API routes only, after body parsing and before route handlers
 app.use('/api', xss());
 
+// API responses often contain tokens, account state, payment state or personal AI output.
+// Default to no-store; explicitly public endpoints can override this later.
+app.use('/api', (_req, res, next) => {
+    res.set('Cache-Control', 'no-store');
+    next();
+});
+
 // Endpoint to get CSRF token (call this on page load)
 app.get('/api/csrf-token', csrfTokenLimiter, (req, res) => {
     try {

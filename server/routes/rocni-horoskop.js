@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createOneTimeOrderInput, attachStripeSessionToOrderInput } from '../services/one-time-orders.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,6 +45,11 @@ function cleanCheckoutSource(value) {
     const trimmed = value.trim();
     if (!trimmed) return 'annual_horoscope_page';
     return trimmed.replace(/[^\w:-]/g, '_').slice(0, 80);
+}
+
+function isValidIsoDate(value) {
+    const date = new Date(`${value}T00:00:00Z`);
+    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
 function buildLineItem(customerName) {
@@ -100,11 +106,21 @@ router.post('/checkout', async (req, res) => {
         return res.status(400).json({ error: 'Neplatné znamení.' });
     }
 
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate) || Number.isNaN(Date.parse(birthDate)) || new Date(birthDate) >= new Date()) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate) || !isValidIsoDate(birthDate) || new Date(`${birthDate}T00:00:00Z`) >= new Date()) {
         return res.status(400).json({ error: 'Neplatné datum narození.' });
     }
 
     try {
+        const order = await createOneTimeOrderInput({
+            productType: PRODUCT.type,
+            productId: PRODUCT.id,
+            customerEmail: email,
+            customerName,
+            payload: {
+                birthDate,
+                sign
+            }
+        });
         const stripe = getStripeClient();
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -118,16 +134,14 @@ router.post('/checkout', async (req, res) => {
                 productType: PRODUCT.type,
                 productId: PRODUCT.id,
                 productYear: PRODUCT.year,
+                orderId: order.id,
                 source,
-                customerName,
-                birthDate,
-                sign,
-                email,
                 price: String(PRODUCT.price),
                 currency: PRODUCT.currency
             }
         });
 
+        await attachStripeSessionToOrderInput(order.id, session.id);
         return res.json({ url: session.url });
     } catch (err) {
         console.error('[HOROSKOP] Checkout session error:', err.message);

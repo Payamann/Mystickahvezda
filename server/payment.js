@@ -7,14 +7,33 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { validateString, validateNumber, validateUserId } from './utils/validation.js';
+import {
+    getOneTimeOrderInput,
+    markOneTimeOrderInputFulfilled,
+    sanitizeOneTimePurchaseMetadata
+} from './services/one-time-orders.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
-const stripe = new Stripe(stripeSecretKey);
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+
+if (process.env.NODE_ENV === 'production') {
+    const missingStripeEnv = [
+        ['STRIPE_SECRET_KEY', stripeSecretKey],
+        ['STRIPE_WEBHOOK_SECRET', STRIPE_WEBHOOK_SECRET]
+    ]
+        .filter(([, value]) => !value)
+        .map(([name]) => name);
+
+    if (missingStripeEnv.length > 0) {
+        throw new Error(`Stripe credentials missing in production (${missingStripeEnv.join(', ')}). Refusing to start degraded.`);
+    }
+}
+
+const stripe = new Stripe(stripeSecretKey);
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
 const router = express.Router();
 
@@ -582,15 +601,20 @@ async function handleCheckoutCompleted(session, stripeEventId = null) {
  * Generates PDF via Claude + Playwright, sends via Resend
  */
 async function handleRocniHoroskopPurchase(session, stripeEventId = null) {
-    const { customerName, birthDate, sign, email, productId = 'rocni_horoskop_2026' } = session.metadata || {};
-    const customerEmail = email || session.customer_email || session.customer_details?.email;
+    const orderInput = await getOneTimeOrderInput(session.metadata?.orderId);
+    const payload = orderInput?.payload || {};
+    const productId = session.metadata?.productId || orderInput?.product_id || 'rocni_horoskop_2026';
+    const customerName = orderInput?.customer_name || session.metadata?.customerName;
+    const birthDate = payload.birthDate || session.metadata?.birthDate;
+    const sign = payload.sign || session.metadata?.sign;
+    const customerEmail = orderInput?.customer_email || session.metadata?.email || session.customer_email || session.customer_details?.email;
 
     if (!customerName || !birthDate || !sign || !customerEmail) {
         console.error('[HOROSKOP] Missing metadata in checkout session:', session.id);
         return;
     }
 
-    console.log(`[HOROSKOP] Generating PDF for ${customerEmail} (${sign})`);
+    console.log(`[HOROSKOP] Generating PDF for paid session ${session.id} (${sign})`);
 
     await recordOneTimePurchase(session, {
         productType: 'rocni_horoskop',
@@ -621,9 +645,10 @@ async function handleRocniHoroskopPurchase(session, stripeEventId = null) {
             const pdfBuffer = await renderPdf({ name: customerName, sign, birthDate, sections });
 
             await sendHoroscopePdf({ to: customerEmail, name: customerName, sign, pdfBuffer });
-            console.log(`[HOROSKOP] PDF sent to ${customerEmail}`);
+            await markOneTimeOrderInputFulfilled(orderInput?.id);
+            console.log(`[HOROSKOP] PDF sent for paid session ${session.id}`);
         } catch (err) {
-            console.error(`[HOROSKOP] PDF generation/delivery failed for ${customerEmail}:`, err.message);
+            console.error(`[HOROSKOP] PDF generation/delivery failed for paid session ${session.id}:`, err.message);
         }
     });
 }
@@ -633,19 +658,18 @@ async function handleRocniHoroskopPurchase(session, stripeEventId = null) {
  * Generates PDF via Claude + Playwright, sends via Resend.
  */
 async function handlePersonalMapPurchase(session, stripeEventId = null) {
-    const {
-        customerName,
-        birthDate,
-        birthTime = '',
-        birthPlace = '',
-        sign,
-        grammaticalGender = 'neutral',
-        focus = '',
-        email,
-        productId = 'osobni_mapa_2026',
-        productYear
-    } = session.metadata || {};
-    const customerEmail = email || session.customer_email || session.customer_details?.email;
+    const orderInput = await getOneTimeOrderInput(session.metadata?.orderId);
+    const payload = orderInput?.payload || {};
+    const productId = session.metadata?.productId || orderInput?.product_id || 'osobni_mapa_2026';
+    const productYear = session.metadata?.productYear;
+    const customerName = orderInput?.customer_name || session.metadata?.customerName;
+    const birthDate = payload.birthDate || session.metadata?.birthDate;
+    const birthTime = payload.birthTime || session.metadata?.birthTime || '';
+    const birthPlace = payload.birthPlace || session.metadata?.birthPlace || '';
+    const sign = payload.sign || session.metadata?.sign;
+    const grammaticalGender = payload.grammaticalGender || session.metadata?.grammaticalGender || 'neutral';
+    const focus = payload.focus || session.metadata?.focus || '';
+    const customerEmail = orderInput?.customer_email || session.metadata?.email || session.customer_email || session.customer_details?.email;
     const year = Number(productYear) || new Date().getFullYear();
 
     if (!customerName || !birthDate || !sign || !customerEmail || !focus) {
@@ -653,7 +677,7 @@ async function handlePersonalMapPurchase(session, stripeEventId = null) {
         return;
     }
 
-    console.log(`[PERSONAL_MAP] Generating PDF for ${customerEmail} (${sign})`);
+    console.log(`[PERSONAL_MAP] Generating PDF for paid session ${session.id} (${sign})`);
 
     await recordOneTimePurchase(session, {
         productType: 'personal_map',
@@ -700,9 +724,10 @@ async function handlePersonalMapPurchase(session, stripeEventId = null) {
             });
 
             await sendPersonalMapPdf({ to: customerEmail, name: customerName, sign, pdfBuffer });
-            console.log(`[PERSONAL_MAP] PDF sent to ${customerEmail}`);
+            await markOneTimeOrderInputFulfilled(orderInput?.id);
+            console.log(`[PERSONAL_MAP] PDF sent for paid session ${session.id}`);
         } catch (err) {
-            console.error(`[PERSONAL_MAP] PDF generation/delivery failed for ${customerEmail}:`, err.message);
+            console.error(`[PERSONAL_MAP] PDF generation/delivery failed for paid session ${session.id}:`, err.message);
         }
     });
 }
@@ -719,7 +744,7 @@ async function recordOneTimePurchase(session, { productType, productId, email })
             amount_total: session.amount_total || Number(session.metadata?.price) || null,
             currency: session.currency || session.metadata?.currency || 'czk',
             status: session.payment_status || 'paid',
-            metadata: session.metadata || {}
+            metadata: sanitizeOneTimePurchaseMetadata(session.metadata)
         });
 
     if (error) {
@@ -1378,8 +1403,8 @@ router.post('/subscription/apply-discount', authenticateToken, async (req, res) 
             .insert({
                 user_id: userId,
                 type: 'discount_applied',
-                reason: couponCode,
-                feedback: `Applied coupon ${couponCode}`,
+                reason: 'retention_offer',
+                feedback: `Applied coupon ${validatedCode}`,
                 created_at: new Date().toISOString()
             })
             .catch(err => console.warn('Could not log discount application:', err));

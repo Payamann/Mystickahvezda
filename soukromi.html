@@ -2,8 +2,6 @@
 
 <html lang="cs">
 
-
-
 <head>
 
     <meta charset="UTF-8">
@@ -18,8 +16,6 @@
 
     <meta name="theme-color" content="#0a0a1a">
 
-
-
     <!-- Open Graph -->
 
     <meta property="og:type" content="website">
@@ -31,19 +27,13 @@
     <meta property="og:image" content="https://www.mystickahvezda.cz/img/hero-3d.webp">
     <meta property="og:locale" content="cs_CZ">
 
-
-
     <title>Ochrana soukromí | Mystická Hvězda</title>
-
-
 
     <!-- Favicon -->
 
     <link rel="icon" type="image/svg+xml"
 
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
-
-
 
     <!-- PWA -->
 
@@ -54,25 +44,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-
-        rel="stylesheet"  >
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
-
+    <link rel="stylesheet" href="/fonts/local-fonts.css">
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
     <link rel="stylesheet" href="css/pages/soukromi.css">
 
     <link rel="canonical" href="https://www.mystickahvezda.cz/soukromi.html">
-
 
     <script type="application/ld+json">
     {
@@ -91,25 +67,17 @@
     <script src="/js/dist/analytics-init.js" defer></script>
 </head>
 
-
-
 <body>
 
     <!-- Skip to main content -->
 
     <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
 
-
-
     <div class="stars" aria-hidden="true"></div>
-
-
 
     <!-- HEADER (loaded dynamically) -->
 
     <div id="header-placeholder"></div>
-
-
 
     <main id="main-content">
 
@@ -139,8 +107,6 @@
 
         </section>
 
-
-
         <!-- PRIVACY CONTENT -->
 
         <section class="section">
@@ -163,8 +129,6 @@
 
                     </div>
 
-
-
                     <div class="content-block mb-xl">
 
                         <h3 class="text-gold mb-md">2. Jaké údaje shromažďujeme</h3>
@@ -185,11 +149,13 @@
 
                             <li>Technické a analytické údaje, například navštívená stránka, typ události, anonymní ID klienta, zpětná vazba Ano/Ne a chybová hlášení bez hesel a tokenů.</li>
 
+                            <li>Údaje z jednorázových objednávek, například rok produktu, vybraný výklad, datum narození, čas narození, místo narození a zvolený fokus výkladu, pokud je pro objednaný výstup zadáte.</li>
+
+                            <li>Platební identifikátory od platební brány, například ID platby, stav platby a typ produktu. Úplná čísla platebních karet neukládáme.</li>
+
                         </ul>
 
                     </div>
-
-
 
                     <div class="content-block mb-xl">
 
@@ -215,8 +181,6 @@
 
                     </div>
 
-
-
                     <div class="content-block mb-xl">
 
                         <h3 class="text-gold mb-md">4. Bezpečnost a sdílení</h3>
@@ -229,9 +193,19 @@
 
                         </p>
 
+                        <p>
+
+                            Pro provoz služby využíváme pouze nezbytné zpracovatele: databázovou a autentizační infrastrukturu, platební bránu Stripe, e-mailové doručování, analytiku po udělení souhlasu a poskytovatele AI modelů pro generování osobních výkladů. Těmto službám předáváme jen údaje potřebné pro konkrétní účel.
+
+                        </p>
+
+                        <p>
+
+                            Citlivé vstupy z jednorázových objednávek a osobních cache pravidelně mažeme podle nastavené retenční lhůty. Platební bráně předáváme u těchto produktů pouze interní identifikátor objednávky a základní údaje o produktu.
+
+                        </p>
+
                     </div>
-
-
 
                     <div class="content-block mb-xl">
 
@@ -246,8 +220,6 @@
                         </p>
 
                     </div>
-
-
 
                     <div class="content-block">
 
@@ -269,8 +241,6 @@
 
                 </div>
 
-
-
                 <!-- Back navigation -->
 
                 <div class="text-center mt-xl">
@@ -285,29 +255,13 @@
 
     </main>
 
-
-
     <!-- FOOTER (loaded dynamically) -->
 
     <div id="footer-placeholder"></div>
 
-
-
-
-
-
-
-
-
-
-
-
-
     <!-- Service Worker Registration -->
 
     <script src="/js/dist/register-sw.js" defer></script>
-
-
 
     <script src="js/dist/api-config.js?v=5" defer></script>
 
@@ -321,10 +275,6 @@
 
     <script type="module" src="js/dist/main.js?v=10"></script>
 
-
-
 </body>
-
-
 
 </html>

@@ -3,16 +3,14 @@
  * Provides offline caching with stale-while-revalidate strategy
  */
 
-const CACHE_NAME = 'mysticka-hvezda-cfab5e1502da';
+const CACHE_NAME = 'mysticka-hvezda-b7bd6b6b1a6d';
 const MAX_RUNTIME_CACHE_SIZE = 150;
 const STATIC_ASSETS = [
-    '/',
-    '/index.html',
-    '/cenik.html',
-    '/kristalova-koule.html',
-    '/rocni-horoskop.html',
-    '/osobni-mapa.html',
-    '/runy.html',
+    '/fonts/local-fonts.css',
+    '/fonts/cinzel-latin-ext.woff2',
+    '/fonts/cinzel-latin.woff2',
+    '/fonts/inter-latin-ext.woff2',
+    '/fonts/inter-latin.woff2',
     '/css/style.v2.min.css',
     '/css/profile-refresh.css',
     '/css/pages/index.css',
@@ -56,6 +54,21 @@ const STATIC_ASSETS = [
     '/manifest.json',
     '/offline.html'
 ];
+
+function isHtmlNavigation(request) {
+    const accept = request.headers.get('accept') || '';
+    const pathname = new URL(request.url).pathname;
+    return request.mode === 'navigate' || accept.includes('text/html') || pathname.endsWith('.html');
+}
+
+function isCacheableResponse(response) {
+    if (!response || response.status !== 200 || response.type !== 'basic') {
+        return false;
+    }
+
+    const cacheControl = response.headers.get('cache-control') || '';
+    return !/\b(?:no-store|private)\b/i.test(cacheControl);
+}
 
 // Install - cache static assets
 self.addEventListener('install', (event) => {
@@ -111,14 +124,21 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    if (isHtmlNavigation(event.request)) {
+        event.respondWith(
+            fetch(event.request).catch(() => caches.match('/offline.html'))
+        );
+        return;
+    }
+
     event.respondWith(
         caches.match(event.request)
             .then((cachedResponse) => {
                 // Start network fetch regardless (for revalidation)
                 const networkFetch = fetch(event.request)
                     .then((response) => {
-                        // Don't cache non-successful or non-basic responses
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
+                        // Don't cache non-successful, non-basic or explicitly private responses
+                        if (!isCacheableResponse(response)) {
                             return response;
                         }
 

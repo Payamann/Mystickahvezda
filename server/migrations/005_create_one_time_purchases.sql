@@ -17,3 +17,12 @@ create index if not exists idx_one_time_purchases_customer_email
 
 create index if not exists idx_one_time_purchases_product_type_created_at
     on one_time_purchases (product_type, created_at desc);
+
+alter table one_time_purchases enable row level security;
+
+drop policy if exists "No direct access to one_time_purchases" on one_time_purchases;
+create policy "No direct access to one_time_purchases"
+    on one_time_purchases
+    for all
+    using (false)
+    with check (false);

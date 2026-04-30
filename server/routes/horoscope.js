@@ -4,6 +4,7 @@
  * Includes daily/weekly/monthly horoscope with database caching
  */
 import express from 'express';
+import crypto from 'node:crypto';
 import { optionalPremiumCheck, aiLimiter, trackPaywallHit } from '../middleware.js';
 import { callClaude } from '../services/claude.js';
 import { SYSTEM_PROMPTS } from '../config/prompts.js';
@@ -39,6 +40,29 @@ const ZODIAC_NORMALIZATION = {
     'Koziorożec': 'Kozoroh',
     'Wodnik': 'Vodnář'
 };
+
+function sanitizeContext(context = []) {
+    if (!Array.isArray(context)) return [];
+
+    return context
+        .slice(0, 5)
+        .map(c => String(c).replace(/[\r\n\t]/g, ' ').substring(0, 300))
+        .map(c => c.trim())
+        .filter(Boolean);
+}
+
+function buildContextCacheHash({ context, userId }) {
+    if (!context.length) return 'nocontext';
+
+    return crypto
+        .createHash('sha256')
+        .update(JSON.stringify({
+            scope: userId || 'anonymous',
+            context
+        }))
+        .digest('hex')
+        .slice(0, 32);
+}
 
 function applyAiLimiter(req, res) {
     return new Promise((resolve, reject) => {
@@ -114,10 +138,13 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
             });
         }
 
-        // Generate cache key (include lang and context hash)
-        const contextHash = Array.isArray(context) && context.length > 0
-            ? Buffer.from(context.join('')).toString('base64').substring(0, 10)
-            : 'nocontext';
+        const sanitizedContext = sanitizeContext(context);
+
+        // Generate cache key (include lang and non-reversible context hash)
+        const contextHash = buildContextCacheHash({
+            context: sanitizedContext,
+            userId: req.user?.id
+        });
         const cacheKey = `${getHoroscopeCacheKey(sign, period)}-${targetLang}-${contextHash}`;
 
         // Check database cache first
@@ -154,20 +181,13 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
 
         periodLabel = labels[targetLang][period];
 
-        if (context && Array.isArray(context) && context.length > 0) {
-            const sanitized = context
-                .slice(0, 5)
-                .map(c => String(c).replace(/[\r\n\t]/g, ' ').substring(0, 300))
-                .filter(c => c.trim().length > 0);
-
-            if (sanitized.length > 0) {
-                if (targetLang === 'sk') {
-                    contextInstruction = `\nCONTEXT (Z užívateľovho denníka):\n"${sanitized.join('", "')}"\nINŠTRUKCIA PRE SYNERGIU: Ak je to relevantné, jemne a nepriamo nadväzuj na témy z denníka. Nehovor "V denníku vidím...", ale skôr "Hviezdy naznačujú posun v témach, ktoré ťa trápia...". Buď empatický.`;
-                } else if (targetLang === 'pl') {
-                    contextInstruction = `\nCONTEXT (Z dziennika użytkownika):\n"${sanitized.join('", "')}"\nINSTRUKCJA DLA SYNERGII: Jeśli to istotne, delikatnie i pośrednio nawiązuj do tematów z dziennika. Nie mów "Widzę w dzienniku...", ale raczej "Gwiazdy sugerują zmianę w tematach, które Cię martwią...". Bądź empatyczny.`;
-                } else {
-                    contextInstruction = `\nCONTEXT (Z uživatelova deníku):\n"${sanitized.join('", "')}"\nINSTRUKCE PRO SYNERGII: Pokud je to relevantní, jemně a nepřímo nawazuj na témata z deníku. Neříkej "V deníku vidím...", ale spíše "Hvězdy naznačují posun v tématech, která tě trápí...". Buď empatický.`;
-                }
+        if (sanitizedContext.length > 0) {
+            if (targetLang === 'sk') {
+                contextInstruction = `\nCONTEXT (Z užívateľovho denníka):\n"${sanitizedContext.join('", "')}"\nINŠTRUKCIA PRE SYNERGIU: Ak je to relevantné, jemne a nepriamo nadväzuj na témy z denníka. Nehovor "V denníku vidím...", ale skôr "Hviezdy naznačujú posun v témach, ktoré ťa trápia...". Buď empatický.`;
+            } else if (targetLang === 'pl') {
+                contextInstruction = `\nCONTEXT (Z dziennika użytkownika):\n"${sanitizedContext.join('", "')}"\nINSTRUKCJA DLA SYNERGII: Jeśli to istotne, delikatnie i pośrednio nawiązuj do tematów z dziennika. Nie mów "Widzę w dzienniku...", ale raczej "Gwiazdy sugerują zmianę w tematach, które Cię martwią...". Bądź empatyczny.`;
+            } else {
+                contextInstruction = `\nCONTEXT (Z uživatelova deníku):\n"${sanitizedContext.join('", "')}"\nINSTRUKCE PRO SYNERGII: Pokud je to relevantní, jemně a nepřímo nawazuj na témata z deníku. Neříkej "V deníku vidím...", ale spíše "Hvězdy naznačují posun v tématech, která tě trápí...". Buď empatický.`;
             }
         }
 

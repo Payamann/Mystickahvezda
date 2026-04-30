@@ -6,6 +6,7 @@ const CACHE_TABLES = Object.freeze([
     { table: 'cache_numerology', dateColumn: 'generated_at' },
     { table: 'cache_past_life', dateColumn: 'generated_at' },
     { table: 'cache_medicine_wheel', dateColumn: 'generated_at' },
+    { table: 'one_time_order_inputs', dateColumn: 'created_at', envKey: 'ONE_TIME_ORDER_RETENTION_DAYS' },
     { table: 'analytics_events', dateColumn: 'created_at', envKey: 'ANALYTICS_RETENTION_DAYS' },
 ]);
 

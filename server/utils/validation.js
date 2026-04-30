@@ -8,10 +8,14 @@ export function validateBirthDate(date) {
     throw new Error('Birth date is required');
   }
 
-  const parsed = new Date(date);
+  if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    throw new Error('Invalid date format');
+  }
+
+  const parsed = new Date(`${date}T00:00:00Z`);
 
   // Must be valid date
-  if (isNaN(parsed.getTime())) {
+  if (isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date) {
     throw new Error('Invalid date format');
   }
 

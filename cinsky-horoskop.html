@@ -2,8 +2,6 @@
 
 <html lang="cs">
 
-
-
 <head>
 
     <meta charset="UTF-8">
@@ -26,15 +24,7 @@
 
     <meta property="og:image" content="https://www.mystickahvezda.cz/img/hero-3d.webp">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link
-
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext"
-
-        rel="stylesheet"  >
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
-
+    <link rel="stylesheet" href="/fonts/local-fonts.css">
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
     <link rel="stylesheet" href="css/pages/cinsky-horoskop.css">
 
@@ -44,19 +34,15 @@
 
     </script>
 <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/dist/analytics-init.js" defer></script>
 </head>
-
-
 
 <body>
 
     <div class="stars" aria-hidden="true"></div>
 
     <div id="header-placeholder"></div>
-
-
 
     <main>
 
@@ -74,8 +60,6 @@
 
                 </div>
 
-
-
                 <!-- Rok zadání -->
 
                 <div class="mh-inline-5f03cef152"
@@ -92,8 +76,6 @@
                     <button id="btn-calculate" class="btn btn--primary">🐉 Zjistit mé znamení</button>
 
                 </div>
-
-
 
                 <!-- Mřížka zvířat -->
 
@@ -125,8 +107,6 @@
 
                 </div>
 
-
-
                 <!-- Výsledek -->
 
                 <div class="result-section" id="result-section">
@@ -146,8 +126,6 @@
                         <p id="result-element" class="mh-inline-5f26a41e27"></p>
 
                     </div>
-
-
 
                     <div class="detail-card">
 
@@ -223,8 +201,6 @@
 
         </section>
 
-
-
         <!-- ČÍNSKÁ KOMPATIBILITA -->
 
         <section class="section section--alt mh-inline-e73c9faaa6" id="chinese-synastry">
@@ -238,8 +214,6 @@
                 <p class="section__text">Zjistěte, jak se k sobě hodíte s partnerem podle staleté čínské moudrosti pěti
 
                     elementů a dvanácti zvířat.</p>
-
-
 
                 <div class="card mh-inline-4e254343b9" data-animate>
 
@@ -285,8 +259,6 @@
 
                         Vypočítat shodu vztahu</button>
 
-
-
                     <!-- Vysledek synastrie -->
 
                     <div id="synastry-result"
@@ -325,8 +297,6 @@
 
                         </div>
 
-
-
                         <div class="detail-card mh-inline-0edad4595f">
 
                             <h3 id="syn-title" class="mh-inline-ab9e971564"></h3>
@@ -336,8 +306,6 @@
                             </p>
 
                         </div>
-
-
 
                         <!-- CTA Do Synastrie Západní a Premium -->
 
@@ -361,8 +329,6 @@
 
     </main>
 
-
-
     <div id="footer-placeholder"></div>
 
     <script src="js/dist/api-config.js?v=5" defer></script>
@@ -384,9 +350,6 @@
 
     <script src="js/dist/cinsky-horoskop.js?v=6" defer></script>
 
-
 </body>
-
-
 
 </html>

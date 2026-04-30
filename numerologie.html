@@ -2,8 +2,6 @@
 
 <html lang="cs">
 
-
-
 <head>
 
     <meta charset="UTF-8">
@@ -56,20 +54,6 @@
 
             "cssSelector": ["#main-content h1", ".hero__subtitle"]
 
-        },
-
-        "aggregateRating": {
-
-            "@type": "AggregateRating",
-
-            "ratingValue": "4.9",
-
-            "reviewCount": "1560",
-
-            "bestRating": "5",
-
-            "worstRating": "1"
-
         }
 
     }
@@ -78,15 +62,11 @@
 
     <title>Numerologie Online | Mystická Hvězda</title>
 
-
-
     <!-- Favicon -->
 
     <link rel="icon" type="image/svg+xml"
 
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔢</text></svg>">
-
-
 
     <!-- PWA -->
 
@@ -97,48 +77,25 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-
-        rel="stylesheet"  >
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="/fonts/local-fonts.css">
 
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
     <link rel="stylesheet" href="css/pages/numerologie.css">
 
-
-
     <script src="js/dist/premium-gates.js?v=2" defer></script>
-
-
-
-
 
     <script type="module" src="js/dist/numerology.js?v=2"></script>
 
     <link rel="stylesheet" href="css/page-extras.css">
 
-
     <link rel="canonical" href="https://www.mystickahvezda.cz/numerologie.html">
 
     <link rel="alternate" hreflang="cs" href="https://www.mystickahvezda.cz/numerologie.html">
 
-    <link rel="alternate" hreflang="sk" href="https://www.mystickahvezda.cz/sk/numerologie.html">
-
   <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="alternate" hreflang="x-default" href="https://www.mystickahvezda.cz/numerologie.html">    <script src="/js/dist/analytics-init.js" defer></script>
 </head>
-
-
 
 <body>
 
@@ -146,13 +103,9 @@
 
     <div class="stars" aria-hidden="true"></div>
 
-
-
     <!-- HEADER (loaded dynamically) -->
 
     <div id="header-placeholder"></div>
-
-
 
     <main id="main-content">
 
@@ -180,8 +133,6 @@
 
         </section>
 
-
-
         <!-- CALCULATOR -->
 
         <section class="section">
@@ -196,8 +147,6 @@
 
                         <label class="checkbox-wrapper mh-inline-c26fcc7b86"
 
-
-
                             title="Použít údaje z mého profilu">
 
                             <input type="checkbox" id="use-profile-num" class="mh-inline-62ac942649">
@@ -207,8 +156,6 @@
                         </label>
 
                     </div>
-
-
 
                     <form id="numerology-form" class="num-form">
 
@@ -226,8 +173,6 @@
 
                         </div>
 
-
-
                         <div class="form-group">
 
                             <label for="num-date" class="form-label">Datum narození *</label>
@@ -235,8 +180,6 @@
                             <input type="date" id="num-date" class="form-input" required>
 
                         </div>
-
-
 
                         <div class="form-group">
 
@@ -252,8 +195,6 @@
 
                         </div>
 
-
-
                         <button type="submit" class="btn btn--primary u-w-full">
 
                             Odhalit má čísla
@@ -264,8 +205,6 @@
 
                 </div>
 
-
-
                 <!-- Loading -->
 
                 <div id="num-loading">
@@ -275,8 +214,6 @@
                     <span class="u-text-gold">Počítám vaše čísla...</span>
 
                 </div>
-
-
 
                 <!-- DAILY VIBRATIONS (New Feature) -->
 
@@ -297,8 +234,6 @@
                         </p>
 
                     </div>
-
-
 
                     <div class="grid grid-3 mh-inline-cf96b41003"
 
@@ -336,8 +271,6 @@
 
                         </div>
 
-
-
                         <!-- Personal Month -->
 
                         <div class="card text-center mh-inline-127e7ceadf"
@@ -361,8 +294,6 @@
                                 období.</p>
 
                         </div>
-
-
 
                         <!-- Personal Year -->
 
@@ -392,8 +323,6 @@
 
                 </section>
 
-
-
                 <!-- Results -->
 
                 <div id="numerology-results" class="mh-inline-1ceef7d917">
@@ -410,8 +339,6 @@
 
                     </div>
 
-
-
                     <div id="num-interpretation"></div>
 
                 </div>
@@ -419,8 +346,6 @@
             </div>
 
         </section>
-
-
 
         <!-- INFO SECTION -->
 
@@ -531,35 +456,15 @@
 
     </main>
 
-
-
     <!-- FOOTER (loaded dynamically) -->
 
     <div id="footer-placeholder"></div>
 
-
-
-
-
-
-
-
-
-
-
-
-
     <script src="js/dist/favorites-helper.js" defer></script>
-
-
-
-
 
     <!-- Service Worker Registration -->
 
     <script src="/js/dist/register-sw.js" defer></script>
-
-
 
     <script src="js/dist/api-config.js?v=5" defer></script>
 
@@ -571,18 +476,12 @@
 
 <script src="js/dist/share-result.js" defer></script>
 
-
-
     <script src="js/dist/exit-intent.js" defer></script>
 
     <script src="js/dist/components.js?v=10" defer></script>
 
     <script type="module" src="js/dist/main.js?v=10"></script>
 
-
-
 </body>
-
-
 
 </html>

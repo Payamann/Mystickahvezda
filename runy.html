@@ -2,8 +2,6 @@
 
 <html lang="cs">
 
-
-
 <head>
 
     <meta charset="UTF-8">
@@ -38,8 +36,6 @@
 
     <title>Věštění z Run | Mystická Hvězda</title>
 
-
-
     <link rel="icon" type="image/svg+xml"
 
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
@@ -47,24 +43,12 @@
     <link rel="manifest" href="manifest.json">
 
     <link rel="apple-touch-icon" href="img/icon-192.webp">
-
-
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-
-        rel="stylesheet"  >
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="/fonts/local-fonts.css">
 
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
     <link rel="stylesheet" href="css/pages/runy.css">
 <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <!-- SEO: Structured data for rune reading service -->
   <script type="application/ld+json">
@@ -79,18 +63,11 @@
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "CZK"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.7",
-      "ratingCount": "312"
     }
   }
   </script>
     <script src="/js/dist/analytics-init.js" defer></script>
 </head>
-
-
 
 <body>
 
@@ -99,8 +76,6 @@
     <div class="stars" aria-hidden="true"></div>
 
     <div id="header-placeholder"></div>
-
-
 
     <!-- FREEMIUM LIMIT BANNER (pro nepřihlášené a free uživatele) -->
 
@@ -122,10 +97,6 @@
 
     <script src="js/dist/freemium-runy.js" defer></script>
 
-
-
-
-
     <main id="main-content">
 
         <section class="section runes-hero">
@@ -144,8 +115,6 @@
 
                     den. Prastará severská moudrost čeká.</p>
 
-
-
                 <div class="rune-pouch-container">
 
                     <!-- The stone itself -->
@@ -158,8 +127,6 @@
 
                     </div>
 
-
-
                     <button class="btn btn--primary" id="btn-draw">Vytáhnout Runu Dne</button>
 
                     <!-- Loading state -->
@@ -171,8 +138,6 @@
                         <p class="mt-sm mh-inline-24291699b8">Šaman naslouchá runám...</p>
 
                     </div>
-
-
 
                     <!-- Result -->
 
@@ -233,8 +198,6 @@
 
         </section>
 
-
-
         <!-- SEO Content Section -->
 
         <section class="section mh-inline-29c2910ad2"
@@ -276,8 +239,6 @@
             </div>
 
         </section>
-
-
 
         <!-- Cross-linking placeholder (will be filled by index/script logic or inserted directly) -->
 
@@ -361,11 +322,7 @@
 
     </main>
 
-
-
     <div id="footer-placeholder"></div>
-
-
 
     <script src="js/dist/api-config.js?v=5" defer></script>
 
@@ -390,7 +347,5 @@
     <script src="js/dist/favorites-helper.js" defer></script>
 
 </body>
-
-
 
 </html>

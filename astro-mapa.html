@@ -2,8 +2,6 @@
 
 <html lang="cs">
 
-
-
 <head>
 
     <meta charset="UTF-8">
@@ -56,20 +54,6 @@
 
             "cssSelector": ["#main-content h1", ".hero__subtitle"]
 
-        },
-
-        "aggregateRating": {
-
-            "@type": "AggregateRating",
-
-            "ratingValue": "4.9",
-
-            "reviewCount": "850",
-
-            "bestRating": "5",
-
-            "worstRating": "1"
-
         }
 
     }
@@ -78,15 +62,11 @@
 
     <title>Astrokartografie | Mystická Hvězda</title>
 
-
-
     <!-- Favicon -->
 
     <link rel="icon" type="image/svg+xml"
 
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
-
-
 
     <!-- PWA -->
 
@@ -97,33 +77,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-
-        rel="stylesheet"  >
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="/fonts/local-fonts.css">
 
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
     <link rel="stylesheet" href="css/pages/astro-mapa.css">
 
     <link rel="stylesheet" href="css/page-extras.css">
 
-
   <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="canonical" href="https://www.mystickahvezda.cz/astro-mapa.html">
     <script src="/js/dist/analytics-init.js" defer></script>
 </head>
-
-
 
 <body>
 
@@ -131,13 +96,9 @@
 
     <div class="stars" aria-hidden="true"></div>
 
-
-
     <!-- HEADER (loaded dynamically) -->
 
     <div id="header-placeholder"></div>
-
-
 
     <main id="main-content">
 
@@ -163,8 +124,6 @@
 
         </section>
 
-
-
         <!-- FORM SECTION -->
 
         <section class="section">
@@ -172,8 +131,6 @@
             <div class="container">
 
                 <div class="grid grid-2 mh-inline-94487e376d">
-
-
 
                     <!-- Form Card -->
 
@@ -184,8 +141,6 @@
                             <h2 class="card__title mh-inline-0e3d9ac75a">Zadejte své údaje</h2>
 
                             <label class="checkbox-wrapper mh-inline-c445a143df" id="profile-option-wrapper"
-
-
 
                                 title="Použít údaje z mého profilu">
 
@@ -199,8 +154,6 @@
 
                         </div>
 
-
-
                         <form id="astro-form" class="astro-form">
 
                             <div class="form-group full-width">
@@ -211,8 +164,6 @@
 
                             </div>
 
-
-
                             <div class="form-group">
 
                                 <label for="astro-date" class="form-label">Datum narození</label>
@@ -221,8 +172,6 @@
 
                             </div>
 
-
-
                             <div class="form-group">
 
                                 <label for="astro-time" class="form-label">Čas narození</label>
@@ -230,8 +179,6 @@
                                 <input type="time" id="astro-time" class="form-input" required>
 
                             </div>
-
-
 
                             <div class="form-group">
 
@@ -273,8 +220,6 @@
 
                             </div>
 
-
-
                             <div class="form-group">
 
                                 <label for="astro-intention" class="form-label">Záměr cesty (Volitelné)</label>
@@ -297,8 +242,6 @@
 
                             </div>
 
-
-
                             <div class="form-group full-width mh-inline-a359183bb9">
 
                                 <button type="submit" class="btn btn--primary u-w-full">
@@ -312,8 +255,6 @@
                         </form>
 
                     </div>
-
-
 
                     <!-- Map Visualization -->
 
@@ -335,8 +276,6 @@
 
             </div>
 
-
-
             <!-- Loading -->
 
             <div id="astro-loading">
@@ -347,8 +286,6 @@
 
             </div>
 
-
-
             <!-- Results -->
 
             <div id="astro-results" class="mh-inline-cfbcde7816"></div>
@@ -356,8 +293,6 @@
             </div>
 
         </section>
-
-
 
         <!-- INFO CARDS -->
 
@@ -426,12 +361,6 @@
             </div>
 
         </section>
-
-
-
-
-
-
 
     <!-- CROSS-LINKING SEKCE -->
 
@@ -523,8 +452,6 @@
 
                 </a>
 
-
-
                 <a href="snar.html" class="card cross-link-card">
 
                     <div class="cross-link-card__icon">🌙</div>
@@ -563,34 +490,16 @@
 
     </main>
 
-
-
     <!-- FOOTER (loaded dynamically) -->
 
     <div id="footer-placeholder"></div>
 
-
-
-
-
-
-
-
-
-
-
-
-
     <script src="js/dist/favorites-helper.js" defer></script>
     <script src="js/dist/astro-map.js" defer></script>
-
-
 
     <!-- Service Worker Registration -->
 
     <script src="/js/dist/register-sw.js" defer></script>
-
-
 
     <script src="js/dist/api-config.js?v=5" defer></script>
     <script src="js/dist/birth-location-suggestions.js" defer></script>
@@ -603,18 +512,12 @@
 
         <script src="js/dist/share-result.js" defer></script>
 
-
-
     <script src="js/dist/exit-intent.js" defer></script>
 
     <script src="js/dist/components.js?v=10" defer></script>
 
     <script type="module" src="js/dist/main.js?v=10"></script>
 
-
-
 </body>
-
-
 
 </html>

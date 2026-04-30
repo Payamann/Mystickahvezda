@@ -69,4 +69,40 @@ describe('Roční horoskop one-time product', () => {
         expect(res.status).toBe(400);
         expect(res.body.error).toMatch(/znamen/i);
     });
+
+    test('POST /api/rocni-horoskop/checkout rejects rollover birth date before Stripe', async () => {
+        const csrfToken = await getCsrfToken();
+        const res = await request(app)
+            .post('/api/rocni-horoskop/checkout')
+            .set('x-csrf-token', csrfToken)
+            .send({
+                name: 'Test User',
+                email: 'test@example.com',
+                birthDate: '1990-02-31',
+                sign: 'beran'
+            });
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toMatch(/datum/i);
+    });
+
+    test('POST /api/osobni-mapa/checkout rejects rollover birth date before Stripe', async () => {
+        const csrfToken = await getCsrfToken();
+        const res = await request(app)
+            .post('/api/osobni-mapa/checkout')
+            .set('x-csrf-token', csrfToken)
+            .send({
+                name: 'Test User',
+                email: 'test@example.com',
+                birthDate: '1990-02-31',
+                birthTime: '12:30',
+                birthPlace: 'Praha',
+                sign: 'beran',
+                grammaticalGender: 'neutral',
+                focus: 'Chci pochopit hlavni tema roku.'
+            });
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toMatch(/datum/i);
+    });
 });

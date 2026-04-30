@@ -7,6 +7,9 @@
 
 import { defineConfig, devices } from '@playwright/test';
 
+const E2E_PORT = Number.parseInt(process.env.PLAYWRIGHT_PORT || '3001', 10);
+const E2E_BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${E2E_PORT}`;
+
 export default defineConfig({
     testDir: './tests/e2e',
     fullyParallel: true,
@@ -29,7 +32,7 @@ export default defineConfig({
     expect: { timeout: 8_000 },
 
     use: {
-        baseURL: 'http://localhost:3001',
+        baseURL: E2E_BASE_URL,
         headless: true,
         locale: 'cs-CZ',
         timezoneId: 'Europe/Prague',
@@ -57,13 +60,13 @@ export default defineConfig({
     // Spustí dev server pokud ještě neběží
     webServer: {
         command: 'node server/index.js',
-        port: 3001,
+        port: E2E_PORT,
         // Lokálně reuse (rychlejší), v CI vždy čerstvý start
         reuseExistingServer: !process.env.CI,
         timeout: 30_000,
         env: {
             NODE_ENV: 'test',
-            PORT: '3001',
+            PORT: String(E2E_PORT),
             DISABLE_SCHEDULED_JOBS: 'true',
             MOCK_AI: 'true',
             MOCK_SUPABASE: 'true',

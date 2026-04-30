@@ -163,7 +163,7 @@ function updatePricingCopy() {
     }
 
     if (heroTrustBadge) {
-        heroTrustBadge.innerHTML = '<span>Účet zdarma bez karty</span><span>|</span><span>7 dní Premium na vyzkoušení</span><span>|</span><span>Zrušíte kdykoliv</span>';
+        heroTrustBadge.innerHTML = '<span>Účet zdarma bez karty</span><span>|</span><span>Jasná cena před platbou</span><span>|</span><span>Zrušíte kdykoliv</span>';
     }
 
     const freeCard = pricingCards[0];

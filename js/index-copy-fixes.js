@@ -91,9 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const socialProof = document.querySelector('.social-proof__text');
     if (socialProof) {
-        socialProof.innerHTML = '<strong>4.8/5</strong> na základě 489 hodnocení | Více než <strong>12 000+</strong> spokojených uživatelů';
+        socialProof.innerHTML = '<strong>Soukromí na prvním místě</strong> | Jasná cena před platbou | Výklady jako sebereflexe, ne verdikt';
     }
-    setText('.social-proof__stars', '5/5');
+    setText('.social-proof__stars', 'Transparentní vedení');
 
     const heroImage = document.querySelector('.hero__image');
     if (heroImage) heroImage.setAttribute('alt', 'Mystický astroláb');

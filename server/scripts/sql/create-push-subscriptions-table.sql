@@ -17,6 +17,7 @@ CREATE INDEX IF NOT EXISTS idx_push_subs_created ON push_subscriptions(created_a
 -- Enable RLS
 ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;
 
--- Policy: service role can do everything (for server)
-CREATE POLICY "Service role full access" ON push_subscriptions
-    FOR ALL USING (true) WITH CHECK (true);
+-- Policy: backend service_role bypasses RLS; browser clients get no direct access.
+DROP POLICY IF EXISTS "Service role full access" ON push_subscriptions;
+CREATE POLICY "No direct access to push_subscriptions" ON push_subscriptions
+    FOR ALL USING (false) WITH CHECK (false);

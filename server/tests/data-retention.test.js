@@ -33,11 +33,30 @@ describe('Data retention helpers', () => {
                 'cache_numerology',
                 'cache_past_life',
                 'cache_medicine_wheel',
+                'one_time_order_inputs',
                 'analytics_events'
             ]));
         } finally {
             if (originalAnalyticsRetention === undefined) delete process.env.ANALYTICS_RETENTION_DAYS;
             else process.env.ANALYTICS_RETENTION_DAYS = originalAnalyticsRetention;
+        }
+    });
+
+    test('supports a separate retention override for one-time order inputs', async () => {
+        const originalOrderRetention = process.env.ONE_TIME_ORDER_RETENTION_DAYS;
+        process.env.ONE_TIME_ORDER_RETENTION_DAYS = '60';
+
+        try {
+            const summary = await prunePersonalDataCaches({ days: '180' });
+            const orderResult = summary.results.find((row) => row.table === 'one_time_order_inputs');
+
+            expect(orderResult).toMatchObject({
+                ok: true,
+                retentionDays: 60
+            });
+        } finally {
+            if (originalOrderRetention === undefined) delete process.env.ONE_TIME_ORDER_RETENTION_DAYS;
+            else process.env.ONE_TIME_ORDER_RETENTION_DAYS = originalOrderRetention;
         }
     });
 });

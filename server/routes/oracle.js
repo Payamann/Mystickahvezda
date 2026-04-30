@@ -293,12 +293,24 @@ function buildFallbackTarotSummaryResponse({ safeSpreadType, safeCards }) {
     ].join('\n\n');
 }
 
-router.post('/tarot-summary', oracleLimiter, authenticateToken, async (req, res) => {
+router.post('/tarot-summary', oracleLimiter, authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { cards, spreadType } = req.body;
 
         if (!Array.isArray(cards) || cards.length === 0 || cards.length > 20) {
             return res.status(400).json({ success: false, error: 'Neplatná data karet.' });
+        }
+
+        if (!req.isPremium && cards.length > 1) {
+            const feature = spreadType === 'Celtic Cross' ? 'tarot_celtic_cross' : 'tarot_multi_card';
+            trackPaywallHit(req.user?.id, feature).catch(() => {});
+            return res.status(402).json({
+                success: false,
+                error: 'Souhrn vícekaretového výkladu je dostupný pouze pro Premium.',
+                code: 'PREMIUM_REQUIRED',
+                feature,
+                requiredPlan: getRequiredPlanForFeature(feature)
+            });
         }
 
         const safeSpreadType = String(spreadType || 'obecný').substring(0, 100);
@@ -775,6 +787,18 @@ function buildFallbackDailyWisdomResponse({ safeSign, safeMoonPhase }) {
 router.post('/daily-wisdom', oracleLimiter, authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { sign, moonPhase, lang = 'cs' } = req.body;
+
+        if (!req.isPremium) {
+            const feature = 'daily_guidance';
+            trackPaywallHit(req.user?.id, feature).catch(() => {});
+            return res.status(402).json({
+                success: false,
+                error: 'Denní osobní moudrost je dostupná v plánu Hvězdný Průvodce.',
+                code: 'PREMIUM_REQUIRED',
+                feature,
+                requiredPlan: getRequiredPlanForFeature(feature)
+            });
+        }
         
         const langMap = { 'cs': 'češtině (CZ)', 'sk': 'slovenčine (SK)', 'pl': 'poľštine (PL)' };
         const targetLangName = langMap[lang] || langMap['cs'];

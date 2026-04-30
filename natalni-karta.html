@@ -2,8 +2,6 @@
 
 <html lang="cs">
 
-
-
 <head>
 
     <meta charset="UTF-8">
@@ -56,27 +54,11 @@
 
             "cssSelector": ["#main-content h1", ".hero__subtitle"]
 
-        },
-
-        "aggregateRating": {
-
-            "@type": "AggregateRating",
-
-            "ratingValue": "4.9",
-
-            "reviewCount": "2100",
-
-            "bestRating": "5",
-
-            "worstRating": "1"
-
         }
 
     }
 
     </script>
-
-
 
     <script type="application/ld+json">
 
@@ -102,15 +84,11 @@
 
     </script><title>Natální Karta | Mystická Hvězda</title>
 
-
-
     <!-- Favicon -->
 
     <link rel="icon" type="image/svg+xml"
 
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
-
-
 
     <!-- PWA -->
 
@@ -121,19 +99,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext"
-
-        rel="stylesheet"  >
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="/fonts/local-fonts.css">
 
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
     <link rel="stylesheet" href="css/pages/natalni-karta.css">
@@ -228,11 +194,9 @@
     </script>
 
   <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/dist/analytics-init.js" defer></script>
 </head>
-
-
 
 <body>
 
@@ -240,17 +204,11 @@
 
     <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
 
-
-
     <div class="stars" aria-hidden="true"></div>
-
-
 
     <!-- HEADER (loaded dynamically) -->
 
     <div id="header-placeholder"></div>
-
-
 
     <main id="main-content">
 
@@ -278,8 +236,6 @@
 
         </section>
 
-
-
         <!-- CHART INTERFACE -->
 
         <section class="section">
@@ -287,8 +243,6 @@
             <div class="container">
 
                 <div class="grid grid-2 mh-inline-8318922717">
-
-
 
                     <!-- FORM -->
 
@@ -299,8 +253,6 @@
                             <h3 class="card__title mh-inline-f9b4b13ce3">Zadejte své údaje</h3>
 
                             <label class="checkbox-wrapper mh-inline-0057bdf0d3"
-
-
 
                                 title="Použít údaje z mého profilu">
 
@@ -327,8 +279,6 @@
                                    >
 
                             </div>
-
-
 
                             <div class="grid grid-2 mh-inline-2ee748ee9c">
 
@@ -361,8 +311,6 @@
                                 </div>
 
                             </div>
-
-
 
                             <div class="form-group">
 
@@ -408,15 +356,11 @@
 
                             </div>
 
-
-
                             <button type="submit" class="btn btn--primary mh-inline-f84cc648fc"
 
                                >Odhalit hvězdnou mapu</button>
 
                         </form>
-
-
 
                         <div id="chart-results" class="mh-inline-2f73dcd12d">
 
@@ -506,8 +450,6 @@
 
                     </div>
 
-
-
                     <!-- VISUALIZATION -->
 
                     <div class="natal-chart-container" data-animate>
@@ -534,8 +476,6 @@
 
                                 </filter>
 
-
-
                                 <!-- Sun Gradient -->
 
                                 <radialGradient id="grad-sun" cx="30%" cy="30%" r="70%">
@@ -547,8 +487,6 @@
                                     <stop offset="100%" class="mh-inline-5a4f3214ed" />
 
                                 </radialGradient>
-
-
 
                                 <!-- Moon Gradient -->
 
@@ -562,8 +500,6 @@
 
                                 </radialGradient>
 
-
-
                                 <!-- Mercury Gradient -->
 
                                 <radialGradient id="grad-mercury" cx="30%" cy="30%" r="70%">
@@ -575,8 +511,6 @@
                                     <stop offset="100%" class="mh-inline-1c05e1255b" />
 
                                 </radialGradient>
-
-
 
                                 <!-- Venus Gradient -->
 
@@ -590,8 +524,6 @@
 
                                 </radialGradient>
 
-
-
                                 <!-- Mars Gradient -->
 
                                 <radialGradient id="grad-mars" cx="30%" cy="30%" r="70%">
@@ -603,8 +535,6 @@
                                     <stop offset="100%" class="mh-inline-34eacfeb37" />
 
                                 </radialGradient>
-
-
 
                                 <!-- Jupiter Gradient -->
 
@@ -618,8 +548,6 @@
 
                                 </radialGradient>
 
-
-
                                 <!-- Saturn Gradient -->
 
                                 <radialGradient id="grad-saturn" cx="30%" cy="30%" r="70%">
@@ -631,8 +559,6 @@
                                     <stop offset="100%" class="mh-inline-0926d50310" />
 
                                 </radialGradient>
-
-
 
                                 <!-- Soul Center Gradient -->
 
@@ -646,8 +572,6 @@
 
                             </defs>
 
-
-
                             <!-- Background Ring -->
 
                             <circle cx="250" cy="250" r="248" fill="none" stroke="var(--color-mystic-gold)"
@@ -657,8 +581,6 @@
                             <circle cx="250" cy="250" r="195" fill="none" stroke="var(--color-mystic-gold)"
 
                                 stroke-width="1" opacity="0.4" />
-
-
 
                             <!-- Signs (Static Demo) -->
 
@@ -680,8 +602,6 @@
 
                             </g>
 
-
-
                             <!-- Planets (Animated) -->
 
                             <g id="planets-layer" transform="translate(250, 250)">
@@ -691,8 +611,6 @@
                             </g>
 
                         </svg>
-
-
 
                         <div id="tooltip" class="planet-tooltip">
 
@@ -713,8 +631,6 @@
             </div>
 
         </section>
-
-
 
         <!-- CURRENT TRANSITS (New Feature) -->
 
@@ -744,8 +660,6 @@
 
                     </div>
 
-
-
                     <div class="grid grid-2-sidebar mh-inline-3eba41e878">
 
                         <!-- Transit Icon/Visual -->
@@ -765,8 +679,6 @@
                             <p id="transit-subtitle" class="mh-inline-42cf0c1c61">...</p>
 
                         </div>
-
-
 
                         <!-- Transit Text -->
 
@@ -799,8 +711,6 @@
             </div>
 
         </section>
-
-
 
         <!-- CONTENT -->
 
@@ -838,12 +748,6 @@
             </div>
 
         </section>
-
-
-
-
-
-
 
     <!-- CROSS-LINKING SEKCE -->
 
@@ -920,23 +824,9 @@
 
     </main>
 
-
-
     <!-- FOOTER (loaded dynamically) -->
 
     <div id="footer-placeholder"></div>
-
-
-
-
-
-
-
-
-
-
-
-
 
     <script src="js/dist/favorites-helper.js" defer></script>
 
@@ -944,13 +834,9 @@
     <script src="js/dist/natal-3d.js?v=1" defer></script>
     <script src="js/dist/natal-chart.js?v=5" defer></script>
 
-
-
     <!-- Service Worker Registration -->
 
     <script src="/js/dist/register-sw.js" defer></script>
-
-
 
     <script src="js/dist/api-config.js?v=5" defer></script>
     <script src="js/dist/birth-location-suggestions.js" defer></script>
@@ -963,20 +849,14 @@
 
         <script src="js/dist/share-result.js" defer></script>
 
-
-
     <script src="js/dist/exit-intent.js" defer></script>
 
     <script src="js/dist/components.js?v=10" defer></script>
 
     <script type="module" src="js/dist/main.js?v=10"></script>
 
-
-
     <script src="js/dist/newsletter-popup.js" defer></script>
 
 </body>
-
-
 
 </html>

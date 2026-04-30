@@ -78,6 +78,51 @@ CREATE TABLE IF NOT EXISTS email_campaigns (
 CREATE INDEX IF NOT EXISTS email_campaigns_user_idx ON email_campaigns(user_id, campaign_name);
 CREATE INDEX IF NOT EXISTS email_campaigns_status_idx ON email_campaigns(status);
 
+ALTER TABLE email_queue ENABLE ROW LEVEL SECURITY;
+ALTER TABLE email_preferences ENABLE ROW LEVEL SECURITY;
+ALTER TABLE email_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE email_campaigns ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "No direct access to email_queue" ON email_queue;
+CREATE POLICY "No direct access to email_queue"
+  ON email_queue
+  FOR ALL
+  USING (false)
+  WITH CHECK (false);
+
+DROP POLICY IF EXISTS "Users can read own email preferences" ON email_preferences;
+CREATE POLICY "Users can read own email preferences"
+  ON email_preferences
+  FOR SELECT
+  USING (user_id = auth.uid());
+
+DROP POLICY IF EXISTS "Users can insert own email preferences" ON email_preferences;
+CREATE POLICY "Users can insert own email preferences"
+  ON email_preferences
+  FOR INSERT
+  WITH CHECK (user_id = auth.uid());
+
+DROP POLICY IF EXISTS "Users can update own email preferences" ON email_preferences;
+CREATE POLICY "Users can update own email preferences"
+  ON email_preferences
+  FOR UPDATE
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
+
+DROP POLICY IF EXISTS "No direct access to email_events" ON email_events;
+CREATE POLICY "No direct access to email_events"
+  ON email_events
+  FOR ALL
+  USING (false)
+  WITH CHECK (false);
+
+DROP POLICY IF EXISTS "No direct access to email_campaigns" ON email_campaigns;
+CREATE POLICY "No direct access to email_campaigns"
+  ON email_campaigns
+  FOR ALL
+  USING (false)
+  WITH CHECK (false);
+
 -- Trigger to update updated_at timestamps
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$

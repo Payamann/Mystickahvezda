@@ -23,3 +23,12 @@ create index if not exists idx_funnel_events_plan_created
 
 create index if not exists idx_funnel_events_stripe_session
     on funnel_events (stripe_session_id);
+
+alter table funnel_events enable row level security;
+
+drop policy if exists "No direct access to funnel_events" on funnel_events;
+create policy "No direct access to funnel_events"
+    on funnel_events
+    for all
+    using (false)
+    with check (false);

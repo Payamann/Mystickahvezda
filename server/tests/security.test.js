@@ -58,6 +58,14 @@ describe('🔒 Security Tests', () => {
             futureDate.setFullYear(futureDate.getFullYear() + 1);
             expect(() => validateBirthDate(futureDate.toISOString())).toThrow();
         });
+
+        test('Birth date validation: Valid date-only value accepted', () => {
+            expect(() => validateBirthDate('1990-01-01')).not.toThrow();
+        });
+
+        test('Birth date validation: Rollover dates rejected', () => {
+            expect(() => validateBirthDate('2026-02-31')).toThrow();
+        });
     });
 
     // ============================================
@@ -72,6 +80,14 @@ describe('🔒 Security Tests', () => {
             expect(res.body.csrfToken).toBeDefined();
             expect(typeof res.body.csrfToken).toBe('string');
             expect(res.body.csrfToken.length).toBeGreaterThan(0);
+        });
+
+        test('API responses default to no-store cache policy', async () => {
+            const res = await request(app)
+                .get('/api/csrf-token')
+                .expect(200);
+
+            expect(res.headers['cache-control']).toBe('no-store');
         });
 
         test('POST without CSRF token rejected', async () => {

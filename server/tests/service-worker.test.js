@@ -87,16 +87,23 @@ describe('Service worker cache manifest', () => {
         }
     });
 
-    test('business-critical funnel assets are pre-cached', () => {
+    test('business-critical funnel scripts are pre-cached without stale HTML shells', () => {
         const assets = readStaticAssets();
 
         expect(assets).toEqual(expect.arrayContaining([
-            '/cenik.html',
-            '/rocni-horoskop.html',
+            '/fonts/local-fonts.css',
+            '/fonts/cinzel-latin.woff2',
+            '/fonts/inter-latin.woff2',
             '/js/dist/cenik.js',
             '/js/dist/rocni-horoskop.js',
             '/js/dist/analytics.js',
             '/js/dist/retention.js'
+        ]));
+        expect(assets).not.toEqual(expect.arrayContaining([
+            '/cenik.html',
+            '/rocni-horoskop.html',
+            '/profil.html',
+            '/prihlaseni.html'
         ]));
     });
 

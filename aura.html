@@ -2,8 +2,6 @@
 
 <html lang="cs">
 
-
-
 <head>
 
     <meta charset="UTF-8">
@@ -25,15 +23,7 @@
     <meta property="og:description" content="Zadejte datum narození a zjistěte barvu své aury — zdarma, okamžitě.">
 
     <meta property="og:image" content="https://www.mystickahvezda.cz/img/hero-3d.webp">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link
-
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext"
-
-        rel="stylesheet"  >
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap&subset=latin,latin-ext" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="/fonts/local-fonts.css">
 
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
     <link rel="stylesheet" href="css/pages/aura.css">
@@ -70,39 +60,21 @@
 
             "cssSelector": [".section__title", ".section__text"]
 
-        },
-
-        "aggregateRating": {
-
-            "@type": "AggregateRating",
-
-            "ratingValue": "5.0",
-
-            "reviewCount": "980",
-
-            "bestRating": "5",
-
-            "worstRating": "1"
-
         }
 
     }
 
     </script>
 <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/dist/analytics-init.js" defer></script>
 </head>
-
-
 
 <body>
 
     <div class="stars" aria-hidden="true"></div>
 
     <div id="header-placeholder"></div>
-
-
 
     <main>
 
@@ -122,8 +94,6 @@
 
                 </div>
 
-
-
                 <div class="mh-inline-74ba1a8615" data-animate>
 
                     <label for="birth-date"
@@ -140,13 +110,9 @@
 
                 </div>
 
-
-
                 <!-- Aura orb -->
 
                 <div class="aura-orb" id="aura-orb"></div>
-
-
 
                 <!-- Výsledek -->
 
@@ -161,8 +127,6 @@
                     <p id="aura-desc"
 
                         class="mh-inline-8210494844"></p>
-
-
 
                     <div class="aura-detail-grid">
 
@@ -212,8 +176,6 @@
 
                     </div>
 
-
-
                     <div class="mh-inline-63afc91ba0">
 
                         <button id="btn-aura-reset"
@@ -231,8 +193,6 @@
         </section>
 
     </main>
-
-
 
     <div id="footer-placeholder"></div>
 
@@ -255,7 +215,5 @@
     <script src="js/dist/share-result.js" defer></script>
 
 </body>
-
-
 
 </html>

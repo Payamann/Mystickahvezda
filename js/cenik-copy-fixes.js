@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const trustBadge = document.querySelector('.hero__trust-badge');
     if (trustBadge) {
-        trustBadge.innerHTML = '<span>12 000+ aktivních uživatelů</span><span>|</span><span>Bez karty pro start zdarma</span><span>|</span><span>Zrušíte kdykoliv</span>';
+        trustBadge.innerHTML = '<span>Účet zdarma bez karty</span><span>|</span><span>Jasná cena před platbou</span><span>|</span><span>Zrušíte kdykoliv</span>';
     }
 
     setText('#toggle-monthly', 'Měsíčně');

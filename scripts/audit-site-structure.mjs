@@ -298,6 +298,41 @@ function auditCanonical(file, html) {
     }
 }
 
+function auditHreflangTargets(file, html) {
+    const linkPattern = /<link\b[^>]*>/gi;
+    let match;
+
+    while ((match = linkPattern.exec(html)) !== null) {
+        const tag = match[0];
+        const rel = getAttribute(tag, 'rel') || '';
+        const hreflang = getAttribute(tag, 'hreflang');
+        if (!/\balternate\b/i.test(rel) || !hreflang) continue;
+
+        const href = getAttribute(tag, 'href');
+        if (!href) {
+            report('missing_hreflang_href', relative(file), tag);
+            continue;
+        }
+
+        let parsed;
+        try {
+            parsed = new URL(href, siteOrigin);
+        } catch {
+            report('invalid_hreflang_url', relative(file), href);
+            continue;
+        }
+
+        if (parsed.origin !== siteOrigin && parsed.origin !== nonCanonicalOrigin) continue;
+
+        const canonicalizedUrl = parsed.toString().replace(parsed.origin, siteOrigin);
+        const localPath = localPathForSiteUrl(canonicalizedUrl);
+        const fullPath = path.join(rootDir, localPath);
+        if (!fs.existsSync(fullPath)) {
+            report('missing_hreflang_target', relative(file), `${hreflang}: ${href} -> ${localPath}`);
+        }
+    }
+}
+
 function auditLocalLinks(file, html) {
     const attrPattern = /\s(?:href|src|poster)\s*=\s*["']([^"']+)["']/gi;
     const srcsetPattern = /\ssrcset\s*=\s*["']([^"']+)["']/gi;
@@ -362,6 +397,77 @@ function auditMetaImageTargets(file, html) {
 
         if (target && !fs.existsSync(target)) {
             report('missing_meta_image_target', relative(file), `${content} -> ${relative(target)}`);
+        }
+    }
+}
+
+function auditConsentManagedAnalytics(file, html) {
+    if (html.includes('googletagmanager.com/gtag')) {
+        report(
+            'direct_gtag_loader',
+            relative(file),
+            'Load GA through /js/dist/analytics-init.js so consent defaults apply before gtag.js loads.'
+        );
+    }
+}
+
+function auditLocalFontLoading(file, html) {
+    if (/(?:fonts\.googleapis\.com|fonts\.gstatic\.com)/i.test(html)) {
+        report(
+            'remote_google_font_loader',
+            relative(file),
+            'Use /fonts/local-fonts.css instead of loading Google Fonts from the browser.'
+        );
+    }
+}
+
+function auditDomPurifyIntegrity(file, html) {
+    const scriptPattern = /<script\b[^>]*>/gi;
+    let match;
+
+    while ((match = scriptPattern.exec(html)) !== null) {
+        const tag = match[0];
+        const src = getAttribute(tag, 'src') || '';
+        if (!src.includes('cdnjs.cloudflare.com/ajax/libs/dompurify/')) continue;
+
+        const integrity = getAttribute(tag, 'integrity');
+        const crossorigin = getAttribute(tag, 'crossorigin');
+        const referrerPolicy = getAttribute(tag, 'referrerpolicy');
+        if (!integrity || !integrity.startsWith('sha384-')) {
+            report('missing_dompurify_sri', relative(file), src);
+        }
+        if (crossorigin !== 'anonymous') {
+            report('missing_dompurify_crossorigin', relative(file), src);
+        }
+        if (referrerPolicy !== 'no-referrer') {
+            report('missing_dompurify_referrerpolicy', relative(file), src);
+        }
+    }
+}
+
+function auditLucidePinning(file, html) {
+    const scriptPattern = /<script\b[^>]*>/gi;
+    let match;
+
+    while ((match = scriptPattern.exec(html)) !== null) {
+        const tag = match[0];
+        const src = getAttribute(tag, 'src') || '';
+        if (!/^https?:\/\//i.test(src) || !src.toLowerCase().includes('lucide')) continue;
+
+        const integrity = getAttribute(tag, 'integrity');
+        const crossorigin = getAttribute(tag, 'crossorigin');
+        const referrerPolicy = getAttribute(tag, 'referrerpolicy');
+        if (!src.includes('npm/lucide@')) {
+            report('unpinned_lucide_cdn', relative(file), src);
+        }
+        if (!integrity || !integrity.startsWith('sha384-')) {
+            report('missing_lucide_sri', relative(file), src);
+        }
+        if (crossorigin !== 'anonymous') {
+            report('missing_lucide_crossorigin', relative(file), src);
+        }
+        if (referrerPolicy !== 'no-referrer') {
+            report('missing_lucide_referrerpolicy', relative(file), src);
         }
     }
 }
@@ -508,6 +614,11 @@ for (const file of walkHtml()) {
     const html = read(file);
     auditJsonLd(file, html);
     auditCanonical(file, html);
+    auditHreflangTargets(file, html);
+    auditConsentManagedAnalytics(file, html);
+    auditLocalFontLoading(file, html);
+    auditDomPurifyIntegrity(file, html);
+    auditLucidePinning(file, html);
     auditSitemapCoverage(file, html, sitemapLocs);
     collectIndexableCanonical(file, html, canonicalOwners);
     auditLocalLinks(file, html);
@@ -527,4 +638,4 @@ if (issues.length > 0) {
     process.exit(1);
 }
 
-console.log('[site-audit] OK: robots.txt, sitemap targets, sitemap coverage, canonical uniqueness, canonical origins, canonical targets, JSON-LD, manifest icons, local links/srcsets and meta images are valid.');
+console.log('[site-audit] OK: robots.txt, sitemap targets, sitemap coverage, canonical uniqueness, canonical origins, canonical/hreflang targets, consent-managed analytics, local font loading, external script SRI/pinning, JSON-LD, manifest icons, local links/srcsets and meta images are valid.');

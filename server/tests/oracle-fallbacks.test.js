@@ -125,6 +125,55 @@ describe('Oracle AI fallbacks', () => {
         expect(res.body.response).toEqual(expect.stringContaining('The Moon'));
     });
 
+    test('POST /api/tarot-summary requires Premium for multi-card summaries', async () => {
+        const csrfToken = await getCsrfToken();
+        const token = createPremiumToken({ isPremium: false, subscription_status: 'free' });
+        const res = await request(app)
+            .post('/api/tarot-summary')
+            .set('x-csrf-token', csrfToken)
+            .set('Cookie', `auth_token=${token}`)
+            .send({
+                spreadType: 'three-card',
+                cards: [
+                    { position: 'past', name: 'The Sun', meaning: 'clarity' },
+                    { position: 'present', name: 'The Moon', meaning: 'uncertainty' },
+                    { position: 'future', name: 'The Star', meaning: 'hope' }
+                ]
+            })
+            .expect(402);
+
+        expect(res.body).toMatchObject({
+            success: false,
+            code: 'PREMIUM_REQUIRED',
+            feature: 'tarot_multi_card'
+        });
+    });
+
+    test('POST /api/tarot-summary maps Celtic Cross to the exclusive feature gate', async () => {
+        const csrfToken = await getCsrfToken();
+        const token = createPremiumToken({ isPremium: false, subscription_status: 'free' });
+        const res = await request(app)
+            .post('/api/tarot-summary')
+            .set('x-csrf-token', csrfToken)
+            .set('Cookie', `auth_token=${token}`)
+            .send({
+                spreadType: 'Celtic Cross',
+                cards: Array.from({ length: 10 }, (_, index) => ({
+                    position: `position-${index + 1}`,
+                    name: `Card ${index + 1}`,
+                    meaning: 'symbolic meaning'
+                }))
+            })
+            .expect(402);
+
+        expect(res.body).toMatchObject({
+            success: false,
+            code: 'PREMIUM_REQUIRED',
+            feature: 'tarot_celtic_cross',
+            requiredPlan: 'vip-majestrat'
+        });
+    });
+
     test('POST /api/runes returns fallback when AI fails', async () => {
         const csrfToken = await getCsrfToken();
         const token = createPremiumToken();
@@ -161,5 +210,25 @@ describe('Oracle AI fallbacks', () => {
         expect(res.body.success).toBe(true);
         expect(res.body.fallback).toBe(true);
         expect(res.body.response).toEqual(expect.stringContaining('Beran'));
+    });
+
+    test('POST /api/daily-wisdom requires Premium for authenticated free users', async () => {
+        const csrfToken = await getCsrfToken();
+        const token = createPremiumToken({ isPremium: false, subscription_status: 'free' });
+        const res = await request(app)
+            .post('/api/daily-wisdom')
+            .set('x-csrf-token', csrfToken)
+            .set('Cookie', `auth_token=${token}`)
+            .send({
+                sign: 'Beran',
+                moonPhase: 'dorustajici'
+            })
+            .expect(402);
+
+        expect(res.body).toMatchObject({
+            success: false,
+            code: 'PREMIUM_REQUIRED',
+            feature: 'daily_guidance'
+        });
     });
 });

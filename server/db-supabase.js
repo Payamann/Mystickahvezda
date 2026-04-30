@@ -287,7 +287,7 @@ function createMockSupabaseClient() {
 
 if (!USE_MOCK_SUPABASE && (!projectUrl || !serviceKey)) {
     if (process.env.NODE_ENV === 'production') {
-        console.warn('WARNING: Supabase credentials missing (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY). Database features will fail.');
+        throw new Error('Supabase credentials missing in production (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY). Refusing to start degraded.');
     }
     console.warn('WARNING: Supabase credentials missing in .env (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)');
 } else if (!USE_MOCK_SUPABASE) {
