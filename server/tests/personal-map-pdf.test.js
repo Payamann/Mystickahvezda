@@ -2,9 +2,22 @@ import {
     buildPersonalMapFallbackSections,
     buildPersonalMapGenerationPrompt,
     buildPersonalMapHtml,
+    generatePersonalMapContent,
     renderPersonalMapPdf,
     samplePersonalMapData
 } from '../services/personal-map-pdf.js';
+
+function flattenSections(sections) {
+    return JSON.stringify(sections);
+}
+
+function stripHtml(html) {
+    return html
+        .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+        .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ');
+}
 
 describe('personal map PDF service', () => {
     test('buildPersonalMapGenerationPrompt creates a strict Czech JSON prompt', () => {
@@ -44,17 +57,80 @@ describe('personal map PDF service', () => {
             name: 'Pavel',
             sign: 'rak',
             focus: 'ověření doručení PDF',
+            grammaticalGender: 'masculine',
             year: 2026
         });
+        const text = flattenSections(sections);
 
         expect(sections.starSignature.text).toContain('Pavel');
         expect(sections.starSignature.text).toContain('2026');
         expect(sections.starSignature.text).toContain('ověření doručení PDF');
+        expect(text).toContain('Rak');
+        expect(text).not.toContain('Jana');
+        expect(text).not.toContain('Váhy');
+        expect(text).not.toMatch(/\b(vyrovnaná|laskavá|pravdivá|sama|zůstala)\b/i);
+        expect(text).not.toMatch(/\b(AI|záložní|náhradní|selže)\b/i);
         expect(sections.essence).toHaveLength(4);
         expect(sections.months).toHaveLength(5);
         expect(sections.actionPlan).toHaveLength(5);
         expect(sections.journalPrompts).toHaveLength(6);
         expect(sections.closing).toContain('Pavel');
+    });
+
+    test('generatePersonalMapContent keeps mock/test content tied to requested identity', async () => {
+        const previousMockAi = process.env.MOCK_AI;
+        process.env.MOCK_AI = 'true';
+
+        try {
+            const sections = await generatePersonalMapContent({
+                name: 'Pavel',
+                sign: 'rak',
+                focus: 'ověření doručení PDF',
+                grammaticalGender: 'masculine',
+                year: 2026
+            });
+            const text = flattenSections(sections);
+
+            expect(text).toContain('Pavel');
+            expect(text).toContain('Rak');
+            expect(text).toContain('ověření doručení PDF');
+            expect(text).not.toContain('Jana');
+            expect(text).not.toContain('Jano');
+            expect(text).not.toContain('Váhy');
+            expect(text).not.toMatch(/\b(vyrovnaná|laskavá|pravdivá|sama|zůstala)\b/i);
+        } finally {
+            if (previousMockAi === undefined) {
+                delete process.env.MOCK_AI;
+            } else {
+                process.env.MOCK_AI = previousMockAi;
+            }
+        }
+    });
+
+    test('buildPersonalMapHtml does not leak feminine template copy for masculine fallback content', () => {
+        const sections = buildPersonalMapFallbackSections({
+            name: 'Pavel',
+            sign: 'rak',
+            focus: 'ověření doručení PDF',
+            grammaticalGender: 'masculine',
+            year: 2026
+        });
+        const html = buildPersonalMapHtml({
+            name: 'Pavel',
+            sign: 'rak',
+            birthDate: '1989-07-15',
+            focus: 'ověření doručení PDF',
+            year: 2026,
+            productName: 'Osobní mapa zbytku roku 2026',
+            sections
+        });
+        const text = stripHtml(html);
+
+        expect(text).toContain('Pavel');
+        expect(text).toContain('Rak');
+        expect(text).not.toContain('Jana');
+        expect(text).not.toContain('Váhy');
+        expect(text).not.toMatch(/\b(vyrovnaná|laskavá|pravdivá|sama|zůstala)\b/i);
     });
 
     test('renderPersonalMapPdf returns a real PDF buffer', async () => {

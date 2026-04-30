@@ -71,6 +71,25 @@ const GENDER_LABELS = {
     neutral: 'neutrální formulace bez rodových shod'
 };
 
+const MASCULINE_BLOCKED_FEMININE_FORMS = [
+    'vyrovnaná',
+    'pravdivá',
+    'laskavá',
+    'citlivá',
+    'připravená',
+    'otevřená',
+    'unavená',
+    'hodná',
+    'silná',
+    'sama',
+    'zůstala',
+    'odmítla',
+    'přestala',
+    'dokázala'
+];
+
+const FORBIDDEN_SAMPLE_NAMES = ['Jana', 'Jano'];
+
 function escapeHtml(value) {
     return String(value ?? '')
         .replace(/&/g, '&amp;')
@@ -176,10 +195,6 @@ function imageDataUri(relativePath) {
 }
 
 async function callClaudeForPersonalMap(systemPrompt, userPrompt) {
-    if (process.env.MOCK_AI === 'true' || process.env.NODE_ENV === 'test') {
-        return JSON.stringify(samplePersonalMapData.sections);
-    }
-
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
         throw new Error('ANTHROPIC_API_KEY not set');
@@ -232,6 +247,89 @@ function extractJsonPayload(raw) {
     return text.slice(start, end + 1);
 }
 
+function escapeRegExp(value) {
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function normalizeForPersonalMapValidation(value) {
+    return String(value ?? '').normalize('NFC').toLowerCase();
+}
+
+function containsCzechWord(text, word) {
+    const normalizedWord = normalizeForPersonalMapValidation(word);
+    if (!normalizedWord) return false;
+
+    return new RegExp(`(^|[^\\p{L}\\p{N}])${escapeRegExp(normalizedWord)}([^\\p{L}\\p{N}]|$)`, 'iu').test(text);
+}
+
+function containsZodiacSignReference(text, signName) {
+    const normalizedSign = normalizeForPersonalMapValidation(signName);
+    if (!normalizedSign) return false;
+
+    const signPattern = escapeRegExp(normalizedSign);
+    return [
+        new RegExp(`(^|[^\\p{L}])znamen[íi]\\s+${signPattern}([^\\p{L}]|$)`, 'iu'),
+        new RegExp(`(^|[^\\p{L}])kompas\\s+${signPattern}([^\\p{L}]|$)`, 'iu'),
+        new RegExp(`(^|[^\\p{L}])archetyp\\s+${signPattern}([^\\p{L}]|$)`, 'iu')
+    ].some((pattern) => pattern.test(text));
+}
+
+function personalMapSectionsToText(value) {
+    const chunks = [];
+    const visit = (item) => {
+        if (typeof item === 'string') {
+            chunks.push(item);
+            return;
+        }
+        if (Array.isArray(item)) {
+            item.forEach(visit);
+            return;
+        }
+        if (item && typeof item === 'object') {
+            Object.values(item).forEach(visit);
+        }
+    };
+
+    visit(value);
+    return normalizeForPersonalMapValidation(chunks.join(' '));
+}
+
+function assertPersonalMapSectionsMatchInput(sections, input = {}) {
+    const text = personalMapSectionsToText(sections);
+    if (!text.trim()) {
+        throw new Error('Personal map content is empty');
+    }
+
+    const expectedName = String(input.name || '').trim();
+    if (expectedName && !containsCzechWord(text, expectedName)) {
+        throw new Error(`Personal map content does not mention requested name "${expectedName}"`);
+    }
+
+    for (const sampleName of FORBIDDEN_SAMPLE_NAMES) {
+        if (expectedName.toLowerCase() !== sampleName.toLowerCase() && containsCzechWord(text, sampleName)) {
+            throw new Error(`Personal map content leaked sample name "${sampleName}"`);
+        }
+    }
+
+    if (input.sign && SIGN_NAMES[input.sign]) {
+        const expectedSign = SIGN_NAMES[input.sign];
+        for (const [slug, signName] of Object.entries(SIGN_NAMES)) {
+            if (slug !== input.sign && containsZodiacSignReference(text, signName)) {
+                throw new Error(`Personal map content mentions "${signName}" for requested sign "${expectedSign}"`);
+            }
+        }
+    }
+
+    if (input.grammaticalGender === 'masculine') {
+        const feminineForm = MASCULINE_BLOCKED_FEMININE_FORMS.find((form) => containsCzechWord(text, form));
+        if (feminineForm) {
+            throw new Error(`Personal map content contains feminine form "${feminineForm}" for masculine input`);
+        }
+    }
+
+    return sections;
+}
+
 function normalizePersonalMapSections(value) {
     const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
     return {
@@ -264,71 +362,71 @@ function buildPersonalMapFallbackSections({
     focus = '',
     year = new Date().getFullYear()
 } = {}) {
-    const signName = SIGN_NAMES[sign] || sign || 'tvoje znameni';
-    const displayName = name || 'ty';
+    const signName = SIGN_NAMES[sign] || sign || 'tvoje znamení';
+    const displayName = name || 'Ty';
     const focusText = focus
-        ? `Tema, se kterym prichazis, je: ${focus}`
-        : 'Hlavni tema neni zadane, proto se mapa soustredi na smer, hranice a klid v beznem dni.';
+        ? `Hlavní záměr, se kterým přicházíš: ${focus}.`
+        : 'Hlavní záměr není zadaný, proto se mapa soustředí na směr, hranice a klid v běžném dni.';
 
     return {
         starSignature: {
-            title: `Tichy kompas ${signName}`,
-            text: `${displayName}, tahle mapa vznikla jako bezpecny zalozni vyklad pro pripad, kdy se AI generovani zpozdi nebo selze. Je postavena kolem znameni ${signName} a roku ${year}. Nehraje si na jistou predpoved; slouzi jako osobni zrcadlo pro dalsi kroky. ${focusText} V beznem dni si vsimej hlavne toho, kde se ti telo uvolni, kdyz neco zjednodusis, a kde se naopak stahuje, kdyz rikas ano jen ze zvyku.`,
-            keywords: ['smer', 'hranice', 'klid'],
-            guidingQuestion: 'Kde uz znam odpoved, ale porad cekam na dokonale potvrzeni?'
+            title: `Tichý kompas ${signName}`,
+            text: `${displayName}, tahle osobní mapa pro rok ${year} stojí na tématu znamení ${signName}: návrat k vnitřnímu bezpečí, které nemusí nikomu nic dokazovat. ${focusText} V běžném dni se to ukáže hlavně tam, kde se snažíš držet klid za všechny kolem sebe a přitom ti uvnitř ubývá prostor. Tvoje síla není v tom, že všechno vydržíš. Je v citlivém rozpoznání, co je opravdu tvoje odpovědnost a co už jen starý zvyk reagovat dřív, než se nadechneš. Všímej si okamžiků, kdy se tělo uvolní po kratší větě, jasnějším ne nebo odloženém vysvětlování. Právě tam začíná zbytek roku působit méně jako tlak a víc jako návrat k sobě.`,
+            keywords: ['směr', 'hranice', 'klid'],
+            guidingQuestion: 'Kde už znám odpověď, ale pořád čekám na dokonalé potvrzení?'
         },
         essence: [
             {
-                title: 'Hlavni dar',
-                text: `Tvuj dar je schopnost citit, kdy je cas zpomalit a kdy je cas udelat jasny krok. U znameni ${signName} se to muze ukazovat jako citlivost na naladu prostoru, ale i jako odvaha chranit vlastni rytmus. Prakticky to poznas podle okamziku, kdy ti jednoduchost vrati vic energie nez dalsi vysvetlovani.`
+                title: 'Hlavní dar',
+                text: `Tvůj dar je schopnost vnímat podtext dřív, než dostane jasná slova. U znamení ${signName} to může působit jako citlivost na náladu prostoru, ale i jako přesný vnitřní radar. Prakticky to poznáš ve chvíli, kdy jednoduché rozhodnutí vrátí víc energie než další vysvětlování.`
             },
             {
-                title: 'Opakujici se vzorec',
-                text: 'Stary vzorec se muze objevit ve chvili, kdy zacnes odkladat vlastni potrebu, aby se nikdo jiny nemusel citit neprijemne. V beznem dni to poznas podle rychle omluvy, dlouhe zpravy nebo pocitu, ze musis vse uhladit driv, nez si dovolis rict pravdu.'
+                title: 'Opakující se vzorec',
+                text: 'Starý vzorec se objeví ve chvíli, kdy odkládáš vlastní potřebu, aby se nikdo jiný nemusel setkat s nepohodlím. V běžném dni to poznáš podle rychlé omluvy, dlouhé zprávy nebo pocitu, že musíš všechno uhladit dřív, než smí zaznít pravda.'
             },
             {
-                title: 'Prahove tema',
-                text: `Rok ${year} te vede k tomu, aby sis vybral jeden konkretni smer misto mnoha rozevrenych moznosti. Nejde o tlak na vykon. Jde o vycisteni prostoru, ve kterem uz dlouho drzis veci jen proto, ze jsou rozepsane, slibene nebo pro nekoho pohodlne.`
+                title: 'Prahové téma',
+                text: `Rok ${year} vede k výběru jednoho konkrétního směru místo mnoha rozevřených možností. Nejde o tlak na výkon. Jde o vyčištění prostoru, ve kterém dlouho zůstávají věci jen proto, že jsou rozepsané, slíbené nebo pro někoho pohodlné.`
             },
             {
-                title: 'Co se chce zmenit',
-                text: 'Zmena zacina tam, kde prestanes brat vlastni klid jako odmenu az po splneni vsech ukolu. Dej mu misto driv. Jeden odmitnuty zavazek, jedna kratsi odpoved nebo jeden vecer bez dalsiho reseni muze ukazat, kolik energie se vrati, kdyz se neprepisujes podle okoli.'
+                title: 'Co se chce změnit',
+                text: 'Změna začíná tam, kde vlastní klid přestane být odměnou až po splnění všech úkolů. Dej mu místo dřív. Jeden odmítnutý závazek, jedna kratší odpověď nebo jeden večer bez dalšího řešení ukáže, kolik energie se vrací, když už se nepřepisuješ podle okolí.'
             }
         ],
         yearMantra: {
-            sentence: 'Volim krok, ktery mi vraci klid, ne jen prijatelny obraz.',
-            text: `Tahle veta je kotva pro rok ${year}. Vracej se k ni ve chvili, kdy budes chtit udelat rozhodnuti jen proto, aby bylo po napeti. Klid neni vzdy nejrychlejsi odpoved. Casto je to ta nejpravdivejsi. Poznas ho podle toho, ze po nem zustane vic prostoru v tele i v mysli.`
+            sentence: 'Volím krok, který vrací klid, ne jen přijatelný obraz.',
+            text: `Tahle věta je kotva pro rok ${year}. Vracej se k ní ve chvíli, kdy se objeví chuť udělat rozhodnutí jen proto, aby bylo po napětí. Klid není vždy nejrychlejší odpověď. Často je to ta nejpravdivější. Poznáš ho podle toho, že po něm zůstane víc prostoru v těle i v mysli.`
         },
-        mainTheme: `${displayName}, hlavni tema teto mapy je navrat k jednodussimu smeru. ${focusText} V praxi to znamena mene dokazovani a vice presnosti. Nemusis menit cely zivot najednou. Staci najit jedno misto, kde dlouho davas vic energie, nez se ti vraci. Tam zacina skutecny posun. Poznas ho podle drobnych signalu: odkladana odpoved, unava po rozhovoru, tlak v hrudi pred slibem nebo zvlastni uleva, kdyz si dovolis rict pravdu kratce. Znameni ${signName} tu neni jako nalepka, ale jako jazyk pro zpusob, jakym se vracis k sobe. Tvuj prakticky krok je vybrat jednu vec, kterou prestanes ridit za ostatni.`,
-        innerMirror: 'Vnitrni zrcadlo ukazuje rozdil mezi zodpovednosti a prevzetim cizi vahy. Pokud se pristihnes, ze v hlave dokola skladas dokonale vysvetleni, zastav se. Mozna uz nehledas pravdu, ale bezpecnou formu, ktera nikoho nerozhodi. V beznem dni se to ukaze pri zprave, na kterou odpovidas moc rychle, nebo pri nabidce, kterou prijimas driv, nez se zeptas tela. Prakticky krok je jednoduchy: pred dulezitym ano dej deset minut ticha a napis si jednu vetu, kterou nechces zjemnovat.',
-        love: 'Ve vztazich se nejvic pocita pravdivost bez zbytecne tvrdosti. Pokud cekas, az druhy clovek pochopi vse sam, muzes ztratit spoustu sil. Pokud naopak reknes potrebu vcas, vztah dostane sanci stat na realite, ne na domnence. Poznas to podle toho, jestli se po kontaktu citis vic sebou, nebo vic ve strehu. Tvuj prakticky krok je rict jednu konkretni potrebu bez dlouhe obhajoby.',
-        workMoney: 'V praci a penezich je hlavni tema hodnota. Ne vse, co umis, ma automaticky dostat tvuj cas. Vsimni si ukolu, ktere te stoji nejvic energie proto, ze nemaji jasne hranice. Rok preje tomu, abys pojmenoval cenu, rozsah, termin nebo odpovednost. Nejde o slib rychleho zisku. Jde o to, aby tvoje energie netekla do mlhy. Jeden jasnejsi ramec muze uvolnit vic sily nez dalsi snaha.',
-        growth: 'Rust v tomto obdobi neni o dramatickem obratu. Je o opakovanem navratu k tomu, co uz vis. Vsimni si, kde se snazis ziskat povoleni pro rozhodnuti, ktere je uvnitr jasne. Prakticky krok je zapisovat si male momenty ulevy. Casto ukazuji smer presneji nez velke argumenty.',
-        shadowGift: 'Stin se muze projevit jako prehnana ochota zustat dostupny. Dar tohoto stinu je presnost: kdyz prestanes dokazovat svou hodnotu tim, kolik uneses, zacnes lepe videt, komu patri tvoje blizkost, cas a pozornost. Nejde o chlad. Jde o laskavost, ktera nezapomina na tebe.',
+        mainTheme: `${displayName}, hlavní téma této mapy je návrat k jednoduššímu směru. ${focusText} V praxi to znamená méně dokazování a víc přesnosti. Není potřeba měnit celý život najednou. Stačí najít jedno místo, kde dlouho dáváš víc energie, než se ti vrací. Tam začíná skutečný posun. Poznáš ho podle drobných signálů: odkládaná odpověď, únava po rozhovoru, tlak v hrudi před slibem nebo zvláštní úleva, když zazní krátká věta s pravdou. Znamení ${signName} tu není nálepka, ale jazyk pro způsob, jak se vracíš k sobě. Praktický krok je vybrat jednu věc, kterou už nebudeš řídit za ostatní.`,
+        innerMirror: 'Vnitřní zrcadlo ukazuje rozdíl mezi zodpovědností a převzetím cizí váhy. Pokud se v hlavě pořád skládá dokonalé vysvětlení, zastav se. Možná už nejde o pravdu, ale o bezpečnou formu, která nikoho nerozhodí. V běžném dni se to ukáže u zprávy, na kterou odpověď přichází moc rychle, nebo u nabídky, která dostane souhlas dřív, než se ozve tělo. Praktický krok je jednoduchý: před důležitým ano dej deset minut ticha a napiš si jednu větu, kterou nechceš zjemňovat.',
+        love: 'Ve vztazích se nejvíc počítá pravdivost bez zbytečné tvrdosti. Pokud čekáš, až druhý člověk pochopí všechno sám od sebe, může z toho mizet hodně sil. Když potřeba zazní včas, vztah dostane šanci stát na realitě, ne na domněnce. Poznáš to podle toho, jestli se po kontaktu cítíš víc u sebe, nebo víc ve střehu. Praktický krok je říct jednu konkrétní potřebu bez dlouhé obhajoby.',
+        workMoney: 'V práci a penězích je hlavní téma hodnota. Ne všechno, co umíš, má automaticky dostat tvůj čas. Všímej si úkolů, které stojí nejvíc energie právě proto, že nemají jasné hranice. Rok přeje pojmenování ceny, rozsahu, termínu nebo odpovědnosti. Nejde o slib rychlého zisku. Jde o to, aby tvoje energie netekla do mlhy. Jeden jasnější rámec může uvolnit víc síly než další snaha.',
+        growth: 'Růst v tomto období není dramatický obrat. Je to opakovaný návrat k tomu, co už víš. Všímej si, kde se snažíš získat povolení pro rozhodnutí, které je uvnitř jasné. Praktický krok je zapisovat malé momenty úlevy. Často ukazují směr přesněji než velké argumenty.',
+        shadowGift: 'Stín se může projevit jako přehnaná dostupnost. Dar tohoto stínu je přesnost: když hodnota přestane stát na tom, kolik toho uneseš, začne být jasnější, komu patří tvoje blízkost, čas a pozornost. Nejde o chlad. Jde o laskavost, která nezapomíná i na tebe.',
         months: [
-            { month: 'Kveten', title: 'vyjasneni rytmu', text: 'Vsimni si, co ti bere klid opakovane. Jeden maly signal se muze vratit nekolikrat, aby ukazal, kde je cas zjednodusit pravidla.' },
-            { month: 'Cervenec', title: 'viditelny krok', text: 'Dobre obdobi pro jasnejsi rozhodnuti nebo verejnejsi krok. Nepotrebujes dokonalost, potrebujes smer a jednu konkretni akci.' },
-            { month: 'Zari', title: 'hranice v praxi', text: 'Zari proveri, jestli sve hranice jen citis, nebo je umis i pojmenovat. Kratka pravdiva veta bude silnejsi nez dlouhe vysvetlovani.' },
-            { month: 'Listopad', title: 'hlubsi pravda', text: 'Neco pod povrchem bude chtit dostat slova. Vyhni se dramatizaci, ale ani pravdu nezmensuj jen proto, aby byla pohodlna.' },
-            { month: 'Prosinec', title: 'uzavreni kruhu', text: 'Konec roku je vhodny pro odlozeni zavazku, ktere uz neodpovidaji tomu, kam jdes. Zapis si, co nechces prenaset dal.' }
+            { month: 'Květen', title: 'vyjasnění rytmu', text: 'Všímej si, co bere klid opakovaně. Jeden malý signál se může vrátit několikrát, aby ukázal, kde je čas zjednodušit pravidla a přestat řešit všechno najednou.' },
+            { month: 'Červenec', title: 'viditelný krok', text: 'Dobré období pro jasnější rozhodnutí nebo veřejnější krok. Není potřeba dokonalost, ale směr a jedna konkrétní akce, která už nebude jen v hlavě.' },
+            { month: 'Září', title: 'hranice v praxi', text: 'Září prověří, jestli hranice zůstávají jen pocit, nebo dostanou i slova. Krátká věta s pravdou bude silnější než dlouhé vysvětlování.' },
+            { month: 'Listopad', title: 'hlubší pravda', text: 'Něco pod povrchem bude chtít dostat slova. Vyhni se dramatizaci, ale ani pravdu nezmenšuj jen proto, aby byla pro okolí pohodlnější.' },
+            { month: 'Prosinec', title: 'uzavření kruhu', text: 'Konec roku je vhodný pro odložení závazků, které už neodpovídají směru, kam míříš. Zapiš si, co nechceš přenášet dál.' }
         ],
         actionPlan: [
-            { title: 'Vyber jednu zatez', text: 'Napis si jednu vec, kterou drzis hlavne proto, aby mel nekdo jiny klid. Rozhodni, jestli ji ohranicis, predas nebo uzavres.' },
-            { title: 'Zkrat jednu odpoved', text: 'Tam, kde bys normalne vysvetloval dlouze, zkus jednu jasnou vetu. Sleduj, jestli prijde uleva nebo potreba se hned omlouvat.' },
-            { title: 'Over telo pred ano', text: 'Pred dulezitym souhlasem se zastav na deset minut. Vsimni si, jestli telo mekne, nebo tuhne. Ber ten signal vazne.' },
-            { title: 'Zjednodus zavazek', text: 'Vyber jeden pracovni nebo osobni zavazek a dopln mu hranici: termin, cenu, rozsah nebo jasne ne.' },
-            { title: 'Vrat se k jedne otazce', text: 'Na konci tydne si poloz otazku: kde jsem se tento tyden neopustil? Odpoved ukaze, co ma pokracovat.' }
+            { title: 'Vyber jednu zátěž', text: 'Napiš si jednu věc, kterou držíš hlavně proto, aby měl někdo jiný klid. Rozhodni, jestli dostane hranici, předání nebo uzavření.' },
+            { title: 'Zkrať jednu odpověď', text: 'Tam, kde by normálně přišlo dlouhé vysvětlování, zkus jednu jasnou větu. Sleduj, jestli přijde úleva nebo potřeba hned se omlouvat.' },
+            { title: 'Ověř tělo před ano', text: 'Před důležitým souhlasem se zastav na deset minut. Všímej si, jestli tělo měkne, nebo tuhne. Ten signál ber jako součást rozhodování.' },
+            { title: 'Zjednoduš závazek', text: 'Vyber jeden pracovní nebo osobní závazek a doplň mu hranici: termín, cenu, rozsah nebo jasné ne.' },
+            { title: 'Vrať se k jedné otázce', text: 'Na konci týdne si polož otázku: kde jsem tento týden zůstal u sebe? Odpověď ukáže, co má pokračovat.' }
         ],
-        ritual: 'Vecer si nech deset minut bez telefonu. Napis tri vety: co uz nechci drzet za ostatni, kde potrebuji vic pravdy a jaky maly krok udelam do sedmi dnu. Potom jednu vetu zakrouzkuj. Nech ji na viditelnem miste. Kdykoli zacnes znovu vysvetlovat nebo odkladat jasny krok, vrat se k ni jako ke kotve.',
+        ritual: 'Večer si nech deset minut bez telefonu. Napiš tři věty: co už nechci držet za ostatní, kde potřebuji víc pravdy a jaký malý krok udělám do sedmi dnů. Potom jednu větu zakroužkuj. Nech ji na viditelném místě. Kdykoli začne další vysvětlování nebo odklad jasného kroku, vrať se k ní jako ke kotvě.',
         journalPrompts: [
-            'Kde si pletu klid s odkladanim pravdy?',
-            'Ktera jedna povinnost uz potrebuje hranici?',
-            'Co mi telo rika driv nez hlava?',
-            'Kde cekam na potvrzeni, ktere nepotrebuji?',
-            'Jaky maly krok mi tento tyden vrati prostor?',
-            'Co nechci prenaset do dalsiho obdobi?'
+            'Kde si pletu klid s odkládáním pravdy?',
+            'Která jedna povinnost už potřebuje hranici?',
+            'Co mi tělo říká dřív než hlava?',
+            'Kde čekám na potvrzení, které nepotřebuji?',
+            'Jaký malý krok mi tento týden vrátí prostor?',
+            'Co nechci přenášet do dalšího období?'
         ],
-        closing: `${displayName}, tahle mapa neni rozsudek ani slib. Je to zrcadlo pro rok ${year}. Pokud si z ni vezmes jen jednu vec, at je to dovoleni zjednodusit tam, kde uz dlouho delas vse slozitejsi, nez musi byt. Skutecny posun se casto neohlasi velkym znamenim. Prijde jako kratka veta, klidnejsi odpoved, jasnejsi hranice nebo vecer, kdy poprve neprevezmes cizi tlak. To je dost. Odtud muze zacit dalsi krok.`
+        closing: `${displayName}, tahle mapa není rozsudek ani slib. Je to zrcadlo pro rok ${year}. Pokud si z ní vezmeš jen jednu věc, ať je to dovolení zjednodušit tam, kde už dlouho děláš všechno složitější, než musí být. Skutečný posun se často neohlásí velkým znamením. Přijde jako krátká věta, klidnější odpověď, jasnější hranice nebo večer, kdy poprvé nepřevezmeš cizí tlak. To je dost. Odtud může začít další krok.`
     };
 }
 
@@ -441,15 +539,22 @@ Pravidla kvality:
 }
 
 export async function generatePersonalMapContent(input = {}) {
+    if (process.env.MOCK_AI === 'true' || process.env.NODE_ENV === 'test') {
+        const fallback = normalizePersonalMapSections(buildPersonalMapFallbackSections(input));
+        return assertPersonalMapSectionsMatchInput(fallback, input);
+    }
+
     const { system, user } = buildPersonalMapGenerationPrompt(input);
     try {
         const raw = await callClaudeForPersonalMap(system, user);
         const parsed = JSON.parse(extractJsonPayload(raw));
         const sections = parsed?.sections && typeof parsed.sections === 'object' ? parsed.sections : parsed;
-        return normalizePersonalMapSections(sections);
+        const normalized = normalizePersonalMapSections(sections);
+        return assertPersonalMapSectionsMatchInput(normalized, input);
     } catch (error) {
         console.error('[PERSONAL_MAP] AI generation failed, using local fallback:', error.message);
-        return normalizePersonalMapSections(buildPersonalMapFallbackSections(input));
+        const fallback = normalizePersonalMapSections(buildPersonalMapFallbackSections(input));
+        return assertPersonalMapSectionsMatchInput(fallback, input);
     }
 }
 
@@ -1327,7 +1432,7 @@ body {
       accent: '◇',
       variant: 'split',
       sideTitle: 'Praktický signál',
-      sideText: 'Všímej si okamžiku, kdy začneš sama sobě vysvětlovat, proč něco vlastně nevadí. Pokud tělo ztuhne dřív než hlava najde důvod, je to stopa.',
+      sideText: 'Všímej si okamžiku, kdy začne vnitřní vysvětlování, proč něco vlastně nevadí. Pokud tělo ztuhne dřív než hlava najde důvod, je to stopa.',
       children: `${paragraphs(sections.shadowGift)}<div class="callout">Stín tu neznamená chybu. Je to část síly, která dlouho fungovala jako obrana. Když ji uvidíš bez studu, může se změnit v jasnější směr.</div>`
   })}
 
