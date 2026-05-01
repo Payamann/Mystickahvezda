@@ -288,8 +288,18 @@ test.describe('Tarot zdarma', () => {
     test('CTA odkaz na hlavní tarot stránku existuje', async ({ page }) => {
         await page.goto('/tarot-zdarma.html');
         await waitForPageReady(page);
-        const ctaLink = page.locator('a[href*="tarot.html"], a[href*="tarot-ano"]').first();
+        const ctaLink = page.locator('main a[href*="tarot.html?source=tarot_free_landing"]').first();
         await expect(ctaLink).toBeAttached();
+        await expect(ctaLink).toHaveAttribute('href', /source=tarot_free_landing/);
+    });
+
+    test('intent rozcestnik odkazuje na rychle tarot vstupy', async ({ page }) => {
+        await page.goto('/tarot-zdarma.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('.tarot-intent-card')).toHaveCount(4);
+        await expect(page.locator('a[href*="tarot-ano-ne.html?source=tarot_free_intent"]')).toBeVisible();
+        await expect(page.locator('a[href*="tarot.html?source=tarot_free_intent"][href*="intent=three_cards"]')).toBeVisible();
     });
 });
 
@@ -372,6 +382,30 @@ test.describe('Kalkulačka čísla osudu', () => {
         await waitForPageReady(page);
         const input = page.locator('input[type="date"], input[type="number"], form').first();
         await expect(input).toBeAttached();
+    });
+
+    test('navazujici intent rozcestnik vede na placenejsi dalsi kroky', async ({ page }) => {
+        await page.goto('/kalkulacka-cisla-osudu.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('.life-number-intent-card')).toHaveCount(4);
+        await expect(page.locator('a[href*="numerologie.html?source=life_number_intent"]')).toBeVisible();
+        await expect(page.locator('a[href*="rocni-horoskop.html?source=life_number_intent"]')).toBeVisible();
+        await expect(page.locator('a[href*="osobni-mapa.html?source=life_number_intent"]')).toBeVisible();
+    });
+
+    test('vysledek kalkulacky zachova tracking do plne numerologie', async ({ page }) => {
+        await page.goto('/kalkulacka-cisla-osudu.html');
+        await waitForPageReady(page);
+
+        await page.fill('#inp-day', '15');
+        await page.fill('#inp-month', '3');
+        await page.fill('#inp-year', '1990');
+        await page.click('#calc-btn');
+
+        const resultCta = page.locator('#calc-result a[href*="numerologie.html?source=life_number_result"]');
+        await expect(resultCta).toBeVisible();
+        await expect(resultCta).toHaveAttribute('href', /feature=numerologie_vyklad/);
     });
 });
 

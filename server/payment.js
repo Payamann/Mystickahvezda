@@ -90,10 +90,22 @@ function buildSubscriptionLineItem(plan, stripePriceId) {
     };
 }
 
+export function buildPricingCancelUrl({ planId = null, source = null, feature = null } = {}) {
+    const url = new URL('/cenik.html', APP_URL);
+    url.searchParams.set('payment', 'cancel');
+    if (planId) url.searchParams.set('plan', planId);
+    if (source) url.searchParams.set('source', source);
+    if (feature) url.searchParams.set('feature', feature);
+    return url.toString();
+}
+
 const PUBLIC_FUNNEL_EVENTS = new Set([
     'paywall_viewed',
     'paywall_cta_clicked',
     'login_gate_viewed',
+    'pricing_downsell_clicked',
+    'pricing_preview_clicked',
+    'pricing_recommendation_clicked',
     'upgrade_cta_viewed',
 ]);
 
@@ -318,7 +330,7 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
             payment_method_collection: 'always',
             locale: 'cs',
             success_url: `${APP_URL}/profil.html?payment=success&plan=${encodeURIComponent(planId)}&session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${APP_URL}/cenik.html?payment=cancel`,
+            cancel_url: buildPricingCancelUrl({ planId, source, feature }),
             client_reference_id: user.id,
             metadata: {
                 userId: user.id,

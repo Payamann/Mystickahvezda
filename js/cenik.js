@@ -71,6 +71,39 @@ const FALLBACK_FEATURE_PLAN_MAP = {
 };
 let featurePlanMap = FALLBACK_FEATURE_PLAN_MAP;
 
+const FEATURE_PREVIEW_DESTINATIONS = {
+    account: { path: '/horoskopy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt denn\u00ed horoskop zdarma' },
+    angel_card_deep: { path: '/andelske-karty.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt and\u011blsk\u00e9 karty zdarma' },
+    andelske_karty_hluboky_vhled: { path: '/andelske-karty.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt and\u011blsk\u00e9 karty zdarma' },
+    astrocartography: { path: '/astro-mapa.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt astro mapu' },
+    crystal_ball_unlimited: { path: '/kristalova-koule.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt k\u0159i\u0161\u0165\u00e1lovou kouli' },
+    daily_angel_card: { path: '/andelske-karty.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt and\u011blskou kartu zdarma' },
+    daily_guidance: { path: '/horoskopy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt denn\u00ed horoskop zdarma' },
+    horoskopy: { path: '/horoskopy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt horoskopy zdarma' },
+    hvezdny_mentor: { path: '/mentor.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt Hv\u011bzdn\u00e9ho pr\u016fvodce' },
+    journal_insights: { path: '/mentor.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt Hv\u011bzdn\u00e9ho pr\u016fvodce' },
+    kristalova_koule: { path: '/kristalova-koule.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt k\u0159i\u0161\u0165\u00e1lovou kouli' },
+    medicine_wheel: { path: '/shamansko-kolo.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt \u0161amansk\u00e9 kolo' },
+    mentor: { path: '/mentor.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt Hv\u011bzdn\u00e9ho pr\u016fvodce' },
+    minuly_zivot: { path: '/minuly-zivot.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt minul\u00fd \u017eivot' },
+    monthly_horoscope: { path: '/horoskopy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt horoskopy zdarma' },
+    natal_chart: { path: '/natalni-karta.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt nat\u00e1ln\u00ed kartu' },
+    natalni_interpretace: { path: '/natalni-karta.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt nat\u00e1ln\u00ed kartu' },
+    numerologie_vyklad: { path: '/numerologie.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt numerologii zdarma' },
+    numerology: { path: '/numerologie.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt numerologii zdarma' },
+    partnerska_detail: { path: '/partnerska-shoda.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt partnerskou shodu' },
+    past_life: { path: '/minuly-zivot.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt minul\u00fd \u017eivot' },
+    rituals: { path: '/lunace.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt lun\u00e1rn\u00ed kalend\u00e1\u0159' },
+    runes_deep_reading: { path: '/runy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt runy zdarma' },
+    runy_hluboky_vyklad: { path: '/runy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt runy zdarma' },
+    shamanske_kolo_plne_cteni: { path: '/shamansko-kolo.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt \u0161amansk\u00e9 kolo' },
+    synastry: { path: '/partnerska-shoda.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt partnerskou shodu' },
+    tarot: { path: '/tarot.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt tarot zdarma' },
+    tarot_celtic_cross: { path: '/tarot.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt tarot zdarma' },
+    tarot_multi_card: { path: '/tarot.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt tarot zdarma' },
+    weekly_horoscope: { path: '/horoskopy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt horoskopy zdarma' }
+};
+
 function setFeatureText(item, text) {
     if (!item) return;
 
@@ -265,6 +298,137 @@ function resolveCheckoutContext() {
     };
 }
 
+function shouldShowPreviewDestination(context) {
+    return Boolean(context.feature || (context.source && context.source !== 'pricing_page'));
+}
+
+function getPreviewDestination(context) {
+    if (!shouldShowPreviewDestination(context)) return null;
+
+    const destination = FEATURE_PREVIEW_DESTINATIONS[context.feature] || {
+        path: '/horoskopy.html',
+        label: 'Nejd\u0159\u00edv otev\u0159\u00edt bezplatn\u00fd v\u00fdklad'
+    };
+    const url = new URL(destination.path, window.location.origin);
+    url.searchParams.set('source', 'pricing_recommendation_preview');
+    if (context.source) url.searchParams.set('entry_source', context.source);
+    if (context.feature) url.searchParams.set('entry_feature', context.feature);
+
+    return {
+        ...destination,
+        href: `${url.pathname}${url.search}${url.hash}`
+    };
+}
+
+function getCancelDownsellDestination(context) {
+    const url = new URL('/rocni-horoskop.html', window.location.origin);
+    url.searchParams.set('source', 'checkout_cancel_recovery');
+    if (context.source) url.searchParams.set('entry_source', context.source);
+    if (context.feature) url.searchParams.set('entry_feature', context.feature);
+    if (context.recommendedPlan) url.searchParams.set('entry_plan', context.recommendedPlan);
+    return `${url.pathname}${url.search}`;
+}
+
+async function trackPricingFunnelEvent(eventName, context, metadata = {}) {
+    try {
+        const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+        if (!csrfToken) return;
+
+        await fetch(`${getApiBaseUrl()}/payment/funnel-event`, {
+            method: 'POST',
+            credentials: 'include',
+            keepalive: true,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({
+                eventName,
+                source: context.source || 'pricing_page',
+                feature: context.feature || null,
+                planId: context.recommendedPlan || null,
+                metadata: {
+                    path: window.location.pathname,
+                    ...metadata
+                }
+            })
+        });
+    } catch (error) {
+        console.warn('[Pricing] Could not record funnel event:', error.message);
+    }
+}
+
+function renderCheckoutCancelRecovery(context) {
+    const heroSubtitle = document.querySelector('.section--hero .hero__subtitle');
+    if (!heroSubtitle) return;
+
+    const existing = document.getElementById('pricing-cancel-recovery');
+    if (existing) existing.remove();
+
+    const planMeta = PLAN_META[context.recommendedPlan] || PLAN_META.pruvodce;
+    const previewDestination = getPreviewDestination(context);
+    const downsellHref = getCancelDownsellDestination(context);
+    const panel = document.createElement('div');
+    panel.id = 'pricing-cancel-recovery';
+    panel.className = 'pricing-cancel-recovery';
+    panel.innerHTML = `
+        <div class="pricing-cancel-recovery__eyebrow">Platba nebyla dokon\u010dena</div>
+        <strong class="pricing-cancel-recovery__title">M\u016f\u017eete pokra\u010dovat bez hled\u00e1n\u00ed</strong>
+        <p class="pricing-cancel-recovery__text">${planMeta.name}: ${planMeta.headline}</p>
+        <div class="pricing-cancel-recovery__actions">
+            <button type="button" class="pricing-cancel-recovery__primary" data-cancel-retry>Zobrazit vybran\u00fd pl\u00e1n</button>
+            ${previewDestination ? `<a class="pricing-cancel-recovery__secondary" href="${previewDestination.href}" data-cancel-preview>${previewDestination.label}</a>` : ''}
+            <a class="pricing-cancel-recovery__secondary" href="${downsellHref}" data-cancel-downsell>Jednor\u00e1zov\u00fd ro\u010dn\u00ed horoskop</a>
+        </div>
+    `;
+
+    heroSubtitle.insertAdjacentElement('afterend', panel);
+
+    panel.querySelector('[data-cancel-retry]')?.addEventListener('click', () => {
+        window.MH_ANALYTICS?.trackCTA?.('pricing_cancel_retry_plan', {
+            source: context.source || 'pricing_cancel',
+            feature: context.feature || null,
+            plan_id: context.recommendedPlan
+        });
+        void trackPricingFunnelEvent('pricing_recommendation_clicked', context, {
+            recovery: true
+        });
+        if (!highlightRecommendedPlan(context.recommendedPlan)) {
+            startRecommendedCheckout(context.recommendedPlan, context);
+        }
+    });
+
+    panel.querySelector('[data-cancel-preview]')?.addEventListener('click', (event) => {
+        const link = event.currentTarget;
+        window.MH_ANALYTICS?.trackCTA?.('pricing_cancel_preview', {
+            source: context.source || 'pricing_cancel',
+            feature: context.feature || null,
+            plan_id: context.recommendedPlan,
+            destination: link.getAttribute('href') || null
+        });
+        void trackPricingFunnelEvent('pricing_preview_clicked', context, {
+            recovery: true,
+            destination: link.getAttribute('href') || null,
+            label: link.textContent?.trim() || 'preview'
+        });
+    });
+
+    panel.querySelector('[data-cancel-downsell]')?.addEventListener('click', (event) => {
+        const link = event.currentTarget;
+        window.MH_ANALYTICS?.trackCTA?.('pricing_cancel_downsell', {
+            source: context.source || 'pricing_cancel',
+            feature: context.feature || null,
+            plan_id: context.recommendedPlan,
+            destination: link.getAttribute('href') || null
+        });
+        void trackPricingFunnelEvent('pricing_downsell_clicked', context, {
+            recovery: true,
+            destination: link.getAttribute('href') || null,
+            product: 'rocni_horoskop_2026'
+        });
+    });
+}
+
 function showPaymentReturnState(context) {
     const params = new URLSearchParams(window.location.search);
     const paymentState = params.get('payment');
@@ -283,6 +447,7 @@ function showPaymentReturnState(context) {
             'Platbu jste nedokončili. Ceník zůstává otevřený, takže můžete pokračovat kdykoliv.',
             'info'
         );
+        renderCheckoutCancelRecovery(context);
     }
 
     history.replaceState({}, document.title, sanitizeRedirectUrl(window.location.href));
@@ -301,13 +466,17 @@ function renderRecommendationBanner(context) {
     const banner = document.createElement('div');
     const hasVisiblePlanCard = !!document.querySelector(`.plan-checkout-btn[data-plan="${context.recommendedPlan}"]`);
     const actionLabel = hasVisiblePlanCard ? 'Ukázat doporučený plán' : 'Pokračovat k doporučenému plánu';
+    const previewDestination = getPreviewDestination(context);
     banner.id = 'pricing-plan-recommendation';
     banner.className = 'pricing-plan-recommendation';
     banner.innerHTML = `
         <div class="pricing-plan-recommendation__eyebrow">Doporučený další krok</div>
         <strong class="pricing-plan-recommendation__title">${planMeta.name}</strong>
         <p class="pricing-plan-recommendation__text">${planMeta.headline} ${planMeta.recommendedFor}</p>
-        <button type="button" class="pricing-plan-recommendation__action" data-recommended-plan="${context.recommendedPlan}">${actionLabel}</button>
+        <div class="pricing-plan-recommendation__actions">
+            <button type="button" class="pricing-plan-recommendation__action" data-recommended-plan="${context.recommendedPlan}">${actionLabel}</button>
+            ${previewDestination ? `<a class="pricing-plan-recommendation__preview" href="${previewDestination.href}" data-preview-destination>${previewDestination.label}</a>` : ''}
+        </div>
     `;
 
     heroSubtitle.insertAdjacentElement('afterend', banner);
@@ -318,9 +487,26 @@ function renderRecommendationBanner(context) {
             feature: context.feature || null,
             plan_id: context.recommendedPlan
         });
+        void trackPricingFunnelEvent('pricing_recommendation_clicked', context, {
+            visible_plan_card: hasVisiblePlanCard
+        });
         if (!highlightRecommendedPlan(context.recommendedPlan)) {
             startRecommendedCheckout(context.recommendedPlan, context);
         }
+    });
+
+    banner.querySelector('[data-preview-destination]')?.addEventListener('click', (event) => {
+        const link = event.currentTarget;
+        window.MH_ANALYTICS?.trackCTA?.('pricing_recommendation_preview', {
+            source: context.source || 'pricing_page',
+            feature: context.feature || null,
+            plan_id: context.recommendedPlan,
+            destination: link.getAttribute('href') || null
+        });
+        void trackPricingFunnelEvent('pricing_preview_clicked', context, {
+            destination: link.getAttribute('href') || null,
+            label: link.textContent?.trim() || 'preview'
+        });
     });
 }
 

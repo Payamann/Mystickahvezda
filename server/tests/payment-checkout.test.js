@@ -14,6 +14,7 @@ import request from 'supertest';
 import app from '../index.js';
 import jwt from 'jsonwebtoken';
 import { SUBSCRIPTION_PLANS } from '../config/constants.js';
+import { buildPricingCancelUrl } from '../payment.js';
 
 async function getCsrfToken() {
     const res = await request(app).get('/api/csrf-token').expect(200);
@@ -33,6 +34,19 @@ function makeTestToken(userId = 'test-user-uuid') {
 }
 
 describe('💳 Payment Checkout Session', () => {
+    test('Stripe cancel URL preserves plan and funnel context', () => {
+        const cancelUrl = new URL(buildPricingCancelUrl({
+            planId: 'pruvodce',
+            source: 'inline_paywall',
+            feature: 'tarot_multi_card'
+        }));
+
+        expect(cancelUrl.pathname).toBe('/cenik.html');
+        expect(cancelUrl.searchParams.get('payment')).toBe('cancel');
+        expect(cancelUrl.searchParams.get('plan')).toBe('pruvodce');
+        expect(cancelUrl.searchParams.get('source')).toBe('inline_paywall');
+        expect(cancelUrl.searchParams.get('feature')).toBe('tarot_multi_card');
+    });
 
     // ── Autentizace ──────────────────────────────────────────────────────────
 

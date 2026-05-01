@@ -202,6 +202,34 @@ test.describe('Partnerská shoda', () => {
         await expect(page.locator('#total-score')).toContainText('%');
     });
 
+    test('po vypoctu zobrazi navazujici vztahovy bridge s premium kontextem', async ({ page }) => {
+        await page.fill('#p1-name', 'Anna');
+        await page.fill('#p1-date', '1990-01-01');
+        await page.fill('#p2-name', 'Pavel');
+        await page.fill('#p2-date', '1992-07-15');
+
+        await page.locator('#synastry-form button[type="submit"]').click();
+
+        await expect(page.locator('#synastry-results')).toBeVisible();
+        await expect(page.locator('#synastry-next-step')).toBeVisible();
+        await expect(page.locator('.synastry-next-card')).toHaveCount(4);
+        await expect(page.locator('#synastry-next-score')).toContainText('%');
+
+        const premiumBridge = page.locator('[data-synastry-upgrade]');
+        await expect(premiumBridge).toHaveAttribute('href', /source=partner_match_result/);
+        await expect(premiumBridge).toHaveAttribute('href', /feature=partnerska_detail/);
+    });
+
+    test('trust a FAQ bloky jsou dostupne pro SEO i rozhodovani', async ({ page }) => {
+        await expect(page.locator('.synastry-trust-item')).toHaveCount(3);
+        await expect(page.locator('.synastry-faq-item')).toHaveCount(4);
+
+        const faqJson = await page.locator('script[type="application/ld+json"]').evaluateAll((nodes) =>
+            nodes.map((node) => node.textContent || '').find((text) => text.includes('"@type": "FAQPage"'))
+        );
+        expect(faqJson).toBeTruthy();
+    });
+
     test('canonical link existuje', async ({ page }) => {
         const canonical = await page.getAttribute('link[rel="canonical"]', 'href');
         expect(canonical).toBeTruthy();

@@ -161,7 +161,9 @@
 
 
 
-            if (!day || !month || !year || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2025) {
+            const currentYear = new Date().getFullYear();
+
+            if (!day || !month || !year || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > currentYear) {
 
                 err.textContent = 'Zadejte prosím platné datum narození.';
 

@@ -55,4 +55,41 @@ describe('Public funnel event endpoint', () => {
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
     });
+
+    test('accepts pricing recovery events with original funnel context', async () => {
+        const csrfToken = await getCsrfToken();
+        const res = await request(app)
+            .post('/api/payment/funnel-event')
+            .set('x-csrf-token', csrfToken)
+            .send({
+                eventName: 'pricing_preview_clicked',
+                source: 'inline_paywall',
+                feature: 'numerologie_vyklad',
+                planId: 'pruvodce',
+                metadata: {
+                    path: '/cenik.html',
+                    destination: '/numerologie.html?source=pricing_recommendation_preview'
+                }
+            });
+
+        expect(res.status).toBe(200);
+        expect(res.body.success).toBe(true);
+
+        const downsellRes = await request(app)
+            .post('/api/payment/funnel-event')
+            .set('x-csrf-token', csrfToken)
+            .send({
+                eventName: 'pricing_downsell_clicked',
+                source: 'inline_paywall',
+                feature: 'numerologie_vyklad',
+                planId: 'pruvodce',
+                metadata: {
+                    path: '/cenik.html',
+                    product: 'rocni_horoskop_2026'
+                }
+            });
+
+        expect(downsellRes.status).toBe(200);
+        expect(downsellRes.body.success).toBe(true);
+    });
 });

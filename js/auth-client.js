@@ -339,6 +339,16 @@
                     title: 'Vítejte v Mystické Hvězdě',
                     message: 'V numerologii nejrychleji uvidíte, jak osobní umí být vaše první vedení.'
                 },
+                annual_horoscope: {
+                    path: '/rocni-horoskop.html',
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Pokračujte k ročnímu horoskopu a výhledu, který naváže na vaše datum narození.'
+                },
+                personal_map: {
+                    path: '/osobni-mapa.html',
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Pokračujte k osobní mapě a hlubšímu rozboru vlastního směru.'
+                },
                 tarot: {
                     path: '/tarot.html',
                     title: 'Vítejte v Mystické Hvězdě',

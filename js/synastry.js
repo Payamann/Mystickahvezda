@@ -9,24 +9,68 @@ document.addEventListener('DOMContentLoaded', () => {
     initSynastry();
 });
 
+const SYNASTRY_FEATURE = 'partnerska_detail';
+const SYNASTRY_PLAN_ID = 'pruvodce';
+const SYNASTRY_RESULT_SOURCE = 'partner_match_result';
+
 function buildSynastryUpgradeUrl(source = 'synastry_teaser_overlay') {
     const pricingUrl = new URL('/cenik.html', window.location.origin);
-    pricingUrl.searchParams.set('plan', 'pruvodce');
+    pricingUrl.searchParams.set('plan', SYNASTRY_PLAN_ID);
     pricingUrl.searchParams.set('source', source);
-    pricingUrl.searchParams.set('feature', 'partnerska_detail');
+    pricingUrl.searchParams.set('feature', SYNASTRY_FEATURE);
     return `${pricingUrl.pathname}${pricingUrl.search}`;
+}
+
+function getSynastryAttribution() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        source: params.get('source') || 'partnerska_shoda_page',
+        feature: params.get('feature') || SYNASTRY_FEATURE
+    };
+}
+
+async function trackSynastryFunnelEvent(eventName, source, metadata = {}) {
+    try {
+        const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+        if (!csrfToken) return;
+
+        await fetch(`${window.API_CONFIG?.BASE_URL || '/api'}/payment/funnel-event`, {
+            method: 'POST',
+            credentials: 'include',
+            keepalive: true,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({
+                eventName,
+                source,
+                feature: SYNASTRY_FEATURE,
+                planId: SYNASTRY_PLAN_ID,
+                metadata: {
+                    path: window.location.pathname,
+                    ...metadata
+                }
+            })
+        });
+    } catch (error) {
+        console.warn('[Synastry funnel] Could not record event:', error.message);
+    }
 }
 
 function startSynastryUpgradeFlow(source) {
     window.MH_ANALYTICS?.trackCTA?.(source, {
-        plan_id: 'pruvodce',
-        feature: 'partnerska_detail'
+        plan_id: SYNASTRY_PLAN_ID,
+        feature: SYNASTRY_FEATURE
+    });
+    void trackSynastryFunnelEvent('paywall_cta_clicked', source, {
+        destination: '/cenik.html'
     });
 
     if (window.Auth?.startPlanCheckout) {
-        window.Auth.startPlanCheckout('pruvodce', {
+        window.Auth.startPlanCheckout(SYNASTRY_PLAN_ID, {
             source,
-            feature: 'partnerska_detail',
+            feature: SYNASTRY_FEATURE,
             redirect: '/cenik.html',
             authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register'
         });
@@ -205,7 +249,10 @@ async function fetchCalculatedSynastry(person1, person2) {
 }
 
 function trackSynastryCalculation(scores, synastry) {
+    const attribution = getSynastryAttribution();
     window.MH_ANALYTICS?.trackEvent?.('synastry_calculated', {
+        source: attribution.source,
+        feature: attribution.feature,
         engine_version: synastry?.engine?.version || null,
         precision: synastry?.engine?.precision || null,
         person1_precision: synastry?.engine?.person1Precision || null,
@@ -221,9 +268,56 @@ function trackSynastryCalculation(scores, synastry) {
     });
 }
 
+function revealSynastryNextStep(scores, synastry, isPremium) {
+    const section = document.getElementById('synastry-next-step');
+    if (!section) return;
+
+    const score = Number.isFinite(scores?.totalScore) ? `${scores.totalScore}%` : '--';
+    const scoreElement = document.getElementById('synastry-next-score');
+    if (scoreElement) scoreElement.textContent = score;
+
+    setBlockVisible(section, true);
+
+    window.MH_ANALYTICS?.trackEvent?.('synastry_result_bridge_viewed', {
+        source: SYNASTRY_RESULT_SOURCE,
+        feature: SYNASTRY_FEATURE,
+        total_score: scores?.totalScore ?? null,
+        precision: synastry?.engine?.precision || null,
+        premium: Boolean(isPremium)
+    });
+
+    if (!isPremium) {
+        void trackSynastryFunnelEvent('paywall_viewed', SYNASTRY_RESULT_SOURCE, {
+            total_score: scores?.totalScore ?? null,
+            precision: synastry?.engine?.precision || null
+        });
+    }
+}
+
+function bindSynastryNextStepLinks() {
+    document.querySelectorAll('[data-synastry-upgrade]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            startSynastryUpgradeFlow(link.dataset.synastrySource || SYNASTRY_RESULT_SOURCE);
+        });
+    });
+
+    document.querySelectorAll('[data-synastry-intent]').forEach((link) => {
+        link.addEventListener('click', () => {
+            window.MH_ANALYTICS?.trackEvent?.('synastry_result_intent_clicked', {
+                source: 'partner_match_intent',
+                feature: link.dataset.synastryIntent || null,
+                destination: link.getAttribute('href') || null
+            });
+        });
+    });
+}
+
 function initSynastry() {
     const form = document.getElementById('synastry-form');
     if (!form) return;
+
+    bindSynastryNextStepLinks();
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -367,6 +461,8 @@ async function calculateCompatibility() {
         btn.disabled = false;
         return;
     }
+
+    revealSynastryNextStep(displayedScores, calculatedSynastry, isPremium);
 
     // Reset previous state
     const existingOverlay = detailCard.querySelector('.premium-lock-overlay');

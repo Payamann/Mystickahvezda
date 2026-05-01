@@ -164,4 +164,57 @@ test.describe('Tarot Ano/Ne', () => {
         const h1 = page.locator('h1').first();
         await expect(h1).toBeAttached();
     });
+
+    test('po výběru karty ukáže další kroky a prémiový bridge', async ({ page }) => {
+        await page.goto('/tarot-ano-ne.html');
+        await waitForPageReady(page);
+
+        await page.fill('#question-input', 'Mám dnes udělat první krok?');
+        await page.locator('.tarot-card').first().click();
+
+        await expect(page.locator('#result-panel')).toHaveClass(/show/, { timeout: 2500 });
+        await expect(page.locator('#tarot-yes-no-next-step')).toBeVisible();
+        await expect(page.locator('.tarot-yes-no-next-card')).toHaveCount(4);
+
+        const upgradeLink = page.locator('[data-tarot-yes-no-upgrade]').first();
+        await expect(upgradeLink).toBeVisible();
+        const href = await upgradeLink.getAttribute('href');
+        expect(href).toContain('plan=pruvodce');
+        expect(href).toContain('source=tarot_yes_no_result');
+        expect(href).toContain('feature=tarot_multi_card');
+    });
+
+    test('obsahuje trust strip, FAQ blok a FAQ schema markup', async ({ page }) => {
+        await page.goto('/tarot-ano-ne.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('.tarot-yes-no-trust-item')).toHaveCount(3);
+        await expect(page.locator('.tarot-yes-no-faq-item')).toHaveCount(4);
+
+        const ldTypes = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((script) => {
+            try {
+                return JSON.parse(script.textContent || '{}')['@type'];
+            } catch {
+                return null;
+            }
+        }));
+
+        expect(ldTypes).toContain('FAQPage');
+    });
+
+    test('výsledek a další kroky nerozbíjí mobilní layout', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.goto('/tarot-ano-ne.html');
+        await waitForPageReady(page);
+
+        await page.fill('#question-input', 'Mám tomu dát ještě šanci?');
+        await page.locator('.tarot-card').first().click();
+
+        await expect(page.locator('#tarot-yes-no-next-step')).toBeVisible({ timeout: 2500 });
+
+        const hasHorizontalScroll = await page.evaluate(() =>
+            document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+        );
+        expect(hasHorizontalScroll).toBe(false);
+    });
 });

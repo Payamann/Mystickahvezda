@@ -32,6 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
         partnerska_detail: 'Detail partnerské shody',
         numerologie_vyklad: 'Numerologický výklad',
         numerology: 'Numerologický výklad',
+        annual_horoscope: 'Roční horoskop na míru',
+        personal_map: 'Osobní mapa',
         natalni_interpretace: 'Interpretace natální karty',
         runy_hluboky_vyklad: 'Hloubkový výklad run',
         shamanske_kolo_plne_cteni: 'Plné čtení šamanského kola',
@@ -147,6 +149,18 @@ document.addEventListener('DOMContentLoaded', () => {
             stepTitle: 'Otevřeme numerologii',
             stepCopy: 'První vhled dostanete z konkrétního nástroje, ne z prázdného profilu.'
         },
+        annual_horoscope: {
+            title: 'Roční horoskop po registraci',
+            copy: 'Po vytvoření účtu budete pokračovat k ročnímu horoskopu a výhledu, který naváže na vaše osobní datum.',
+            stepTitle: 'Otevřeme roční horoskop',
+            stepCopy: 'Navážete na výpočet, který jste si vybrali, místo obecného profilu.'
+        },
+        personal_map: {
+            title: 'Osobní mapa po registraci',
+            copy: 'Po vytvoření účtu budete pokračovat k osobní mapě a hlubšímu rozboru vlastního směru.',
+            stepTitle: 'Otevřeme osobní mapu',
+            stepCopy: 'Registrace vás vrátí k hlubšímu výstupu, kvůli kterému jste klikli.'
+        },
         runy_hluboky_vyklad: {
             title: 'Runy po registraci',
             copy: 'Po vytvoření účtu se vrátíte k runám a můžete pokračovat v hlubším výkladu.',
@@ -224,6 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
         '/partnerska-shoda.html': SIGNUP_CONTEXT_BY_FEATURE.partnerska_detail,
         '/natalni-karta.html': SIGNUP_CONTEXT_BY_FEATURE.natalni_interpretace,
         '/numerologie.html': SIGNUP_CONTEXT_BY_FEATURE.numerologie_vyklad,
+        '/rocni-horoskop.html': SIGNUP_CONTEXT_BY_FEATURE.annual_horoscope,
+        '/osobni-mapa.html': SIGNUP_CONTEXT_BY_FEATURE.personal_map,
         '/mentor.html': SIGNUP_CONTEXT_BY_FEATURE.mentor
     };
 

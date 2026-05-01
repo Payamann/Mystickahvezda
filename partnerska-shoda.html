@@ -54,6 +54,47 @@
 
     <title>Partnerská Shoda | Mystická Hvězda</title>
 
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Je partnerská shoda zdarma?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Základní výpočet kompatibility je zdarma a funguje bez registrace. Plný vztahový rozbor s konkrétní komunikací, třecími body a uložením do profilu je součástí Premium."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Proč zadávat čas a místo narození?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Datum stačí pro základní skóre. Čas a místo zpřesní ascendent, domy a vztahové souvislosti, takže výsledek lépe naváže na konkrétní dynamiku mezi dvěma lidmi."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Co odemkne plný vztahový rozbor?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Plný rozbor ukáže emoční propojení, komunikaci, chemii, stabilitu, hlavní napětí a praktický další krok pro vztah."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Ukládají se moje údaje?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Výpočet můžete spustit bez účtu. Uložení výkladu do historie probíhá jen po přihlášení a pouze pro výklady, které si v účtu necháte uložit."
+                }
+            }
+        ]
+    }
+    </script>
+
     <!-- Favicon -->
 
     <link rel="icon" type="image/svg+xml"
@@ -299,6 +340,21 @@
 
                 </div>
 
+                <div class="synastry-trust-strip" aria-label="Co dostanete ve vztahovém výpočtu">
+                    <div class="synastry-trust-item">
+                        <strong>Základ zdarma</strong>
+                        <span>Celkové skóre uvidíte bez registrace.</span>
+                    </div>
+                    <div class="synastry-trust-item">
+                        <strong>Přesnější s časem</strong>
+                        <span>Čas a místo pomohou dopočítat ascendent a domy.</span>
+                    </div>
+                    <div class="synastry-trust-item">
+                        <strong>Premium navazuje</strong>
+                        <span>Plný rozbor řeší komunikaci, napětí a další krok.</span>
+                    </div>
+                </div>
+
                 <!-- RESULTS -->
 
                 <div id="synastry-results" class="mh-inline-dc55d6d421" data-animate>
@@ -431,9 +487,75 @@
 
                 </div>
 
+                <section id="synastry-next-step" class="synastry-next-step" hidden aria-labelledby="synastry-next-step-title">
+                    <div class="section__header text-center">
+                        <span class="section__badge">Další krok po výsledku</span>
+                        <h2 id="synastry-next-step-title" class="section__title">Co chceš ve vztahu pochopit dál?</h2>
+                        <p class="section__subtitle">
+                            Skóre <strong id="synastry-next-score">--</strong> je první signál. Vyber navazující výklad podle toho,
+                            jestli řešíš vztah, sebe nebo konkrétní otázku.
+                        </p>
+                    </div>
+
+                    <div class="synastry-next-grid">
+                        <a href="cenik.html?plan=pruvodce&source=partner_match_result&feature=partnerska_detail"
+                            class="synastry-next-card synastry-next-card--primary" data-synastry-upgrade
+                            data-synastry-source="partner_match_result">
+                            <span>Hlubší vztah</span>
+                            <strong>Odemknout plný rozbor</strong>
+                            <em>Komunikace, napětí, silné stránky a další krok.</em>
+                        </a>
+                        <a href="natalni-karta.html?source=partner_match_intent&feature=natalni_interpretace"
+                            class="synastry-next-card" data-synastry-intent="natal_chart">
+                            <span>Nejdřív ty</span>
+                            <strong>Natální karta</strong>
+                            <em>Uvidíš vlastní vzorce, které si do vztahu neseš.</em>
+                        </a>
+                        <a href="tarot.html?source=partner_match_intent&feature=tarot_multi_card"
+                            class="synastry-next-card" data-synastry-intent="relationship_tarot">
+                            <span>Konkrétní otázka</span>
+                            <strong>Tarot na vztah</strong>
+                            <em>Hodí se, když chceš odpověď na jednu situaci.</em>
+                        </a>
+                        <a href="mentor.html?source=partner_match_intent&feature=mentor"
+                            class="synastry-next-card" data-synastry-intent="mentor_question">
+                            <span>Osobní vedení</span>
+                            <strong>Zeptat se průvodce</strong>
+                            <em>Navážeš na výsledek vlastní otázkou.</em>
+                        </a>
+                    </div>
+                </section>
+
             </div>
 
         </section>
+
+    <section class="section synastry-faq-section">
+        <div class="container">
+            <div class="section__header text-center">
+                <span class="section__badge">Než začneš</span>
+                <h2 class="section__title">Jak partnerská shoda funguje</h2>
+            </div>
+            <div class="synastry-faq-grid">
+                <article class="synastry-faq-item">
+                    <h3>Co je zdarma?</h3>
+                    <p>Základní skóre vztahu a technický astro souhrn. Registraci nepotřebujete pro první výpočet.</p>
+                </article>
+                <article class="synastry-faq-item">
+                    <h3>Co se zpřesní časem narození?</h3>
+                    <p>Čas a místo pomáhají dopočítat ascendent, domy a jemnější vztahové vazby.</p>
+                </article>
+                <article class="synastry-faq-item">
+                    <h3>Kdy má smysl Premium?</h3>
+                    <p>Když nechcete jen procento shody, ale konkrétní komunikaci, třecí body a další krok.</p>
+                </article>
+                <article class="synastry-faq-item">
+                    <h3>Musím si výsledek uložit?</h3>
+                    <p>Nemusíte. Uložení do historie je dostupné až po přihlášení a dává smysl pro návrat k výkladu.</p>
+                </article>
+            </div>
+        </div>
+    </section>
 
     <!-- CROSS-LINKING SEKCE -->
 

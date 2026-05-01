@@ -71,6 +71,129 @@
 
     let used = false;
 
+    const TAROT_YES_NO_FEATURE = 'tarot_multi_card';
+    const TAROT_YES_NO_PLAN_ID = 'pruvodce';
+    const TAROT_YES_NO_RESULT_SOURCE = 'tarot_yes_no_result';
+
+    function buildTarotYesNoUpgradeUrl(source = TAROT_YES_NO_RESULT_SOURCE) {
+        const pricingUrl = new URL('/cenik.html', window.location.origin);
+        pricingUrl.searchParams.set('plan', TAROT_YES_NO_PLAN_ID);
+        pricingUrl.searchParams.set('source', source);
+        pricingUrl.searchParams.set('feature', TAROT_YES_NO_FEATURE);
+        return `${pricingUrl.pathname}${pricingUrl.search}`;
+    }
+
+    async function trackTarotYesNoFunnelEvent(eventName, source, metadata = {}) {
+        try {
+            const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+            if (!csrfToken) return;
+
+            await fetch(`${window.API_CONFIG?.BASE_URL || '/api'}/payment/funnel-event`, {
+                method: 'POST',
+                credentials: 'include',
+                keepalive: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                    eventName,
+                    source,
+                    feature: TAROT_YES_NO_FEATURE,
+                    planId: TAROT_YES_NO_PLAN_ID,
+                    metadata: {
+                        path: window.location.pathname,
+                        ...metadata
+                    }
+                })
+            });
+        } catch (error) {
+            console.warn('[Tarot ANO/NE funnel] Could not record event:', error.message);
+        }
+    }
+
+    function startTarotYesNoUpgradeFlow(source = TAROT_YES_NO_RESULT_SOURCE) {
+        window.MH_ANALYTICS?.trackCTA?.(source, {
+            plan_id: TAROT_YES_NO_PLAN_ID,
+            feature: TAROT_YES_NO_FEATURE
+        });
+
+        void trackTarotYesNoFunnelEvent('paywall_cta_clicked', source, {
+            destination: '/cenik.html'
+        });
+
+        if (window.Auth?.startPlanCheckout) {
+            window.Auth.startPlanCheckout(TAROT_YES_NO_PLAN_ID, {
+                source,
+                feature: TAROT_YES_NO_FEATURE,
+                redirect: '/cenik.html',
+                authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register'
+            });
+            return;
+        }
+
+        window.location.href = buildTarotYesNoUpgradeUrl(source);
+    }
+
+    function setBlockVisible(element, visible) {
+        if (!element) return;
+        element.hidden = !visible;
+        element.classList.toggle('mh-block-visible', visible);
+    }
+
+    function getResultMetadata(answerKey, ans, question) {
+        return {
+            answer_key: answerKey,
+            answer_label: ans.label,
+            has_question: Boolean(question),
+            question_length: Math.min((question || '').length, 200)
+        };
+    }
+
+    function revealTarotYesNoNextStep(answerKey, ans, question) {
+        const nextStep = document.getElementById('tarot-yes-no-next-step');
+        const answerBadge = document.getElementById('tarot-yes-no-next-answer');
+        if (!nextStep) return;
+
+        if (answerBadge) {
+            answerBadge.textContent = ans.label.toLowerCase();
+        }
+
+        nextStep.dataset.answerKey = answerKey;
+        setBlockVisible(nextStep, true);
+
+        const metadata = getResultMetadata(answerKey, ans, question);
+        window.MH_ANALYTICS?.trackAction?.('tarot_yes_no_result_bridge_viewed', {
+            ...metadata,
+            feature: TAROT_YES_NO_FEATURE,
+            source: TAROT_YES_NO_RESULT_SOURCE
+        });
+        void trackTarotYesNoFunnelEvent('paywall_viewed', TAROT_YES_NO_RESULT_SOURCE, metadata);
+    }
+
+    function bindTarotYesNoBridgeLinks() {
+        document.querySelectorAll('[data-tarot-yes-no-upgrade]').forEach((link) => {
+            if (link.dataset.tarotYesNoBound === 'true') return;
+            link.dataset.tarotYesNoBound = 'true';
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                startTarotYesNoUpgradeFlow(link.dataset.tarotYesNoUpgrade || TAROT_YES_NO_RESULT_SOURCE);
+            });
+        });
+
+        document.querySelectorAll('[data-tarot-yes-no-intent]').forEach((link) => {
+            if (link.dataset.tarotYesNoBound === 'true') return;
+            link.dataset.tarotYesNoBound = 'true';
+            link.addEventListener('click', () => {
+                window.MH_ANALYTICS?.trackCTA?.('tarot_yes_no_intent', {
+                    intent: link.dataset.tarotYesNoIntent,
+                    destination: link.getAttribute('href') || '',
+                    source: TAROT_YES_NO_RESULT_SOURCE
+                });
+            });
+        });
+    }
+
     function flipCard(card, index) {
         if (used) return;
 
@@ -124,6 +247,7 @@
             document.getElementById('result-text').textContent = text;
             const panel = document.getElementById('result-panel');
             panel.classList.add('show');
+            revealTarotYesNoNextStep(key, ans, q);
             panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }, 800);
     }
@@ -133,6 +257,7 @@
         document.getElementById('question-input').value = '';
         document.getElementById('question-input').classList.remove('input--invalid');
         document.getElementById('result-panel').classList.remove('show');
+        setBlockVisible(document.getElementById('tarot-yes-no-next-step'), false);
 
         document.querySelectorAll('.tarot-card').forEach(c => {
             c.classList.remove('flipped', 'tarot-card--locked');
@@ -166,6 +291,8 @@
         if (btnReset) {
             btnReset.addEventListener('click', resetCards);
         }
+
+        bindTarotYesNoBridgeLinks();
     }
 
     // Spolehlivě ukotví listenery i pro případy dynamického loadu

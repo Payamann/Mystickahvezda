@@ -116,6 +116,48 @@ test.describe('Ceník — platební tlačítka', () => {
         await expect(page.locator('.card--pricing', { has: page.locator('[data-plan="osviceni"]') })).toHaveClass(/pricing-card--recommended/);
     });
 
+    test('feature kontext nabizi navrat na relevantni bezplatny nahled', async ({ page }) => {
+        await page.goto('/cenik.html?source=inline_paywall&feature=numerologie_vyklad&plan=pruvodce');
+        await waitForPageReady(page);
+
+        const previewLink = page.locator('[data-preview-destination]');
+        await expect(previewLink).toBeVisible();
+
+        const href = await previewLink.getAttribute('href');
+        expect(href).toContain('/numerologie.html');
+        expect(href).toContain('source=pricing_recommendation_preview');
+        expect(href).toContain('entry_source=inline_paywall');
+        expect(href).toContain('entry_feature=numerologie_vyklad');
+    });
+
+    test('bezny cenik bez feature kontextu neduplikuje preview CTA', async ({ page }) => {
+        await page.goto('/cenik.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('[data-preview-destination]')).toHaveCount(0);
+    });
+
+    test('zruseny checkout zobrazi recovery panel s kontextovym navratem', async ({ page }) => {
+        await page.goto('/cenik.html?payment=cancel&plan=pruvodce&source=inline_paywall&feature=tarot_multi_card');
+        await waitForPageReady(page);
+
+        const recovery = page.locator('#pricing-cancel-recovery');
+        await expect(recovery).toBeVisible();
+        await expect(recovery).toContainText('Platba nebyla');
+
+        const previewHref = await recovery.locator('[data-cancel-preview]').getAttribute('href');
+        expect(previewHref).toContain('/tarot.html');
+        expect(previewHref).toContain('source=pricing_recommendation_preview');
+        expect(previewHref).toContain('entry_source=inline_paywall');
+        expect(previewHref).toContain('entry_feature=tarot_multi_card');
+
+        const downsellHref = await recovery.locator('[data-cancel-downsell]').getAttribute('href');
+        expect(downsellHref).toContain('/rocni-horoskop.html');
+        expect(downsellHref).toContain('source=checkout_cancel_recovery');
+        expect(downsellHref).toContain('entry_plan=pruvodce');
+        expect(page.url()).not.toContain('payment=cancel');
+    });
+
     // ── Kritický test: nepřihlášený uživatel → správné přesměrování ──────────
 
     test('klik na checkout bez přihlášení přesměruje na prihlaseni.html', async ({ page }) => {
