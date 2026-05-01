@@ -297,10 +297,11 @@ test.describe('Tarot zdarma', () => {
         await page.goto('/tarot-zdarma.html');
         await waitForPageReady(page);
 
-        await expect(page.locator('.tarot-intent-card')).toHaveCount(5);
+        await expect(page.locator('.tarot-intent-card')).toHaveCount(6);
         await expect(page.locator('a[href*="tarot-ano-ne.html?source=tarot_free_intent"]')).toBeVisible();
         await expect(page.locator('a[href*="tarot-karta-dne.html?source=tarot_free_intent"]')).toBeVisible();
         await expect(page.locator('a[href*="tarot-laska.html?source=tarot_free_intent"]')).toBeVisible();
+        await expect(page.locator('a[href*="tarot-vyznam-karet.html?source=tarot_free_intent"]')).toBeVisible();
         await expect(page.locator('a[href*="tarot.html?source=tarot_free_intent"][href*="intent=three_cards"]')).toBeVisible();
     });
 });
