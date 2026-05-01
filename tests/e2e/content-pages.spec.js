@@ -297,9 +297,10 @@ test.describe('Tarot zdarma', () => {
         await page.goto('/tarot-zdarma.html');
         await waitForPageReady(page);
 
-        await expect(page.locator('.tarot-intent-card')).toHaveCount(4);
+        await expect(page.locator('.tarot-intent-card')).toHaveCount(5);
         await expect(page.locator('a[href*="tarot-ano-ne.html?source=tarot_free_intent"]')).toBeVisible();
         await expect(page.locator('a[href*="tarot-karta-dne.html?source=tarot_free_intent"]')).toBeVisible();
+        await expect(page.locator('a[href*="tarot-laska.html?source=tarot_free_intent"]')).toBeVisible();
         await expect(page.locator('a[href*="tarot.html?source=tarot_free_intent"][href*="intent=three_cards"]')).toBeVisible();
     });
 });
@@ -343,6 +344,53 @@ test.describe('Tarot karta dne', () => {
     test('mobilní layout nemá horizontální scroll', async ({ page }) => {
         await page.setViewportSize(MOBILE_VIEWPORT);
         await page.goto('/tarot-karta-dne.html');
+        await waitForPageReady(page);
+
+        const hasHorizontalScroll = await page.evaluate(() =>
+            document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+        );
+        expect(hasHorizontalScroll).toBe(false);
+    });
+});
+
+// ═══════════════════════════════════════════════════════════
+// TAROT NA LÁSKU (SEO landing)
+// ═══════════════════════════════════════════════════════════
+
+test.describe('Tarot na lásku', () => {
+
+    test('stránka se načte a má h1', async ({ page }) => {
+        await smokeTest(page, '/tarot-laska.html', 'lásku');
+    });
+
+    test('primární CTA a partnerská shoda drží atribuci', async ({ page }) => {
+        await page.goto('/tarot-laska.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('main a[href*="tarot.html?source=tarot_love_landing"][href*="intent=love_tarot"]').first()).toBeVisible();
+        await expect(page.locator('main a[href*="partnerska-shoda.html?source=tarot_love_landing"][href*="feature=partnerska_detail"]').first()).toBeVisible();
+    });
+
+    test('obsahuje vztahové další kroky a FAQ schema', async ({ page }) => {
+        await page.goto('/tarot-laska.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('.love-tarot-intent-card')).toHaveCount(5);
+        await expect(page.locator('a[href*="cenik.html?plan=pruvodce"][href*="source=tarot_love_landing"]')).toBeVisible();
+
+        const ldTypes = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((script) => {
+            try {
+                return JSON.parse(script.textContent || '{}')['@type'];
+            } catch {
+                return null;
+            }
+        }));
+        expect(ldTypes).toContain('FAQPage');
+    });
+
+    test('mobilní layout nemá horizontální scroll', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.goto('/tarot-laska.html');
         await waitForPageReady(page);
 
         const hasHorizontalScroll = await page.evaluate(() =>

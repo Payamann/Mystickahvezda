@@ -58,6 +58,11 @@ Mandate: grow profit, not just ship features. The near-term strategy is to turn 
    - The page links into the existing tarot tool with `source=tarot_daily_card_landing`, preserves FAQ schema, and routes users to ANO/NE, three-card tarot, angel cards, or Premium.
    - `tarot-zdarma.html` and the header dropdown now point daily-card visitors to this focused entry page instead of a generic tarot jump.
 
+10. Love tarot SEO entry
+   - Added `tarot-laska.html` for the "tarot na lásku / výklad na lásku" intent.
+   - The page routes visitors to love-focused tarot, ANO/NE, partner match, mentor, and Premium with `source=tarot_love_landing` or `source=tarot_love_intent`.
+   - This connects SEO demand for relationship questions to the existing `partnerska-shoda.html` monetization path.
+
 ## External Market Signals
 
 - eTarot ranks around a broad free tarot hub with clear sub-intents: one-card reading, daily card, monthly card, annual card. Source: https://etarot.cz/
@@ -90,8 +95,8 @@ Mandate: grow profit, not just ship features. The near-term strategy is to turn 
 
 1. Build free-tool landing clusters
    - Tarot cluster: ANO/NE, karta dne, 3 karty, keltsky kriz, vyklad na lasku.
-   - Shipped: ANO/NE, tarot zdarma hub, and karta dne.
-   - Remaining: focused pages for 3-card tarot, Celtic Cross, and love tarot.
+   - Shipped: ANO/NE, tarot zdarma hub, karta dne, and love tarot.
+   - Remaining: focused pages for 3-card tarot and Celtic Cross.
    - Numerology cluster: cislo osudu, osobni rok 2026, partnerska numerologie, vyznam data narozeni.
    - Horoscope cluster: denni, tydenni, mesicni, rocni, znameni-specific internal links.
 

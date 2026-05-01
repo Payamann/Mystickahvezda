@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load header and footer in parallel for faster initial paint
     // Use high priority for header as it affects LCP/CLS
     await Promise.all([
-        loadComponent('header-placeholder', `${basePath}components/header.html?v=4`, basePath, true),
+        loadComponent('header-placeholder', `${basePath}components/header.html?v=5`, basePath, true),
         loadComponent('footer-placeholder', `${basePath}components/footer.html?v=12`, basePath, false)
     ]);
 

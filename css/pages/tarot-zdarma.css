@@ -154,6 +154,10 @@
             margin-top: 2rem;
         }
 
+        .tarot-intent-grid--wide {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+
         .tarot-intent-card {
             min-height: 190px;
             padding: 1.25rem;
