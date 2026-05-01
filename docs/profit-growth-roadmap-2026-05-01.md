@@ -53,6 +53,11 @@ Mandate: grow profit, not just ship features. The near-term strategy is to turn 
    - `tarot-ano-ne.html` listens for the banner and keeps result actions above it on mobile, so first-value CTAs remain reachable before consent is saved.
    - Added E2E coverage for the mobile result + cookie-banner overlap case.
 
+9. Tarot daily-card SEO entry
+   - Added `tarot-karta-dne.html` as a dedicated landing page for the "tarot karta dne zdarma" intent.
+   - The page links into the existing tarot tool with `source=tarot_daily_card_landing`, preserves FAQ schema, and routes users to ANO/NE, three-card tarot, angel cards, or Premium.
+   - `tarot-zdarma.html` and the header dropdown now point daily-card visitors to this focused entry page instead of a generic tarot jump.
+
 ## External Market Signals
 
 - eTarot ranks around a broad free tarot hub with clear sub-intents: one-card reading, daily card, monthly card, annual card. Source: https://etarot.cz/
@@ -85,6 +90,8 @@ Mandate: grow profit, not just ship features. The near-term strategy is to turn 
 
 1. Build free-tool landing clusters
    - Tarot cluster: ANO/NE, karta dne, 3 karty, keltsky kriz, vyklad na lasku.
+   - Shipped: ANO/NE, tarot zdarma hub, and karta dne.
+   - Remaining: focused pages for 3-card tarot, Celtic Cross, and love tarot.
    - Numerology cluster: cislo osudu, osobni rok 2026, partnerska numerologie, vyznam data narozeni.
    - Horoscope cluster: denni, tydenni, mesicni, rocni, znameni-specific internal links.
 
