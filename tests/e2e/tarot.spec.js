@@ -92,6 +92,18 @@ test.describe('Tarot', () => {
         await expect(page.locator('.tarot-practical-advice')).toBeVisible();
     });
 
+    test('card parametr použije konkrétní kartu pro výklad jedné karty', async ({ page }) => {
+        await page.goto('/tarot.html?card=Hvězda&source=e2e');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#tarot-card-context')).toContainText('Hvězda');
+        await page.locator('[data-spread-type="Jedna karta"]').first().click();
+
+        await expect(page.locator('#tarot-results')).toBeVisible({ timeout: 9000 });
+        await expect(page.locator('#tarot-results .tarot-card-image')).toHaveAttribute('alt', /Hvězda/, { timeout: 9000 });
+        await expect(page.locator('#interpretations-container')).toContainText('Hvězda', { timeout: 9000 });
+    });
+
     test('free teaser pro tři karty ukáže zamčené karty a pošle funnel event', async ({ page }) => {
         await page.evaluate(() => {
             localStorage.removeItem('tarot_free_usage');

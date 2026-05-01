@@ -94,6 +94,36 @@ html body .mh-inline-4665ff48a5 { font-size: 4rem; }
     color: var(--color-silver-mist);
 }
 
+.tarot-card-context {
+    max-width: 760px;
+    margin: 0 auto 1.25rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid rgba(212, 175, 55, 0.26);
+    border-radius: 10px;
+    background: rgba(212, 175, 55, 0.08);
+    text-align: left;
+}
+
+.tarot-card-context span {
+    color: var(--color-mystic-gold);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.tarot-card-context strong {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--color-starlight);
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+}
+
+.tarot-card-context p {
+    margin: 0.35rem 0 0;
+    color: var(--color-silver-mist);
+}
+
 .tarot-meaning-bridge {
     display: flex;
     align-items: center;

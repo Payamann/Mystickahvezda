@@ -109,6 +109,44 @@ function bindTarotImageFallbacks(root) {
     });
 }
 
+function normalizeTarotCardName(value) {
+    return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+}
+
+function getRequestedTarotCardName() {
+    const rawCard = new URLSearchParams(window.location.search).get('card');
+    if (!rawCard) return null;
+
+    const directMatch = TAROT_CARDS[rawCard] ? rawCard : null;
+    if (directMatch) return directMatch;
+
+    const normalizedCard = normalizeTarotCardName(rawCard);
+    return TAROT_CARDS_ARRAY.find((name) => normalizeTarotCardName(name) === normalizedCard) || null;
+}
+
+function renderRequestedCardContext(cardName) {
+    if (!cardName || document.getElementById('tarot-card-context')) return;
+
+    const deckContainer = document.querySelector('.tarot-deck');
+    const sectionContainer = deckContainer?.closest('.section')?.querySelector('.container');
+    const card = TAROT_CARDS[cardName];
+    if (!sectionContainer || !card) return;
+
+    const context = document.createElement('div');
+    context.id = 'tarot-card-context';
+    context.className = 'tarot-card-context';
+    context.innerHTML = `
+        <span>Výklad navazuje na kartu z katalogu</span>
+        <strong>${escapeHtml(cardName)}</strong>
+        <p>${escapeHtml(card.meaning || 'Tato karta bude použita jako výchozí energie pro výklad jedné karty.')}</p>
+    `;
+    sectionContainer.prepend(context);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     await loadTarotData();
     initTarot();
@@ -136,6 +174,9 @@ function initTarot() {
     const deckContainer = document.querySelector('.tarot-deck');
 
     if (!deckContainer) return;
+
+    const requestedCardName = getRequestedTarotCardName();
+    renderRequestedCardContext(requestedCardName);
 
     // Create Results Container if not exists
     let resultsContainer = document.getElementById('tarot-results');
@@ -277,6 +318,16 @@ async function startReading(spreadType, isSoftGated = false) {
     if (spreadType === 'Celtic Cross') numCards = 10;
 
     const drawnCardNames = [];
+    const requestedCardName = getRequestedTarotCardName();
+
+    if (spreadType === 'Jedna karta' && requestedCardName && cardsWithImages.includes(requestedCardName)) {
+        drawnCardNames.push(requestedCardName);
+        window.MH_ANALYTICS?.trackAction?.('tarot_card_context_used', {
+            source: 'tarot_card_parameter',
+            card: requestedCardName,
+            spread_type: spreadType
+        });
+    }
 
     while (drawnCardNames.length < numCards && drawnCardNames.length < cardsWithImages.length) {
         const randomCard = cardsWithImages[Math.floor(Math.random() * cardsWithImages.length)];
