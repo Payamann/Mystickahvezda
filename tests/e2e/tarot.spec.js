@@ -217,4 +217,37 @@ test.describe('Tarot Ano/Ne', () => {
         );
         expect(hasHorizontalScroll).toBe(false);
     });
+
+    test('mobilní cookie lišta nepřekrývá akce výsledku', async ({ page }) => {
+        await page.setViewportSize({ width: 393, height: 851 });
+        await page.addInitScript(() => {
+            localStorage.removeItem('mh_cookie_prefs');
+            localStorage.removeItem('cookieConsent');
+        });
+        await page.goto('/tarot-ano-ne.html');
+        await waitForPageReady(page);
+
+        await page.fill('#question-input', 'Mám tomu dát ještě šanci?');
+        await page.locator('.tarot-card').first().click();
+
+        await expect(page.locator('#result-panel')).toHaveClass(/show/, { timeout: 2500 });
+        await expect(page.locator('#cookie-banner')).toBeVisible({ timeout: 4500 });
+        await expect(page.locator('#cookie-banner')).toHaveClass(/visible/, { timeout: 5000 });
+        await page.waitForTimeout(700);
+
+        const metrics = await page.evaluate(() => {
+            const bannerRect = document.getElementById('cookie-banner').getBoundingClientRect();
+            const resetRect = document.getElementById('btn-reset').getBoundingClientRect();
+            return {
+                bannerHeight: bannerRect.height,
+                bannerTop: bannerRect.top,
+                resetBottom: resetRect.bottom,
+                viewportHeight: window.innerHeight
+            };
+        });
+
+        expect(metrics.bannerHeight).toBeLessThan(180);
+        expect(metrics.resetBottom).toBeLessThanOrEqual(metrics.bannerTop - 8);
+        expect(metrics.bannerTop).toBeLessThan(metrics.viewportHeight);
+    });
 });

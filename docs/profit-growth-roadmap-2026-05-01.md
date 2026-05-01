@@ -48,6 +48,11 @@ Mandate: grow profit, not just ship features. The near-term strategy is to turn 
    - After the free one-card answer, visitors see a contextual bridge into Premium, one-card tarot, three-card tarot, or angel cards.
    - Premium CTA preserves `source=tarot_yes_no_result` and `feature=tarot_multi_card`, and sends public funnel events for paywall view/click.
 
+8. Consent banner conversion friction
+   - The global cookie banner is more compact and now marks the root scroll container while visible.
+   - `tarot-ano-ne.html` listens for the banner and keeps result actions above it on mobile, so first-value CTAs remain reachable before consent is saved.
+   - Added E2E coverage for the mobile result + cookie-banner overlap case.
+
 ## External Market Signals
 
 - eTarot ranks around a broad free tarot hub with clear sub-intents: one-card reading, daily card, monthly card, annual card. Source: https://etarot.cz/

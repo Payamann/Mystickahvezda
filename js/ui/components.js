@@ -201,6 +201,11 @@ export function initCookieBanner() {
 
     const K = 'mh_cookie_prefs';
 
+    function setCookieBannerActive(isActive) {
+        document.body?.classList.toggle('cookie-banner-active', isActive);
+        document.documentElement?.classList.toggle('cookie-banner-active', isActive);
+    }
+
     function saveCookieConsent(analytics, marketing) {
         localStorage.setItem(K, JSON.stringify({ analytics, marketing, ts: Date.now() }));
         // Fire GA consent update immediately (not just on next page load)
@@ -209,6 +214,8 @@ export function initCookieBanner() {
         }));
         banner.classList.remove('visible');
         banner.hidden = true;
+        setCookieBannerActive(false);
+        window.dispatchEvent(new CustomEvent('mh_cookie_banner_hidden'));
     }
 
     // Check if user already acted (support both old and new key)
@@ -219,10 +226,15 @@ export function initCookieBanner() {
     if (!alreadyDone) {
         setTimeout(() => {
             banner.hidden = false;
-            banner.classList.add('visible');
+            setCookieBannerActive(true);
+            requestAnimationFrame(() => {
+                banner.classList.add('visible');
+                window.dispatchEvent(new CustomEvent('mh_cookie_banner_visible'));
+            });
         }, 1000);
     } else {
         banner.hidden = true;
+        setCookieBannerActive(false);
     }
 
     acceptBtn.addEventListener('click', () => saveCookieConsent(true, true));

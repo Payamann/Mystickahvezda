@@ -6,6 +6,11 @@
     var K = 'mh_cookie_prefs';
     var preferencesOpen = false;
 
+    function setActiveState(isActive) {
+        if (document.body) document.body.classList.toggle('cookie-banner-active', isActive);
+        if (document.documentElement) document.documentElement.classList.toggle('cookie-banner-active', isActive);
+    }
+
     /** Hide banner completely (after consent given) */
     function hide() {
         var b = document.getElementById('cookie-banner');
@@ -14,7 +19,8 @@
             b.hidden = true;
         }
         preferencesOpen = false;
-        if (document.body) document.body.classList.remove('cookie-banner-active');
+        setActiveState(false);
+        window.dispatchEvent(new CustomEvent('mh_cookie_banner_hidden'));
     }
 
     /** Show banner via CSS class (matches style.v2.css transform animation) */
@@ -23,8 +29,11 @@
         if (b) {
             preferencesOpen = true;
             b.hidden = false;
-            if (document.body) document.body.classList.add('cookie-banner-active');
-            requestAnimationFrame(function () { b.classList.add('visible'); });
+            setActiveState(true);
+            requestAnimationFrame(function () {
+                b.classList.add('visible');
+                window.dispatchEvent(new CustomEvent('mh_cookie_banner_visible'));
+            });
         }
     }
 

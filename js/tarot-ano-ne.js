@@ -141,6 +141,30 @@
         element.classList.toggle('mh-block-visible', visible);
     }
 
+    function getVisibleCookieBannerOffset() {
+        const banner = document.getElementById('cookie-banner');
+        if (!banner || banner.hidden || !banner.classList.contains('visible')) return 0;
+
+        const viewportHeight = window.visualViewport?.height || window.innerHeight;
+        const rect = banner.getBoundingClientRect();
+        return Math.max(0, viewportHeight - rect.top + 16);
+    }
+
+    function scrollTarotResultIntoView(panel, behavior = 'smooth') {
+        if (!panel) return;
+
+        const viewportHeight = window.visualViewport?.height || window.innerHeight;
+        const reservedBottom = getVisibleCookieBannerOffset();
+        const availableHeight = Math.max(320, viewportHeight - reservedBottom);
+        const rect = panel.getBoundingClientRect();
+        const targetTop = window.scrollY + rect.top - Math.max(86, (availableHeight - rect.height) / 2);
+
+        window.scrollTo({
+            top: Math.max(0, targetTop),
+            behavior
+        });
+    }
+
     function getResultMetadata(answerKey, ans, question) {
         return {
             answer_key: answerKey,
@@ -248,7 +272,8 @@
             const panel = document.getElementById('result-panel');
             panel.classList.add('show');
             revealTarotYesNoNextStep(key, ans, q);
-            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            scrollTarotResultIntoView(panel);
+            setTimeout(() => scrollTarotResultIntoView(panel), 320);
         }, 800);
     }
 
@@ -293,6 +318,13 @@
         }
 
         bindTarotYesNoBridgeLinks();
+
+        window.addEventListener('mh_cookie_banner_visible', () => {
+            const panel = document.getElementById('result-panel');
+            if (panel?.classList.contains('show')) {
+                scrollTarotResultIntoView(panel);
+            }
+        });
     }
 
     // Spolehlivě ukotví listenery i pro případy dynamického loadu
