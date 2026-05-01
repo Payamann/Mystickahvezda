@@ -12,26 +12,66 @@ function getTarotPlanForSpread(spreadType) {
     return spreadType === 'Celtic Cross' ? 'vip-majestrat' : 'pruvodce';
 }
 
+function getTarotFeatureForSpread(spreadType) {
+    return spreadType === 'Celtic Cross' ? 'tarot_celtic_cross' : 'tarot_multi_card';
+}
+
 function buildTarotUpgradeUrl(spreadType, source = 'tarot_inline_upsell') {
     const planId = getTarotPlanForSpread(spreadType);
     const pricingUrl = new URL('/cenik.html', window.location.origin);
     pricingUrl.searchParams.set('plan', planId);
     pricingUrl.searchParams.set('source', source);
-    pricingUrl.searchParams.set('feature', spreadType === 'Celtic Cross' ? 'tarot_celtic_cross' : 'tarot_multi_card');
+    pricingUrl.searchParams.set('feature', getTarotFeatureForSpread(spreadType));
     return `${pricingUrl.pathname}${pricingUrl.search}`;
+}
+
+async function trackTarotFunnelEvent(eventName, source, spreadType, metadata = {}) {
+    try {
+        const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+        if (!csrfToken) return;
+
+        await fetch(`${window.API_CONFIG?.BASE_URL || '/api'}/payment/funnel-event`, {
+            method: 'POST',
+            credentials: 'include',
+            keepalive: true,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({
+                eventName,
+                source,
+                feature: getTarotFeatureForSpread(spreadType),
+                planId: getTarotPlanForSpread(spreadType),
+                metadata: {
+                    path: window.location.pathname,
+                    spread_type: spreadType,
+                    ...metadata
+                }
+            })
+        });
+    } catch (error) {
+        console.warn('[Tarot funnel] Could not record event:', error.message);
+    }
 }
 
 function startTarotUpgradeFlow(spreadType, source = 'tarot_inline_upsell') {
     const planId = getTarotPlanForSpread(spreadType);
+    const feature = getTarotFeatureForSpread(spreadType);
     window.MH_ANALYTICS?.trackCTA?.(source, {
         plan_id: planId,
-        spread_type: spreadType
+        spread_type: spreadType,
+        feature
+    });
+
+    void trackTarotFunnelEvent('paywall_cta_clicked', source, spreadType, {
+        destination: '/cenik.html'
     });
 
     if (window.Auth?.startPlanCheckout) {
         window.Auth.startPlanCheckout(planId, {
             source,
-            feature: spreadType === 'Celtic Cross' ? 'tarot_celtic_cross' : 'tarot_multi_card',
+            feature,
             redirect: '/cenik.html',
             authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register'
         });
@@ -39,6 +79,24 @@ function startTarotUpgradeFlow(spreadType, source = 'tarot_inline_upsell') {
     }
 
     window.location.href = buildTarotUpgradeUrl(spreadType, source);
+}
+
+function getTarotUpgradeCopy(spreadType) {
+    const copy = {
+        'Tři karty': {
+            title: 'Odemkněte celý tříkartový výklad',
+            body: 'První karta ukázala začátek příběhu. Zbývající dvě karty doplní aktuální vliv a nejbližší krok, aby výklad dával praktický smysl.'
+        },
+        'Celtic Cross': {
+            title: 'Odemkněte celý Keltský kříž',
+            body: 'Keltský kříž dává sílu až jako deset pozic: situace, výzva, skryté vlivy, postoj, okolí i možný výsledek.'
+        }
+    };
+
+    return copy[spreadType] || {
+        title: 'Odemkněte hlubší tarotový výklad',
+        body: 'Pokračujte do celého výkladu s více kartami a jasnějším kontextem pro další krok.'
+    };
 }
 
 function bindTarotImageFallbacks(root) {
@@ -130,6 +188,9 @@ function initTarot() {
             if (spreadType !== 'Jedna karta') {
                 if (!window.Auth || !window.Auth.isLoggedIn()) {
                     window.Auth?.showToast('Přihlášení vyžadováno', 'Pro vstup do Hvězdného Průvodce se prosím přihlaste.', 'info');
+                    void trackTarotFunnelEvent('paywall_viewed', 'tarot_auth_gate', spreadType, {
+                        gate_reason: 'auth_required'
+                    });
                     startTarotUpgradeFlow(spreadType, 'tarot_auth_gate');
                     return;
                 }
@@ -145,6 +206,9 @@ function initTarot() {
 
                     if (usage.date === today && usage.count >= 1) {
                         window.Auth.showToast('Limit vyčerpán 🔒', 'Dnešní ukázka zdarma již byla vyčerpána. Získejte Premium pro neomezené výklady.', 'error');
+                        void trackTarotFunnelEvent('paywall_viewed', 'tarot_limit_gate', spreadType, {
+                            gate_reason: 'free_limit'
+                        });
                         startTarotUpgradeFlow(spreadType, 'tarot_limit_gate');
                         return;
                     }
@@ -232,6 +296,7 @@ async function startReading(spreadType, isSoftGated = false) {
     // Use responsive grid class based on number of cards
     // For Celtic Cross (10 cards), we might want a different grid or just standard grid-5 wrap
     const gridClass = numCards === 1 ? 'grid-1' : (numCards <= 3 ? `grid-${numCards}` : 'grid-5');
+    const upgradeCopy = getTarotUpgradeCopy(spreadType);
 
     // Build initial layout (cards face down)
     resultsContainer.innerHTML = `
@@ -250,10 +315,9 @@ async function startReading(spreadType, isSoftGated = false) {
                                 ${isLocked ? `
                                     <div class="premium-lock-overlay tarot-card-lock">
                                         <div class="lock-icon tarot-card-lock__icon">🔒</div>
-                                        <h2 class="tarot-card-lock__title">Pouze pro Premium</h2>
+                                        <h2 class="tarot-card-lock__title">${escapeHtml(upgradeCopy.title)}</h2>
                                         <p class="tarot-card-lock__copy">
-                                            Hvězdný Průvodce je exkluzivní zdroj moudrosti pro naše předplatitele.<br>
-                                            Odemkněte plný potenciál a získejte přístup ke všem výkladům.
+                                            ${escapeHtml(upgradeCopy.body)}
                                         </p>
                                         <a href="${buildTarotUpgradeUrl(spreadType, 'tarot_locked_card')}" class="btn btn--primary tarot-upgrade-btn">Získat Premium</a>
                                     </div>
@@ -275,8 +339,8 @@ async function startReading(spreadType, isSoftGated = false) {
             <div id="interpretations-container" class="tarot-interpretations"></div>
              ${isSoftGated ? `
                 <div class="text-center mt-xl p-lg tarot-soft-gate">
-                    <h3 class="tarot-soft-gate__title">Odemkněte svůj osud</h3>
-                    <p class="mb-lg">Právě jste nahlédli za oponu. Zbývajících ${numCards - 1} karet skrývá klíč k pochopení celé situace.</p>
+                    <h3 class="tarot-soft-gate__title">${escapeHtml(upgradeCopy.title)}</h3>
+                    <p class="mb-lg">${escapeHtml(upgradeCopy.body)}</p>
                     <a href="${buildTarotUpgradeUrl(spreadType, 'tarot_teaser_banner')}" class="btn btn--primary tarot-upgrade-btn">Získat Premium a odhalit vše</a>
                 </div>
             ` : ''}
@@ -285,6 +349,21 @@ async function startReading(spreadType, isSoftGated = false) {
 
     resultsContainer.classList.remove('hidden');
     bindTarotImageFallbacks(resultsContainer);
+    if (isSoftGated) {
+        window.MH_ANALYTICS?.trackAction?.('tarot_soft_gate_viewed', {
+            source: 'tarot_teaser_banner',
+            feature: getTarotFeatureForSpread(spreadType),
+            plan_id: getTarotPlanForSpread(spreadType),
+            spread_type: spreadType,
+            cards_total: numCards,
+            cards_locked: Math.max(0, numCards - 1)
+        });
+        void trackTarotFunnelEvent('paywall_viewed', 'tarot_teaser_banner', spreadType, {
+            gate_reason: 'teaser_after_free_card',
+            cards_total: numCards,
+            cards_locked: Math.max(0, numCards - 1)
+        });
+    }
     resultsContainer.querySelectorAll('.tarot-upgrade-btn').forEach((link) => {
         link.addEventListener('click', (event) => {
             event.preventDefault();

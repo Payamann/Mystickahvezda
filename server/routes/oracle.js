@@ -288,8 +288,8 @@ function buildFallbackTarotSummaryResponse({ safeSpreadType, safeCards }) {
 
     return [
         `Souhrn výkladu ${safeSpreadType}: ${cardNames}.`,
-        'Celek ukazuje cestu od prvního napětí k rozhodnutí, které potřebuje jednoduchost. Nehledej dokonalý význam každé karty zvlášť; sleduj, jak spolu mění tón příběhu.',
-        'Praktický krok: vrať se k pozici, která působí nejnepříjemněji. Tam výklad pravděpodobně ukazuje místo, kde máš největší vliv.'
+        'Celek ukazuje cestu od prvního napětí k rozhodnutí, které potřebuje jednoduchost. Teď to pro tebe znamená hlavně zpomalit, pojmenovat skutečný problém a oddělit vlastní vliv od věcí, které už nemáš tlačit silou.',
+        'Praktický krok na příštích 24 hodin: vrať se k pozici, která působí nejnepříjemněji, a napiš jednu větu, co po tobě chce změnit dnes. Tam výklad pravděpodobně ukazuje místo, kde máš největší vliv.'
     ].join('\n\n');
 }
 

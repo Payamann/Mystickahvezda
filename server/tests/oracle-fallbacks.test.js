@@ -123,6 +123,8 @@ describe('Oracle AI fallbacks', () => {
         expect(res.body.success).toBe(true);
         expect(res.body.fallback).toBe(true);
         expect(res.body.response).toEqual(expect.stringContaining('The Moon'));
+        expect(res.body.response).toEqual(expect.stringContaining('Teď to pro tebe znamená'));
+        expect(res.body.response).toEqual(expect.stringContaining('Praktický krok na příštích 24 hodin'));
     });
 
     test('POST /api/tarot-summary requires Premium for multi-card summaries', async () => {
