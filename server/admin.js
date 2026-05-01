@@ -465,6 +465,104 @@ function analyticsVisitFromEvent(event) {
     return normalizeDimension(metadata.visitId || metadata.visit_id || metadata.sessionId || metadata.session_id);
 }
 
+function analyticsMetadataFromEvent(event) {
+    return event?.metadata && typeof event.metadata === 'object' ? event.metadata : {};
+}
+
+function analyticsAttributionValue(metadata, keys, fallback) {
+    for (const key of keys) {
+        const value = normalizeDimension(metadata[key]);
+        if (value) return value;
+    }
+    return fallback;
+}
+
+function createAnalyticsAttributionSegment(source, campaign, medium, entryFeature) {
+    return {
+        source,
+        campaign,
+        medium,
+        entryFeature,
+        totalEvents: 0,
+        visitors: 0,
+        pageViews: 0,
+        ctaClicks: 0,
+        signups: 0,
+        checkouts: 0,
+        purchases: 0,
+        errors: 0,
+        visitorToSignupRate: 0,
+        visitorToCheckoutRate: 0,
+        visitorIds: new Set()
+    };
+}
+
+function getAnalyticsAttributionKey(source, campaign, medium, entryFeature) {
+    return `${source}\u0000${campaign}\u0000${medium}\u0000${entryFeature}`;
+}
+
+function addAnalyticsAttributionEvent(segments, event) {
+    const eventType = normalizeDimension(event.event_type) || 'unknown';
+    const metadata = analyticsMetadataFromEvent(event);
+    const source = analyticsAttributionValue(metadata, ['first_source', 'last_source', 'referrer_host'], '(direct)');
+    const campaign = analyticsAttributionValue(metadata, ['first_campaign', 'last_campaign'], '(none)');
+    const medium = analyticsAttributionValue(metadata, ['first_medium', 'last_medium'], '(none)');
+    const entryFeature = analyticsAttributionValue(metadata, ['entry_feature', 'feature'], normalizeDimension(event.feature) || '(none)');
+    const key = getAnalyticsAttributionKey(source, campaign, medium, entryFeature);
+
+    if (!segments.has(key)) {
+        segments.set(key, createAnalyticsAttributionSegment(source, campaign, medium, entryFeature));
+    }
+
+    const segment = segments.get(key);
+    const visitorId = analyticsVisitorFromEvent(event);
+    segment.totalEvents += 1;
+    if (visitorId) segment.visitorIds.add(visitorId);
+    if (eventType === 'page_view') segment.pageViews += 1;
+    if (eventType === 'cta_clicked') segment.ctaClicks += 1;
+    if (eventType === 'signup_completed') segment.signups += 1;
+    if (eventType === 'begin_checkout') segment.checkouts += 1;
+    if (eventType === 'purchase' || eventType === 'purchase_completed') segment.purchases += 1;
+    if (eventType === 'client_error' || eventType === 'server_error' || eventType === 'error') segment.errors += 1;
+}
+
+function buildAnalyticsAttributionSegments(events, limit = 12) {
+    const segments = new Map();
+
+    for (const event of events) {
+        addAnalyticsAttributionEvent(segments, event);
+    }
+
+    return [...segments.values()]
+        .map(segment => {
+            const visitors = segment.visitorIds.size;
+            return {
+                source: segment.source,
+                campaign: segment.campaign,
+                medium: segment.medium,
+                entryFeature: segment.entryFeature,
+                totalEvents: segment.totalEvents,
+                visitors,
+                pageViews: segment.pageViews,
+                ctaClicks: segment.ctaClicks,
+                signups: segment.signups,
+                checkouts: segment.checkouts,
+                purchases: segment.purchases,
+                errors: segment.errors,
+                visitorToSignupRate: visitors > 0 ? Math.round((segment.signups / visitors) * 1000) / 10 : 0,
+                visitorToCheckoutRate: visitors > 0 ? Math.round((segment.checkouts / visitors) * 1000) / 10 : 0
+            };
+        })
+        .sort((a, b) => b.checkouts - a.checkouts
+            || b.signups - a.signups
+            || b.ctaClicks - a.ctaClicks
+            || b.pageViews - a.pageViews
+            || b.totalEvents - a.totalEvents
+            || a.source.localeCompare(b.source)
+            || a.campaign.localeCompare(b.campaign))
+        .slice(0, limit);
+}
+
 function createAnalyticsDailyBucket(date) {
     return {
         date,
@@ -499,7 +597,7 @@ export function buildAnalyticsReport(events = [], { days = DEFAULT_ANALYTICS_DAY
     for (const event of events.slice(0, limit)) {
         const eventType = normalizeDimension(event.event_type) || 'unknown';
         const feature = normalizeDimension(event.feature) || '(none)';
-        const metadata = event?.metadata && typeof event.metadata === 'object' ? event.metadata : {};
+        const metadata = analyticsMetadataFromEvent(event);
         const path = analyticsPathFromEvent(event);
         const date = getEventDate(event.created_at) || 'unknown';
         const visitorId = analyticsVisitorFromEvent(event);
@@ -573,6 +671,7 @@ export function buildAnalyticsReport(events = [], { days = DEFAULT_ANALYTICS_DAY
         byEvent,
         topFeatures: topCounter(byFeature),
         topPaths: topCounter(byPath),
+        attributionSegments: buildAnalyticsAttributionSegments(events.slice(0, limit)),
         daily: Object.values(byDay).sort((a, b) => a.date.localeCompare(b.date)),
         recentErrors: recentErrors.slice(0, 25)
     };
@@ -590,6 +689,43 @@ export function buildAnalyticsDailyCsv(report) {
         day.signups,
         day.checkouts,
         day.errors
+    ].map(csvCell).join(','));
+
+    return [header.join(','), ...rows].join('\n');
+}
+
+export function buildAnalyticsAttributionCsv(report) {
+    const header = [
+        'source',
+        'campaign',
+        'medium',
+        'entry_feature',
+        'total_events',
+        'visitors',
+        'page_views',
+        'cta_clicks',
+        'signups',
+        'checkouts',
+        'purchases',
+        'errors',
+        'visitor_to_signup_rate',
+        'visitor_to_checkout_rate'
+    ];
+    const rows = (report.attributionSegments || []).map((segment) => [
+        segment.source,
+        segment.campaign,
+        segment.medium,
+        segment.entryFeature,
+        segment.totalEvents,
+        segment.visitors,
+        segment.pageViews,
+        segment.ctaClicks,
+        segment.signups,
+        segment.checkouts,
+        segment.purchases,
+        segment.errors,
+        segment.visitorToSignupRate,
+        segment.visitorToCheckoutRate
     ].map(csvCell).join(','));
 
     return [header.join(','), ...rows].join('\n');
@@ -820,9 +956,12 @@ router.get('/analytics', authenticateToken, requireAdmin, async (req, res) => {
         const report = buildAnalyticsReport(events || [], { days, limit });
 
         if (req.query.format === 'csv') {
+            const csvView = req.query.view === 'attribution' ? 'attribution' : 'daily';
             res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-            res.setHeader('Content-Disposition', `attachment; filename="analytics-daily-${days}d.csv"`);
-            return res.send(buildAnalyticsDailyCsv(report));
+            res.setHeader('Content-Disposition', `attachment; filename="analytics-${csvView}-${days}d.csv"`);
+            return res.send(csvView === 'attribution'
+                ? buildAnalyticsAttributionCsv(report)
+                : buildAnalyticsDailyCsv(report));
         }
 
         res.json({

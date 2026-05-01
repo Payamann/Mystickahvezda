@@ -1,4 +1,5 @@
 import {
+    buildAnalyticsAttributionCsv,
     buildAnalyticsDailyCsv,
     buildAnalyticsReport,
     buildFunnelDailyCsv,
@@ -374,6 +375,108 @@ describe('Admin first-party analytics helpers', () => {
         expect(buildAnalyticsDailyCsv(report)).toContain('date,total,visitors,visits,page_views');
         expect(buildAnalyticsDailyCsv(report)).toContain('2026-04-28');
     });
+
+    test('segments first-party analytics by campaign attribution', () => {
+        const report = buildAnalyticsReport([
+            {
+                id: 'pin-1',
+                event_type: 'page_view',
+                feature: null,
+                metadata: {
+                    path: '/tarot-vyznam-karet.html',
+                    clientId: 'client-pin',
+                    visitId: 'visit-pin',
+                    first_source: 'pinterest',
+                    first_medium: 'organic',
+                    first_campaign: 'tarot_meanings',
+                    entry_feature: 'tarot'
+                },
+                created_at: '2026-04-28T08:00:00.000Z'
+            },
+            {
+                id: 'pin-2',
+                event_type: 'cta_clicked',
+                feature: 'tarot',
+                metadata: {
+                    path: '/tarot-vyznam-karet.html',
+                    clientId: 'client-pin',
+                    visitId: 'visit-pin',
+                    first_source: 'pinterest',
+                    first_medium: 'organic',
+                    first_campaign: 'tarot_meanings',
+                    entry_feature: 'tarot'
+                },
+                created_at: '2026-04-28T08:02:00.000Z'
+            },
+            {
+                id: 'pin-3',
+                event_type: 'signup_completed',
+                feature: 'tarot',
+                metadata: {
+                    path: '/prihlaseni.html',
+                    clientId: 'client-pin',
+                    visitId: 'visit-pin',
+                    first_source: 'pinterest',
+                    first_medium: 'organic',
+                    first_campaign: 'tarot_meanings',
+                    entry_feature: 'tarot'
+                },
+                created_at: '2026-04-28T08:04:00.000Z'
+            },
+            {
+                id: 'pin-4',
+                event_type: 'begin_checkout',
+                feature: 'tarot',
+                metadata: {
+                    path: '/cenik.html',
+                    clientId: 'client-pin',
+                    visitId: 'visit-pin',
+                    first_source: 'pinterest',
+                    first_medium: 'organic',
+                    first_campaign: 'tarot_meanings',
+                    entry_feature: 'tarot'
+                },
+                created_at: '2026-04-28T08:06:00.000Z'
+            },
+            {
+                id: 'fb-1',
+                event_type: 'page_view',
+                feature: null,
+                metadata: {
+                    path: '/',
+                    clientId: 'client-fb',
+                    visitId: 'visit-fb',
+                    first_source: 'facebook',
+                    first_medium: 'social',
+                    first_campaign: 'daily_horoscope'
+                },
+                created_at: '2026-04-28T09:00:00.000Z'
+            }
+        ], { days: 7 });
+
+        expect(report.attributionSegments[0]).toMatchObject({
+            source: 'pinterest',
+            campaign: 'tarot_meanings',
+            medium: 'organic',
+            entryFeature: 'tarot',
+            totalEvents: 4,
+            visitors: 1,
+            pageViews: 1,
+            ctaClicks: 1,
+            signups: 1,
+            checkouts: 1,
+            visitorToSignupRate: 100,
+            visitorToCheckoutRate: 100
+        });
+        expect(report.attributionSegments).toContainEqual(expect.objectContaining({
+            source: 'facebook',
+            campaign: 'daily_horoscope',
+            medium: 'social',
+            pageViews: 1
+        }));
+        expect(buildAnalyticsAttributionCsv(report)).toContain('source,campaign,medium,entry_feature');
+        expect(buildAnalyticsAttributionCsv(report)).toContain('"pinterest","tarot_meanings","organic","tarot"');
+    });
 });
 
 describe('Admin funnel API access control', () => {
@@ -444,7 +547,13 @@ describe('Admin funnel API access control', () => {
             {
                 event_type: 'page_view',
                 feature: null,
-                metadata: { path: uniquePath },
+                metadata: {
+                    path: uniquePath,
+                    clientId: `client-${Date.now()}`,
+                    first_source: 'pinterest',
+                    first_medium: 'organic',
+                    first_campaign: 'admin_analytics_test'
+                },
                 created_at: new Date().toISOString()
             },
             {
@@ -478,6 +587,16 @@ describe('Admin funnel API access control', () => {
         expect(csvRes.headers['content-type']).toContain('text/csv');
         expect(csvRes.headers['content-disposition']).toContain('analytics-daily-1d.csv');
         expect(csvRes.text).toContain('date,total,visitors,visits,page_views');
+
+        const attributionCsvRes = await request(app)
+            .get('/api/admin/analytics?days=1&format=csv&view=attribution')
+            .set('Authorization', `Bearer ${token}`)
+            .expect(200);
+
+        expect(attributionCsvRes.headers['content-type']).toContain('text/csv');
+        expect(attributionCsvRes.headers['content-disposition']).toContain('analytics-attribution-1d.csv');
+        expect(attributionCsvRes.text).toContain('source,campaign,medium,entry_feature');
+        expect(attributionCsvRes.text).toContain('"pinterest","admin_analytics_test","organic"');
     });
 });
 
