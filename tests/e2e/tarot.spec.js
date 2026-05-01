@@ -238,6 +238,23 @@ test.describe('Tarot Ano/Ne', () => {
         expect(href).toContain('feature=tarot_multi_card');
     });
 
+    test('výsledek tarot ano/ne lze uložit jako sdílitelný obrázek', async ({ page }) => {
+        await page.goto('/tarot-ano-ne.html');
+        await waitForPageReady(page);
+
+        await page.fill('#question-input', 'Mám dnes udělat první krok?');
+        await page.locator('.tarot-card').first().click();
+
+        await expect(page.locator('#result-panel')).toHaveClass(/show/, { timeout: 2500 });
+        await expect(page.locator('#btn-save-result-image')).toBeVisible();
+        await expect.poll(() => page.evaluate(() => Boolean(window.__lastTarotYesNoShareResult))).toBe(true);
+
+        const downloadPromise = page.waitForEvent('download');
+        await page.locator('#btn-save-result-image').click();
+        const download = await downloadPromise;
+        expect(download.suggestedFilename()).toMatch(/^tarot-ano-ne-.+\.png$/);
+    });
+
     test('obsahuje trust strip, FAQ blok a FAQ schema markup', async ({ page }) => {
         await page.goto('/tarot-ano-ne.html');
         await waitForPageReady(page);
