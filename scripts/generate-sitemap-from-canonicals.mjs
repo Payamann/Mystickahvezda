@@ -208,7 +208,8 @@ function inferMetadata(loc, file, existingMetadata) {
         '/slovnik.html',
         '/natalni-karta.html',
         '/numerologie.html',
-        '/partnerska-shoda.html'
+        '/partnerska-shoda.html',
+        '/tarot-vyznam-karet.html'
     ].includes(pathname);
 
     if (isHome) {

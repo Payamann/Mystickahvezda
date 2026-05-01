@@ -93,3 +93,41 @@ html body .mh-inline-4665ff48a5 { font-size: 4rem; }
 .tarot-summary-error {
     color: var(--color-silver-mist);
 }
+
+.tarot-meaning-bridge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 1.25rem auto 0;
+    padding: 1.25rem;
+    border: 1px solid rgba(212, 175, 55, 0.24);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.tarot-meaning-bridge span {
+    color: var(--color-mystic-gold);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.tarot-meaning-bridge h3 {
+    margin: 0.35rem 0;
+    color: var(--color-starlight);
+    font-size: 1.16rem;
+}
+
+.tarot-meaning-bridge p {
+    margin: 0;
+    color: var(--color-silver-mist);
+}
+
+@media (max-width: 680px) {
+    .tarot-meaning-bridge {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}

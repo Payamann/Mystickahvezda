@@ -188,6 +188,47 @@ test.describe('Tarot', () => {
     });
 });
 
+// ── Význam tarotových karet ─────────────────────────────────────────────────
+
+test.describe('Tarot význam karet', () => {
+    test('hub načte 78 karet a umí filtrovat katalog', async ({ page }) => {
+        await page.goto('/tarot-vyznam-karet.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('h1')).toContainText('Význam tarotových karet');
+
+        const canonical = await page.getAttribute('link[rel="canonical"]', 'href');
+        expect(canonical).toContain('tarot-vyznam-karet.html');
+
+        await expect(page.locator('.tarot-meaning-card')).toHaveCount(78, { timeout: 9000 });
+
+        await page.locator('#tarot-card-search').fill('Hvězda');
+        await expect(page.locator('.tarot-meaning-card h3')).toContainText('Hvězda');
+        const searchCount = await page.locator('.tarot-meaning-card').count();
+        expect(searchCount).toBeGreaterThanOrEqual(1);
+        expect(searchCount).toBeLessThan(78);
+
+        await page.locator('#tarot-card-search').fill('');
+        await page.locator('[data-tarot-filter="cups"]').click();
+        await expect(page.locator('.tarot-meaning-card')).toHaveCount(14);
+
+        const hasHorizontalScroll = await page.evaluate(() =>
+            document.documentElement.scrollWidth > document.documentElement.clientWidth
+        );
+        expect(hasHorizontalScroll).toBe(false);
+
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.goto('/tarot-vyznam-karet.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('.tarot-meaning-card')).toHaveCount(78, { timeout: 9000 });
+        const hasMobileHorizontalScroll = await page.evaluate(() =>
+            document.documentElement.scrollWidth > document.documentElement.clientWidth
+        );
+        expect(hasMobileHorizontalScroll).toBe(false);
+    });
+});
+
 // ── Tarot Ano/Ne stránka ─────────────────────────────────────────────────────
 
 test.describe('Tarot Ano/Ne', () => {
