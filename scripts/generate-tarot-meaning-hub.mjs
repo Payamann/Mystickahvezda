@@ -150,6 +150,43 @@ function getReadingAngles(group, name, meaning) {
     return base[group] || base.major;
 }
 
+function getRelatedCards(entries, index, limit = 3) {
+    const [name] = entries[index];
+    const group = getCardGroup(name);
+    const candidates = [];
+
+    const addCandidate = (candidate) => {
+        if (!candidate) return;
+        const [candidateName, candidateCard] = candidate;
+        if (!candidateName || candidateName === name) return;
+        if (candidates.some(([existingName]) => existingName === candidateName)) return;
+        candidates.push([candidateName, candidateCard]);
+    };
+
+    addCandidate(entries[index - 1]);
+    addCandidate(entries[index + 1]);
+
+    for (const entry of entries) {
+        if (candidates.length >= limit) break;
+        if (getCardGroup(entry[0]) === group) addCandidate(entry);
+    }
+
+    return candidates.slice(0, limit);
+}
+
+function buildRelatedCardLinks(relatedCards) {
+    return relatedCards
+        .map(([relatedName, relatedCard]) => {
+            const relatedGroup = groupLabels[getCardGroup(relatedName)] || 'Tarot';
+            return `<a class="tarot-related-card" href="/${escapeHtml(detailHref(relatedName))}">
+                        <span>${escapeHtml(relatedGroup)}</span>
+                        <strong>${escapeHtml(relatedName)}</strong>
+                        <small>${escapeHtml(relatedCard.meaning || '')}</small>
+                    </a>`;
+        })
+        .join('\n                    ');
+}
+
 function buildCard(name, card) {
     const group = getCardGroup(name);
     const groupLabel = groupLabels[group] || 'Tarot';
@@ -173,7 +210,7 @@ function buildCard(name, card) {
                     </article>`;
 }
 
-function buildDetailPage(name, card) {
+function buildDetailPage(name, card, relatedCards = []) {
     const group = getCardGroup(name);
     const groupLabel = groupLabels[group] || 'Tarot';
     const image = card.image || 'img/tarot/tarot_placeholder.webp';
@@ -185,6 +222,7 @@ function buildDetailPage(name, card) {
     const encodedName = encodeURIComponent(name);
     const description = compactText(`Karta ${name} v tarotu znamená: ${meaning}. Výklad pro lásku, práci i osobní rozhodnutí s přímým vstupem do online tarotu.`);
     const title = `${name} tarot význam | ${groupLabel} | Mystická Hvězda`;
+    const relatedLinks = buildRelatedCardLinks(relatedCards);
     const articleSchema = {
         '@context': 'https://schema.org',
         '@type': 'Article',
@@ -323,6 +361,19 @@ ${jsonLd([articleSchema, breadcrumbSchema, faqSchema])}
         </section>
 
         <section class="section">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Související karty</span>
+                    <h2 class="section__title">Kam pokračovat dál</h2>
+                    <p class="section__text">Propoj význam karty ${escapeHtml(name)} s dalšími kartami ze stejného tarotovému toku.</p>
+                </div>
+                <div class="tarot-related-card-grid">
+                    ${relatedLinks}
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
             <div class="container u-narrow-center-760">
                 <div class="section__header">
                     <span class="section__badge">Časté otázky</span>
@@ -370,14 +421,15 @@ function writeIfChanged(filePath, content) {
 
 function generateDetailPages(cards) {
     fs.mkdirSync(detailDir, { recursive: true });
+    const entries = Object.entries(cards);
     const desiredFiles = new Set();
     let changed = 0;
 
-    for (const [name, card] of Object.entries(cards)) {
+    for (const [index, [name, card]] of entries.entries()) {
         const fileName = detailFileName(name);
         desiredFiles.add(fileName);
         const filePath = path.join(detailDir, fileName);
-        if (writeIfChanged(filePath, buildDetailPage(name, card))) changed += 1;
+        if (writeIfChanged(filePath, buildDetailPage(name, card, getRelatedCards(entries, index)))) changed += 1;
     }
 
     for (const entry of fs.readdirSync(detailDir, { withFileTypes: true })) {

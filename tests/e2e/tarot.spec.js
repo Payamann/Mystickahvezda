@@ -255,6 +255,8 @@ test.describe('Tarot význam karet', () => {
 
         await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1);
         await expect(page.locator('.tarot-card-detail-panel')).toContainText('Nad');
+        await expect(page.locator('.tarot-related-card')).toHaveCount(3);
+        await expect(page.locator('.tarot-related-card').first()).toHaveAttribute('href', /\/tarot-vyznam\/.+\.html/);
         await expect(page.locator('a[href*="/tarot.html?source=tarot_card_detail"]').first()).toHaveAttribute('href', /card=Hv%C4%9Bzda/);
 
         const hasHorizontalScroll = await page.evaluate(() =>
