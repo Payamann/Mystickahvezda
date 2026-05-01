@@ -137,6 +137,18 @@ def draw_symbol_for_slug(draw: ImageDraw.ImageDraw, slug: str) -> None:
         draw.ellipse([cx - 28, cy - 42, cx + 28, cy + 14], fill=SILVER + (190,), outline=GOLD + (220,), width=3)
         draw.arc([cx - 250, cy - 85, cx + 10, cy + 260], 105, 245, fill=GOLD + (140,), width=5)
         draw.arc([cx - 10, cy - 85, cx + 250, cy + 260], -65, 75, fill=SILVER + (140,), width=5)
+    elif "tarot-vyznam" in slug:
+        draw.rounded_rectangle([cx - 220, cy - 115, cx + 220, cy + 165], radius=34, fill=(13, 11, 35, 235), outline=GOLD + (190,), width=4)
+        draw.line([(cx, cy - 112), (cx, cy + 165)], fill=GOLD + (90,), width=3)
+        draw.arc([cx - 210, cy - 150, cx - 20, cy + 190], 250, 90, fill=GOLD_SOFT + (135,), width=4)
+        draw.arc([cx + 20, cy - 150, cx + 210, cy + 190], 90, 290, fill=GOLD_SOFT + (135,), width=4)
+        for idx, dx in enumerate([-152, -50, 55, 156]):
+            draw_tarot_card(draw, cx + dx, cy - 105 + (idx % 2) * 24, 0.44)
+        for angle in range(0, 360, 45):
+            x = cx + math.cos(math.radians(angle)) * 178
+            y = cy + math.sin(math.radians(angle)) * 92 + 30
+            draw.line([(cx, cy + 20), (x, y)], fill=SILVER + (52,), width=2)
+            draw.ellipse([x - 6, y - 6, x + 6, y + 6], fill=GOLD_SOFT + (185,))
     elif "karta-dne" in slug:
         draw_tarot_card(draw, cx, cy, 1.08)
         draw.ellipse([cx - 165, cy - 165, cx + 165, cy + 165], outline=GOLD_SOFT + (130,), width=10)

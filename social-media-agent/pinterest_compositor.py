@@ -248,7 +248,7 @@ def composite_pin(
     f_brand    = _load_font(INTER_SEMI,    36)   # Inter 600  — brand mark
 
     # ── Brand mark — logo + text, vpravo nahoře ──────────────────────
-    brand_label = "Mystick\u00e1Hv\u011bzda"
+    brand_label = "Mystick\u00e1 Hv\u011bzda"
     bw_label = _text_width(brand_label, f_brand)
     logo_img = _load_logo(68)
     gap = 12

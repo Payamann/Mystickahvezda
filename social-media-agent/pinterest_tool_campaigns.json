@@ -51,6 +51,23 @@
     "image_prompt": "Two intertwined moonlit crystal hearts orbiting a small golden tarot card, rose-gold stardust, deep navy cosmic background, romantic but elegant premium 3D mystical object, clean dark bottom negative space."
   },
   {
+    "slug": "tool-tarot-vyznam-karet",
+    "category": "Tarot",
+    "path": "/tarot-vyznam-karet.html",
+    "utm_campaign": "tool_tarot_card_meanings",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Přehled významů všech 78 tarotových karet. Najdi konkrétní kartu, pochop její symboliku a rovnou pokračuj do online výkladu.",
+    "keywords": "význam tarotových karet, velká arkána, malá arkána, tarot karty, výklad tarotu",
+    "hooks": [
+      "VÝZNAM KARET: Najdi libovolnou tarotovou kartu — pochop její vzkaz",
+      "78 TAROTOVÝCH KARET: Velká i Malá arkána — v jednom přehledu",
+      "NEVÍŠ, CO KARTA ZNAMENÁ?: Otevři tarotový slovník — vylož si ji",
+      "TAROT PRO ZAČÁTEČNÍKY: Nauč se číst karty — podle symboliky",
+      "KARTA TI NĚCO ŘÍKÁ: Najdi její význam — a další praktický krok"
+    ],
+    "image_prompt": "An open midnight-blue tarot guidebook with a glowing golden tarot card rising from the pages, small constellation lines connecting four suits symbols, deep navy cosmic background, premium 3D mystical object, clean dark bottom negative space."
+  },
+  {
     "slug": "tool-numerologie",
     "category": "Numerologie",
     "path": "/numerologie.html",
