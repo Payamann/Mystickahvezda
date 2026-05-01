@@ -1,0 +1,172 @@
+[
+  {
+    "slug": "tool-tarot-ano-ne",
+    "category": "Tarot",
+    "path": "/tarot-ano-ne.html",
+    "utm_campaign": "tool_tarot_yes_no",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Rychlý tarot ano/ne pro otázky, které potřebují jasnější směr. Polož otázku, vytáhni kartu a pokračuj podle dalšího kroku.",
+    "keywords": "tarot ano ne, tarot zdarma, výklad tarotu, tarot otázka, tarot online",
+    "hooks": [
+      "TAROT ANO/NE: Zeptej se karet — odpověď dostaneš za minutu",
+      "MÁŠ UDĚLAT PRVNÍ KROK?: Tarot ti ukáže směr — ano, ne, nebo počkej",
+      "JEDNA OTÁZKA: Jedna karta — rychlý tarotový vhled pro dnešek",
+      "NEVÍŠ, CO DÁL?: Zkus tarot ano/ne — jemná odpověď bez složitého výkladu",
+      "KARTY ODPOVÍ: Polož otázku — tarot ti ukáže nejbližší energii"
+    ],
+    "image_prompt": "A luminous crystal pendulum floating above one glowing tarot card back, two subtle paths of gold and silver light forming a yes/no choice, deep navy cosmic starfield, premium 3D mystical object, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-karta-dne",
+    "category": "Tarot",
+    "path": "/tarot-karta-dne.html",
+    "utm_campaign": "tool_daily_tarot",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Denní tarotová karta jako krátký rituál pro jasnější začátek dne. Vytáhni kartu a přečti si praktické poselství.",
+    "keywords": "tarot karta dne, denní tarot, tarot online, tarot zdarma, výklad karty",
+    "hooks": [
+      "KARTA DNE: Vytáhni si dnešní tarotové poselství",
+      "RANNÍ TAROT: Jedna karta — jeden jasný signál pro dnešek",
+      "CO TI DNES ŘÍKÁ TAROT?: Vytáhni kartu a přečti si vzkaz",
+      "DENNÍ VEDENÍ: Tarotová karta pro tvoji aktuální energii",
+      "ULOŽ SI RITUÁL: Každý den jedna karta a jeden praktický krok"
+    ],
+    "image_prompt": "One ornate tarot card back standing upright inside a ring of sunrise stardust, small moon and golden sun symbols, deep navy cosmic field, premium 3D mystical object, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-laska",
+    "category": "Vztahy",
+    "path": "/tarot-laska.html",
+    "utm_campaign": "tool_love_tarot",
+    "board": "Synastrie, kompatibilita a spřízněné duše",
+    "description": "Tarot lásky pro vztahy, city a nejisté signály. Vytáhni kartu a zjisti, jakou energii teď vztah nese.",
+    "keywords": "tarot lásky, vztahový tarot, výklad lásky, tarot vztahy, partnerská energie",
+    "hooks": [
+      "TAROT LÁSKY: Co se mezi vámi teď opravdu děje?",
+      "VZTAHOVÝ SIGNÁL: Vytáhni kartu pro lásku a city",
+      "MYSLÍ NA TEBE?: Tarot lásky ukáže energii mezi vámi",
+      "LÁSKA NEBO LEKCE?: Jedna karta pro tvůj vztahový směr",
+      "KDYŽ SRDCE VÁHÁ: Zkus tarot lásky a získej jemný vhled"
+    ],
+    "image_prompt": "Two intertwined moonlit crystal hearts orbiting a small golden tarot card, rose-gold stardust, deep navy cosmic background, romantic but elegant premium 3D mystical object, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-numerologie",
+    "category": "Numerologie",
+    "path": "/numerologie.html",
+    "utm_campaign": "tool_numerology",
+    "board": "Životní číslo, jméno a kompatibilita párů",
+    "description": "Numerologický výpočet z data narození a jména. Objev své životní číslo, silné stránky a praktické téma pro další krok.",
+    "keywords": "numerologie, číslo osudu, životní číslo, numerologie datum narození, numerologický výklad",
+    "hooks": [
+      "ČÍSLO OSUDU: Spočítej si, jaká energie tě vede",
+      "NUMEROLOGIE JMÉNA: Co o tobě říká tvé jméno a datum narození?",
+      "TVÉ ŽIVOTNÍ ČÍSLO: Rychlý výpočet a osobní význam",
+      "DATUM NAROZENÍ: Numerologie ti ukáže silné téma života",
+      "SKRYTÝ VZOREC: Spočítej své číslo a zjisti, co opakuješ"
+    ],
+    "image_prompt": "Floating golden numbers made of stardust around a crystal sphere, subtle sacred geometry grid, deep navy cosmic starfield, premium 3D mystical object, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-partnerska-shoda",
+    "category": "Vztahy",
+    "path": "/partnerska-shoda.html",
+    "utm_campaign": "tool_compatibility",
+    "board": "Synastrie, kompatibilita a spřízněné duše",
+    "description": "Partnerská shoda podle narození. Porovnej dvě energie a zjisti, kde vztah přirozeně plyne a kde potřebuje vědomou práci.",
+    "keywords": "partnerská shoda, kompatibilita partnerů, synastrie, vztah podle data narození, láska astrologie",
+    "hooks": [
+      "PARTNERSKÁ SHODA: Zjisti, jak spolu ladíte",
+      "JSTE K SOBĚ?: Porovnej data narození a vztahovou energii",
+      "LÁSKA PODLE HVĚZD: Otestuj partnerskou kompatibilitu",
+      "VZTAHOVÁ CHEMIE: Kde si rozumíte a kde vzniká napětí?",
+      "DVĚ DATA NAROZENÍ: Jeden vztahový vhled pro vás oba"
+    ],
+    "image_prompt": "Two glowing natal chart wheels overlapping like a celestial eclipse, gold and silver relationship lines connecting points, deep navy cosmic background, premium 3D mystical object, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-lunace",
+    "category": "Lunární Magie",
+    "path": "/lunace.html",
+    "utm_campaign": "tool_lunar_calendar",
+    "board": "Úplněk, nov a lunární rituály každý měsíc",
+    "description": "Lunární kalendář pro aktuální fázi Měsíce, rituály a energii dne. Zjisti, kdy začínat, čistit, pouštět a odpočívat.",
+    "keywords": "lunární kalendář, fáze měsíce, úplněk, nov, lunární rituál",
+    "hooks": [
+      "LUNÁRNÍ KALENDÁŘ: Zjisti, co dnes podporuje Měsíc",
+      "ÚPLNĚK NEBO NOV?: Podívej se na aktuální měsíční fázi",
+      "MĚSÍČNÍ ENERGIE: Kdy začít, kdy čistit a kdy pustit?",
+      "RITUÁL PODLE MĚSÍCE: Najdi správný čas pro svůj záměr",
+      "DNES PODLE LUNY: Jednoduchý lunární průvodce pro každý den"
+    ],
+    "image_prompt": "A polished moon phase dial with gold markings and pearlescent moon discs, floating above dark water with stardust, deep navy cosmic background, premium 3D mystical object, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-andelske-karty",
+    "category": "Spiritualita",
+    "path": "/andelske-karty.html",
+    "utm_campaign": "tool_angel_cards",
+    "board": "Čakry, aura, ochrana a duchovní rovnováha",
+    "description": "Andělské karty pro jemné povzbuzení a klidnější rozhodnutí. Vytáhni kartu a přečti si vzkaz pro dnešní den.",
+    "keywords": "andělské karty, andělský vzkaz, duchovní vedení, karta dne, spiritualita",
+    "hooks": [
+      "ANDĚLSKÝ VZKAZ: Vytáhni si kartu pro dnešní den",
+      "KDYŽ POTŘEBUJEŠ KLID: Andělská karta ti dá jemný směr",
+      "JEDNA KARTA: Krátké vedení pro těžší rozhodnutí",
+      "TVŮJ DNEŠNÍ VZKAZ: Andělské karty online",
+      "ZASTAV SE NA CHVÍLI: Vytáhni kartu a nadechni se"
+    ],
+    "image_prompt": "A luminous white feather and pearl-gold oracle card floating in a halo of soft light, tiny silver stars, deep navy cosmic background, premium 3D mystical object, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-natalni-karta",
+    "category": "Astrologie",
+    "path": "/natalni-karta.html",
+    "utm_campaign": "tool_natal_chart",
+    "board": "Horoskopy, natální karta a planety v retro",
+    "description": "Natální karta podle data, času a místa narození. Podívej se na Slunce, Měsíc, ascendent a základní mapu osobnosti.",
+    "keywords": "natální karta, horoskop narození, ascendent, sluneční znamení, astrologie",
+    "hooks": [
+      "NATÁLNÍ KARTA: Zjisti Slunce, Měsíc a ascendent",
+      "MAPA TVÉ DUŠE: Vypočítej si natální horoskop",
+      "ČAS NAROZENÍ: Co odhalí tvoje astrologická mapa?",
+      "ASCENDENT: Zjisti, jak tě ukazuje svět",
+      "TVŮJ HOROSKOP NAROZENÍ: Osobní mapa podle hvězd"
+    ],
+    "image_prompt": "An ornate golden natal chart astrolabe with planets as gemstones, suspended in deep navy cosmic space, elegant sacred geometry, premium 3D mystical object, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-kristalova-koule",
+    "category": "Věštění",
+    "path": "/kristalova-koule.html",
+    "utm_campaign": "tool_crystal_ball",
+    "board": "Astrologie, tarot a spiritualita v češtině",
+    "description": "Křišťálová koule pro intuitivní otázky a jemný vhled. Polož otázku a nech odpověď otevřít další možnost.",
+    "keywords": "křišťálová koule, věštění online, intuitivní odpověď, duchovní otázka, mystika",
+    "hooks": [
+      "KŘIŠŤÁLOVÁ KOULE: Polož otázku a otevři vhled",
+      "CO TI ŘEKNE INTUICE?: Zeptej se křišťálové koule",
+      "JEDNA OTÁZKA: Jemná odpověď z mystické koule",
+      "KDYŽ NEVÍŠ, CO DÁL: Nech si ukázat další možnost",
+      "MYSTICKÝ VHLED: Zkus křišťálovou kouli online"
+    ],
+    "image_prompt": "A glowing crystal ball on a small obsidian pedestal, inner nebula swirl and gold sparks, deep navy cosmic background, premium 3D mystical object, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-runy",
+    "category": "Šamanismus",
+    "path": "/runy.html",
+    "utm_campaign": "tool_runes",
+    "board": "Severské runy, totemová zvířata a rituály",
+    "description": "Runový výklad pro otázky, které potřebují zemitější symboliku. Vytáhni runu a přečti si její praktický význam.",
+    "keywords": "runy, runový výklad, severské runy, duchovní symboly, věštění runy",
+    "hooks": [
+      "RUNOVÝ VÝKLAD: Vytáhni runu pro dnešní otázku",
+      "SEVERSKÉ RUNY: Jeden symbol a jasnější směr",
+      "CO TI ŘÍKÁ RUNA?: Zkus rychlý výklad online",
+      "STARÝ SYMBOL: Praktický vzkaz pro dnešní rozhodnutí",
+      "RUNA DNE: Zemitý vhled pro tvoji aktuální energii"
+    ],
+    "image_prompt": "Three polished obsidian rune stones with glowing gold runes, arranged on dark velvet with stardust and pine shadows, deep navy cosmic background, premium 3D mystical object, clean dark bottom negative space."
+  }
+]
