@@ -39,6 +39,7 @@
     "audit:tarot-assets": "node server/scripts/verify-tarot-paths.js",
     "sitemap:generate": "node scripts/generate-sitemap-from-canonicals.mjs",
     "sitemap:check": "node scripts/generate-sitemap-from-canonicals.mjs --check",
+    "tarot:generate-meaning-hub": "node scripts/generate-tarot-meaning-hub.mjs",
     "verify:production": "node server/scripts/verify-production.js",
     "deploy:guard": "node scripts/deploy-guard.mjs",
     "deploy:guard:local": "node scripts/deploy-guard.mjs --skip-remote --skip-railway --allow-dirty --base-url=http://localhost:3001",
