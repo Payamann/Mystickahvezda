@@ -133,6 +133,46 @@ test.describe('Numerologie', () => {
         expect(canonical.toLowerCase()).toContain('numerologi');
     });
 
+    test('výsledek numerologie lze uložit jako sdílitelný obrázek', async ({ page }) => {
+        await page.evaluate(() => {
+            window.Auth = {
+                isLoggedIn: () => true,
+                isPremium: () => false,
+                showToast: () => {},
+                getProfile: async () => null,
+                saveReading: async () => ({ id: 'test-numerology-reading' })
+            };
+            window.Premium = {
+                trackPaywallHit: () => {},
+                showTrialPaywall: () => {}
+            };
+            window.__numerologyAnalyticsEvents = [];
+            window.MH_ANALYTICS = {
+                trackAction: (eventName, payload) => {
+                    window.__numerologyAnalyticsEvents.push({ eventName, payload });
+                }
+            };
+        });
+
+        await page.locator('#num-name').fill('Jana Nováková');
+        await page.locator('#num-date').fill('1990-06-15');
+        await page.locator('#numerology-form button[type="submit"]').click();
+
+        await expect(page.locator('#numerology-results')).toBeVisible({ timeout: 2500 });
+        await expect(page.locator('#btn-save-numerology-result')).toBeVisible();
+        await expect.poll(() => page.evaluate(() => Boolean(window.__lastNumerologyShareResult))).toBe(true);
+
+        const downloadPromise = page.waitForEvent('download');
+        await page.locator('#btn-save-numerology-result').click();
+        const download = await downloadPromise;
+        expect(download.suggestedFilename()).toMatch(/^numerologie-zivotni-cesta-\d+\.png$/);
+
+        const events = await page.evaluate(() => window.__numerologyAnalyticsEvents);
+        expect(events).toContainEqual(expect.objectContaining({
+            eventName: 'numerology_result_image_saved'
+        }));
+    });
+
     // ── Mobilní responsivita ─────────────────────────────────────────────────
 
     test('formulář je viditelný na mobilním viewportu', async ({ page }) => {

@@ -23,6 +23,26 @@ html body .mh-inline-18f6c81258 { color: var(--color-silver-mist); font-size: 0.
 html body .mh-inline-00a714ff98 { font-size: 2rem; color: var(--color-mystic-gold); margin-bottom: 0.5rem; }
 html body .mh-inline-bc2787405c { color: var(--color-silver-mist); opacity: 0.8; }
 
+.numerology-result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem 1rem;
+    margin: -0.5rem auto 1.75rem;
+    text-align: center;
+}
+
+.numerology-result-actions[hidden] {
+    display: none !important;
+}
+
+.numerology-result-actions__note {
+    color: var(--color-silver-mist);
+    font-size: 0.86rem;
+    opacity: 0.86;
+}
+
 .number-card--gold { --card-color: #d4af37; }
 .number-card--blue { --card-color: #3498db; }
 .number-card--green { --card-color: #2ecc71; }
@@ -84,9 +104,14 @@ html body .mh-inline-bc2787405c { color: var(--color-silver-mist); opacity: 0.8;
     color: var(--color-starlight);
 }
 
-.numerology-premium-preview {
+.numerology-premium-shell {
     position: relative;
     margin-top: 2rem;
+}
+
+.numerology-premium-preview {
+    position: relative;
+    margin-top: 0;
     padding: 3rem;
     border-radius: 15px;
     background: linear-gradient(135deg, rgba(30, 20, 50, 0.8), rgba(42, 26, 78, 0.8));
