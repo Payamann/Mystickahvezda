@@ -162,6 +162,41 @@ test.describe('Homepage', () => {
         expect(pageView.metadata.url).not.toContain('token=');
     });
 
+    test('first-party analytics pripoji kampanovou atribuci ke vsem eventum', async ({ page }) => {
+        await page.addInitScript(() => {
+            localStorage.removeItem('mh_attribution_first_touch');
+            sessionStorage.removeItem('mh_attribution_last_touch');
+            localStorage.removeItem('mh_cookie_prefs');
+            localStorage.removeItem('cookieConsent');
+        });
+
+        await page.goto('/?utm_source=pinterest&utm_medium=organic&utm_campaign=tarot_meanings&utm_content=pin_v1&entry_feature=tarot');
+        await waitForPageReady(page);
+        await page.evaluate(() => {
+            window.MH_ANALYTICS?.trackCTA('attribution_regression', { label: 'Test CTA' });
+        });
+
+        const events = await page.evaluate(() => ({
+            pageView: window.MH_ANALYTICS_QUEUE.find((item) => item.name === 'page_view'),
+            cta: window.MH_ANALYTICS_QUEUE.find((item) => item.name === 'cta_clicked' && item.location === 'attribution_regression'),
+            context: window.MH_ANALYTICS?.getAttributionContext?.().metadata
+        }));
+
+        for (const event of [events.pageView, events.cta, events.context]) {
+            expect(event).toEqual(expect.objectContaining({
+                first_source: 'pinterest',
+                first_medium: 'organic',
+                first_campaign: 'tarot_meanings',
+                last_source: 'pinterest',
+                last_medium: 'organic',
+                last_campaign: 'tarot_meanings',
+                utm_content: 'pin_v1',
+                entry_feature: 'tarot',
+                landing_path: '/'
+            }));
+        }
+    });
+
     test('mobilni cookie lista na homepage nezakryva prvni dojem', async ({ page }) => {
         await page.setViewportSize({ width: 393, height: 851 });
         await page.evaluate(() => {

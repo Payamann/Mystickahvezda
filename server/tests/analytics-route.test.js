@@ -1,6 +1,7 @@
 import request from 'supertest';
 import app from '../index.js';
 import {
+    buildAnalyticsMetadata,
     normalizeAnalyticsEventName,
     sanitizeAnalyticsMetadata
 } from '../routes/analytics.js';
@@ -100,6 +101,34 @@ describe('First-party analytics endpoint', () => {
             sessionId: '[redacted]',
             count: 2
         });
+    });
+
+    test('reserves analytics metadata budget for system context', () => {
+        const metadata = buildAnalyticsMetadata({
+            page: 'Homepage',
+            path: '/',
+            referrer: 'https://cz.pinterest.com/pin/123',
+            clientId: 'mhc_123',
+            sessionId: 'mhs_123',
+            metadata: Object.fromEntries(
+                Array.from({ length: 20 }, (_, index) => [`extra_${index}`, `value_${index}`])
+            )
+        }, {
+            get: (header) => (header === 'user-agent' ? 'Playwright' : undefined)
+        });
+
+        expect(Object.keys(metadata)).toHaveLength(16);
+        expect(metadata).toEqual(expect.objectContaining({
+            page: 'Homepage',
+            path: '/',
+            referrer: 'https://cz.pinterest.com/pin/123',
+            clientId: 'mhc_123',
+            visitId: 'mhs_123',
+            userAgent: 'Playwright',
+            extra_0: 'value_0',
+            extra_9: 'value_9'
+        }));
+        expect(metadata.extra_10).toBeUndefined();
     });
 
     test('redacts sensitive server telemetry metadata', () => {

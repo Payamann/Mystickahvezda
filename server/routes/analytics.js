@@ -84,11 +84,11 @@ function sanitizePrimitive(key, value) {
     return undefined;
 }
 
-export function sanitizeAnalyticsMetadata(input) {
+export function sanitizeAnalyticsMetadata(input, maxKeys = MAX_METADATA_KEYS) {
     if (!input || typeof input !== 'object' || Array.isArray(input)) return {};
 
     const output = {};
-    const entries = Object.entries(input).slice(0, MAX_METADATA_KEYS);
+    const entries = Object.entries(input).slice(0, Math.max(0, maxKeys));
 
     for (const [rawKey, rawValue] of entries) {
         const key = cleanString(rawKey, 48);
@@ -109,19 +109,29 @@ export function normalizeAnalyticsEventName(value) {
     return null;
 }
 
-function normalizeEventPayload(body = {}, req) {
-    const eventName = normalizeAnalyticsEventName(body.eventName || body.name);
-    if (!eventName) return null;
-
-    const metadata = sanitizeAnalyticsMetadata({
-        ...(body.metadata || {}),
+export function buildAnalyticsMetadata(body = {}, req = null) {
+    const systemMetadata = sanitizeAnalyticsMetadata({
         page: body.page,
         path: body.path,
         referrer: body.referrer,
         clientId: body.clientId,
         visitId: body.sessionId,
-        userAgent: req.get('user-agent') || undefined
+        userAgent: req?.get?.('user-agent') || undefined
     });
+    const userMetadataBudget = MAX_METADATA_KEYS - Object.keys(systemMetadata).length;
+    const userMetadata = sanitizeAnalyticsMetadata(body.metadata || {}, userMetadataBudget);
+
+    return {
+        ...userMetadata,
+        ...systemMetadata
+    };
+}
+
+function normalizeEventPayload(body = {}, req) {
+    const eventName = normalizeAnalyticsEventName(body.eventName || body.name);
+    if (!eventName) return null;
+
+    const metadata = buildAnalyticsMetadata(body, req);
 
     return {
         event_type: eventName.slice(0, 50),
