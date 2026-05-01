@@ -234,10 +234,33 @@ test.describe('Tarot význam karet', () => {
         await waitForPageReady(page);
 
         await expect(page.locator('.tarot-meaning-card')).toHaveCount(78, { timeout: 9000 });
+        await expect(page.locator('a[href="tarot-vyznam/hvezda.html"]').first()).toBeVisible();
         const hasMobileHorizontalScroll = await page.evaluate(() =>
             document.documentElement.scrollWidth > document.documentElement.clientWidth
         );
         expect(hasMobileHorizontalScroll).toBe(false);
+    });
+
+    test('detail konkretni tarotove karty je indexovatelny a vede do vykladu', async ({ page }) => {
+        const res = await page.request.get('/tarot-vyznam/hvezda.html');
+        expect(res.status()).toBe(200);
+
+        await page.goto('/tarot-vyznam/hvezda.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('h1')).toContainText('Hv');
+        await expect(page.locator('h1')).toContainText('tarot');
+        const canonical = await page.getAttribute('link[rel="canonical"]', 'href');
+        expect(canonical).toBe('https://www.mystickahvezda.cz/tarot-vyznam/hvezda.html');
+
+        await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1);
+        await expect(page.locator('.tarot-card-detail-panel')).toContainText('Nad');
+        await expect(page.locator('a[href*="/tarot.html?source=tarot_card_detail"]').first()).toHaveAttribute('href', /card=Hv%C4%9Bzda/);
+
+        const hasHorizontalScroll = await page.evaluate(() =>
+            document.documentElement.scrollWidth > document.documentElement.clientWidth
+        );
+        expect(hasHorizontalScroll).toBe(false);
     });
 });
 

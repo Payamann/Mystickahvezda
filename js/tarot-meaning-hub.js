@@ -51,6 +51,19 @@
             .replace(/'/g, '&#039;');
     }
 
+    function slugify(value) {
+        return String(value || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    }
+
+    function detailHref(name) {
+        return `tarot-vyznam/${slugify(name)}.html`;
+    }
+
     function getCardGroup(name) {
         if (majorArcana.has(name)) return 'major';
         if (name.includes('holí')) return 'wands';
@@ -73,16 +86,19 @@
     }
 
     function buildCard(card) {
+        const detail = detailHref(card.name);
+
         return `
-            <article class="tarot-meaning-card" data-group="${escapeHtml(card.group)}">
+            <article class="tarot-meaning-card" data-group="${escapeHtml(card.group)}" data-card="${escapeHtml(card.name)}">
                 <div class="tarot-meaning-card__image">
                     <img loading="lazy" src="${escapeHtml(card.image)}" alt="${escapeHtml(card.name)} tarot karta" width="180" height="300">
                 </div>
                 <div class="tarot-meaning-card__body">
                     <div class="tarot-meaning-card__meta">${escapeHtml(card.groupLabel)}</div>
-                    <h3>${escapeHtml(card.name)}</h3>
+                    <h3><a href="${escapeHtml(detail)}">${escapeHtml(card.name)}</a></h3>
                     <p class="tarot-meaning-card__meaning">${escapeHtml(card.meaning)}</p>
                     <p>${escapeHtml(getFirstSentence(card.interpretation))}</p>
+                    <a href="${escapeHtml(detail)}" class="tarot-meaning-card__link">Význam karty</a>
                     <a href="tarot.html?source=tarot_meaning_card&card=${encodeURIComponent(card.name)}" class="tarot-meaning-card__link">Vyložit tarot s touto energií</a>
                 </div>
             </article>

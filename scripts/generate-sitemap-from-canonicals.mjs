@@ -232,7 +232,7 @@ function inferMetadata(loc, file, existingMetadata) {
         return { lastmod: dateFromMtime(file), changefreq: 'monthly', priority: '0.7' };
     }
 
-    if (pathname.startsWith('/slovnik/') || pathname.startsWith('/testy/')) {
+    if (pathname.startsWith('/slovnik/') || pathname.startsWith('/testy/') || pathname.startsWith('/tarot-vyznam/')) {
         return { lastmod: dateFromMtime(file), changefreq: 'monthly', priority: '0.6' };
     }
 
