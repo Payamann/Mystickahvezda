@@ -69,12 +69,19 @@ const app = express();
 app.set('trust proxy', 1);
 
 const PORT = process.env.PORT || 3001;
+const RUNTIME_ENVIRONMENT_NAME = process.env.RAILWAY_ENVIRONMENT_NAME ||
+    process.env.RAILWAY_ENVIRONMENT ||
+    process.env.NODE_ENV ||
+    'development';
+const IS_TEST_RUNTIME = process.env.NODE_ENV === 'test';
+const IS_PRODUCTION_RUNTIME = process.env.NODE_ENV === 'production' ||
+    RUNTIME_ENVIRONMENT_NAME === 'production';
 const SHOULD_RUN_SCHEDULED_JOBS = process.env.DISABLE_SCHEDULED_JOBS !== 'true' &&
-    process.env.NODE_ENV !== 'test' &&
-    (process.env.NODE_ENV === 'production' || process.env.ENABLE_SCHEDULED_JOBS === 'true');
+    !IS_TEST_RUNTIME &&
+    (IS_PRODUCTION_RUNTIME || process.env.ENABLE_SCHEDULED_JOBS === 'true');
 const SHOULD_RUN_DAILY_HOROSCOPE_EMAILS = process.env.DISABLE_DAILY_HOROSCOPE_EMAILS !== 'true' &&
-    process.env.NODE_ENV !== 'test' &&
-    (process.env.NODE_ENV === 'production' ||
+    !IS_TEST_RUNTIME &&
+    (IS_PRODUCTION_RUNTIME ||
         process.env.ENABLE_DAILY_HOROSCOPE_EMAILS === 'true' ||
         process.env.ENABLE_SCHEDULED_JOBS === 'true');
 const DAILY_HOROSCOPE_SEND_HOUR_UTC = 7;
@@ -413,9 +420,7 @@ function getDeploymentMetadata() {
             process.env.VERCEL_GIT_COMMIT_REF ||
             process.env.GIT_BRANCH ||
             null,
-        environment: process.env.RAILWAY_ENVIRONMENT_NAME ||
-            process.env.NODE_ENV ||
-            'development',
+        environment: RUNTIME_ENVIRONMENT_NAME,
         service: process.env.RAILWAY_SERVICE_NAME || null
     };
 }
@@ -774,7 +779,7 @@ const isMain = process.argv[1] && (
 if (isMain || process.env.NODE_ENV === 'production') {
     app.listen(PORT, () => {
         console.warn(`✨ Mystická Hvězda API running on port ${PORT}`);
-        console.warn(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.warn(`🚀 Environment: ${RUNTIME_ENVIRONMENT_NAME}`);
 
         if (SHOULD_RUN_SCHEDULED_JOBS) {
             // Initialize email queue job processor

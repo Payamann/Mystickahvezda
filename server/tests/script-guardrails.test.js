@@ -129,7 +129,9 @@ describe('manual script guardrails', () => {
         const source = readScript('server/index.js');
         const envExample = readScript('server/.env.example');
 
-        expect(source).toContain("process.env.NODE_ENV === 'production' || process.env.ENABLE_SCHEDULED_JOBS === 'true'");
+        expect(source).toContain("process.env.RAILWAY_ENVIRONMENT_NAME");
+        expect(source).toContain("const IS_PRODUCTION_RUNTIME");
+        expect(source).toContain("IS_PRODUCTION_RUNTIME || process.env.ENABLE_SCHEDULED_JOBS === 'true'");
         expect(source).toContain("process.env.DISABLE_SCHEDULED_JOBS !== 'true'");
         expect(source).toContain("process.env.ENABLE_DAILY_HOROSCOPE_EMAILS === 'true'");
         expect(source).toContain("process.env.DISABLE_DAILY_HOROSCOPE_EMAILS !== 'true'");
