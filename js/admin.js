@@ -8,6 +8,9 @@ document.addEventListener('click', (event) => {
     if (action === 'loadFunnel') {
         loadFunnel();
     }
+    if (action === 'loadBusiness') {
+        loadBusiness();
+    }
     if (action === 'exportFunnelCsv') {
         exportFunnelCsv();
     }
@@ -44,6 +47,9 @@ document.addEventListener('change', (event) => {
     if (event.target && event.target.id === 'funnel-range-days') {
         loadFunnel();
     }
+    if (event.target && event.target.id === 'business-range-days') {
+        loadBusiness();
+    }
     if (event.target && event.target.id === 'analytics-range-days') {
         loadAnalytics();
     }
@@ -78,6 +84,7 @@ async function checkAdminAccess() {
 async function loadAdminData() {
     await Promise.all([
         loadUsers(),
+        loadBusiness(),
         loadFunnel(),
         loadAnalytics(),
         loadAngelMessages()
@@ -165,6 +172,42 @@ function renderUsers(users) {
         tr.append(tdEmail, tdId, tdPlan, tdCredits, tdDate, tdActions);
         tbody.appendChild(tr);
     });
+}
+
+async function loadBusiness() {
+    const daysSelect = document.getElementById('business-range-days');
+    const days = daysSelect ? daysSelect.value : '30';
+    const summary = document.getElementById('business-summary');
+    const acquisitionTbody = document.querySelector('#business-acquisition-table tbody');
+    const errorMsg = document.getElementById('error-msg');
+
+    if (!summary || !acquisitionTbody) return;
+
+    summary.replaceChildren(createLoadingBlock('Načítám business cockpit...'));
+    acquisitionTbody.replaceChildren(createTableMessageRow(9, 'Načítám data...'));
+
+    try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/admin/business?days=${encodeURIComponent(days)}`, {
+            credentials: 'include'
+        });
+
+        if (response.status === 403) {
+            summary.replaceChildren(createLoadingBlock('Přístup odepřen (nejste admin).'));
+            acquisitionTbody.replaceChildren(createTableMessageRow(9, 'Přístup odepřen.', 'admin-table-error'));
+            return;
+        }
+
+        const data = await response.json();
+        if (!data.success) throw new Error(data.error);
+
+        renderBusiness(data.report);
+        errorMsg.textContent = '';
+    } catch (error) {
+        console.error(error);
+        summary.replaceChildren(createLoadingBlock('Business cockpit se nepodařilo načíst.'));
+        acquisitionTbody.replaceChildren(createTableMessageRow(9, 'Akviziční segmenty nejsou dostupné.', 'admin-table-error'));
+        errorMsg.textContent = 'Chyba při načítání business cockpit: ' + error.message;
+    }
 }
 
 async function loadFunnel() {
@@ -443,6 +486,124 @@ async function deleteAngelMessage(id) {
         console.error(error);
         errorMsg.textContent = 'Vzkaz se nepodařilo smazat: ' + error.message;
     }
+}
+
+function renderBusiness(report) {
+    const summary = report.summary || {};
+    const deltas = report.deltas || {};
+    const userStats = report.userStats || {};
+    const summaryNode = document.getElementById('business-summary');
+    const metricCards = [
+        ['Business score', `${formatInteger(report.score)}/100`, `Za posledních ${report.periodDays} dnů`],
+        ['Návštěvníci', formatInteger(summary.visitors), formatDeltaHint(deltas.visitors, 'proti předchozímu období')],
+        ['Registrace', formatInteger(summary.signups), `${formatPercent(summary.visitorToSignupRate)} visitor -> signup`],
+        ['Checkouty', formatInteger(summary.checkoutStarted), `${formatPercent(summary.signupToCheckoutRate)} signup -> checkout`],
+        ['Nákupy', formatInteger(summary.purchases), `${formatPercent(summary.checkoutToPurchaseRate)} checkout -> purchase`],
+        ['Odhad příjmu', formatCurrency(summary.estimatedValueCzk), formatDeltaHint(deltas.estimatedValueCzk, 'proti předchozímu období')],
+        ['Aktivní předplatné', formatInteger(userStats.activeSubscribers), `${formatCurrency(userStats.estimatedMrrCzk)} odhad MRR`],
+        ['Noví uživatelé', formatInteger(userStats.newUsers), `${formatInteger(userStats.totalUsers)} celkem`]
+    ];
+
+    summaryNode.replaceChildren(...metricCards.map(([label, value, hint]) => createMetric(label, value, hint)));
+    renderBusinessSignals(report.signals || []);
+    renderBusinessActions(report.recommendedActions || []);
+    renderBreakdown('business-pages', report.topPages || []);
+    renderBusinessAcquisition(report.topAcquisition || []);
+}
+
+function renderBusinessSignals(signals) {
+    const list = document.getElementById('business-signals');
+    if (!list) return;
+
+    list.replaceChildren();
+    if (!signals.length) {
+        const empty = document.createElement('li');
+        empty.textContent = 'Žádné health signály.';
+        list.appendChild(empty);
+        return;
+    }
+
+    signals.forEach(signal => {
+        const item = document.createElement('li');
+        item.className = `admin-signal admin-signal--${signal.status || 'warning'}`;
+
+        const head = document.createElement('div');
+        head.className = 'admin-signal__head';
+
+        const label = document.createElement('strong');
+        label.textContent = signal.label || '-';
+
+        const value = document.createElement('span');
+        value.textContent = signal.value || '-';
+
+        const detail = document.createElement('p');
+        detail.textContent = signal.detail || '';
+
+        const action = document.createElement('small');
+        action.textContent = signal.action || '';
+
+        head.append(label, value);
+        item.append(head, detail, action);
+        list.appendChild(item);
+    });
+}
+
+function renderBusinessActions(actions) {
+    const list = document.getElementById('business-actions');
+    if (!list) return;
+
+    list.replaceChildren();
+    if (!actions.length) {
+        const empty = document.createElement('li');
+        empty.textContent = 'Žádné urgentní akce.';
+        list.appendChild(empty);
+        return;
+    }
+
+    actions.forEach(action => {
+        const item = document.createElement('li');
+        item.className = 'admin-action-item';
+
+        const title = document.createElement('strong');
+        title.textContent = action.title || '-';
+
+        const meta = document.createElement('span');
+        meta.textContent = `${action.owner || 'Team'} · priorita ${action.priority || '-'}`;
+
+        const impact = document.createElement('p');
+        impact.textContent = action.impact || '';
+
+        const nextStep = document.createElement('small');
+        nextStep.textContent = action.nextStep || '';
+
+        item.append(title, meta, impact, nextStep);
+        list.appendChild(item);
+    });
+}
+
+function renderBusinessAcquisition(rows) {
+    const tbody = document.querySelector('#business-acquisition-table tbody');
+    if (!tbody) return;
+
+    tbody.replaceChildren();
+    if (!rows.length) {
+        tbody.appendChild(createTableMessageRow(9, 'Zatím tu nejsou žádné akviziční segmenty.'));
+        return;
+    }
+
+    rows.slice(0, 12).forEach(row => {
+        const tr = document.createElement('tr');
+        appendCell(tr, formatDimension(row.source));
+        appendCell(tr, formatDimension(row.campaign));
+        appendCell(tr, formatDimension(row.entryFeature));
+        appendCell(tr, formatInteger(row.visitors));
+        appendCell(tr, formatInteger(row.ctaClicks));
+        appendCell(tr, formatInteger(row.signups));
+        appendCell(tr, formatInteger(row.checkouts));
+        appendCell(tr, formatInteger(row.purchases));
+        appendCell(tr, formatPercent(row.visitorToSignupRate));
+        tbody.appendChild(tr);
+    });
 }
 
 function renderFunnel(report) {
@@ -780,6 +941,13 @@ function formatDeltaPercent(value) {
     const numericValue = Number(value) || 0;
     const formatted = formatPercent(numericValue);
     return numericValue > 0 ? `+${formatted}` : formatted;
+}
+
+function formatDeltaHint(delta = {}, label = '') {
+    if (!delta || typeof delta !== 'object') return label || '';
+    const deltaText = formatSignedInteger(delta.delta);
+    const percentText = delta.deltaPercent == null ? 'nové období' : formatDeltaPercent(delta.deltaPercent);
+    return `${deltaText} (${percentText}) ${label}`.trim();
 }
 
 function formatDimension(value) {

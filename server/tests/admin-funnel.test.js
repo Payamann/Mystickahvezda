@@ -2,12 +2,14 @@ import {
     buildAnalyticsAttributionCsv,
     buildAnalyticsDailyCsv,
     buildAnalyticsReport,
+    buildBusinessReport,
     buildFunnelDailyCsv,
     buildFunnelReport,
     buildFunnelSegmentsCsv,
     buildFunnelTarotCardsCsv,
     normalizeAnalyticsDays,
     normalizeAnalyticsLimit,
+    normalizeBusinessDays,
     normalizeFunnelDays,
     normalizeFunnelLimit
 } from '../admin.js';
@@ -526,6 +528,114 @@ describe('Admin first-party analytics helpers', () => {
     });
 });
 
+describe('Admin business cockpit helpers', () => {
+    test('normalizes business report query bounds', () => {
+        expect(normalizeBusinessDays(undefined)).toBe(30);
+        expect(normalizeBusinessDays('0')).toBe(1);
+        expect(normalizeBusinessDays('999')).toBe(365);
+        expect(normalizeBusinessDays('90')).toBe(90);
+    });
+
+    test('combines analytics, funnel and subscription state into growth priorities', () => {
+        const analyticsReport = buildAnalyticsReport([
+            {
+                id: 'page-1',
+                event_type: 'page_view',
+                metadata: { path: '/', clientId: 'client-1', visitId: 'visit-1', first_source: 'tiktok' },
+                created_at: '2026-04-28T08:00:00.000Z'
+            },
+            {
+                id: 'cta-1',
+                event_type: 'cta_clicked',
+                feature: 'daily_guidance',
+                metadata: { path: '/', clientId: 'client-1', visitId: 'visit-1', first_source: 'tiktok' },
+                created_at: '2026-04-28T08:02:00.000Z'
+            },
+            {
+                id: 'signup-1',
+                event_type: 'signup_completed',
+                feature: 'daily_guidance',
+                metadata: { path: '/prihlaseni.html', clientId: 'client-1', visitId: 'visit-1', first_source: 'tiktok' },
+                created_at: '2026-04-28T08:05:00.000Z'
+            },
+            {
+                id: 'checkout-1',
+                event_type: 'begin_checkout',
+                feature: 'premium_membership',
+                metadata: { path: '/cenik.html', clientId: 'client-1', visitId: 'visit-1', first_source: 'tiktok' },
+                created_at: '2026-04-28T08:08:00.000Z'
+            }
+        ], { days: 30 });
+        const previousAnalyticsReport = buildAnalyticsReport([
+            {
+                id: 'prev-page',
+                event_type: 'page_view',
+                metadata: { path: '/', clientId: 'client-prev', visitId: 'visit-prev' },
+                created_at: '2026-03-28T08:00:00.000Z'
+            }
+        ], { days: 30 });
+        const funnelReport = buildFunnelReport([
+            {
+                id: 'funnel-checkout',
+                event_name: 'checkout_session_created',
+                source: 'pricing',
+                feature: 'premium_membership',
+                plan_id: 'pruvodce',
+                created_at: '2026-04-28T08:08:00.000Z'
+            },
+            {
+                id: 'funnel-sub',
+                event_name: 'subscription_checkout_completed',
+                source: 'pricing',
+                feature: 'premium_membership',
+                plan_id: 'pruvodce',
+                created_at: '2026-04-28T08:10:00.000Z'
+            },
+            {
+                id: 'funnel-one-time',
+                event_name: 'one_time_purchase_completed',
+                source: 'osobni-mapa',
+                feature: 'personal_map',
+                metadata: { amount: 29900 },
+                created_at: '2026-04-28T08:12:00.000Z'
+            }
+        ], { days: 30 });
+        const report = buildBusinessReport({
+            analyticsReport,
+            previousAnalyticsReport,
+            funnelReport,
+            previousFunnelReport: buildFunnelReport([], { days: 30 }),
+            userStats: {
+                totalUsers: 10,
+                newUsers: 2,
+                activeSubscriptions: [{ plan_type: 'premium_monthly' }]
+            },
+            days: 30
+        });
+
+        expect(report.summary).toMatchObject({
+            visitors: 1,
+            signups: 1,
+            checkoutStarted: 1,
+            purchases: 2,
+            visitorToSignupRate: 100,
+            checkoutToPurchaseRate: 100,
+            estimatedValueCzk: 498
+        });
+        expect(report.userStats).toMatchObject({
+            totalUsers: 10,
+            newUsers: 2,
+            activeSubscribers: 1,
+            estimatedMrrCzk: 199
+        });
+        expect(report.deltas.visitors).toMatchObject({ current: 1, previous: 1, delta: 0 });
+        expect(report.signals).toHaveLength(5);
+        expect(report.recommendedActions[0]).toMatchObject({
+            title: 'Zvýšit kvalitní návštěvnost'
+        });
+    });
+});
+
 describe('Admin funnel API access control', () => {
     test('requires authentication', async () => {
         const res = await request(app).get('/api/admin/funnel');
@@ -663,6 +773,87 @@ describe('Admin funnel API access control', () => {
         expect(attributionCsvRes.headers['content-disposition']).toContain('analytics-attribution-1d.csv');
         expect(attributionCsvRes.text).toContain('source,campaign,medium,entry_feature');
         expect(attributionCsvRes.text).toContain('"pinterest","admin_analytics_test","organic"');
+    });
+
+    test('admin can fetch business cockpit report', async () => {
+        const stamp = Date.now();
+        const source = `business-${stamp}`;
+        const clientId = `client-business-${stamp}`;
+        const userId = `business-user-${stamp}`;
+        const future = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+        await supabase.from('users').insert({
+            id: userId,
+            email: `business-${stamp}@example.com`,
+            created_at: new Date().toISOString()
+        });
+        await supabase.from('subscriptions').insert({
+            user_id: userId,
+            plan_type: 'premium_monthly',
+            status: 'active',
+            current_period_end: future
+        });
+        await supabase.from('analytics_events').insert([
+            {
+                event_type: 'page_view',
+                feature: null,
+                metadata: {
+                    path: '/business-cockpit-test',
+                    clientId,
+                    visitId: `visit-${stamp}`,
+                    first_source: source,
+                    first_campaign: 'business_cockpit_test'
+                },
+                created_at: new Date().toISOString()
+            },
+            {
+                event_type: 'signup_completed',
+                feature: 'daily_guidance',
+                metadata: {
+                    path: '/prihlaseni.html',
+                    clientId,
+                    visitId: `visit-${stamp}`,
+                    first_source: source,
+                    first_campaign: 'business_cockpit_test'
+                },
+                created_at: new Date().toISOString()
+            }
+        ]);
+        await supabase.from('funnel_events').insert([
+            {
+                event_name: 'checkout_session_created',
+                source,
+                feature: 'premium_membership',
+                plan_id: 'pruvodce',
+                created_at: new Date().toISOString()
+            },
+            {
+                event_name: 'subscription_checkout_completed',
+                source,
+                feature: 'premium_membership',
+                plan_id: 'pruvodce',
+                created_at: new Date().toISOString()
+            }
+        ]);
+
+        const token = jwt.sign(
+            { id: 'admin-1', email: 'admin@example.com', role: 'admin' },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        const res = await request(app)
+            .get('/api/admin/business?days=1')
+            .set('Authorization', `Bearer ${token}`)
+            .expect(200);
+
+        expect(res.body.success).toBe(true);
+        expect(res.body.report.summary.signups).toBeGreaterThanOrEqual(1);
+        expect(res.body.report.summary.checkoutStarted).toBeGreaterThanOrEqual(1);
+        expect(res.body.report.summary.purchases).toBeGreaterThanOrEqual(1);
+        expect(res.body.report.userStats.activeSubscribers).toBeGreaterThanOrEqual(1);
+        expect(res.body.report.userStats.estimatedMrrCzk).toBeGreaterThanOrEqual(199);
+        expect(res.body.report.topAcquisition).toContainEqual(expect.objectContaining({ source }));
     });
 });
 

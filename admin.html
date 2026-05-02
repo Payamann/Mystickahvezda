@@ -46,6 +46,120 @@
 
                 </div>
 
+                <section class="admin-panel admin-panel--business mb-xl" aria-labelledby="business-title">
+
+                    <div class="admin-panel__header">
+
+                        <div>
+
+                            <h2 id="business-title">Business cockpit</h2>
+
+                            <p class="admin-panel__subtext">Rychly prehled, jestli rosteme v akvizici, aktivaci, monetizaci a retenci.</p>
+
+                        </div>
+
+                        <div class="admin-panel__controls">
+
+                            <label class="admin-select-label" for="business-range-days">Obdobi</label>
+
+                            <select id="business-range-days" class="admin-select">
+
+                                <option value="7">7 dni</option>
+
+                                <option value="30" selected>30 dni</option>
+
+                                <option value="90">90 dni</option>
+
+                                <option value="180">180 dni</option>
+
+                                <option value="365">365 dni</option>
+
+                            </select>
+
+                            <button class="btn btn--secondary" data-action="loadBusiness">Obnovit cockpit</button>
+
+                        </div>
+
+                    </div>
+
+                    <div id="business-summary" class="admin-metrics" aria-live="polite">
+
+                        <div class="admin-loading">Nacitam business cockpit...</div>
+
+                    </div>
+
+                    <div class="admin-funnel-grid">
+
+                        <div class="admin-box">
+
+                            <h3>Health signaly</h3>
+
+                            <ul id="business-signals" class="admin-signal-list"></ul>
+
+                        </div>
+
+                        <div class="admin-box">
+
+                            <h3>Prioritni akce</h3>
+
+                            <ol id="business-actions" class="admin-action-list"></ol>
+
+                        </div>
+
+                        <div class="admin-box">
+
+                            <h3>Top vstupy</h3>
+
+                            <ul id="business-pages" class="admin-breakdown-list"></ul>
+
+                        </div>
+
+                    </div>
+
+                    <div class="admin-table-container admin-table-container--compact">
+
+                        <h3>Akvizicni segmenty</h3>
+
+                        <table id="business-acquisition-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Zdroj</th>
+
+                                    <th>Kampan</th>
+
+                                    <th>Vstup</th>
+
+                                    <th>Navstevnici</th>
+
+                                    <th>CTA</th>
+
+                                    <th>Registrace</th>
+
+                                    <th>Checkouty</th>
+
+                                    <th>Nakupy</th>
+
+                                    <th>Signup %</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr><td colspan="9">Nacitam data...</td></tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
                 <section class="admin-panel mb-xl" aria-labelledby="funnel-title">
 
                     <div class="admin-panel__header">

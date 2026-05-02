@@ -203,6 +203,106 @@
 
         }
 
+        .admin-signal-list,
+        .admin-action-list {
+
+            display: grid;
+
+            gap: 0.75rem;
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        .admin-action-list {
+
+            padding-left: 1.1rem;
+
+        }
+
+        .admin-signal {
+
+            list-style: none;
+
+            border-left: 3px solid rgba(255, 255, 255, 0.22);
+
+            border-radius: 8px;
+
+            background: rgba(255, 255, 255, 0.045);
+
+            padding: 0.75rem;
+
+        }
+
+        .admin-signal--ok {
+
+            border-left-color: #2ecc71;
+
+        }
+
+        .admin-signal--warning {
+
+            border-left-color: var(--color-mystic-gold);
+
+        }
+
+        .admin-signal--critical {
+
+            border-left-color: #e74c3c;
+
+        }
+
+        .admin-signal__head {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 0.75rem;
+
+            color: white;
+
+        }
+
+        .admin-signal p,
+        .admin-action-item p {
+
+            margin: 0.45rem 0;
+
+            color: var(--color-silver-mist);
+
+            font-size: 0.88rem;
+
+            line-height: 1.45;
+
+        }
+
+        .admin-signal small,
+        .admin-action-item small,
+        .admin-action-item span {
+
+            display: block;
+
+            color: var(--color-silver-mist);
+
+            font-size: 0.78rem;
+
+            opacity: 0.8;
+
+            line-height: 1.4;
+
+        }
+
+        .admin-action-item {
+
+            color: white;
+
+            padding-bottom: 0.7rem;
+
+        }
+
         .admin-breakdown-list {
 
             display: grid;

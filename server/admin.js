@@ -1,7 +1,7 @@
 import express from 'express';
 import { supabase } from './db-supabase.js';
 import { authenticateToken, requireAdmin } from './middleware.js';
-import { SUBSCRIPTION_PLANS } from './config/constants.js';
+import { PLAN_TYPES, SUBSCRIPTION_PLANS } from './config/constants.js';
 
 const router = express.Router();
 
@@ -13,6 +13,15 @@ const DEFAULT_ANALYTICS_DAYS = 7;
 const MAX_ANALYTICS_DAYS = 90;
 const DEFAULT_ANALYTICS_LIMIT = 1000;
 const MAX_ANALYTICS_LIMIT = 5000;
+const DEFAULT_BUSINESS_DAYS = 30;
+const MAX_BUSINESS_DAYS = 365;
+const DEFAULT_BUSINESS_LIMIT = 5000;
+
+const MONTHLY_REVENUE_BY_PLAN_TYPE = Object.freeze({
+    [PLAN_TYPES.PREMIUM]: 199,
+    [PLAN_TYPES.EXCLUSIVE]: 499,
+    [PLAN_TYPES.VIP]: 999
+});
 
 const FUNNEL_FAILURE_EVENTS = new Set([
     'checkout_validation_failed',
@@ -357,6 +366,266 @@ export function normalizeAnalyticsLimit(value) {
     const parsed = Number.parseInt(value, 10);
     if (!Number.isFinite(parsed)) return DEFAULT_ANALYTICS_LIMIT;
     return Math.min(MAX_ANALYTICS_LIMIT, Math.max(100, parsed));
+}
+
+export function normalizeBusinessDays(value) {
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed)) return DEFAULT_BUSINESS_DAYS;
+    return Math.min(MAX_BUSINESS_DAYS, Math.max(1, parsed));
+}
+
+function rate(numerator, denominator) {
+    if (!denominator || denominator <= 0) return 0;
+    return Math.min(100, Math.round((numerator / denominator) * 1000) / 10);
+}
+
+function countDelta(current, previous) {
+    const delta = current - previous;
+    return {
+        current,
+        previous,
+        delta,
+        deltaPercent: previous > 0 ? Math.round((delta / previous) * 1000) / 10 : null
+    };
+}
+
+function clampScore(value) {
+    return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function statusFromThreshold(value, { ok, warning, lowerIsBetter = false }) {
+    if (lowerIsBetter) {
+        if (value <= ok) return 'ok';
+        if (value <= warning) return 'warning';
+        return 'critical';
+    }
+
+    if (value >= ok) return 'ok';
+    if (value >= warning) return 'warning';
+    return 'critical';
+}
+
+function createBusinessSignal(label, status, value, detail, action) {
+    return { label, status, value, detail, action };
+}
+
+function createBusinessAction(priority, title, impact, owner, nextStep) {
+    return { priority, title, impact, owner, nextStep };
+}
+
+function businessPeriodSummary(analyticsReport = {}, funnelReport = {}) {
+    const summary = analyticsReport.summary || {};
+    const metrics = funnelReport.metrics || {};
+    const purchases = (metrics.subscriptionCompleted || 0) + (metrics.oneTimeCompleted || 0);
+    const visitors = summary.visitors || 0;
+    const signups = summary.signups || 0;
+    const checkoutStarted = Math.max(summary.checkouts || 0, metrics.checkoutStarted || 0);
+
+    return {
+        visitors,
+        visits: summary.visits || 0,
+        pageViews: summary.pageViews || 0,
+        ctaClicks: summary.ctaClicks || 0,
+        signups,
+        checkoutStarted,
+        purchases,
+        subscriptionCompleted: metrics.subscriptionCompleted || 0,
+        oneTimeCompleted: metrics.oneTimeCompleted || 0,
+        failures: metrics.failures || 0,
+        refunds: metrics.refunds || 0,
+        cancelRequests: metrics.cancelRequests || 0,
+        estimatedValueCzk: metrics.estimatedValueCzk || 0,
+        visitorToSignupRate: rate(signups, visitors),
+        visitorToCheckoutRate: rate(checkoutStarted, visitors),
+        signupToCheckoutRate: rate(checkoutStarted, signups),
+        checkoutToPurchaseRate: rate(purchases, checkoutStarted),
+        purchaseValuePerVisitorCzk: visitors > 0 ? Math.round(((metrics.estimatedValueCzk || 0) / visitors) * 100) / 100 : 0
+    };
+}
+
+function estimateMrrCzk(activeSubscriptions = []) {
+    return (activeSubscriptions || []).reduce((sum, subscription) => {
+        return sum + (MONTHLY_REVENUE_BY_PLAN_TYPE[subscription?.plan_type] || 0);
+    }, 0);
+}
+
+function buildBusinessSignals(summary, userStats, analyticsReport = {}) {
+    const errorCount = (analyticsReport.summary?.clientErrors || 0) + (analyticsReport.summary?.serverErrors || 0);
+    const errorRate = rate(errorCount, analyticsReport.total || 0);
+    const failureRate = rate(summary.failures, summary.checkoutStarted);
+
+    return [
+        createBusinessSignal(
+            'Akvizice',
+            statusFromThreshold(summary.visitors, { ok: 500, warning: 100 }),
+            `${summary.visitors} návštěvníků`,
+            'Dostatek návštěv za zvolené období určuje, jestli má smysl ladit konverzi nebo nejdřív přivést větší vzorek.',
+            summary.visitors < 100 ? 'Zvýšit distribuci: short-form video, SEO clustery a newsletter.' : 'Pokračovat v měření zdrojů a škálovat nejlepší kanály.'
+        ),
+        createBusinessSignal(
+            'Registrace',
+            statusFromThreshold(summary.visitorToSignupRate, { ok: 4, warning: 1.5 }),
+            `${summary.visitorToSignupRate} % visitor -> signup`,
+            'Měří, jestli homepage, obsah a CTA mění anonymní návštěvu na účet.',
+            summary.visitorToSignupRate < 1.5 ? 'Zjednodušit první CTA a posílit slib denního osobního rituálu.' : 'Rozšiřovat zdroje, které už přivádí registrace.'
+        ),
+        createBusinessSignal(
+            'Monetizace',
+            statusFromThreshold(summary.checkoutToPurchaseRate, { ok: 45, warning: 20 }),
+            `${summary.checkoutToPurchaseRate} % checkout -> purchase`,
+            'Měří, jestli pricing, důvěra a Stripe flow mění záměr v platbu.',
+            summary.checkoutStarted === 0 ? 'Přivést víc lidí na pricing/paywall.' : 'Testovat trial, roční default a jednorázový PDF upsell.'
+        ),
+        createBusinessSignal(
+            'Spolehlivost',
+            statusFromThreshold(Math.max(errorRate, failureRate), { ok: 1, warning: 5, lowerIsBetter: true }),
+            `${Math.max(errorRate, failureRate)} % rizikových eventů`,
+            'Kombinuje client/server chyby a selhání checkoutu. V růstu musí být nízko.',
+            Math.max(errorRate, failureRate) > 5 ? 'Nejdřív odstranit chyby a platební selhání.' : 'Technicky není vidět blokující obchodní riziko.'
+        ),
+        createBusinessSignal(
+            'Předplatné',
+            statusFromThreshold(userStats.activeSubscribers || 0, { ok: 25, warning: 5 }),
+            `${userStats.activeSubscribers || 0} aktivních`,
+            'Aktivní předplatitelé a MRR jsou hlavní dlouhodobý health signál.',
+            (userStats.activeSubscribers || 0) < 5 ? 'Dostat první placené uživatele přes jednorázový produkt a onboarding.' : 'Zavést retenční a win-back sekvence.'
+        )
+    ];
+}
+
+function buildBusinessActions(summary, previousSummary, userStats, analyticsReport = {}) {
+    const actions = [];
+    const hasTrafficDrop = previousSummary.visitors > 0 && summary.visitors < previousSummary.visitors * 0.75;
+
+    if (summary.visitors < 100 || hasTrafficDrop) {
+        actions.push(createBusinessAction(
+            1,
+            'Zvýšit kvalitní návštěvnost',
+            'Bez většího vzorku nebude možné spolehlivě vyhodnotit pricing ani onboarding.',
+            'Growth',
+            'Spustit 30denní plán: 3 short-form videa denně, interní linky z tarot/partnerských stránek a UTM pro každý kanál.'
+        ));
+    }
+
+    if (summary.visitorToSignupRate < 3) {
+        actions.push(createBusinessAction(
+            2,
+            'Zpřesnit hlavní slib a signup CTA',
+            'Nejrychlejší páka na růst účtů je převést návštěvu na osobní denní rituál zdarma.',
+            'CRO',
+            'Otestovat hero headline kolem 3minutového denního rituálu a opakovat CTA u nejčtenějších nástrojů.'
+        ));
+    }
+
+    if (summary.signups > 0 && summary.signupToCheckoutRate < 8) {
+        actions.push(createBusinessAction(
+            3,
+            'Posílit aktivaci po registraci',
+            'Signup bez prvního aha momentu nevytvoří ochotu platit.',
+            'Product',
+            'Po registraci navést uživatele na horoskop + kartu dne + uložení profilu a ukázat Premium až po hodnotě.'
+        ));
+    }
+
+    if (summary.checkoutStarted > 0 && summary.checkoutToPurchaseRate < 35) {
+        actions.push(createBusinessAction(
+            4,
+            'Otestovat trial a roční default',
+            'Lidé už mají nákupní záměr, takže zlepšení checkout konverze se projeví přímo v příjmu.',
+            'Pricing',
+            'A/B test: 7denní trial Průvodce vs. současný model, roční plán jako doporučená volba.'
+        ));
+    }
+
+    if ((userStats.activeSubscribers || 0) > 0 && summary.cancelRequests > 0) {
+        actions.push(createBusinessAction(
+            5,
+            'Zavést retenční signály',
+            'Každé zrušení je drahé, pokud acquisition teprve stavíme.',
+            'Lifecycle',
+            'U zrušení sbírat důvod, nabídnout pauzu a poslat win-back email po 14 dnech.'
+        ));
+    }
+
+    const errorCount = (analyticsReport.summary?.clientErrors || 0) + (analyticsReport.summary?.serverErrors || 0);
+    if (errorCount > 0 || summary.failures > 0) {
+        actions.push(createBusinessAction(
+            6,
+            'Denně hlídat technické ztráty',
+            'Chyby a selhání checkoutu přímo snižují důvěru i výkon placených kampaní.',
+            'Engineering',
+            'V adminu kontrolovat poslední chyby a segmenty se selháním; kritické zdroje řešit před škálováním.'
+        ));
+    }
+
+    return actions.sort((a, b) => a.priority - b.priority).slice(0, 6);
+}
+
+function calculateBusinessScore(summary, userStats, analyticsReport = {}) {
+    let score = 100;
+    const errorCount = (analyticsReport.summary?.clientErrors || 0) + (analyticsReport.summary?.serverErrors || 0);
+    const errorRate = rate(errorCount, analyticsReport.total || 0);
+    const failureRate = rate(summary.failures, summary.checkoutStarted);
+
+    if (summary.visitors < 100) score -= 18;
+    else if (summary.visitors < 500) score -= 8;
+
+    if (summary.visitorToSignupRate < 1.5) score -= 18;
+    else if (summary.visitorToSignupRate < 4) score -= 8;
+
+    if (summary.signups > 0 && summary.signupToCheckoutRate < 8) score -= 14;
+    if (summary.checkoutStarted > 0 && summary.checkoutToPurchaseRate < 20) score -= 16;
+    else if (summary.checkoutStarted > 0 && summary.checkoutToPurchaseRate < 45) score -= 8;
+
+    if (failureRate > 10) score -= 10;
+    else if (failureRate > 3) score -= 5;
+
+    if (errorRate > 5) score -= 10;
+    else if (errorRate > 1) score -= 4;
+
+    if ((userStats.activeSubscribers || 0) === 0 && summary.purchases === 0) score -= 8;
+
+    return clampScore(score);
+}
+
+export function buildBusinessReport({
+    analyticsReport = {},
+    previousAnalyticsReport = {},
+    funnelReport = {},
+    previousFunnelReport = {},
+    userStats = {},
+    days = DEFAULT_BUSINESS_DAYS
+} = {}) {
+    const summary = businessPeriodSummary(analyticsReport, funnelReport);
+    const previousSummary = businessPeriodSummary(previousAnalyticsReport, previousFunnelReport);
+    const activeSubscriptions = userStats.activeSubscriptions || [];
+    const normalizedUserStats = {
+        totalUsers: userStats.totalUsers || 0,
+        newUsers: userStats.newUsers || 0,
+        activeSubscribers: userStats.activeSubscribersCount ?? activeSubscriptions.length,
+        estimatedMrrCzk: userStats.estimatedMrrCzk ?? estimateMrrCzk(activeSubscriptions)
+    };
+
+    return {
+        generatedAt: new Date().toISOString(),
+        periodDays: days,
+        score: calculateBusinessScore(summary, normalizedUserStats, analyticsReport),
+        summary,
+        previousSummary,
+        deltas: {
+            visitors: countDelta(summary.visitors, previousSummary.visitors),
+            signups: countDelta(summary.signups, previousSummary.signups),
+            checkoutStarted: countDelta(summary.checkoutStarted, previousSummary.checkoutStarted),
+            purchases: countDelta(summary.purchases, previousSummary.purchases),
+            estimatedValueCzk: countDelta(summary.estimatedValueCzk, previousSummary.estimatedValueCzk)
+        },
+        userStats: normalizedUserStats,
+        signals: buildBusinessSignals(summary, normalizedUserStats, analyticsReport),
+        recommendedActions: buildBusinessActions(summary, previousSummary, normalizedUserStats, analyticsReport),
+        topAcquisition: analyticsReport.attributionSegments || [],
+        topFunnelSegments: funnelReport.sourceFeatureSegments || [],
+        topPages: analyticsReport.topPaths || []
+    };
 }
 
 export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, since = null, previousSince = null, periodEnd = null, limit = DEFAULT_FUNNEL_LIMIT } = {}) {
@@ -839,6 +1108,53 @@ export function buildAnalyticsAttributionCsv(report) {
     return [header.join(','), ...rows].join('\n');
 }
 
+function filterEventsByWindow(events = [], startIso, endIso) {
+    const start = getEventTime(startIso);
+    const end = getEventTime(endIso);
+
+    return (events || []).filter(event => {
+        const eventTime = getEventTime(event.created_at);
+        if (!Number.isFinite(eventTime)) return false;
+        return eventTime >= start && eventTime < end;
+    });
+}
+
+async function fetchBusinessUserStats(since, nowIso) {
+    const [
+        totalUsersResult,
+        newUsersResult,
+        activeSubscriptionsResult
+    ] = await Promise.all([
+        supabase
+            .from('users')
+            .select('id', { count: 'exact', head: true }),
+        supabase
+            .from('users')
+            .select('id', { count: 'exact', head: true })
+            .gte('created_at', since),
+        supabase
+            .from('subscriptions')
+            .select('plan_type, status, current_period_end')
+            .eq('status', 'active')
+            .gte('current_period_end', nowIso)
+            .limit(DEFAULT_BUSINESS_LIMIT)
+    ]);
+
+    if (totalUsersResult.error) throw totalUsersResult.error;
+    if (newUsersResult.error) throw newUsersResult.error;
+    if (activeSubscriptionsResult.error) throw activeSubscriptionsResult.error;
+
+    const activeSubscriptions = activeSubscriptionsResult.data || [];
+
+    return {
+        totalUsers: totalUsersResult.count || 0,
+        newUsers: newUsersResult.count || 0,
+        activeSubscriptions,
+        activeSubscribersCount: activeSubscriptions.length,
+        estimatedMrrCzk: estimateMrrCzk(activeSubscriptions)
+    };
+}
+
 function normalizeModerationStatus(value) {
     if (value === 'approved' || value === 'all') return value;
     return 'pending';
@@ -1079,6 +1395,87 @@ router.get('/analytics', authenticateToken, requireAdmin, async (req, res) => {
     } catch (error) {
         console.error('Admin Analytics Error:', error);
         res.status(500).json({ success: false, error: 'Nepodařilo se načíst analytics report.' });
+    }
+});
+
+// Business cockpit: acquisition, activation, monetization and prioritized next actions
+router.get('/business', authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        const days = normalizeBusinessDays(req.query.days);
+        const periodEndDate = new Date();
+        const sinceDate = new Date(periodEndDate.getTime() - days * 24 * 60 * 60 * 1000);
+        const previousSinceDate = new Date(periodEndDate.getTime() - days * 2 * 24 * 60 * 60 * 1000);
+        const periodEnd = periodEndDate.toISOString();
+        const since = sinceDate.toISOString();
+        const previousSince = previousSinceDate.toISOString();
+
+        const [
+            analyticsEventsResult,
+            funnelEventsResult,
+            userStats
+        ] = await Promise.all([
+            supabase
+                .from('analytics_events')
+                .select(`
+                    id,
+                    user_id,
+                    event_type,
+                    feature,
+                    metadata,
+                    created_at
+                `)
+                .gte('created_at', previousSince)
+                .order('created_at', { ascending: false })
+                .limit(DEFAULT_BUSINESS_LIMIT),
+            supabase
+                .from('funnel_events')
+                .select(`
+                    id,
+                    user_id,
+                    event_name,
+                    source,
+                    feature,
+                    plan_id,
+                    plan_type,
+                    stripe_session_id,
+                    stripe_event_id,
+                    metadata,
+                    created_at
+                `)
+                .gte('created_at', previousSince)
+                .order('created_at', { ascending: false })
+                .limit(DEFAULT_BUSINESS_LIMIT),
+            fetchBusinessUserStats(since, periodEnd)
+        ]);
+
+        if (analyticsEventsResult.error) throw analyticsEventsResult.error;
+        if (funnelEventsResult.error) throw funnelEventsResult.error;
+
+        const analyticsEvents = analyticsEventsResult.data || [];
+        const funnelEvents = funnelEventsResult.data || [];
+        const currentAnalyticsEvents = filterEventsByWindow(analyticsEvents, since, periodEnd);
+        const previousAnalyticsEvents = filterEventsByWindow(analyticsEvents, previousSince, since);
+        const currentFunnelEvents = filterEventsByWindow(funnelEvents, since, periodEnd);
+        const previousFunnelEvents = filterEventsByWindow(funnelEvents, previousSince, since);
+        const analyticsReport = buildAnalyticsReport(currentAnalyticsEvents, { days, limit: DEFAULT_BUSINESS_LIMIT });
+        const previousAnalyticsReport = buildAnalyticsReport(previousAnalyticsEvents, { days, limit: DEFAULT_BUSINESS_LIMIT });
+        const funnelReport = buildFunnelReport(currentFunnelEvents, { days, since, limit: DEFAULT_BUSINESS_LIMIT });
+        const previousFunnelReport = buildFunnelReport(previousFunnelEvents, { days, since: previousSince, periodEnd: since, limit: DEFAULT_BUSINESS_LIMIT });
+
+        res.json({
+            success: true,
+            report: buildBusinessReport({
+                analyticsReport,
+                previousAnalyticsReport,
+                funnelReport,
+                previousFunnelReport,
+                userStats,
+                days
+            })
+        });
+    } catch (error) {
+        console.error('Admin Business Error:', error);
+        res.status(500).json({ success: false, error: 'Nepodařilo se načíst business cockpit.' });
     }
 });
 
