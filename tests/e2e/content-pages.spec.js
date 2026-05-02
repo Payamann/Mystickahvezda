@@ -360,6 +360,7 @@ test.describe('Tarot karta dne', () => {
         expect(fullReadingHref).toContain('card=');
 
         await expect(page.locator('#tarot-daily-card-detail')).toHaveAttribute('href', /\/tarot-vyznam\/.+\.html/);
+        await expect(page.locator('#tarot-daily-save-profile')).toBeVisible();
         await expect(page.locator('#tarot-daily-save-image')).toBeVisible();
         await expect(page.locator('#tarot-daily-share')).toBeVisible();
 
@@ -368,6 +369,87 @@ test.describe('Tarot karta dne', () => {
         await page.locator('#tarot-daily-save-image').click();
         const download = await downloadPromise;
         expect(download.suggestedFilename()).toMatch(/^tarot-karta-dne-.+\.png$/);
+    });
+
+    test('uložení karty do profilu pošle hosta na registraci s kontextem', async ({ page }) => {
+        await page.goto('/tarot-karta-dne.html');
+        await waitForPageReady(page);
+
+        await page.locator('#tarot-daily-reveal').click();
+        const saveProfileButton = page.locator('#tarot-daily-save-profile');
+        await expect(saveProfileButton).toBeVisible();
+
+        await Promise.all([
+            page.waitForURL(/\/prihlaseni\.html/),
+            saveProfileButton.click()
+        ]);
+
+        const target = new URL(page.url());
+        expect(target.pathname).toBe('/prihlaseni.html');
+        expect(target.searchParams.get('mode')).toBe('register');
+        expect(target.searchParams.get('redirect')).toBe('/tarot-karta-dne.html#denni-karta');
+        expect(target.searchParams.get('source')).toBe('tarot_daily_card_profile_save');
+        expect(target.searchParams.get('feature')).toBe('tarot_daily_card_profile_save');
+        expect(target.searchParams.get('intent')).toBe('save_daily_card');
+        expect(target.searchParams.get('card')).toBeTruthy();
+
+        await waitForPageReady(page);
+        await expect(page.locator('#checkout-context-title')).toContainText('Uložte kartu dne do profilu');
+    });
+
+    test('přihlášenému uživateli uloží denní kartu přes existující profil API', async ({ page }) => {
+        await page.goto('/tarot-karta-dne.html');
+        await waitForPageReady(page);
+
+        await page.evaluate(() => {
+            window.__dailyTarotSaveCalls = [];
+            window.__dailyTarotEvents = [];
+            window.Auth = {
+                isLoggedIn: () => true,
+                saveReading: async (type, data) => {
+                    window.__dailyTarotSaveCalls.push({ type, data });
+                    return { id: 'reading-test-1', type, data };
+                }
+            };
+            window.MH_ANALYTICS = {
+                trackAction: (eventName, props) => {
+                    window.__dailyTarotEvents.push({ eventName, props });
+                }
+            };
+        });
+
+        await page.locator('#tarot-daily-reveal').click();
+        const saveProfileButton = page.locator('#tarot-daily-save-profile');
+        await expect(saveProfileButton).toBeVisible();
+        await saveProfileButton.click();
+
+        await expect(saveProfileButton).toHaveText('Uloženo v profilu');
+        await expect(saveProfileButton).toBeDisabled();
+
+        const saveCall = await page.evaluate(() => window.__dailyTarotSaveCalls[0]);
+        expect(saveCall).toEqual(expect.objectContaining({
+            type: 'tarot',
+            data: expect.objectContaining({
+                spreadType: 'Tarot karta dne',
+                source: 'tarot_daily_card_widget',
+                dateKey: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+                cards: expect.arrayContaining([
+                    expect.objectContaining({
+                        position: 'Karta dne',
+                        name: expect.any(String)
+                    })
+                ])
+            })
+        }));
+
+        const saveEvent = await page.evaluate(() => window.__dailyTarotEvents.find(
+            event => event.eventName === 'tarot_daily_card_profile_saved'
+        ));
+        expect(saveEvent).toEqual(expect.objectContaining({
+            props: expect.objectContaining({
+                reading_id: 'reading-test-1'
+            })
+        }));
     });
 
     test('obsahuje další kroky a FAQ schema', async ({ page }) => {

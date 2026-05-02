@@ -43,6 +43,17 @@
         return `${url.pathname}${url.search}`;
     }
 
+    function buildProfileSignupUrl(cardName) {
+        const url = new URL('/prihlaseni.html', window.location.origin);
+        url.searchParams.set('mode', 'register');
+        url.searchParams.set('redirect', '/tarot-karta-dne.html#denni-karta');
+        url.searchParams.set('source', 'tarot_daily_card_profile_save');
+        url.searchParams.set('feature', 'tarot_daily_card_profile_save');
+        url.searchParams.set('intent', 'save_daily_card');
+        url.searchParams.set('card', cardName);
+        return `${url.pathname}${url.search}`;
+    }
+
     function trackDailyCard(eventName, cardName, extra = {}) {
         window.MH_ANALYTICS?.trackAction?.(eventName, {
             source: SOURCE,
@@ -58,6 +69,20 @@
         return meaning
             ? `Konkrétní krok: všimněte si dnes tématu „${meaning}“ a udělejte jednu malou věc, která s ním bude v souladu.`
             : 'Konkrétní krok: vezměte kartu jako jemnou připomínku a vyberte si jednu věc, kterou dnes nebudete odkládat.';
+    }
+
+    function buildProfileReadingPayload(card) {
+        return {
+            spreadType: 'Tarot karta dne',
+            source: SOURCE,
+            dateKey: getLocalDateKey(),
+            cards: [{
+                name: card.name,
+                position: 'Karta dne',
+                meaning: card.meaning || ''
+            }],
+            response: `${card.meaning || 'Symbol pro dnešní energii.'}\n\n${dailyAdvice(card)}`
+        };
     }
 
     function wrapCanvasText(ctx, text, maxWidth) {
@@ -272,6 +297,60 @@
         saveButton.onclick = () => saveDailyCardImage(saveButton, card);
     }
 
+    function setupProfileSaveButton(profileButton, card) {
+        if (!profileButton) return;
+
+        const defaultText = window.Auth?.isLoggedIn?.() ? 'Uložit do profilu' : 'Uložit do profilu zdarma';
+        profileButton.hidden = false;
+        profileButton.textContent = defaultText;
+        profileButton.onclick = async () => {
+            const auth = window.Auth;
+            if (!auth?.isLoggedIn?.()) {
+                trackDailyCard('tarot_daily_card_profile_signup_clicked', card.name);
+                window.location.href = buildProfileSignupUrl(card.name);
+                return;
+            }
+
+            if (typeof auth.saveReading !== 'function') {
+                trackDailyCard('tarot_daily_card_profile_save_unavailable', card.name);
+                window.location.href = '/profil.html';
+                return;
+            }
+
+            const previousText = profileButton.textContent;
+            profileButton.disabled = true;
+            profileButton.textContent = 'Ukládám...';
+
+            try {
+                const savedReading = await auth.saveReading('tarot', buildProfileReadingPayload(card));
+                if (!savedReading) {
+                    profileButton.textContent = 'Zkusit znovu';
+                    trackDailyCard('tarot_daily_card_profile_save_failed', card.name);
+                    return;
+                }
+
+                window.__lastTarotDailySavedReading = savedReading;
+                profileButton.dataset.saved = 'true';
+                profileButton.textContent = 'Uloženo v profilu';
+                trackDailyCard('tarot_daily_card_profile_saved', card.name, {
+                    reading_id: savedReading.id || savedReading._id || null
+                });
+            } catch (error) {
+                console.warn('[Tarot karta dne] Profile save failed:', error.message);
+                profileButton.textContent = 'Zkusit znovu';
+                trackDailyCard('tarot_daily_card_profile_save_failed', card.name);
+            } finally {
+                setTimeout(() => {
+                    if (profileButton.dataset.saved === 'true') return;
+                    profileButton.disabled = false;
+                    if (profileButton.textContent !== 'Uloženo v profilu') {
+                        profileButton.textContent = previousText || defaultText;
+                    }
+                }, 1600);
+            }
+        };
+    }
+
     function revealCard(card, elements) {
         elements.result.dataset.state = 'revealed';
         elements.image.src = card.image || 'img/tarot/tarot_card_back_straight_v2.webp';
@@ -284,6 +363,7 @@
         elements.detail.href = buildDetailUrl(card.name);
         elements.button.textContent = 'Zobrazit znovu dnešní kartu';
         window.__lastTarotDailyShareResult = card;
+        setupProfileSaveButton(elements.profileSave, card);
         setupSaveImageButton(elements.saveImage, card);
         setupShareButton(elements.share, card.name, card);
         trackDailyCard('tarot_daily_card_revealed', card.name);
@@ -300,6 +380,7 @@
             advice: document.getElementById('tarot-daily-card-advice'),
             fullReading: document.getElementById('tarot-daily-full-reading'),
             detail: document.getElementById('tarot-daily-card-detail'),
+            profileSave: document.getElementById('tarot-daily-save-profile'),
             saveImage: document.getElementById('tarot-daily-save-image'),
             share: document.getElementById('tarot-daily-share')
         };

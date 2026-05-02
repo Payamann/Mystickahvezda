@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         subscription_management: 'Správa předplatného',
         vip_membership: 'VIP členství',
         tarot: 'Tarot',
+        tarot_daily_card_profile_save: 'Tarot karta dne',
         tarot_multi_card: 'Vícekartový tarot',
         daily_angel_card: 'Andělská karta dne',
         andelske_karty_hluboky_vhled: 'Andělské karty',
@@ -112,6 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
             copy: 'Po vytvoření účtu budete pokračovat k tarotu a můžete si rovnou položit první otázku.',
             stepTitle: 'Otevřeme tarotový výklad',
             stepCopy: 'Navážete přímo na záměr, se kterým jste přišli.'
+        },
+        tarot_daily_card_profile_save: {
+            title: 'Uložte kartu dne do profilu',
+            copy: 'Vytvořte si účet zdarma a vraťte se ke stejné kartě dne, aby nezmizela jen jako jednorázový náhodný vhled.',
+            stepTitle: 'Vrátíme vás ke kartě dne',
+            stepCopy: 'Po registraci pokračujete u stejného symbolu a můžete si výklad uložit do profilu.'
         },
         tarot_multi_card: {
             title: 'Vícekartový tarot po registraci',
@@ -228,7 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
             stepCopy: 'První hodnota přijde hned po registraci.'
         },
         newsletter_form: SIGNUP_CONTEXT_BY_FEATURE.daily_guidance,
-        newsletter_popup: SIGNUP_CONTEXT_BY_FEATURE.daily_guidance
+        newsletter_popup: SIGNUP_CONTEXT_BY_FEATURE.daily_guidance,
+        tarot_daily_card_profile_save: SIGNUP_CONTEXT_BY_FEATURE.tarot_daily_card_profile_save
     };
 
     const SIGNUP_CONTEXT_BY_REDIRECT = {
