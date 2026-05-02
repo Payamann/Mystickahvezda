@@ -46,7 +46,7 @@ describe('manual script guardrails', () => {
 
         expect(source).toContain("process.argv.includes('--send')");
         expect(source).toContain('[DRY RUN]');
-        expect(source).toContain('export async function run()');
+        expect(source).toContain('export async function run(options = {})');
     });
 
     test('daily horoscope script uses shared email service payload', () => {
@@ -131,6 +131,8 @@ describe('manual script guardrails', () => {
 
         expect(source).toContain("process.env.NODE_ENV === 'production' || process.env.ENABLE_SCHEDULED_JOBS === 'true'");
         expect(source).toContain("process.env.DISABLE_SCHEDULED_JOBS !== 'true'");
+        expect(source).toContain('startup_catchup');
+        expect(source).toContain('hourly_catchup');
         expect(envExample).toContain('ENABLE_SCHEDULED_JOBS=false');
     });
 

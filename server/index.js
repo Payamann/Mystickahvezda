@@ -72,6 +72,29 @@ const PORT = process.env.PORT || 3001;
 const SHOULD_RUN_SCHEDULED_JOBS = process.env.DISABLE_SCHEDULED_JOBS !== 'true' &&
     process.env.NODE_ENV !== 'test' &&
     (process.env.NODE_ENV === 'production' || process.env.ENABLE_SCHEDULED_JOBS === 'true');
+const DAILY_HOROSCOPE_SEND_HOUR_UTC = 7;
+let dailyHoroscopeJobRunning = false;
+
+function isAfterDailyHoroscopeSendWindow(date = new Date()) {
+    return date.getUTCHours() >= DAILY_HOROSCOPE_SEND_HOUR_UTC;
+}
+
+async function runDailyHoroscopeJob(reason = 'scheduled') {
+    if (dailyHoroscopeJobRunning) {
+        console.warn(`[CRON] Daily horoscope skipped (${reason}) because a run is already active.`);
+        return;
+    }
+
+    dailyHoroscopeJobRunning = true;
+    try {
+        const { run } = await import('./scripts/send-daily-horoscope.js');
+        await run();
+    } catch (e) {
+        console.error(`[CRON] Daily horoscope failed (${reason}):`, e.message);
+    } finally {
+        dailyHoroscopeJobRunning = false;
+    }
+}
 
 // Middleware - Restrict CORS to same-origin by default
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
@@ -817,16 +840,19 @@ if (isMain || process.env.NODE_ENV === 'production') {
         });
         console.warn('📅 Horoscope prefill cron scheduled (05:00 UTC).');
 
-        // Daily horoscope emails — every day at 07:00 UTC
-        schedule.scheduleJob('0 7 * * *', async () => {
-            try {
-                const { run } = await import('./scripts/send-daily-horoscope.js');
-                await run();
-            } catch (e) {
-                console.error('[CRON] Daily horoscope failed:', e.message);
+        // Daily horoscope emails — every day at 07:00 UTC, with catch-up after restarts.
+        schedule.scheduleJob('0 7 * * *', () => runDailyHoroscopeJob('scheduled_07_utc'));
+        schedule.scheduleJob('20 * * * *', () => {
+            if (isAfterDailyHoroscopeSendWindow()) {
+                runDailyHoroscopeJob('hourly_catchup');
             }
         });
-        console.warn('📅 Daily horoscope cron scheduled (07:00 UTC).');
+        setTimeout(() => {
+            if (isAfterDailyHoroscopeSendWindow()) {
+                runDailyHoroscopeJob('startup_catchup');
+            }
+        }, 5000);
+        console.warn('📅 Daily horoscope cron scheduled (07:00 UTC + startup/hourly catch-up).');
     });
 }
 
