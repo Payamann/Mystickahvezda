@@ -38,8 +38,8 @@
 html body .mh-inline-fd21170680 { padding-top: var(--space-2xl); padding-bottom: 3rem; }
 html body .mh-inline-44e3a01151 { margin: 0.5rem 0 1rem; font-size: 3rem; }
 html body .mh-inline-9536a1e4b5 { max-width: 760px; margin: 0 auto; }
-html body .mh-inline-c838d5f69c { cursor:pointer; padding:0.6rem 1.6rem; border-radius:30px; font-size:0.85rem; font-weight:700; background:var(--color-mystic-gold); color:#000; border:none; transition:all 0.2s; }
-html body .mh-inline-8cb51f9572 { cursor:pointer; padding:0.6rem 1.6rem; border-radius:30px; font-size:0.85rem; font-weight:500; color:rgba(255,255,255,0.5); background:transparent; border:none; transition:all 0.2s; }
+html body .mh-inline-c838d5f69c { cursor:pointer; min-height:44px; display:inline-flex; align-items:center; justify-content:center; padding:0.6rem 1.6rem; border-radius:30px; font-size:0.85rem; font-weight:700; background:var(--color-mystic-gold); color:#000; border:none; transition:color 0.2s, background-color 0.2s, border-color 0.2s, opacity 0.2s, transform 0.2s; }
+html body .mh-inline-8cb51f9572 { cursor:pointer; min-height:44px; display:inline-flex; align-items:center; justify-content:center; padding:0.6rem 1.6rem; border-radius:30px; font-size:0.85rem; font-weight:500; color:rgba(255,255,255,0.5); background:transparent; border:none; transition:color 0.2s, background-color 0.2s, border-color 0.2s, opacity 0.2s, transform 0.2s; }
 html body .mh-inline-bbf01b1a87 { padding-top:0; }
 html body .mh-inline-b3f39e388b { font-size:0.8rem; opacity:0.5; }
 html body .mh-inline-31d501362b { background:linear-gradient(to right,#d4af37,#b38b00);border:none;color:#000;font-weight:700; }
@@ -206,7 +206,7 @@ html body .pricing-toggle--active {
 
 .pricing-plan-recommendation__action,
 .pricing-plan-recommendation__preview {
-    min-height: 40px;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;

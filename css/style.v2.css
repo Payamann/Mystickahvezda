@@ -14718,3 +14718,68 @@ body.page-mentor .cookie-banner__actions .btn {
   color: var(--color-mystic-gold);
 
 }
+
+/* Mobile touch-target hardening */
+
+@media (max-width: 768px) {
+
+  .logo {
+
+    min-height: 44px;
+
+  }
+
+  .tab {
+
+    min-height: 44px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+  }
+
+  .password-toggle {
+
+    min-height: 44px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    touch-action: manipulation;
+
+  }
+
+  .cookie-banner__actions .btn,
+  body.page-home .cookie-banner__actions .btn,
+  body.page-login .cookie-banner__actions .btn,
+  body.page-pricing .cookie-banner__actions .btn,
+  body.page-profile .cookie-banner__actions .btn,
+  body.page-mentor .cookie-banner__actions .btn {
+
+    min-height: 44px;
+
+  }
+
+  [data-action="closeBanner"] {
+
+    min-width: 44px;
+
+    min-height: 44px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    touch-action: manipulation;
+
+  }
+
+}

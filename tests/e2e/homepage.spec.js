@@ -74,8 +74,18 @@ test.describe('Homepage', () => {
         await page.reload();
         await waitForPageReady(page);
 
-        await expect(page.locator('#auth-register-btn')).toBeVisible();
-        await expect(page.locator('#profile-link')).toBeHidden();
+        if ((page.viewportSize()?.width || 1024) <= MOBILE_VIEWPORT.width) {
+            await expect(page.locator('#auth-register-btn')).toBeHidden();
+            await expect(page.locator('#profile-link')).toBeHidden();
+
+            await page.locator('.nav__toggle').click();
+            await expect(page.locator('#mobile-auth-register-btn')).toBeVisible();
+            await expect(page.locator('#mobile-profile-link')).toBeHidden();
+        } else {
+            await expect(page.locator('#auth-register-btn')).toBeVisible();
+            await expect(page.locator('#profile-link')).toBeHidden();
+        }
+
         await expect(page.locator('#personalized-greeting')).toHaveAttribute('aria-hidden', 'true');
         await expect.poll(() => page.evaluate(() => localStorage.getItem('auth_user'))).toBeNull();
     });

@@ -13,9 +13,7 @@ export function initHeader() {
 
     // Throttled scroll handler for better performance
     const handleScroll = throttle(() => {
-        const currentScroll = window.scrollY || document.documentElement.scrollTop;
-
-        if (currentScroll > 50) {
+        if (window.scrollY > 50) {
             header.classList.add('scrolled');
         } else {
             header.classList.remove('scrolled');
@@ -25,7 +23,9 @@ export function initHeader() {
     window.addEventListener('scroll', handleScroll, { passive: true });
 
     // Initial check (in case page is loaded already scrolled)
-    handleScroll();
+    if (window.scrollY > 50) {
+        requestAnimationFrame(handleScroll);
+    }
 }
 
 /* ============================================

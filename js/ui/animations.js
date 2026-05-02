@@ -30,18 +30,9 @@ export function initScrollAnimations() {
     });
 
     animatedElements.forEach(el => {
-        // Check if element is already in viewport
-        const rect = el.getBoundingClientRect();
-        const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
-
         // Content should never depend on the observer to become visible.
         el.classList.add('is-visible');
-
-        if (isInViewport) {
-            el.classList.add('animate-fade-in');
-        } else {
-            observer.observe(el);
-        }
+        observer.observe(el);
     });
 }
 

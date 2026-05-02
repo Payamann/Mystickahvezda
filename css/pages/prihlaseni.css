@@ -11,7 +11,7 @@
         .login-card .form-input::placeholder { color: rgba(255,255,255,0.3); }
         .password-input-wrap { position: relative; }
         .password-input-wrap .form-input { padding-right: 5.35rem; }
-        .password-toggle { position: absolute; right: 0.55rem; top: 50%; transform: translateY(-50%); min-height: 2rem; padding: 0 0.58rem; border: 1px solid rgba(212,175,55,0.25); border-radius: 999px; background: rgba(10,10,26,0.58); color: var(--color-mystic-gold); font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em; cursor: pointer; }
+        .password-toggle { position: absolute; right: 0.55rem; top: 50%; transform: translateY(-50%); min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0 0.72rem; border: 1px solid rgba(212,175,55,0.25); border-radius: 999px; background: rgba(10,10,26,0.58); color: var(--color-mystic-gold); font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em; cursor: pointer; touch-action: manipulation; }
         .password-toggle:hover, .password-toggle:focus-visible { background: rgba(212,175,55,0.12); outline: none; border-color: rgba(212,175,55,0.45); }
         .login-card .btn--primary { width: 100%; margin-top: 0.5rem; padding: 0.85rem; font-size: 0.95rem; letter-spacing: 0.05em; }
          .login-card .btn--text { background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.9rem; padding: 0.25rem 0; }

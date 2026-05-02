@@ -143,7 +143,9 @@ function initStandaloneHeader() {
         }
     }
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial check
+    if (window.scrollY > 50) {
+        handleScroll(); // Initial check only when restoring a scrolled page
+    }
 
     // === HAMBURGER MENU ===
     const toggle = document.querySelector('.nav__toggle');
