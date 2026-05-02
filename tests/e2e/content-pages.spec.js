@@ -323,6 +323,22 @@ test.describe('Tarot karta dne', () => {
         const cta = page.locator('main a[href*="tarot.html?source=tarot_daily_card_landing"][href*="intent=daily_card"]').first();
         await expect(cta).toBeVisible();
         await expect(cta).toHaveAttribute('href', /feature=tarot/);
+
+        await page.evaluate(() => {
+            window.MH_ANALYTICS_QUEUE = [];
+            const link = document.querySelector('main a[data-analytics-cta="tarot_daily_card_landing_primary"]');
+            link?.addEventListener('click', event => event.preventDefault(), { once: true, capture: true });
+            link?.click();
+        });
+
+        const event = await page.evaluate(() => window.MH_ANALYTICS_QUEUE.find(
+            item => item.name === 'cta_clicked' && item.location === 'tarot_daily_card_landing_primary'
+        ));
+        expect(event).toEqual(expect.objectContaining({
+            destination: expect.stringContaining('tarot.html?source=tarot_daily_card_landing'),
+            feature: 'tarot',
+            intent: 'daily_card'
+        }));
     });
 
     test('interaktivní karta dne ukáže kartu a předá ji do výkladu', async ({ page }) => {

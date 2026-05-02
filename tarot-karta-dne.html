@@ -33,6 +33,7 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/dist/analytics-init.js" defer></script>
+    <script src="/js/dist/analytics.js?v=7" defer></script>
 </head>
 <body>
     <div class="stars" aria-hidden="true"></div>
@@ -46,8 +47,8 @@
                     <h1 class="section__title">Tarot karta dne pro dnešní směr</h1>
                     <p class="section__text">Vytáhněte si jednu kartu a získejte krátký symbol pro energii dne, rozhodnutí před vámi a první praktický krok.</p>
                     <div class="tarot-daily-hero__actions">
-                        <a href="tarot.html?source=tarot_daily_card_landing&feature=tarot&intent=daily_card" class="btn btn--primary">Vytáhnout kartu dne</a>
-                        <a href="tarot-ano-ne.html?source=tarot_daily_card_landing&intent=yes_no" class="btn btn--ghost">Zeptat se ANO/NE</a>
+                        <a href="tarot.html?source=tarot_daily_card_landing&feature=tarot&intent=daily_card" class="btn btn--primary" data-analytics-cta="tarot_daily_card_landing_primary" data-analytics-feature="tarot" data-analytics-intent="daily_card">Vytáhnout kartu dne</a>
+                        <a href="tarot-ano-ne.html?source=tarot_daily_card_landing&intent=yes_no" class="btn btn--ghost" data-analytics-cta="tarot_daily_card_landing_yes_no" data-analytics-feature="tarot" data-analytics-intent="yes_no">Zeptat se ANO/NE</a>
                     </div>
                     <div class="tarot-daily-trust" aria-label="Výhody karty dne">
                         <span>Bez registrace</span>
@@ -84,8 +85,8 @@
                             <p id="tarot-daily-card-meaning">Otoč kartu a uvidíš symbol dne, krátký význam a navazující krok.</p>
                             <p id="tarot-daily-card-advice" class="tarot-daily-card-result__advice"></p>
                             <div class="tarot-daily-card-result__actions">
-                                <a id="tarot-daily-full-reading" href="tarot.html?source=tarot_daily_card_widget&feature=tarot&intent=daily_card" class="btn btn--primary">Rozvinout výklad</a>
-                                <a id="tarot-daily-card-detail" href="tarot-vyznam-karet.html?source=tarot_daily_card_widget" class="btn btn--ghost">Význam karty</a>
+                                <a id="tarot-daily-full-reading" href="tarot.html?source=tarot_daily_card_widget&feature=tarot&intent=daily_card" class="btn btn--primary" data-analytics-cta="tarot_daily_card_widget_reading" data-analytics-feature="tarot" data-analytics-intent="daily_card">Rozvinout výklad</a>
+                                <a id="tarot-daily-card-detail" href="tarot-vyznam-karet.html?source=tarot_daily_card_widget" class="btn btn--ghost" data-analytics-cta="tarot_daily_card_widget_detail" data-analytics-feature="tarot" data-analytics-intent="card_meaning">Význam karty</a>
                                 <button id="tarot-daily-save-image" class="btn btn--ghost" type="button" hidden>Uložit obrázek</button>
                                 <button id="tarot-daily-share" class="btn btn--ghost" type="button" hidden>Sdílet kartu</button>
                             </div>
@@ -132,17 +133,17 @@
                     <article class="tarot-daily-primer__card">
                         <h3>Velká arkána ukáže téma</h3>
                         <p>Když přijde karta jako Hvězda, Síla nebo Věž, obvykle mluví o větším posunu, odvaze, zlomu nebo návratu důvěry.</p>
-                        <a href="tarot-vyznam-karet.html?source=tarot_daily_card_primer&intent=major_arcana">Projít významy karet</a>
+                        <a href="tarot-vyznam-karet.html?source=tarot_daily_card_primer&intent=major_arcana" data-analytics-cta="tarot_daily_card_primer_meanings" data-analytics-feature="tarot" data-analytics-intent="major_arcana">Projít významy karet</a>
                     </article>
                     <article class="tarot-daily-primer__card">
                         <h3>Malá arkána zpřesní krok</h3>
                         <p>Hůlky často řeší akci, poháry vztahy, meče myšlenky a pentákly praktické věci. Díky tomu víš, kde začít.</p>
-                        <a href="tarot-zdarma.html?source=tarot_daily_card_primer&intent=free_tarot">Vybrat typ tarotu</a>
+                        <a href="tarot-zdarma.html?source=tarot_daily_card_primer&intent=free_tarot" data-analytics-cta="tarot_daily_card_primer_free_tarot" data-analytics-feature="tarot" data-analytics-intent="free_tarot">Vybrat typ tarotu</a>
                     </article>
                     <article class="tarot-daily-primer__card">
                         <h3>Jedna karta je začátek</h3>
                         <p>Pokud dnešní symbol trefí silné téma, rozviň ho tříkartovým výkladem a podívej se na souvislosti kolem rozhodnutí.</p>
-                        <a href="tarot.html?source=tarot_daily_card_primer&feature=tarot_multi_card&intent=three_cards">Rozvinout výklad</a>
+                        <a href="tarot.html?source=tarot_daily_card_primer&feature=tarot_multi_card&intent=three_cards" data-analytics-cta="tarot_daily_card_primer_three_cards" data-analytics-feature="tarot_multi_card" data-analytics-intent="three_cards">Rozvinout výklad</a>
                     </article>
                 </div>
             </div>
@@ -157,22 +158,22 @@
                 </div>
 
                 <div class="tarot-daily-intent-grid" data-animate>
-                    <a href="tarot.html?source=tarot_daily_card_intent&feature=tarot_multi_card&intent=three_cards" class="tarot-daily-intent-card">
+                    <a href="tarot.html?source=tarot_daily_card_intent&feature=tarot_multi_card&intent=three_cards" class="tarot-daily-intent-card" data-analytics-cta="tarot_daily_card_intent_three_cards" data-analytics-feature="tarot_multi_card" data-analytics-intent="three_cards">
                         <span>Chci souvislosti</span>
                         <strong>Tříkartový tarot</strong>
                         <em>Minulost, přítomnost a další krok pro dnešní téma.</em>
                     </a>
-                    <a href="tarot-ano-ne.html?source=tarot_daily_card_intent&intent=yes_no" class="tarot-daily-intent-card">
+                    <a href="tarot-ano-ne.html?source=tarot_daily_card_intent&intent=yes_no" class="tarot-daily-intent-card" data-analytics-cta="tarot_daily_card_intent_yes_no" data-analytics-feature="tarot" data-analytics-intent="yes_no">
                         <span>Potřebuji rozhodnutí</span>
                         <strong>Tarot ANO/NE</strong>
                         <em>Jedna konkrétní otázka, jedna rychlá odpověď.</em>
                     </a>
-                    <a href="andelske-karty.html?source=tarot_daily_card_intent&feature=angel_card_deep" class="tarot-daily-intent-card">
+                    <a href="andelske-karty.html?source=tarot_daily_card_intent&feature=angel_card_deep" class="tarot-daily-intent-card" data-analytics-cta="tarot_daily_card_intent_angel_cards" data-analytics-feature="angel_card_deep" data-analytics-intent="softer_guidance">
                         <span>Chci jemnější tón</span>
                         <strong>Andělské karty</strong>
                         <em>Laskavé vedení, když nechcete ostrý výklad.</em>
                     </a>
-                    <a href="cenik.html?plan=pruvodce&source=tarot_daily_card_landing&feature=tarot_multi_card" class="tarot-daily-intent-card tarot-daily-intent-card--primary">
+                    <a href="cenik.html?plan=pruvodce&source=tarot_daily_card_landing&feature=tarot_multi_card" class="tarot-daily-intent-card tarot-daily-intent-card--primary" data-analytics-cta="tarot_daily_card_intent_pricing" data-analytics-feature="tarot_multi_card" data-analytics-intent="pricing" data-analytics-plan="pruvodce">
                         <span>Chci osobní vedení</span>
                         <strong>Odemknout hlubší tarot</strong>
                         <em>Vícekartové výklady a Hvězdný průvodce v jednom plánu.</em>

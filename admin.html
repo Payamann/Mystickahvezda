@@ -275,6 +275,7 @@
                             </select>
                             <button class="btn btn--secondary" data-action="loadAnalytics">Obnovit analytics</button>
                             <button class="btn btn--secondary" data-action="exportAnalyticsCsv">Export CSV</button>
+                            <button class="btn btn--secondary" data-action="exportAnalyticsAttributionCsv">Export atribuce</button>
 
                         </div>
 
@@ -297,6 +298,31 @@
                             <h3>Top stránky</h3>
                             <ul id="analytics-paths" class="admin-breakdown-list"></ul>
                         </div>
+                    </div>
+
+                    <div class="admin-table-container admin-table-container--compact">
+                        <h3>Atribuce kampaní</h3>
+                        <table id="analytics-attribution-table">
+                            <thead>
+                                <tr>
+                                    <th>Zdroj</th>
+                                    <th>Kampaň</th>
+                                    <th>Médium</th>
+                                    <th>Vstup</th>
+                                    <th>Návštěvníci</th>
+                                    <th>Page views</th>
+                                    <th>CTA</th>
+                                    <th>Registrace</th>
+                                    <th>Checkouty</th>
+                                    <th>Nákupy</th>
+                                    <th>Signup %</th>
+                                    <th>Checkout %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="12">Načítám data...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="admin-table-container admin-table-container--compact">

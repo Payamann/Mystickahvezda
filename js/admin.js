@@ -20,6 +20,9 @@ document.addEventListener('click', (event) => {
     if (action === 'exportAnalyticsCsv') {
         exportAnalyticsCsv();
     }
+    if (action === 'exportAnalyticsAttributionCsv') {
+        exportAnalyticsCsv('attribution');
+    }
     if (action === 'loadAdminData') {
         loadAdminData();
     }
@@ -241,6 +244,7 @@ async function loadAnalytics() {
     const daysSelect = document.getElementById('analytics-range-days');
     const days = daysSelect ? daysSelect.value : '7';
     const summary = document.getElementById('analytics-summary');
+    const attributionTbody = document.querySelector('#analytics-attribution-table tbody');
     const dailyTbody = document.querySelector('#analytics-daily-table tbody');
     const errorsTbody = document.querySelector('#analytics-errors-table tbody');
     const errorMsg = document.getElementById('error-msg');
@@ -248,6 +252,7 @@ async function loadAnalytics() {
     if (!summary || !dailyTbody || !errorsTbody) return;
 
     summary.replaceChildren(createLoadingBlock('Načítám analytics...'));
+    if (attributionTbody) attributionTbody.replaceChildren(createTableMessageRow(12, 'Načítám data...'));
     dailyTbody.replaceChildren(createTableMessageRow(7, 'Načítám data...'));
     errorsTbody.replaceChildren(createTableMessageRow(5, 'Načítám data...'));
 
@@ -258,6 +263,7 @@ async function loadAnalytics() {
 
         if (response.status === 403) {
             summary.replaceChildren(createLoadingBlock('Přístup odepřen (nejste admin).'));
+            if (attributionTbody) attributionTbody.replaceChildren(createTableMessageRow(12, 'Přístup odepřen.', 'admin-table-error'));
             dailyTbody.replaceChildren(createTableMessageRow(7, 'Přístup odepřen.', 'admin-table-error'));
             errorsTbody.replaceChildren(createTableMessageRow(5, 'Přístup odepřen.', 'admin-table-error'));
             return;
@@ -271,19 +277,21 @@ async function loadAnalytics() {
     } catch (error) {
         console.error(error);
         summary.replaceChildren(createLoadingBlock('Analytics se nepodařilo načíst.'));
+        if (attributionTbody) attributionTbody.replaceChildren(createTableMessageRow(12, 'Atribuce nejsou dostupné.', 'admin-table-error'));
         dailyTbody.replaceChildren(createTableMessageRow(9, 'Denní analytics report není dostupný.', 'admin-table-error'));
         errorsTbody.replaceChildren(createTableMessageRow(5, 'Chyby nejsou dostupné.', 'admin-table-error'));
         errorMsg.textContent = 'Chyba při načítání analytics: ' + error.message;
     }
 }
 
-async function exportAnalyticsCsv() {
+async function exportAnalyticsCsv(view = 'daily') {
     const daysSelect = document.getElementById('analytics-range-days');
     const days = daysSelect ? daysSelect.value : '7';
     const errorMsg = document.getElementById('error-msg');
+    const viewParam = view === 'attribution' ? '&view=attribution' : '';
 
     try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}/admin/analytics?days=${encodeURIComponent(days)}&format=csv`, {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/admin/analytics?days=${encodeURIComponent(days)}&format=csv${viewParam}`, {
             credentials: 'include'
         });
 
@@ -293,7 +301,9 @@ async function exportAnalyticsCsv() {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `analytics-${days}d.csv`;
+        link.download = view === 'attribution'
+            ? `analytics-attribution-${days}d.csv`
+            : `analytics-${days}d.csv`;
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -489,8 +499,38 @@ function renderAnalytics(report) {
         .slice(0, 8));
     renderBreakdown('analytics-features', report.topFeatures || []);
     renderBreakdown('analytics-paths', report.topPaths || []);
+    renderAnalyticsAttribution(report.attributionSegments || []);
     renderAnalyticsDaily(report.daily || []);
     renderAnalyticsErrors(report.recentErrors || []);
+}
+
+function renderAnalyticsAttribution(rows) {
+    const tbody = document.querySelector('#analytics-attribution-table tbody');
+    if (!tbody) return;
+
+    tbody.replaceChildren();
+
+    if (!rows || rows.length === 0) {
+        tbody.appendChild(createTableMessageRow(12, 'Zatím tu nejsou žádné atribuční segmenty.'));
+        return;
+    }
+
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        appendCell(tr, formatDimension(row.source));
+        appendCell(tr, formatDimension(row.campaign));
+        appendCell(tr, formatDimension(row.medium));
+        appendCell(tr, formatDimension(row.entryFeature));
+        appendCell(tr, formatInteger(row.visitors));
+        appendCell(tr, formatInteger(row.pageViews));
+        appendCell(tr, formatInteger(row.ctaClicks));
+        appendCell(tr, formatInteger(row.signups));
+        appendCell(tr, formatInteger(row.checkouts));
+        appendCell(tr, formatInteger(row.purchases));
+        appendCell(tr, formatPercent(row.visitorToSignupRate));
+        appendCell(tr, formatPercent(row.visitorToCheckoutRate));
+        tbody.appendChild(tr);
+    });
 }
 
 function renderAnalyticsDaily(rows) {

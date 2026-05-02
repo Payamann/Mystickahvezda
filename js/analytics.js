@@ -459,12 +459,23 @@ if (document.readyState === 'loading') {
 
 document.addEventListener('click', (event) => {
     const target = event.target.closest(
-        '#hero-cta-btn, #hero-daily-card-link, #cta-banner-btn, #auth-register-btn, #mobile-auth-register-btn, #auth-btn, #mobile-auth-btn, a[data-plan]'
+        '[data-analytics-cta], #hero-cta-btn, #hero-daily-card-link, #cta-banner-btn, #auth-register-btn, #mobile-auth-register-btn, #auth-btn, #mobile-auth-btn, a[data-plan]'
     );
     if (!target) return;
 
     const href = target.getAttribute('href') || '';
     const label = target.textContent?.trim() || target.id || 'unknown';
+
+    if (target.matches('[data-analytics-cta]')) {
+        MH_ANALYTICS.trackCTA(target.dataset.analyticsCta, {
+            label,
+            destination: href || null,
+            feature: target.dataset.analyticsFeature || null,
+            intent: target.dataset.analyticsIntent || null,
+            plan_id: target.dataset.analyticsPlan || target.dataset.plan || null
+        });
+        return;
+    }
 
     if (target.matches('#hero-cta-btn')) {
         MH_ANALYTICS.trackCTA('homepage_hero', { label, destination: href || '/prihlaseni.html?mode=register' });
