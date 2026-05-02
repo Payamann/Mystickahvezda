@@ -36,10 +36,20 @@ Each tool campaign has:
 
 This turns 10 tool pages into 50 scheduled pins without creating 50 separate visual concepts.
 
+Tarot card meaning pages are generated as a second evergreen layer. The generator keeps the curated tool campaigns and creates one campaign for every tarot card detail page:
+
+```bash
+cd social-media-agent
+python generate_tarot_pinterest_campaigns.py
+```
+
+This expands the tarot cluster from a few hand-picked card pins to all 78 tarot meanings, each with its own UTM campaign and three hook variants.
+
 ## Workflow
 
 ```bash
 cd social-media-agent
+python generate_tarot_pinterest_campaigns.py
 python pinterest_batch.py --tool-prompts
 python pinterest_tool_backgrounds.py
 python pinterest_batch.py --compose

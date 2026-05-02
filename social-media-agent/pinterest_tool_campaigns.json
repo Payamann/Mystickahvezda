@@ -187,109 +187,34 @@
     "image_prompt": "Three polished obsidian rune stones with glowing gold runes, arranged on dark velvet with stardust and pine shadows, deep navy cosmic background, premium 3D mystical object, clean dark bottom negative space."
   },
   {
-    "slug": "tool-tarot-vyznam-hvezda",
+    "slug": "tool-tarot-vyznam-blazen",
     "category": "Tarot",
-    "path": "/tarot-vyznam/hvezda.html",
-    "utm_campaign": "tarot_card_hvezda",
+    "path": "/tarot-vyznam/blazen.html",
+    "utm_campaign": "tarot_card_blazen",
     "board": "Výklady karet, arcana a tarotová rozložení",
-    "description": "Vyznam tarotove karty Hvezda: nadeje, uzdraveni a svetlo po tezkem obdobi. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
-    "keywords": "Hvezda tarot vyznam, karta Hvezda, tarot nadeje, velka arkana Hvezda",
+    "description": "Význam tarotové karty Blázen: nové začátky a nekonečné možnosti. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Blázen tarot význam, karta Blázen, tarot nové začátky a nekonečné možnosti, velká arkána, výklad tarotu online",
     "hooks": [
-      "HVEZDA: Co ti tahle tarotova karta opravdu rika?",
-      "KARTA HVEZDA: Vyznam pro lasku, praci i dnesni krok",
-      "VYTAHL SI HVEZDA?: Pochop symbol a pokracuj do vykladu"
+      "BLÁZEN: co ti tahle tarotová karta opravdu říká?",
+      "KARTA BLÁZEN: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS BLÁZEN?: pochop symbol a pokračuj do výkladu"
     ],
-    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Hvezda, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Blázen, visual metaphor for nové začátky a nekonečné možnosti, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
   },
   {
-    "slug": "tool-tarot-vyznam-slunce",
+    "slug": "tool-tarot-vyznam-mag",
     "category": "Tarot",
-    "path": "/tarot-vyznam/slunce.html",
-    "utm_campaign": "tarot_card_slunce",
+    "path": "/tarot-vyznam/mag.html",
+    "utm_campaign": "tarot_card_mag",
     "board": "Výklady karet, arcana a tarotová rozložení",
-    "description": "Vyznam tarotove karty Slunce: radost, uspech a jasnost. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
-    "keywords": "Slunce tarot vyznam, karta Slunce, tarot radost, velka arkana Slunce",
+    "description": "Význam tarotové karty Mág: síla vůle a manifestace. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Mág tarot význam, karta Mág, tarot síla vůle a manifestace, velká arkána, výklad tarotu online",
     "hooks": [
-      "SLUNCE: Co ti tahle tarotova karta opravdu rika?",
-      "KARTA SLUNCE: Vyznam pro lasku, praci i dnesni krok",
-      "VYTAHL SI SLUNCE?: Pochop symbol a pokracuj do vykladu"
+      "MÁG: co ti tahle tarotová karta opravdu říká?",
+      "KARTA MÁG: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS MÁG?: pochop symbol a pokračuj do výkladu"
     ],
-    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Slunce, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
-  },
-  {
-    "slug": "tool-tarot-vyznam-luna",
-    "category": "Tarot",
-    "path": "/tarot-vyznam/luna.html",
-    "utm_campaign": "tarot_card_luna",
-    "board": "Výklady karet, arcana a tarotová rozložení",
-    "description": "Vyznam tarotove karty Luna: intuice, sny a veci skryte pod povrchem. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
-    "keywords": "Luna tarot vyznam, karta Luna, tarot intuice, velka arkana Luna",
-    "hooks": [
-      "LUNA: Co ti tahle tarotova karta opravdu rika?",
-      "KARTA LUNA: Vyznam pro lasku, praci i dnesni krok",
-      "VYTAHL SI LUNA?: Pochop symbol a pokracuj do vykladu"
-    ],
-    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Luna, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
-  },
-  {
-    "slug": "tool-tarot-vyznam-vez",
-    "category": "Tarot",
-    "path": "/tarot-vyznam/vez.html",
-    "utm_campaign": "tarot_card_vez",
-    "board": "Výklady karet, arcana a tarotová rozložení",
-    "description": "Vyznam tarotove karty Vez: nahla zmena, pravda a osvobozeni. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
-    "keywords": "Vez tarot vyznam, karta Vez, tarot zmena, velka arkana Vez",
-    "hooks": [
-      "VEZ: Co ti tahle tarotova karta opravdu rika?",
-      "KARTA VEZ: Vyznam pro lasku, praci i dnesni krok",
-      "VYTAHL SI VEZ?: Pochop symbol a pokracuj do vykladu"
-    ],
-    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Vez, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
-  },
-  {
-    "slug": "tool-tarot-vyznam-smrt",
-    "category": "Tarot",
-    "path": "/tarot-vyznam/smrt.html",
-    "utm_campaign": "tarot_card_smrt",
-    "board": "Výklady karet, arcana a tarotová rozložení",
-    "description": "Vyznam tarotove karty Smrt: transformace, konec stareho a novy zacatek. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
-    "keywords": "Smrt tarot vyznam, karta Smrt, tarot transformace, velka arkana Smrt",
-    "hooks": [
-      "SMRT: Co ti tahle tarotova karta opravdu rika?",
-      "KARTA SMRT: Vyznam pro lasku, praci i dnesni krok",
-      "VYTAHL SI SMRT?: Pochop symbol a pokracuj do vykladu"
-    ],
-    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Smrt, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
-  },
-  {
-    "slug": "tool-tarot-vyznam-milenci",
-    "category": "Tarot",
-    "path": "/tarot-vyznam/milenci.html",
-    "utm_campaign": "tarot_card_milenci",
-    "board": "Výklady karet, arcana a tarotová rozložení",
-    "description": "Vyznam tarotove karty Milenci: laska, volba a hlubsi soulad. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
-    "keywords": "Milenci tarot vyznam, karta Milenci, tarot laska, velka arkana Milenci",
-    "hooks": [
-      "MILENCI: Co ti tahle tarotova karta opravdu rika?",
-      "KARTA MILENCI: Vyznam pro lasku, praci i dnesni krok",
-      "VYTAHL SI MILENCI?: Pochop symbol a pokracuj do vykladu"
-    ],
-    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Milenci, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
-  },
-  {
-    "slug": "tool-tarot-vyznam-dabel",
-    "category": "Tarot",
-    "path": "/tarot-vyznam/dabel.html",
-    "utm_campaign": "tarot_card_dabel",
-    "board": "Výklady karet, arcana a tarotová rozložení",
-    "description": "Vyznam tarotove karty Dabel: stin, pokuseni a navrat k vlastni sile. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
-    "keywords": "Dabel tarot vyznam, karta Dabel, tarot stin, velka arkana Dabel",
-    "hooks": [
-      "DABEL: Co ti tahle tarotova karta opravdu rika?",
-      "KARTA DABEL: Vyznam pro lasku, praci i dnesni krok",
-      "VYTAHL SI DABEL?: Pochop symbol a pokracuj do vykladu"
-    ],
-    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Dabel, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Mág, visual metaphor for síla vůle a manifestace, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
   },
   {
     "slug": "tool-tarot-vyznam-veleknezka",
@@ -297,14 +222,14 @@
     "path": "/tarot-vyznam/veleknezka.html",
     "utm_campaign": "tarot_card_veleknezka",
     "board": "Výklady karet, arcana a tarotová rozložení",
-    "description": "Vyznam tarotove karty Veleknezka: intuice, tajemstvi a vnitrni moudrost. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
-    "keywords": "Veleknezka tarot vyznam, karta Veleknezka, tarot intuice, velka arkana Veleknezka",
+    "description": "Význam tarotové karty Velekněžka: intuice a vnitřní moudrost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Velekněžka tarot význam, karta Velekněžka, tarot intuice a vnitřní moudrost, velká arkána, výklad tarotu online",
     "hooks": [
-      "VELEKNEZKA: Co ti tahle tarotova karta opravdu rika?",
-      "KARTA VELEKNEZKA: Vyznam pro lasku, praci i dnesni krok",
-      "VYTAHL SI VELEKNEZKA?: Pochop symbol a pokracuj do vykladu"
+      "VELEKNĚŽKA: co ti tahle tarotová karta opravdu říká?",
+      "KARTA VELEKNĚŽKA: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS VELEKNĚŽKA?: pochop symbol a pokračuj do výkladu"
     ],
-    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Veleknezka, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Velekněžka, visual metaphor for intuice a vnitřní moudrost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
   },
   {
     "slug": "tool-tarot-vyznam-cisarovna",
@@ -312,14 +237,104 @@
     "path": "/tarot-vyznam/cisarovna.html",
     "utm_campaign": "tarot_card_cisarovna",
     "board": "Výklady karet, arcana a tarotová rozložení",
-    "description": "Vyznam tarotove karty Cisarovna: hojnost, pece a tvoriva energie. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
-    "keywords": "Cisarovna tarot vyznam, karta Cisarovna, tarot hojnost, velka arkana Cisarovna",
+    "description": "Význam tarotové karty Císařovna: hojnost a péče. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Císařovna tarot význam, karta Císařovna, tarot hojnost a péče, velká arkána, výklad tarotu online",
     "hooks": [
-      "CISAROVNA: Co ti tahle tarotova karta opravdu rika?",
-      "KARTA CISAROVNA: Vyznam pro lasku, praci i dnesni krok",
-      "VYTAHL SI CISAROVNA?: Pochop symbol a pokracuj do vykladu"
+      "CÍSAŘOVNA: co ti tahle tarotová karta opravdu říká?",
+      "KARTA CÍSAŘOVNA: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS CÍSAŘOVNA?: pochop symbol a pokračuj do výkladu"
     ],
-    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Cisarovna, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Císařovna, visual metaphor for hojnost a péče, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-cisar",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/cisar.html",
+    "utm_campaign": "tarot_card_cisar",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Císař: autorita a struktura. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Císař tarot význam, karta Císař, tarot autorita a struktura, velká arkána, výklad tarotu online",
+    "hooks": [
+      "CÍSAŘ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA CÍSAŘ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS CÍSAŘ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Císař, visual metaphor for autorita a struktura, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-veleknez",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/veleknez.html",
+    "utm_campaign": "tarot_card_veleknez",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Velekněz: tradice a duchovní vedení. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Velekněz tarot význam, karta Velekněz, tarot tradice a duchovní vedení, velká arkána, výklad tarotu online",
+    "hooks": [
+      "VELEKNĚZ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA VELEKNĚZ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS VELEKNĚZ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Velekněz, visual metaphor for tradice a duchovní vedení, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-milenci",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/milenci.html",
+    "utm_campaign": "tarot_card_milenci",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Milenci: láska a volba. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Milenci tarot význam, karta Milenci, tarot láska a volba, velká arkána, výklad tarotu online",
+    "hooks": [
+      "MILENCI: co ti tahle tarotová karta opravdu říká?",
+      "KARTA MILENCI: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS MILENCI?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Milenci, visual metaphor for láska a volba, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-vuz",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/vuz.html",
+    "utm_campaign": "tarot_card_vuz",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Vůz: vítězství a odhodlání. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Vůz tarot význam, karta Vůz, tarot vítězství a odhodlání, velká arkána, výklad tarotu online",
+    "hooks": [
+      "VŮZ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA VŮZ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS VŮZ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Vůz, visual metaphor for vítězství a odhodlání, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-sila",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/sila.html",
+    "utm_campaign": "tarot_card_sila",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Síla: odvaha a vnitřní síla. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Síla tarot význam, karta Síla, tarot odvaha a vnitřní síla, velká arkána, výklad tarotu online",
+    "hooks": [
+      "SÍLA: co ti tahle tarotová karta opravdu říká?",
+      "KARTA SÍLA: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS SÍLA?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Síla, visual metaphor for odvaha a vnitřní síla, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-poustevnik",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/poustevnik.html",
+    "utm_campaign": "tarot_card_poustevnik",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Poustevník: introspekce a hledání pravdy. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Poustevník tarot význam, karta Poustevník, tarot introspekce a hledání pravdy, velká arkána, výklad tarotu online",
+    "hooks": [
+      "POUSTEVNÍK: co ti tahle tarotová karta opravdu říká?",
+      "KARTA POUSTEVNÍK: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS POUSTEVNÍK?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Poustevník, visual metaphor for introspekce a hledání pravdy, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
   },
   {
     "slug": "tool-tarot-vyznam-kolo-stesti",
@@ -327,13 +342,1018 @@
     "path": "/tarot-vyznam/kolo-stesti.html",
     "utm_campaign": "tarot_card_kolo_stesti",
     "board": "Výklady karet, arcana a tarotová rozložení",
-    "description": "Vyznam tarotove karty Kolo stesti: obrat, cykly a zmena smeru. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
-    "keywords": "Kolo stesti tarot vyznam, karta Kolo stesti, tarot osud, velka arkana Kolo stesti",
+    "description": "Význam tarotové karty Kolo štěstí: změna a cykly osudu. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Kolo štěstí tarot význam, karta Kolo štěstí, tarot změna a cykly osudu, velká arkána, výklad tarotu online",
     "hooks": [
-      "KOLO STESTI: Co ti tahle tarotova karta opravdu rika?",
-      "KARTA KOLO STESTI: Vyznam pro lasku, praci i dnesni krok",
-      "VYTAHL SI KOLO STESTI?: Pochop symbol a pokracuj do vykladu"
+      "KOLO ŠTĚSTÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA KOLO ŠTĚSTÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS KOLO ŠTĚSTÍ?: pochop symbol a pokračuj do výkladu"
     ],
-    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Kolo stesti, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Kolo štěstí, visual metaphor for změna a cykly osudu, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-spravedlnost",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/spravedlnost.html",
+    "utm_campaign": "tarot_card_spravedlnost",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Spravedlnost: rovnováha a pravda. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Spravedlnost tarot význam, karta Spravedlnost, tarot rovnováha a pravda, velká arkána, výklad tarotu online",
+    "hooks": [
+      "SPRAVEDLNOST: co ti tahle tarotová karta opravdu říká?",
+      "KARTA SPRAVEDLNOST: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS SPRAVEDLNOST?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Spravedlnost, visual metaphor for rovnováha a pravda, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-viselec",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/viselec.html",
+    "utm_campaign": "tarot_card_viselec",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Viselec: oběť a nový pohled. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Viselec tarot význam, karta Viselec, tarot oběť a nový pohled, velká arkána, výklad tarotu online",
+    "hooks": [
+      "VISELEC: co ti tahle tarotová karta opravdu říká?",
+      "KARTA VISELEC: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS VISELEC?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Viselec, visual metaphor for oběť a nový pohled, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-smrt",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/smrt.html",
+    "utm_campaign": "tarot_card_smrt",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Smrt: transformace a nové začátky. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Smrt tarot význam, karta Smrt, tarot transformace a nové začátky, velká arkána, výklad tarotu online",
+    "hooks": [
+      "SMRT: co ti tahle tarotová karta opravdu říká?",
+      "KARTA SMRT: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS SMRT?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Smrt, visual metaphor for transformace a nové začátky, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-mirnost",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/mirnost.html",
+    "utm_campaign": "tarot_card_mirnost",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Mírnost: harmonie a trpělivost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Mírnost tarot význam, karta Mírnost, tarot harmonie a trpělivost, velká arkána, výklad tarotu online",
+    "hooks": [
+      "MÍRNOST: co ti tahle tarotová karta opravdu říká?",
+      "KARTA MÍRNOST: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS MÍRNOST?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Mírnost, visual metaphor for harmonie a trpělivost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-dabel",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/dabel.html",
+    "utm_campaign": "tarot_card_dabel",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Ďábel: pokušení a stínová stránka. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Ďábel tarot význam, karta Ďábel, tarot pokušení a stínová stránka, velká arkána, výklad tarotu online",
+    "hooks": [
+      "ĎÁBEL: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ĎÁBEL: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ĎÁBEL?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Ďábel, visual metaphor for pokušení a stínová stránka, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-vez",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/vez.html",
+    "utm_campaign": "tarot_card_vez",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Věž: náhlá změna a osvobození. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Věž tarot význam, karta Věž, tarot náhlá změna a osvobození, velká arkána, výklad tarotu online",
+    "hooks": [
+      "VĚŽ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA VĚŽ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS VĚŽ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Věž, visual metaphor for náhlá změna a osvobození, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-hvezda",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/hvezda.html",
+    "utm_campaign": "tarot_card_hvezda",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Hvězda: naděje a inspirace. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Hvězda tarot význam, karta Hvězda, tarot naděje a inspirace, velká arkána, výklad tarotu online",
+    "hooks": [
+      "HVĚZDA: co ti tahle tarotová karta opravdu říká?",
+      "KARTA HVĚZDA: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS HVĚZDA?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Hvězda, visual metaphor for naděje a inspirace, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-luna",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/luna.html",
+    "utm_campaign": "tarot_card_luna",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Luna: intuice a podvědomí. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Luna tarot význam, karta Luna, tarot intuice a podvědomí, velká arkána, výklad tarotu online",
+    "hooks": [
+      "LUNA: co ti tahle tarotová karta opravdu říká?",
+      "KARTA LUNA: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS LUNA?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Luna, visual metaphor for intuice a podvědomí, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-slunce",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/slunce.html",
+    "utm_campaign": "tarot_card_slunce",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Slunce: radost a úspěch. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Slunce tarot význam, karta Slunce, tarot radost a úspěch, velká arkána, výklad tarotu online",
+    "hooks": [
+      "SLUNCE: co ti tahle tarotová karta opravdu říká?",
+      "KARTA SLUNCE: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS SLUNCE?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Slunce, visual metaphor for radost a úspěch, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-soud",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/soud.html",
+    "utm_campaign": "tarot_card_soud",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Soud: probuzení a odpuštění. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Soud tarot význam, karta Soud, tarot probuzení a odpuštění, velká arkána, výklad tarotu online",
+    "hooks": [
+      "SOUD: co ti tahle tarotová karta opravdu říká?",
+      "KARTA SOUD: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS SOUD?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Soud, visual metaphor for probuzení a odpuštění, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-svet",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/svet.html",
+    "utm_campaign": "tarot_card_svet",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Svět: dokončení a naplnění. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Svět tarot význam, karta Svět, tarot dokončení a naplnění, velká arkána, výklad tarotu online",
+    "hooks": [
+      "SVĚT: co ti tahle tarotová karta opravdu říká?",
+      "KARTA SVĚT: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS SVĚT?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Svět, visual metaphor for dokončení a naplnění, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-eso-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/eso-holi.html",
+    "utm_campaign": "tarot_card_eso_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Eso holí: nová inspirace a energie. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Eso holí tarot význam, karta Eso holí, tarot nová inspirace a energie, hůlky, výklad tarotu online",
+    "hooks": [
+      "ESO HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ESO HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ESO HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Eso holí, visual metaphor for nová inspirace a energie, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-dvojka-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/dvojka-holi.html",
+    "utm_campaign": "tarot_card_dvojka_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Dvojka holí: plánování a rozhodování. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Dvojka holí tarot význam, karta Dvojka holí, tarot plánování a rozhodování, hůlky, výklad tarotu online",
+    "hooks": [
+      "DVOJKA HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DVOJKA HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DVOJKA HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Dvojka holí, visual metaphor for plánování a rozhodování, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-trojka-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/trojka-holi.html",
+    "utm_campaign": "tarot_card_trojka_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Trojka holí: expanze a průzkum. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Trojka holí tarot význam, karta Trojka holí, tarot expanze a průzkum, hůlky, výklad tarotu online",
+    "hooks": [
+      "TROJKA HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA TROJKA HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS TROJKA HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Trojka holí, visual metaphor for expanze a průzkum, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-ctyrka-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/ctyrka-holi.html",
+    "utm_campaign": "tarot_card_ctyrka_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Čtyřka holí: oslava a stabilita. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Čtyřka holí tarot význam, karta Čtyřka holí, tarot oslava a stabilita, hůlky, výklad tarotu online",
+    "hooks": [
+      "ČTYŘKA HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ČTYŘKA HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ČTYŘKA HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Čtyřka holí, visual metaphor for oslava a stabilita, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-petka-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/petka-holi.html",
+    "utm_campaign": "tarot_card_petka_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Pětka holí: konflikt a soutěž. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Pětka holí tarot význam, karta Pětka holí, tarot konflikt a soutěž, hůlky, výklad tarotu online",
+    "hooks": [
+      "PĚTKA HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA PĚTKA HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS PĚTKA HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Pětka holí, visual metaphor for konflikt a soutěž, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-sestka-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/sestka-holi.html",
+    "utm_campaign": "tarot_card_sestka_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Šestka holí: vítězství a uznání. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Šestka holí tarot význam, karta Šestka holí, tarot vítězství a uznání, hůlky, výklad tarotu online",
+    "hooks": [
+      "ŠESTKA HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ŠESTKA HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ŠESTKA HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Šestka holí, visual metaphor for vítězství a uznání, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-sedmicka-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/sedmicka-holi.html",
+    "utm_campaign": "tarot_card_sedmicka_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Sedmička holí: obrana a vytrvalost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Sedmička holí tarot význam, karta Sedmička holí, tarot obrana a vytrvalost, hůlky, výklad tarotu online",
+    "hooks": [
+      "SEDMIČKA HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA SEDMIČKA HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS SEDMIČKA HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Sedmička holí, visual metaphor for obrana a vytrvalost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-osmicka-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/osmicka-holi.html",
+    "utm_campaign": "tarot_card_osmicka_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Osmička holí: rychlý pohyb a akce. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Osmička holí tarot význam, karta Osmička holí, tarot rychlý pohyb a akce, hůlky, výklad tarotu online",
+    "hooks": [
+      "OSMIČKA HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA OSMIČKA HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS OSMIČKA HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Osmička holí, visual metaphor for rychlý pohyb a akce, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-devitka-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/devitka-holi.html",
+    "utm_campaign": "tarot_card_devitka_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Devítka holí: odolnost a hranice. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Devítka holí tarot význam, karta Devítka holí, tarot odolnost a hranice, hůlky, výklad tarotu online",
+    "hooks": [
+      "DEVÍTKA HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DEVÍTKA HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DEVÍTKA HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Devítka holí, visual metaphor for odolnost a hranice, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-desitka-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/desitka-holi.html",
+    "utm_campaign": "tarot_card_desitka_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Desítka holí: břemeno a zodpovědnost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Desítka holí tarot význam, karta Desítka holí, tarot břemeno a zodpovědnost, hůlky, výklad tarotu online",
+    "hooks": [
+      "DESÍTKA HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DESÍTKA HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DESÍTKA HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Desítka holí, visual metaphor for břemeno a zodpovědnost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-paze-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/paze-holi.html",
+    "utm_campaign": "tarot_card_paze_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Páže holí: nadšení a nové zprávy. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Páže holí tarot význam, karta Páže holí, tarot nadšení a nové zprávy, hůlky, výklad tarotu online",
+    "hooks": [
+      "PÁŽE HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA PÁŽE HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS PÁŽE HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Páže holí, visual metaphor for nadšení a nové zprávy, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-rytir-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/rytir-holi.html",
+    "utm_campaign": "tarot_card_rytir_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Rytíř holí: vášeň a dobrodružství. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Rytíř holí tarot význam, karta Rytíř holí, tarot vášeň a dobrodružství, hůlky, výklad tarotu online",
+    "hooks": [
+      "RYTÍŘ HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA RYTÍŘ HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS RYTÍŘ HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Rytíř holí, visual metaphor for vášeň a dobrodružství, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-kralovna-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/kralovna-holi.html",
+    "utm_campaign": "tarot_card_kralovna_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Královna holí: vřelost a kreativita. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Královna holí tarot význam, karta Královna holí, tarot vřelost a kreativita, hůlky, výklad tarotu online",
+    "hooks": [
+      "KRÁLOVNA HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA KRÁLOVNA HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS KRÁLOVNA HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Královna holí, visual metaphor for vřelost a kreativita, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-kral-holi",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/kral-holi.html",
+    "utm_campaign": "tarot_card_kral_holi",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Král holí: vize a vůdcovství. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Král holí tarot význam, karta Král holí, tarot vize a vůdcovství, hůlky, výklad tarotu online",
+    "hooks": [
+      "KRÁL HOLÍ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA KRÁL HOLÍ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS KRÁL HOLÍ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Král holí, visual metaphor for vize a vůdcovství, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-eso-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/eso-poharu.html",
+    "utm_campaign": "tarot_card_eso_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Eso pohárů: nová láska a emoce. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Eso pohárů tarot význam, karta Eso pohárů, tarot nová láska a emoce, poháry, výklad tarotu online",
+    "hooks": [
+      "ESO POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ESO POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ESO POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Eso pohárů, visual metaphor for nová láska a emoce, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-dvojka-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/dvojka-poharu.html",
+    "utm_campaign": "tarot_card_dvojka_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Dvojka pohárů: partnerství a spojení. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Dvojka pohárů tarot význam, karta Dvojka pohárů, tarot partnerství a spojení, poháry, výklad tarotu online",
+    "hooks": [
+      "DVOJKA POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DVOJKA POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DVOJKA POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Dvojka pohárů, visual metaphor for partnerství a spojení, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-trojka-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/trojka-poharu.html",
+    "utm_campaign": "tarot_card_trojka_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Trojka pohárů: oslava a přátelství. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Trojka pohárů tarot význam, karta Trojka pohárů, tarot oslava a přátelství, poháry, výklad tarotu online",
+    "hooks": [
+      "TROJKA POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA TROJKA POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS TROJKA POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Trojka pohárů, visual metaphor for oslava a přátelství, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-ctyrka-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/ctyrka-poharu.html",
+    "utm_campaign": "tarot_card_ctyrka_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Čtyřka pohárů: nespokojenost a introspekce. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Čtyřka pohárů tarot význam, karta Čtyřka pohárů, tarot nespokojenost a introspekce, poháry, výklad tarotu online",
+    "hooks": [
+      "ČTYŘKA POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ČTYŘKA POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ČTYŘKA POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Čtyřka pohárů, visual metaphor for nespokojenost a introspekce, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-petka-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/petka-poharu.html",
+    "utm_campaign": "tarot_card_petka_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Pětka pohárů: ztráta a smutek. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Pětka pohárů tarot význam, karta Pětka pohárů, tarot ztráta a smutek, poháry, výklad tarotu online",
+    "hooks": [
+      "PĚTKA POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA PĚTKA POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS PĚTKA POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Pětka pohárů, visual metaphor for ztráta a smutek, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-sestka-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/sestka-poharu.html",
+    "utm_campaign": "tarot_card_sestka_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Šestka pohárů: nostalgie a vzpomínky. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Šestka pohárů tarot význam, karta Šestka pohárů, tarot nostalgie a vzpomínky, poháry, výklad tarotu online",
+    "hooks": [
+      "ŠESTKA POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ŠESTKA POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ŠESTKA POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Šestka pohárů, visual metaphor for nostalgie a vzpomínky, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-sedmicka-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/sedmicka-poharu.html",
+    "utm_campaign": "tarot_card_sedmicka_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Sedmička pohárů: fantazie a volby. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Sedmička pohárů tarot význam, karta Sedmička pohárů, tarot fantazie a volby, poháry, výklad tarotu online",
+    "hooks": [
+      "SEDMIČKA POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA SEDMIČKA POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS SEDMIČKA POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Sedmička pohárů, visual metaphor for fantazie a volby, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-osmicka-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/osmicka-poharu.html",
+    "utm_campaign": "tarot_card_osmicka_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Osmička pohárů: odchod a hledání smyslu. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Osmička pohárů tarot význam, karta Osmička pohárů, tarot odchod a hledání smyslu, poháry, výklad tarotu online",
+    "hooks": [
+      "OSMIČKA POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA OSMIČKA POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS OSMIČKA POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Osmička pohárů, visual metaphor for odchod a hledání smyslu, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-devitka-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/devitka-poharu.html",
+    "utm_campaign": "tarot_card_devitka_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Devítka pohárů: splněná přání a spokojenost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Devítka pohárů tarot význam, karta Devítka pohárů, tarot splněná přání a spokojenost, poháry, výklad tarotu online",
+    "hooks": [
+      "DEVÍTKA POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DEVÍTKA POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DEVÍTKA POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Devítka pohárů, visual metaphor for splněná přání a spokojenost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-desitka-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/desitka-poharu.html",
+    "utm_campaign": "tarot_card_desitka_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Desítka pohárů: rodinné štěstí a harmonie. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Desítka pohárů tarot význam, karta Desítka pohárů, tarot rodinné štěstí a harmonie, poháry, výklad tarotu online",
+    "hooks": [
+      "DESÍTKA POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DESÍTKA POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DESÍTKA POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Desítka pohárů, visual metaphor for rodinné štěstí a harmonie, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-paze-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/paze-poharu.html",
+    "utm_campaign": "tarot_card_paze_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Páže pohárů: citlivost a kreativní zprávy. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Páže pohárů tarot význam, karta Páže pohárů, tarot citlivost a kreativní zprávy, poháry, výklad tarotu online",
+    "hooks": [
+      "PÁŽE POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA PÁŽE POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS PÁŽE POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Páže pohárů, visual metaphor for citlivost a kreativní zprávy, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-rytir-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/rytir-poharu.html",
+    "utm_campaign": "tarot_card_rytir_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Rytíř pohárů: romantika a idealismus. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Rytíř pohárů tarot význam, karta Rytíř pohárů, tarot romantika a idealismus, poháry, výklad tarotu online",
+    "hooks": [
+      "RYTÍŘ POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA RYTÍŘ POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS RYTÍŘ POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Rytíř pohárů, visual metaphor for romantika a idealismus, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-kralovna-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/kralovna-poharu.html",
+    "utm_campaign": "tarot_card_kralovna_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Královna pohárů: empatie a intuice. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Královna pohárů tarot význam, karta Královna pohárů, tarot empatie a intuice, poháry, výklad tarotu online",
+    "hooks": [
+      "KRÁLOVNA POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA KRÁLOVNA POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS KRÁLOVNA POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Královna pohárů, visual metaphor for empatie a intuice, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-kral-poharu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/kral-poharu.html",
+    "utm_campaign": "tarot_card_kral_poharu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Král pohárů: emocionální moudrost a rovnováha. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Král pohárů tarot význam, karta Král pohárů, tarot emocionální moudrost a rovnováha, poháry, výklad tarotu online",
+    "hooks": [
+      "KRÁL POHÁRŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA KRÁL POHÁRŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS KRÁL POHÁRŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Král pohárů, visual metaphor for emocionální moudrost a rovnováha, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-eso-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/eso-mecu.html",
+    "utm_campaign": "tarot_card_eso_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Eso mečů: jasnost a pravda. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Eso mečů tarot význam, karta Eso mečů, tarot jasnost a pravda, meče, výklad tarotu online",
+    "hooks": [
+      "ESO MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ESO MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ESO MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Eso mečů, visual metaphor for jasnost a pravda, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-dvojka-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/dvojka-mecu.html",
+    "utm_campaign": "tarot_card_dvojka_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Dvojka mečů: patová situace a rozhodování. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Dvojka mečů tarot význam, karta Dvojka mečů, tarot patová situace a rozhodování, meče, výklad tarotu online",
+    "hooks": [
+      "DVOJKA MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DVOJKA MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DVOJKA MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Dvojka mečů, visual metaphor for patová situace a rozhodování, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-trojka-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/trojka-mecu.html",
+    "utm_campaign": "tarot_card_trojka_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Trojka mečů: bolest srdce a smutek. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Trojka mečů tarot význam, karta Trojka mečů, tarot bolest srdce a smutek, meče, výklad tarotu online",
+    "hooks": [
+      "TROJKA MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA TROJKA MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS TROJKA MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Trojka mečů, visual metaphor for bolest srdce a smutek, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-ctyrka-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/ctyrka-mecu.html",
+    "utm_campaign": "tarot_card_ctyrka_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Čtyřka mečů: odpočinek a regenerace. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Čtyřka mečů tarot význam, karta Čtyřka mečů, tarot odpočinek a regenerace, meče, výklad tarotu online",
+    "hooks": [
+      "ČTYŘKA MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ČTYŘKA MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ČTYŘKA MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Čtyřka mečů, visual metaphor for odpočinek a regenerace, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-petka-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/petka-mecu.html",
+    "utm_campaign": "tarot_card_petka_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Pětka mečů: konflikt a porážka. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Pětka mečů tarot význam, karta Pětka mečů, tarot konflikt a porážka, meče, výklad tarotu online",
+    "hooks": [
+      "PĚTKA MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA PĚTKA MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS PĚTKA MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Pětka mečů, visual metaphor for konflikt a porážka, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-sestka-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/sestka-mecu.html",
+    "utm_campaign": "tarot_card_sestka_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Šestka mečů: přechod a léčení. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Šestka mečů tarot význam, karta Šestka mečů, tarot přechod a léčení, meče, výklad tarotu online",
+    "hooks": [
+      "ŠESTKA MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ŠESTKA MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ŠESTKA MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Šestka mečů, visual metaphor for přechod a léčení, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-sedmicka-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/sedmicka-mecu.html",
+    "utm_campaign": "tarot_card_sedmicka_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Sedmička mečů: klam a strategie. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Sedmička mečů tarot význam, karta Sedmička mečů, tarot klam a strategie, meče, výklad tarotu online",
+    "hooks": [
+      "SEDMIČKA MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA SEDMIČKA MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS SEDMIČKA MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Sedmička mečů, visual metaphor for klam a strategie, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-osmicka-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/osmicka-mecu.html",
+    "utm_campaign": "tarot_card_osmicka_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Osmička mečů: omezení a vlastní vězení. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Osmička mečů tarot význam, karta Osmička mečů, tarot omezení a vlastní vězení, meče, výklad tarotu online",
+    "hooks": [
+      "OSMIČKA MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA OSMIČKA MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS OSMIČKA MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Osmička mečů, visual metaphor for omezení a vlastní vězení, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-devitka-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/devitka-mecu.html",
+    "utm_campaign": "tarot_card_devitka_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Devítka mečů: úzkost a noční můry. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Devítka mečů tarot význam, karta Devítka mečů, tarot úzkost a noční můry, meče, výklad tarotu online",
+    "hooks": [
+      "DEVÍTKA MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DEVÍTKA MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DEVÍTKA MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Devítka mečů, visual metaphor for úzkost a noční můry, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-desitka-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/desitka-mecu.html",
+    "utm_campaign": "tarot_card_desitka_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Desítka mečů: konec a nový začátek. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Desítka mečů tarot význam, karta Desítka mečů, tarot konec a nový začátek, meče, výklad tarotu online",
+    "hooks": [
+      "DESÍTKA MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DESÍTKA MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DESÍTKA MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Desítka mečů, visual metaphor for konec a nový začátek, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-paze-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/paze-mecu.html",
+    "utm_campaign": "tarot_card_paze_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Páže mečů: zvídavost a bdělost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Páže mečů tarot význam, karta Páže mečů, tarot zvídavost a bdělost, meče, výklad tarotu online",
+    "hooks": [
+      "PÁŽE MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA PÁŽE MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS PÁŽE MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Páže mečů, visual metaphor for zvídavost a bdělost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-rytir-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/rytir-mecu.html",
+    "utm_campaign": "tarot_card_rytir_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Rytíř mečů: rychlé myšlení a akce. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Rytíř mečů tarot význam, karta Rytíř mečů, tarot rychlé myšlení a akce, meče, výklad tarotu online",
+    "hooks": [
+      "RYTÍŘ MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA RYTÍŘ MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS RYTÍŘ MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Rytíř mečů, visual metaphor for rychlé myšlení a akce, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-kralovna-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/kralovna-mecu.html",
+    "utm_campaign": "tarot_card_kralovna_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Královna mečů: nezávislost a jasné myšlení. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Královna mečů tarot význam, karta Královna mečů, tarot nezávislost a jasné myšlení, meče, výklad tarotu online",
+    "hooks": [
+      "KRÁLOVNA MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA KRÁLOVNA MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS KRÁLOVNA MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Královna mečů, visual metaphor for nezávislost a jasné myšlení, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-kral-mecu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/kral-mecu.html",
+    "utm_campaign": "tarot_card_kral_mecu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Král mečů: autorita intelektu a spravedlnost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Král mečů tarot význam, karta Král mečů, tarot autorita intelektu a spravedlnost, meče, výklad tarotu online",
+    "hooks": [
+      "KRÁL MEČŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA KRÁL MEČŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS KRÁL MEČŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Král mečů, visual metaphor for autorita intelektu a spravedlnost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-eso-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/eso-pentaklu.html",
+    "utm_campaign": "tarot_card_eso_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Eso pentáklů: nová příležitost a prosperita. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Eso pentáklů tarot význam, karta Eso pentáklů, tarot nová příležitost a prosperita, pentákly, výklad tarotu online",
+    "hooks": [
+      "ESO PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ESO PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ESO PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Eso pentáklů, visual metaphor for nová příležitost a prosperita, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-dvojka-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/dvojka-pentaklu.html",
+    "utm_campaign": "tarot_card_dvojka_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Dvojka pentáklů: rovnováha a přizpůsobivost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Dvojka pentáklů tarot význam, karta Dvojka pentáklů, tarot rovnováha a přizpůsobivost, pentákly, výklad tarotu online",
+    "hooks": [
+      "DVOJKA PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DVOJKA PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DVOJKA PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Dvojka pentáklů, visual metaphor for rovnováha a přizpůsobivost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-trojka-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/trojka-pentaklu.html",
+    "utm_campaign": "tarot_card_trojka_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Trojka pentáklů: mistrovství a spolupráce. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Trojka pentáklů tarot význam, karta Trojka pentáklů, tarot mistrovství a spolupráce, pentákly, výklad tarotu online",
+    "hooks": [
+      "TROJKA PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA TROJKA PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS TROJKA PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Trojka pentáklů, visual metaphor for mistrovství a spolupráce, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-ctyrka-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/ctyrka-pentaklu.html",
+    "utm_campaign": "tarot_card_ctyrka_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Čtyřka pentáklů: stabilita a kontrola. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Čtyřka pentáklů tarot význam, karta Čtyřka pentáklů, tarot stabilita a kontrola, pentákly, výklad tarotu online",
+    "hooks": [
+      "ČTYŘKA PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ČTYŘKA PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ČTYŘKA PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Čtyřka pentáklů, visual metaphor for stabilita a kontrola, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-petka-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/petka-pentaklu.html",
+    "utm_campaign": "tarot_card_petka_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Pětka pentáklů: nedostatek a izolace. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Pětka pentáklů tarot význam, karta Pětka pentáklů, tarot nedostatek a izolace, pentákly, výklad tarotu online",
+    "hooks": [
+      "PĚTKA PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA PĚTKA PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS PĚTKA PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Pětka pentáklů, visual metaphor for nedostatek a izolace, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-sestka-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/sestka-pentaklu.html",
+    "utm_campaign": "tarot_card_sestka_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Šestka pentáklů: štědrost a spravedlnost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Šestka pentáklů tarot význam, karta Šestka pentáklů, tarot štědrost a spravedlnost, pentákly, výklad tarotu online",
+    "hooks": [
+      "ŠESTKA PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA ŠESTKA PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS ŠESTKA PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Šestka pentáklů, visual metaphor for štědrost a spravedlnost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-sedmicka-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/sedmicka-pentaklu.html",
+    "utm_campaign": "tarot_card_sedmicka_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Sedmička pentáklů: trpělivost a hodnocení. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Sedmička pentáklů tarot význam, karta Sedmička pentáklů, tarot trpělivost a hodnocení, pentákly, výklad tarotu online",
+    "hooks": [
+      "SEDMIČKA PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA SEDMIČKA PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS SEDMIČKA PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Sedmička pentáklů, visual metaphor for trpělivost a hodnocení, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-osmicka-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/osmicka-pentaklu.html",
+    "utm_campaign": "tarot_card_osmicka_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Osmička pentáklů: píle a zdokonalování. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Osmička pentáklů tarot význam, karta Osmička pentáklů, tarot píle a zdokonalování, pentákly, výklad tarotu online",
+    "hooks": [
+      "OSMIČKA PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA OSMIČKA PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS OSMIČKA PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Osmička pentáklů, visual metaphor for píle a zdokonalování, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-devitka-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/devitka-pentaklu.html",
+    "utm_campaign": "tarot_card_devitka_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Devítka pentáklů: nezávislost a úspěch. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Devítka pentáklů tarot význam, karta Devítka pentáklů, tarot nezávislost a úspěch, pentákly, výklad tarotu online",
+    "hooks": [
+      "DEVÍTKA PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DEVÍTKA PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DEVÍTKA PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Devítka pentáklů, visual metaphor for nezávislost a úspěch, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-desitka-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/desitka-pentaklu.html",
+    "utm_campaign": "tarot_card_desitka_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Desítka pentáklů: rodinné dědictví a hojnost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Desítka pentáklů tarot význam, karta Desítka pentáklů, tarot rodinné dědictví a hojnost, pentákly, výklad tarotu online",
+    "hooks": [
+      "DESÍTKA PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA DESÍTKA PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS DESÍTKA PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Desítka pentáklů, visual metaphor for rodinné dědictví a hojnost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-paze-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/paze-pentaklu.html",
+    "utm_campaign": "tarot_card_paze_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Páže pentáklů: učení a nové příležitosti. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Páže pentáklů tarot význam, karta Páže pentáklů, tarot učení a nové příležitosti, pentákly, výklad tarotu online",
+    "hooks": [
+      "PÁŽE PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA PÁŽE PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS PÁŽE PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Páže pentáklů, visual metaphor for učení a nové příležitosti, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-rytir-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/rytir-pentaklu.html",
+    "utm_campaign": "tarot_card_rytir_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Rytíř pentáklů: spolehlivost a vytrvalost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Rytíř pentáklů tarot význam, karta Rytíř pentáklů, tarot spolehlivost a vytrvalost, pentákly, výklad tarotu online",
+    "hooks": [
+      "RYTÍŘ PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA RYTÍŘ PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS RYTÍŘ PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Rytíř pentáklů, visual metaphor for spolehlivost a vytrvalost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-kralovna-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/kralovna-pentaklu.html",
+    "utm_campaign": "tarot_card_kralovna_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Královna pentáklů: péče a praktičnost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Královna pentáklů tarot význam, karta Královna pentáklů, tarot péče a praktičnost, pentákly, výklad tarotu online",
+    "hooks": [
+      "KRÁLOVNA PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA KRÁLOVNA PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS KRÁLOVNA PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Královna pentáklů, visual metaphor for péče a praktičnost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
+  },
+  {
+    "slug": "tool-tarot-vyznam-kral-pentaklu",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/kral-pentaklu.html",
+    "utm_campaign": "tarot_card_kral_pentaklu",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Význam tarotové karty Král pentáklů: materiální úspěch a moudrost. Krátký výklad pro lásku, práci i dnešní krok, s přímým pokračováním do online tarotu.",
+    "keywords": "Král pentáklů tarot význam, karta Král pentáklů, tarot materiální úspěch a moudrost, pentákly, výklad tarotu online",
+    "hooks": [
+      "KRÁL PENTÁKLŮ: co ti tahle tarotová karta opravdu říká?",
+      "KARTA KRÁL PENTÁKLŮ: význam pro lásku, práci i dnešní krok",
+      "VYTÁHL SIS KRÁL PENTÁKLŮ?: pochop symbol a pokračuj do výkladu"
+    ],
+    "image_prompt": "Premium mystical 3D tarot symbolism scene inspired by the tarot card Král pentáklů, visual metaphor for materiální úspěch a moudrost, ornate gold arcana details, deep navy cosmic background, elegant centered object in the top area, clean dark bottom negative space, no readable text."
   }
 ]
