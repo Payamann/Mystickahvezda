@@ -5,6 +5,7 @@ import {
     buildFunnelDailyCsv,
     buildFunnelReport,
     buildFunnelSegmentsCsv,
+    buildFunnelTarotCardsCsv,
     normalizeAnalyticsDays,
     normalizeAnalyticsLimit,
     normalizeFunnelDays,
@@ -296,6 +297,52 @@ describe('Admin funnel report helpers', () => {
             '"pricing","tarot","3","1","1","1","0","100","100","0","0","",""'
         ].join('\n'));
     });
+
+    test('builds tarot card conversion segments from funnel metadata', () => {
+        const hvezdaMetadata = {
+            requested_card: 'Hvězda',
+            entry_source: 'tarot_card_detail',
+            utm_source: 'pinterest',
+            utm_campaign: 'tarot_card_hvezda'
+        };
+        const smrtMetadata = {
+            requested_card: 'Smrt',
+            entry_source: 'tarot_card_detail',
+            utm_source: 'pinterest',
+            utm_campaign: 'tarot_card_smrt'
+        };
+        const report = buildFunnelReport([
+            { event_name: 'paywall_viewed', source: 'tarot_teaser_banner', feature: 'tarot_multi_card', created_at: '2026-04-20T10:00:00.000Z', metadata: hvezdaMetadata },
+            { event_name: 'checkout_session_created', source: 'tarot_teaser_banner', feature: 'tarot_multi_card', created_at: '2026-04-20T10:01:00.000Z', metadata: hvezdaMetadata },
+            { event_name: 'subscription_checkout_completed', source: 'tarot_teaser_banner', feature: 'tarot_multi_card', created_at: '2026-04-20T10:02:00.000Z', metadata: hvezdaMetadata },
+            { event_name: 'paywall_viewed', source: 'tarot_teaser_banner', feature: 'tarot_multi_card', created_at: '2026-04-20T10:03:00.000Z', metadata: smrtMetadata },
+            { event_name: 'checkout_session_failed', source: 'tarot_teaser_banner', feature: 'tarot_multi_card', created_at: '2026-04-20T10:04:00.000Z', metadata: smrtMetadata },
+        ]);
+
+        expect(report.tarotCardSegments[0]).toMatchObject({
+            card: 'Hvězda',
+            entrySource: 'tarot_card_detail',
+            utmSource: 'pinterest',
+            campaign: 'tarot_card_hvezda',
+            totalEvents: 3,
+            paywallViewed: 1,
+            checkoutStarted: 1,
+            purchaseCompleted: 1,
+            failures: 0,
+            paywallToCheckoutRate: 100,
+            checkoutToPurchaseRate: 100
+        });
+        expect(report.tarotCardSegments[1]).toMatchObject({
+            card: 'Smrt',
+            campaign: 'tarot_card_smrt',
+            failures: 1
+        });
+        expect(buildFunnelTarotCardsCsv(report)).toBe([
+            '"card","entry_source","utm_source","campaign","total_events","paywall_viewed","checkout_started","purchase_completed","failures","paywall_to_checkout_rate","checkout_to_purchase_rate"',
+            '"Hvězda","tarot_card_detail","pinterest","tarot_card_hvezda","3","1","1","1","0","100","100"',
+            '"Smrt","tarot_card_detail","pinterest","tarot_card_smrt","2","1","0","0","1","0","0"'
+        ].join('\n'));
+    });
 });
 
 describe('Admin first-party analytics helpers', () => {
@@ -502,17 +549,25 @@ describe('Admin funnel API access control', () => {
 
     test('admin can export source feature segments as CSV', async () => {
         const source = `route-segment-${Date.now()}`;
+        const metadata = {
+            requested_card: 'Hvězda',
+            entry_source: 'tarot_card_detail',
+            utm_source: 'pinterest',
+            utm_campaign: 'tarot_card_hvezda'
+        };
         await supabase.from('funnel_events').insert([
             {
                 event_name: 'paywall_viewed',
                 source,
                 feature: 'tarot',
+                metadata,
                 created_at: new Date().toISOString()
             },
             {
                 event_name: 'checkout_session_created',
                 source,
                 feature: 'tarot',
+                metadata,
                 created_at: new Date().toISOString()
             },
             {
@@ -520,6 +575,7 @@ describe('Admin funnel API access control', () => {
                 source,
                 feature: 'tarot',
                 plan_id: 'pruvodce',
+                metadata,
                 created_at: new Date().toISOString()
             }
         ]);
@@ -539,6 +595,16 @@ describe('Admin funnel API access control', () => {
         expect(res.headers['content-disposition']).toContain('funnel-segments-1d.csv');
         expect(res.text).toContain('"source","feature","total_events"');
         expect(res.text).toContain(`"${source}","tarot","3","1","1","1","0","100","100"`);
+
+        const tarotCardsRes = await request(app)
+            .get('/api/admin/funnel?days=1&format=csv&view=tarot-cards')
+            .set('Authorization', `Bearer ${token}`)
+            .expect(200);
+
+        expect(tarotCardsRes.headers['content-type']).toContain('text/csv');
+        expect(tarotCardsRes.headers['content-disposition']).toContain('funnel-tarot-cards-1d.csv');
+        expect(tarotCardsRes.text).toContain('"card","entry_source","utm_source","campaign"');
+        expect(tarotCardsRes.text).toContain('"Hvězda","tarot_card_detail","pinterest","tarot_card_hvezda","3","1","1","1","0","100","100"');
     });
 
     test('admin can fetch first-party analytics report and CSV', async () => {

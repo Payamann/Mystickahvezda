@@ -190,6 +190,15 @@ function getSourceFeatureSegmentKey(source, feature) {
     return `${source}\u0000${feature}`;
 }
 
+function addFunnelConversionCounts(segment, eventName) {
+    segment.totalEvents += 1;
+
+    if (eventName === 'paywall_viewed' || eventName === 'login_gate_viewed') segment.paywallViewed += 1;
+    if (eventName === 'checkout_session_created') segment.checkoutStarted += 1;
+    if (eventName === 'subscription_checkout_completed' || eventName === 'one_time_purchase_completed') segment.purchaseCompleted += 1;
+    if (FUNNEL_FAILURE_EVENTS.has(eventName)) segment.failures += 1;
+}
+
 function addSourceFeatureEvent(segments, event) {
     const eventName = normalizeDimension(event.event_name) || 'unknown';
     const source = normalizeDimension(event.source) || '(direct)';
@@ -201,12 +210,7 @@ function addSourceFeatureEvent(segments, event) {
     }
 
     const segment = segments.get(key);
-    segment.totalEvents += 1;
-
-    if (eventName === 'paywall_viewed' || eventName === 'login_gate_viewed') segment.paywallViewed += 1;
-    if (eventName === 'checkout_session_created') segment.checkoutStarted += 1;
-    if (eventName === 'subscription_checkout_completed' || eventName === 'one_time_purchase_completed') segment.purchaseCompleted += 1;
-    if (FUNNEL_FAILURE_EVENTS.has(eventName)) segment.failures += 1;
+    addFunnelConversionCounts(segment, eventName);
 }
 
 function buildSourceFeatureSegmentMap(events) {
@@ -259,6 +263,75 @@ function buildSourceFeatureSegments(events, previousEvents = [], limit = 10) {
             || b.totalEvents - a.totalEvents
             || a.source.localeCompare(b.source)
             || a.feature.localeCompare(b.feature))
+        .slice(0, limit);
+}
+
+function funnelMetadataFromEvent(event) {
+    return event?.metadata && typeof event.metadata === 'object' ? event.metadata : {};
+}
+
+function funnelMetadataValue(metadata, keys, fallback) {
+    for (const key of keys) {
+        const value = normalizeDimension(metadata[key]);
+        if (value) return value;
+    }
+    return fallback;
+}
+
+function createTarotCardSegment(card, entrySource, utmSource, campaign) {
+    return {
+        card,
+        entrySource,
+        utmSource,
+        campaign,
+        totalEvents: 0,
+        paywallViewed: 0,
+        checkoutStarted: 0,
+        purchaseCompleted: 0,
+        failures: 0,
+        paywallToCheckoutRate: 0,
+        checkoutToPurchaseRate: 0
+    };
+}
+
+function getTarotCardSegmentKey(card, entrySource, utmSource, campaign) {
+    return `${card}\u0000${entrySource}\u0000${utmSource}\u0000${campaign}`;
+}
+
+function addTarotCardEvent(segments, event) {
+    const metadata = funnelMetadataFromEvent(event);
+    const card = funnelMetadataValue(metadata, ['requested_card', 'card_param'], null);
+    if (!card) return;
+
+    const eventName = normalizeDimension(event.event_name) || 'unknown';
+    const entrySource = funnelMetadataValue(metadata, ['entry_source'], normalizeDimension(event.source) || '(direct)');
+    const utmSource = funnelMetadataValue(metadata, ['utm_source'], '(none)');
+    const campaign = funnelMetadataValue(metadata, ['utm_campaign'], '(none)');
+    const key = getTarotCardSegmentKey(card, entrySource, utmSource, campaign);
+
+    if (!segments.has(key)) {
+        segments.set(key, createTarotCardSegment(card, entrySource, utmSource, campaign));
+    }
+
+    addFunnelConversionCounts(segments.get(key), eventName);
+}
+
+function buildTarotCardSegments(events, limit = 12) {
+    const segments = new Map();
+
+    for (const event of events) {
+        addTarotCardEvent(segments, event);
+    }
+
+    return [...segments.values()]
+        .map(applySourceFeatureRates)
+        .sort((a, b) => b.purchaseCompleted - a.purchaseCompleted
+            || b.checkoutStarted - a.checkoutStarted
+            || b.paywallViewed - a.paywallViewed
+            || b.totalEvents - a.totalEvents
+            || a.card.localeCompare(b.card)
+            || a.entrySource.localeCompare(b.entrySource)
+            || a.campaign.localeCompare(b.campaign))
         .slice(0, limit);
 }
 
@@ -364,6 +437,7 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
             ? buildSourceComparison(currentEvents, previousEvents)
             : [],
         sourceFeatureSegments: buildSourceFeatureSegments(currentEvents, hasComparison ? previousEvents : []),
+        tarotCardSegments: buildTarotCardSegments(currentEvents),
         topFeatures: topCounter(byFeature),
         topPlans: topCounter(byPlan),
         daily: Object.values(byDay).sort((a, b) => a.date.localeCompare(b.date)),
@@ -441,6 +515,40 @@ export function buildFunnelSegmentsCsv(report) {
         row.previous?.checkoutToPurchaseRate ?? 0,
         row.paywallToCheckoutRateDelta,
         row.checkoutToPurchaseRateDelta
+    ]);
+
+    return [header, ...rows]
+        .map(row => row.map(csvCell).join(','))
+        .join('\n');
+}
+
+export function buildFunnelTarotCardsCsv(report) {
+    const header = [
+        'card',
+        'entry_source',
+        'utm_source',
+        'campaign',
+        'total_events',
+        'paywall_viewed',
+        'checkout_started',
+        'purchase_completed',
+        'failures',
+        'paywall_to_checkout_rate',
+        'checkout_to_purchase_rate'
+    ];
+
+    const rows = (report.tarotCardSegments || []).map(row => [
+        row.card,
+        row.entrySource,
+        row.utmSource,
+        row.campaign,
+        row.totalEvents,
+        row.paywallViewed,
+        row.checkoutStarted,
+        row.purchaseCompleted,
+        row.failures,
+        row.paywallToCheckoutRate,
+        row.checkoutToPurchaseRate
     ]);
 
     return [header, ...rows]
@@ -912,12 +1020,12 @@ router.get('/funnel', authenticateToken, requireAdmin, async (req, res) => {
         const report = buildFunnelReport(events || [], { days, since, previousSince, periodEnd, limit });
 
         if (req.query.format === 'csv') {
-            const csvView = req.query.view === 'segments' ? 'segments' : 'daily';
+            const csvView = ['segments', 'tarot-cards'].includes(req.query.view) ? req.query.view : 'daily';
             res.setHeader('Content-Type', 'text/csv; charset=utf-8');
             res.setHeader('Content-Disposition', `attachment; filename="funnel-${csvView}-${days}d.csv"`);
-            return res.send(csvView === 'segments'
-                ? buildFunnelSegmentsCsv(report)
-                : buildFunnelDailyCsv(report));
+            if (csvView === 'segments') return res.send(buildFunnelSegmentsCsv(report));
+            if (csvView === 'tarot-cards') return res.send(buildFunnelTarotCardsCsv(report));
+            return res.send(buildFunnelDailyCsv(report));
         }
 
         res.json({
