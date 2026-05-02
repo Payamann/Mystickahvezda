@@ -10,6 +10,7 @@ import random
 import re
 import tempfile
 import os
+import time
 from pathlib import Path
 from datetime import datetime, date
 from typing import Optional
@@ -21,6 +22,7 @@ from logger import get_logger
 log = get_logger(__name__)
 
 MEMORY_FILE = config.OUTPUT_DIR / "content_memory.json"
+ATOMIC_REPLACE_ATTEMPTS = 5
 
 
 _EMPTY_MEMORY = lambda: {
@@ -77,8 +79,17 @@ def _save_memory(memory: dict):
     try:
         with os.fdopen(fd, 'w', encoding='utf-8') as f:
             json.dump(memory, f, ensure_ascii=False, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
         # Atomický přesun — na stejném filesystému je to atomic operace
-        os.replace(tmp_path, str(MEMORY_FILE))
+        for attempt in range(ATOMIC_REPLACE_ATTEMPTS):
+            try:
+                os.replace(tmp_path, str(MEMORY_FILE))
+                break
+            except PermissionError:
+                if attempt == ATOMIC_REPLACE_ATTEMPTS - 1:
+                    raise
+                time.sleep(0.05 * (attempt + 1))
         log.debug("Content memory uložena atomicky: %s", MEMORY_FILE)
     except Exception:
         # Pokud se něco pokazí, smaž temp soubor
