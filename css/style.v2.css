@@ -8096,6 +8096,8 @@ body.page-mentor .header {
 
   width: 100%;
 
+  overflow-x: clip;
+
   padding: 0 var(--space-2xl);
 
   /* Space for arrows */
@@ -8107,6 +8109,8 @@ body.page-mentor .header {
 .carousel-track-container {
 
   overflow: hidden;
+
+  overflow-x: clip;
 
   width: 100%;
 
