@@ -69,21 +69,36 @@ const app = express();
 app.set('trust proxy', 1);
 
 const PORT = process.env.PORT || 3001;
-const RUNTIME_ENVIRONMENT_NAME = process.env.RAILWAY_ENVIRONMENT_NAME ||
-    process.env.RAILWAY_ENVIRONMENT ||
-    process.env.NODE_ENV ||
-    'development';
-const IS_TEST_RUNTIME = process.env.NODE_ENV === 'test';
-const IS_PRODUCTION_RUNTIME = process.env.NODE_ENV === 'production' ||
-    RUNTIME_ENVIRONMENT_NAME === 'production';
-const SHOULD_RUN_SCHEDULED_JOBS = process.env.DISABLE_SCHEDULED_JOBS !== 'true' &&
-    !IS_TEST_RUNTIME &&
-    (IS_PRODUCTION_RUNTIME || process.env.ENABLE_SCHEDULED_JOBS === 'true');
-const SHOULD_RUN_DAILY_HOROSCOPE_EMAILS = process.env.DISABLE_DAILY_HOROSCOPE_EMAILS !== 'true' &&
-    !IS_TEST_RUNTIME &&
-    (IS_PRODUCTION_RUNTIME ||
-        process.env.ENABLE_DAILY_HOROSCOPE_EMAILS === 'true' ||
-        process.env.ENABLE_SCHEDULED_JOBS === 'true');
+
+function getRuntimeEnvironmentName() {
+    return process.env.RAILWAY_ENVIRONMENT_NAME ||
+        process.env.RAILWAY_ENVIRONMENT ||
+        process.env.NODE_ENV ||
+        'development';
+}
+
+function isTestRuntime() {
+    return process.env.NODE_ENV === 'test';
+}
+
+function isProductionRuntime() {
+    return process.env.NODE_ENV === 'production' ||
+        getRuntimeEnvironmentName() === 'production';
+}
+
+function shouldRunScheduledJobs() {
+    return process.env.DISABLE_SCHEDULED_JOBS !== 'true' &&
+        !isTestRuntime() &&
+        (isProductionRuntime() || process.env.ENABLE_SCHEDULED_JOBS === 'true');
+}
+
+function shouldRunDailyHoroscopeEmails() {
+    return process.env.DISABLE_DAILY_HOROSCOPE_EMAILS !== 'true' &&
+        !isTestRuntime() &&
+        (isProductionRuntime() ||
+            process.env.ENABLE_DAILY_HOROSCOPE_EMAILS === 'true' ||
+            process.env.ENABLE_SCHEDULED_JOBS === 'true');
+}
 const DAILY_HOROSCOPE_SEND_HOUR_UTC = 7;
 let dailyHoroscopeJobRunning = false;
 
@@ -93,8 +108,8 @@ function isAfterDailyHoroscopeSendWindow(date = new Date()) {
 
 function getBackgroundJobStatus() {
     return {
-        general: SHOULD_RUN_SCHEDULED_JOBS ? 'enabled' : 'disabled',
-        dailyHoroscopeEmail: SHOULD_RUN_DAILY_HOROSCOPE_EMAILS ? 'enabled' : 'disabled'
+        general: shouldRunScheduledJobs() ? 'enabled' : 'disabled',
+        dailyHoroscopeEmail: shouldRunDailyHoroscopeEmails() ? 'enabled' : 'disabled'
     };
 }
 
@@ -420,7 +435,7 @@ function getDeploymentMetadata() {
             process.env.VERCEL_GIT_COMMIT_REF ||
             process.env.GIT_BRANCH ||
             null,
-        environment: RUNTIME_ENVIRONMENT_NAME,
+        environment: getRuntimeEnvironmentName(),
         service: process.env.RAILWAY_SERVICE_NAME || null
     };
 }
@@ -779,9 +794,9 @@ const isMain = process.argv[1] && (
 if (isMain || process.env.NODE_ENV === 'production') {
     app.listen(PORT, () => {
         console.warn(`✨ Mystická Hvězda API running on port ${PORT}`);
-        console.warn(`🚀 Environment: ${RUNTIME_ENVIRONMENT_NAME}`);
+        console.warn(`🚀 Environment: ${getRuntimeEnvironmentName()}`);
 
-        if (SHOULD_RUN_SCHEDULED_JOBS) {
+        if (shouldRunScheduledJobs()) {
             // Initialize email queue job processor
             try {
                 initializeEmailQueueJob();
@@ -857,7 +872,7 @@ if (isMain || process.env.NODE_ENV === 'production') {
             console.warn('[JOBS] General scheduled jobs skipped for this environment.');
         }
 
-        if (SHOULD_RUN_DAILY_HOROSCOPE_EMAILS) {
+        if (shouldRunDailyHoroscopeEmails()) {
             // Daily horoscope emails — every day at 07:00 UTC, with catch-up after restarts.
             schedule.scheduleJob('0 7 * * *', () => runDailyHoroscopeJob('scheduled_07_utc'));
             schedule.scheduleJob('20 * * * *', () => {

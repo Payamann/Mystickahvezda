@@ -130,12 +130,12 @@ describe('manual script guardrails', () => {
         const envExample = readScript('server/.env.example');
 
         expect(source).toContain("process.env.RAILWAY_ENVIRONMENT_NAME");
-        expect(source).toContain("const IS_PRODUCTION_RUNTIME");
-        expect(source).toContain("IS_PRODUCTION_RUNTIME || process.env.ENABLE_SCHEDULED_JOBS === 'true'");
+        expect(source).toContain("function isProductionRuntime()");
+        expect(source).toContain("isProductionRuntime() || process.env.ENABLE_SCHEDULED_JOBS === 'true'");
         expect(source).toContain("process.env.DISABLE_SCHEDULED_JOBS !== 'true'");
         expect(source).toContain("process.env.ENABLE_DAILY_HOROSCOPE_EMAILS === 'true'");
         expect(source).toContain("process.env.DISABLE_DAILY_HOROSCOPE_EMAILS !== 'true'");
-        expect(source).toContain('dailyHoroscopeEmail: SHOULD_RUN_DAILY_HOROSCOPE_EMAILS');
+        expect(source).toContain('dailyHoroscopeEmail: shouldRunDailyHoroscopeEmails()');
         expect(source).toContain('scheduledJobs: getBackgroundJobStatus()');
         expect(source).toContain('startup_catchup');
         expect(source).toContain('hourly_catchup');
