@@ -123,6 +123,8 @@ describe('manual script guardrails', () => {
         expect(deployGuard).toContain('const smokeExpectedSha = args.skipRemote && args.skipRailway ? null : sha;');
         expect(productionVerifier).toContain('Deployment commit verified');
         expect(productionVerifier).toContain("got ${liveCommit || 'none'}");
+        expect(productionVerifier).toContain('runApexDomainDiagnostic');
+        expect(productionVerifier).toContain('Add ${VERIFY_APEX_URL} as a Railway custom domain');
     });
 
     test('local server does not run scheduled jobs by default', () => {

@@ -47,7 +47,10 @@ const publicSourceExtensions = new Set([
 ]);
 const nonCanonicalOrigin = siteOrigin.replace('https://www.', 'https://');
 const allowedNonCanonicalOriginLines = new Map([
-    ['server/index.js', new Set([`'${nonCanonicalOrigin}',`])]
+    ['server/index.js', new Set([`'${nonCanonicalOrigin}',`])],
+    ['server/scripts/verify-production.js', new Set([
+        `const VERIFY_APEX_URL = process.env.VERIFY_APEX_URL || '${nonCanonicalOrigin}';`
+    ])]
 ]);
 
 function report(type, file, detail) {

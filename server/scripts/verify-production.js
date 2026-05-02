@@ -11,6 +11,8 @@ const PASSWORD = process.env.VERIFY_PASSWORD;
 const RUN_AI_CHECKS = process.env.VERIFY_RUN_AI === 'true';
 const EXPECTED_DEPLOY_SHA = process.env.VERIFY_EXPECTED_SHA || null;
 const EXPECTED_SITEMAP_URL = process.env.VERIFY_EXPECTED_SITEMAP_URL || 'https://www.mystickahvezda.cz/sitemap.xml';
+const VERIFY_APEX_URL = process.env.VERIFY_APEX_URL || 'https://mystickahvezda.cz';
+const EXPECTED_CANONICAL_URL = process.env.VERIFY_CANONICAL_URL || 'https://www.mystickahvezda.cz';
 const PUBLIC_PAGE_PATHS = (process.env.VERIFY_PUBLIC_PATHS || [
     '/',
     '/horoskopy.html',
@@ -244,6 +246,7 @@ async function runPublicChecks() {
     await runPublicPageChecks();
     await runConversionLinkChecks();
     await runRedirectChecks();
+    await runApexDomainDiagnostic();
     await runAstroCalculationChecks();
 }
 
@@ -365,6 +368,31 @@ async function runRedirectChecks() {
     const location = redirectRes.headers.get('location') || '';
     if (redirectRes.status !== 301 || location !== '/shamansko-kolo.html?source=smoke') {
         throw new Error(`Legacy shaman wheel redirect mismatch: ${redirectRes.status} ${location}`);
+    }
+}
+
+async function runApexDomainDiagnostic() {
+    if (isLocal) return;
+
+    const target = `${VERIFY_APEX_URL.replace(/\/$/, '')}/`;
+    const start = Date.now();
+    try {
+        const response = await fetch(target, {
+            method: 'HEAD',
+            redirect: 'manual',
+            signal: AbortSignal.timeout(10_000)
+        });
+        const duration = Date.now() - start;
+        const location = response.headers.get('location') || '';
+        if ([301, 302, 307, 308].includes(response.status) && location.startsWith(EXPECTED_CANONICAL_URL)) {
+            console.log(`[Apex domain] ${duration}ms -> ${response.status} ${location}`);
+            return;
+        }
+
+        console.warn(`[Apex domain] ${duration}ms -> ${response.status}; expected redirect to ${EXPECTED_CANONICAL_URL}. Check Railway custom domain for ${VERIFY_APEX_URL}.`);
+    } catch (error) {
+        const duration = Date.now() - start;
+        console.warn(`[Apex domain] warning after ${duration}ms: ${error.message}. Add ${VERIFY_APEX_URL} as a Railway custom domain and wait for its TLS certificate.`);
     }
 }
 
