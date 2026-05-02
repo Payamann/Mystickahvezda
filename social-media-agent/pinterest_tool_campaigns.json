@@ -185,5 +185,155 @@
       "RUNA DNE: Zemitý vhled pro tvoji aktuální energii"
     ],
     "image_prompt": "Three polished obsidian rune stones with glowing gold runes, arranged on dark velvet with stardust and pine shadows, deep navy cosmic background, premium 3D mystical object, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-vyznam-hvezda",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/hvezda.html",
+    "utm_campaign": "tarot_card_hvezda",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Vyznam tarotove karty Hvezda: nadeje, uzdraveni a svetlo po tezkem obdobi. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
+    "keywords": "Hvezda tarot vyznam, karta Hvezda, tarot nadeje, velka arkana Hvezda",
+    "hooks": [
+      "HVEZDA: Co ti tahle tarotova karta opravdu rika?",
+      "KARTA HVEZDA: Vyznam pro lasku, praci i dnesni krok",
+      "VYTAHL SI HVEZDA?: Pochop symbol a pokracuj do vykladu"
+    ],
+    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Hvezda, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-vyznam-slunce",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/slunce.html",
+    "utm_campaign": "tarot_card_slunce",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Vyznam tarotove karty Slunce: radost, uspech a jasnost. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
+    "keywords": "Slunce tarot vyznam, karta Slunce, tarot radost, velka arkana Slunce",
+    "hooks": [
+      "SLUNCE: Co ti tahle tarotova karta opravdu rika?",
+      "KARTA SLUNCE: Vyznam pro lasku, praci i dnesni krok",
+      "VYTAHL SI SLUNCE?: Pochop symbol a pokracuj do vykladu"
+    ],
+    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Slunce, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-vyznam-luna",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/luna.html",
+    "utm_campaign": "tarot_card_luna",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Vyznam tarotove karty Luna: intuice, sny a veci skryte pod povrchem. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
+    "keywords": "Luna tarot vyznam, karta Luna, tarot intuice, velka arkana Luna",
+    "hooks": [
+      "LUNA: Co ti tahle tarotova karta opravdu rika?",
+      "KARTA LUNA: Vyznam pro lasku, praci i dnesni krok",
+      "VYTAHL SI LUNA?: Pochop symbol a pokracuj do vykladu"
+    ],
+    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Luna, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-vyznam-vez",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/vez.html",
+    "utm_campaign": "tarot_card_vez",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Vyznam tarotove karty Vez: nahla zmena, pravda a osvobozeni. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
+    "keywords": "Vez tarot vyznam, karta Vez, tarot zmena, velka arkana Vez",
+    "hooks": [
+      "VEZ: Co ti tahle tarotova karta opravdu rika?",
+      "KARTA VEZ: Vyznam pro lasku, praci i dnesni krok",
+      "VYTAHL SI VEZ?: Pochop symbol a pokracuj do vykladu"
+    ],
+    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Vez, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-vyznam-smrt",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/smrt.html",
+    "utm_campaign": "tarot_card_smrt",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Vyznam tarotove karty Smrt: transformace, konec stareho a novy zacatek. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
+    "keywords": "Smrt tarot vyznam, karta Smrt, tarot transformace, velka arkana Smrt",
+    "hooks": [
+      "SMRT: Co ti tahle tarotova karta opravdu rika?",
+      "KARTA SMRT: Vyznam pro lasku, praci i dnesni krok",
+      "VYTAHL SI SMRT?: Pochop symbol a pokracuj do vykladu"
+    ],
+    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Smrt, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-vyznam-milenci",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/milenci.html",
+    "utm_campaign": "tarot_card_milenci",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Vyznam tarotove karty Milenci: laska, volba a hlubsi soulad. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
+    "keywords": "Milenci tarot vyznam, karta Milenci, tarot laska, velka arkana Milenci",
+    "hooks": [
+      "MILENCI: Co ti tahle tarotova karta opravdu rika?",
+      "KARTA MILENCI: Vyznam pro lasku, praci i dnesni krok",
+      "VYTAHL SI MILENCI?: Pochop symbol a pokracuj do vykladu"
+    ],
+    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Milenci, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-vyznam-dabel",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/dabel.html",
+    "utm_campaign": "tarot_card_dabel",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Vyznam tarotove karty Dabel: stin, pokuseni a navrat k vlastni sile. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
+    "keywords": "Dabel tarot vyznam, karta Dabel, tarot stin, velka arkana Dabel",
+    "hooks": [
+      "DABEL: Co ti tahle tarotova karta opravdu rika?",
+      "KARTA DABEL: Vyznam pro lasku, praci i dnesni krok",
+      "VYTAHL SI DABEL?: Pochop symbol a pokracuj do vykladu"
+    ],
+    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Dabel, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-vyznam-veleknezka",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/veleknezka.html",
+    "utm_campaign": "tarot_card_veleknezka",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Vyznam tarotove karty Veleknezka: intuice, tajemstvi a vnitrni moudrost. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
+    "keywords": "Veleknezka tarot vyznam, karta Veleknezka, tarot intuice, velka arkana Veleknezka",
+    "hooks": [
+      "VELEKNEZKA: Co ti tahle tarotova karta opravdu rika?",
+      "KARTA VELEKNEZKA: Vyznam pro lasku, praci i dnesni krok",
+      "VYTAHL SI VELEKNEZKA?: Pochop symbol a pokracuj do vykladu"
+    ],
+    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Veleknezka, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-vyznam-cisarovna",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/cisarovna.html",
+    "utm_campaign": "tarot_card_cisarovna",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Vyznam tarotove karty Cisarovna: hojnost, pece a tvoriva energie. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
+    "keywords": "Cisarovna tarot vyznam, karta Cisarovna, tarot hojnost, velka arkana Cisarovna",
+    "hooks": [
+      "CISAROVNA: Co ti tahle tarotova karta opravdu rika?",
+      "KARTA CISAROVNA: Vyznam pro lasku, praci i dnesni krok",
+      "VYTAHL SI CISAROVNA?: Pochop symbol a pokracuj do vykladu"
+    ],
+    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Cisarovna, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
+  },
+  {
+    "slug": "tool-tarot-vyznam-kolo-stesti",
+    "category": "Tarot",
+    "path": "/tarot-vyznam/kolo-stesti.html",
+    "utm_campaign": "tarot_card_kolo_stesti",
+    "board": "Výklady karet, arcana a tarotová rozložení",
+    "description": "Vyznam tarotove karty Kolo stesti: obrat, cykly a zmena smeru. Otevri strucny vyklad, otazky pro praxi a pokracuj do online tarotu.",
+    "keywords": "Kolo stesti tarot vyznam, karta Kolo stesti, tarot osud, velka arkana Kolo stesti",
+    "hooks": [
+      "KOLO STESTI: Co ti tahle tarotova karta opravdu rika?",
+      "KARTA KOLO STESTI: Vyznam pro lasku, praci i dnesni krok",
+      "VYTAHL SI KOLO STESTI?: Pochop symbol a pokracuj do vykladu"
+    ],
+    "image_prompt": "A premium mystical 3D tarot symbolism scene inspired by the card Kolo stesti, no readable text, gold arcana details, deep navy cosmic background, elegant object centered in top area, clean dark bottom negative space."
   }
 ]
