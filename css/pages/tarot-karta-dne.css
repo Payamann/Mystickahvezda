@@ -144,6 +144,91 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.tarot-daily-tool {
+    padding-top: 2rem;
+}
+
+.tarot-daily-tool__panel {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(320px, 1.15fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+    padding: clamp(1.25rem, 4vw, 2.25rem);
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    border-radius: 14px;
+    background:
+        linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(118, 88, 255, 0.08)),
+        rgba(255, 255, 255, 0.045);
+}
+
+.tarot-daily-tool__copy .section__title {
+    margin-bottom: 0.75rem;
+}
+
+.tarot-daily-card-result {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.72fr) minmax(0, 1fr);
+    gap: clamp(1rem, 3vw, 1.8rem);
+    align-items: center;
+}
+
+.tarot-daily-card-result__image {
+    min-width: 0;
+}
+
+.tarot-daily-card-result__image img {
+    width: min(100%, 230px);
+    max-height: 340px;
+    object-fit: contain;
+    border-radius: 14px;
+    filter: drop-shadow(0 22px 34px rgba(0, 0, 0, 0.46));
+    transition: transform 0.28s ease, filter 0.28s ease;
+}
+
+.tarot-daily-card-result[data-state="revealed"] .tarot-daily-card-result__image img {
+    transform: translateY(-4px) rotate(-2deg);
+    filter: drop-shadow(0 28px 42px rgba(0, 0, 0, 0.52));
+}
+
+.tarot-daily-card-result__date {
+    display: block;
+    margin-bottom: 0.55rem;
+    color: var(--color-mystic-gold);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.tarot-daily-card-result h3 {
+    margin: 0 0 0.65rem;
+    color: #fff7d6;
+    font-size: 1.75rem;
+    line-height: 1.15;
+}
+
+.tarot-daily-card-result p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.68;
+}
+
+.tarot-daily-card-result__advice {
+    margin-top: 0.75rem !important;
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.tarot-daily-card-result__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.15rem;
+}
+
+.tarot-daily-card-result__actions .btn {
+    min-height: 44px;
+}
+
 @media (max-width: 980px) {
     .tarot-daily-hero__grid {
         grid-template-columns: 1fr;
@@ -157,6 +242,15 @@
 
     .tarot-daily-intent-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tarot-daily-tool__panel,
+    .tarot-daily-card-result {
+        grid-template-columns: 1fr;
+    }
+
+    .tarot-daily-card-result__image {
+        text-align: center;
     }
 }
 
@@ -182,5 +276,17 @@
     .tarot-daily-intent-grid,
     .tarot-daily-faq__grid {
         grid-template-columns: 1fr;
+    }
+
+    .tarot-daily-tool__panel {
+        border-radius: 14px;
+    }
+
+    .tarot-daily-card-result__actions .btn {
+        width: 100%;
+    }
+
+    .tarot-daily-card-result h3 {
+        font-size: 1.45rem;
     }
 }

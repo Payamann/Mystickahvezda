@@ -325,6 +325,28 @@ test.describe('Tarot karta dne', () => {
         await expect(cta).toHaveAttribute('href', /feature=tarot/);
     });
 
+    test('interaktivní karta dne ukáže kartu a předá ji do výkladu', async ({ page }) => {
+        await page.goto('/tarot-karta-dne.html');
+        await waitForPageReady(page);
+
+        const revealButton = page.locator('#tarot-daily-reveal');
+        await expect(revealButton).toBeEnabled();
+        await revealButton.click();
+
+        await expect(page.locator('#tarot-daily-card-result')).toHaveAttribute('data-state', 'revealed');
+        await expect(page.locator('#tarot-daily-card-image')).toHaveAttribute('alt', /Tarot karta dne:/);
+        await expect(page.locator('#tarot-daily-card-name')).not.toHaveText('Tvoje dnešní karta');
+        await expect(page.locator('#tarot-daily-card-advice')).toContainText('Konkrétní krok');
+
+        const fullReadingHref = await page.locator('#tarot-daily-full-reading').getAttribute('href');
+        expect(fullReadingHref).toContain('source=tarot_daily_card_widget');
+        expect(fullReadingHref).toContain('intent=daily_card');
+        expect(fullReadingHref).toContain('card=');
+
+        await expect(page.locator('#tarot-daily-card-detail')).toHaveAttribute('href', /\/tarot-vyznam\/.+\.html/);
+        await expect(page.locator('#tarot-daily-share')).toBeVisible();
+    });
+
     test('obsahuje další kroky a FAQ schema', async ({ page }) => {
         await page.goto('/tarot-karta-dne.html');
         await waitForPageReady(page);

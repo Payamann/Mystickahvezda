@@ -55,6 +55,36 @@
             </div>
         </section>
 
+        <section class="section tarot-daily-tool" id="denni-karta">
+            <div class="container">
+                <div class="tarot-daily-tool__panel" data-animate>
+                    <div class="tarot-daily-tool__copy">
+                        <span class="section__badge">Dnešní karta</span>
+                        <h2 id="tarot-daily-tool-title" class="section__title">Otočte si kartu dne přímo tady</h2>
+                        <p class="section__text">Dnešní karta je stejná pro celý den, aby se k ní dalo vracet. Berte ji jako krátký symbol pro to, co dnes nepřehlédnout.</p>
+                        <button id="tarot-daily-reveal" class="btn btn--primary" type="button">Otočit kartu dne</button>
+                    </div>
+
+                    <div id="tarot-daily-card-result" class="tarot-daily-card-result" aria-live="polite" data-state="waiting">
+                        <div class="tarot-daily-card-result__image">
+                            <img id="tarot-daily-card-image" src="img/tarot/tarot_card_back_straight_v2.webp" alt="Zadní strana tarotové karty" loading="lazy">
+                        </div>
+                        <div class="tarot-daily-card-result__content">
+                            <span id="tarot-daily-date" class="tarot-daily-card-result__date">Karta čeká na otočení</span>
+                            <h3 id="tarot-daily-card-name">Tvoje dnešní karta</h3>
+                            <p id="tarot-daily-card-meaning">Otoč kartu a uvidíš symbol dne, krátký význam a navazující krok.</p>
+                            <p id="tarot-daily-card-advice" class="tarot-daily-card-result__advice"></p>
+                            <div class="tarot-daily-card-result__actions">
+                                <a id="tarot-daily-full-reading" href="tarot.html?source=tarot_daily_card_widget&feature=tarot&intent=daily_card" class="btn btn--primary">Rozvinout výklad</a>
+                                <a id="tarot-daily-card-detail" href="tarot-vyznam-karet.html?source=tarot_daily_card_widget" class="btn btn--ghost">Význam karty</a>
+                                <button id="tarot-daily-share" class="btn btn--ghost" type="button" hidden>Sdílet kartu</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="section section--alt">
             <div class="container">
                 <div class="section__header" data-animate>
@@ -150,6 +180,7 @@
     <script src="js/dist/auth-copy-fixes.js" defer></script>
     <script src="js/dist/secondary-pages-copy-fixes.js" defer></script>
     <script src="js/dist/components.js?v=10" defer></script>
+    <script src="js/dist/tarot-karta-dne.js" defer></script>
     <script src="js/dist/exit-intent.js" defer></script>
     <script type="module" src="js/dist/main.js?v=10"></script>
 </body>
