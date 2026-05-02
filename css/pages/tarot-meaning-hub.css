@@ -303,6 +303,47 @@
     line-height: 1.78;
 }
 
+.tarot-card-detail-next-step {
+    margin-top: 2rem;
+    padding: 1.2rem;
+    border: 1px solid rgba(212, 175, 55, 0.28);
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(255, 255, 255, 0.035));
+}
+
+.tarot-card-detail-next-step span {
+    color: var(--color-mystic-gold);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.tarot-card-detail-next-step h2 {
+    margin-top: 0.45rem;
+}
+
+.tarot-card-detail-next-step p {
+    margin-bottom: 1rem;
+}
+
+.tarot-card-detail-next-step__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+
+.tarot-card-detail-next-step__link {
+    color: var(--color-mystic-gold);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.tarot-card-detail-next-step__link:hover {
+    text-decoration: underline;
+}
+
 .tarot-card-detail-panel {
     position: sticky;
     top: 96px;

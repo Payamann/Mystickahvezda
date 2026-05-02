@@ -283,6 +283,9 @@ test.describe('Tarot význam karet', () => {
         await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', /tarot_hvezda\.webp/);
         await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', /Hvězda tarot karta/);
         await expect(page.locator('.tarot-card-detail-panel')).toContainText('Nad');
+        await expect(page.locator('.tarot-card-detail-next-step')).toContainText('Co udělat');
+        await expect(page.locator('a[href*="tarot-karta-dne.html?source=tarot_card_detail_next_step"]')).toHaveAttribute('href', /card=Hv%C4%9Bzda/);
+        await expect(page.locator('a[data-analytics-cta="tarot_card_detail_next_profile"]')).toHaveAttribute('href', /feature=tarot_daily_card_profile_save/);
         await expect(page.locator('.tarot-related-card')).toHaveCount(3);
         await expect(page.locator('.tarot-related-card').first()).toHaveAttribute('href', /\/tarot-vyznam\/.+\.html/);
         await expect(page.locator('a[href*="/tarot.html?source=tarot_card_detail"]').first()).toHaveAttribute('href', /card=Hv%C4%9Bzda/);
