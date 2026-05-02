@@ -304,6 +304,7 @@ function buildDetailPage(name, card, relatedCards = []) {
 ${jsonLd([articleSchema, breadcrumbSchema, faqSchema])}
     </script>
     <script src="/js/dist/analytics-init.js" defer></script>
+    <script src="/js/dist/analytics.js?v=7" defer></script>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Přeskočit na obsah</a>
