@@ -143,9 +143,8 @@ function initStandaloneHeader() {
         }
     }
     window.addEventListener('scroll', handleScroll, { passive: true });
-    if (window.scrollY > 50) {
-        handleScroll(); // Initial check only when restoring a scrolled page
-    }
+    // Avoid an eager scrollY read during startup; the next scroll event applies
+    // the compact header state without forcing first-paint layout.
 
     // === HAMBURGER MENU ===
     const toggle = document.querySelector('.nav__toggle');

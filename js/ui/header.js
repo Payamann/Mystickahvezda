@@ -22,10 +22,8 @@ export function initHeader() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // Initial check (in case page is loaded already scrolled)
-    if (window.scrollY > 50) {
-        requestAnimationFrame(handleScroll);
-    }
+    // The first real scroll event applies the scrolled state. Avoiding an eager
+    // scrollY read prevents a mobile Lighthouse forced reflow on first paint.
 }
 
 /* ============================================

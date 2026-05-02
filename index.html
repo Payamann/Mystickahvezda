@@ -71,19 +71,9 @@
   <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
   <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
-  <!-- Local Fonts - Eliminates 750ms Google Fonts CDN latency -->
-  <link rel="stylesheet" href="/fonts/local-fonts.css">
-
-  <!-- Critical CSS - Inline for instant rendering (FCP + LCP optimization) -->
-<!-- Preload critical font for LCP heading (Cinzel, not Inter) -->
-  <link rel="preload" href="/fonts/cinzel-latin-ext.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
-
-  <!-- Main CSS -->
-  <link rel="preload" href="/css/style.v2.min.css?v=11" as="style">
-  <link rel="stylesheet" href="/css/style.v2.min.css?v=11">
-
-  <!-- Modulepreload for critical JS (parallel download with CSS/fonts) -->
-  <link rel="modulepreload" href="/js/dist/main.js">
+  <!-- Homepage CSS bundle: local fonts + global CSS + homepage-only rules -->
+  <link rel="preload" href="/css/home.min.css?v=1" as="style">
+  <link rel="stylesheet" href="/css/home.min.css?v=1">
 
   <!-- SEO Schema -->
 
@@ -147,7 +137,6 @@
 
 
 
-  <link rel="stylesheet" href="css/pages/index.css?v=4">
 <link rel="canonical" href="https://www.mystickahvezda.cz/">
   <link rel="alternate" hreflang="cs" href="https://www.mystickahvezda.cz/index.html">
   <link rel="alternate" hreflang="sk" href="https://www.mystickahvezda.cz/sk/index.html">
@@ -389,7 +378,7 @@
 
             <div class="hero__glow-effect"></div>
 
-            <img src="img/hero-3d.webp" alt="Mystické astroláby a nebeské symboly" class="hero__image floating-anim" srcset="img/hero-3d-mobile.webp 400w, img/hero-3d-mobile-640.webp 640w, img/hero-3d-mobile-720.webp 720w, img/hero-3d.webp 800w" sizes="(max-width: 500px) 50vw, (max-width: 768px) 55vw, 50vw" width="800" height="751" loading="eager">
+            <img src="img/hero-3d.webp" alt="Mystické astroláby a nebeské symboly" class="hero__image floating-anim" srcset="img/hero-3d-mobile.webp 400w, img/hero-3d-mobile-640.webp 640w, img/hero-3d-mobile-720.webp 720w, img/hero-3d.webp 800w" sizes="(max-width: 500px) 50vw, (max-width: 768px) 55vw, 50vw" width="800" height="751" loading="lazy" decoding="async" fetchpriority="low">
 
           </div>
 
@@ -1814,7 +1803,6 @@
     <script src="/js/dist/register-sw.js" defer></script>
 
   <script src="js/dist/analytics-init.js" defer></script>
-  <script src="js/dist/csp-hover-handler.js" defer></script>
   <script src="js/dist/analytics.js" defer></script>
   <script src="js/dist/api-config.js" defer></script>
   <script src="js/dist/sentry-init.js" defer></script>
@@ -1822,7 +1810,7 @@
   <script type="module" src="js/dist/personalization.js?v=6" async></script>
 <script src="js/dist/auth-client.js?v=6" defer></script>
 <script src="js/dist/auth-copy-fixes.js" defer></script>
-  <script src="js/dist/components.js" defer></script>
+  <script src="js/dist/feedback-widget.js" defer></script>
 
   <script src="js/dist/daily-card.js?v=3" defer></script>
 

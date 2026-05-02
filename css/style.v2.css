@@ -2157,7 +2157,8 @@ body.page-mentor .header {
 
 
 
-.btn--primary {
+.btn--primary,
+.btn--gold {
 
   background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
 
@@ -2183,7 +2184,8 @@ body.page-mentor .header {
 
 
 
-.btn--primary::before {
+.btn--primary::before,
+.btn--gold::before {
 
   content: '';
 
@@ -2205,7 +2207,8 @@ body.page-mentor .header {
 
 
 
-.btn--primary:hover::before {
+.btn--primary:hover::before,
+.btn--gold:hover::before {
 
   left: 100%;
 
@@ -2213,7 +2216,8 @@ body.page-mentor .header {
 
 
 
-.btn--primary:hover {
+.btn--primary:hover,
+.btn--gold:hover {
 
   transform: translateY(-2px);
 
@@ -6445,9 +6449,9 @@ body.page-mentor .header {
 
     display: block;
 
-    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0, 0, 0, 1) 40%, transparent 100%);
+    filter: none;
 
-    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0, 0, 0, 1) 40%, transparent 100%);
+    mix-blend-mode: normal;
 
   }
 
@@ -6461,11 +6465,11 @@ body.page-mentor .header {
 
 
 
-  /* Reduce floating animation on mobile for performance */
+  /* Remove decorative motion on mobile; the transparent WebP already blends into the background. */
 
   .floating-anim {
 
-    animation-duration: 8s;
+    animation: none;
 
   }
 

@@ -55,9 +55,6 @@
         },
 
         init() {
-            if (!this.isStandaloneAuthPage()) {
-                this.injectModal();
-            }
             this.updateUI();
             this.setupListeners();
             this.handleRedirect();
@@ -158,6 +155,16 @@
             } else {
                 console.error('Templates library not loaded!');
             }
+        },
+
+        bindModalListeners() {
+            const modal = document.getElementById('auth-modal');
+            if (!modal || modal.dataset.modalListenersAttached === 'true') return;
+
+            modal.dataset.modalListenersAttached = 'true';
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) this.closeModal();
+            });
         },
 
         isLoggedIn() {
@@ -798,17 +805,9 @@
                 }
             });
 
-            // Close modal on outside click
-            const modal = document.getElementById('auth-modal');
-            if (modal) {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) this.closeModal();
-                });
-            }
-
             // Forms (Static inside modal, safe to bind directly if modal exists)
             // But better to delegate too in case injectModal hasn't run yet? 
-            // injectModal runs in init(), so it should be there.
+            // The modal is now injected lazily, so delegated listeners stay safest.
             // Let's keep form listener simple or delegate it too.
             // Actually, let's look at the existing form listener...
             // It relies on getElementById('login-form').
@@ -976,6 +975,7 @@
         openModal(mode = 'login') {
             // Auto-inject if missing
             if (!document.getElementById('auth-modal')) this.injectModal();
+            this.bindModalListeners();
 
             const modal = document.getElementById('auth-modal');
             if (modal) {
