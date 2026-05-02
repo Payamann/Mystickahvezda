@@ -76,6 +76,15 @@ app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
 const PORT = process.env.PORT || 3001;
+const CANONICAL_HOST = 'www.mystickahvezda.cz';
+const APEX_HOST = 'mystickahvezda.cz';
+
+app.use((req, res, next) => {
+    if (isProductionRuntime() && req.hostname === APEX_HOST) {
+        return res.redirect(308, `https://${CANONICAL_HOST}${req.originalUrl}`);
+    }
+    return next();
+});
 
 function shouldRunScheduledJobs() {
     return process.env.DISABLE_SCHEDULED_JOBS !== 'true' &&

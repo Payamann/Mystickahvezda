@@ -54,6 +54,20 @@ async function withTemporaryEnv(overrides, callback) {
 
 describe('API Endpoint Tests', () => {
     describe('Static page redirects', () => {
+        test('production apex host redirects to canonical www host', async () => {
+            await withTemporaryEnv({
+                RAILWAY_ENVIRONMENT_NAME: 'production',
+            }, async () => {
+                const res = await request(app)
+                    .get('/tarot.html?source=apex')
+                    .set('Host', 'mystickahvezda.cz')
+                    .redirects(0)
+                    .expect(308);
+
+                expect(res.headers.location).toBe('https://www.mystickahvezda.cz/tarot.html?source=apex');
+            });
+        });
+
         test('legacy social slug for shaman wheel redirects to canonical page with campaign params', async () => {
             const res = await request(app)
                 .get('/shamanske-kolo.html?source=social_post')
