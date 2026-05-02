@@ -2,6 +2,9 @@
     const DATA_URL = 'data/tarot-cards.json';
     const SOURCE = 'tarot_daily_card_widget';
     const FEATURE = 'tarot';
+    const PROFILE_SAVE_RETURN_SOURCE = 'tarot_daily_card_profile_save_return';
+    const PROFILE_SAVE_INTENT = 'save_daily_card';
+    const PROFILE_SAVE_PENDING_KEY = 'mh_pending_tarot_daily_profile_save';
 
     function getLocalDateKey(date = new Date()) {
         const year = date.getFullYear();
@@ -46,14 +49,14 @@
     function buildProfileSignupUrl(cardName) {
         const url = new URL('/prihlaseni.html', window.location.origin);
         const redirectUrl = new URL('/tarot-karta-dne.html', window.location.origin);
-        redirectUrl.searchParams.set('source', 'tarot_daily_card_profile_save_return');
-        redirectUrl.searchParams.set('intent', 'save_daily_card');
+        redirectUrl.searchParams.set('source', PROFILE_SAVE_RETURN_SOURCE);
+        redirectUrl.searchParams.set('intent', PROFILE_SAVE_INTENT);
         redirectUrl.hash = 'denni-karta';
         url.searchParams.set('mode', 'register');
         url.searchParams.set('redirect', `${redirectUrl.pathname}${redirectUrl.search}${redirectUrl.hash}`);
         url.searchParams.set('source', 'tarot_daily_card_profile_save');
         url.searchParams.set('feature', 'tarot_daily_card_profile_save');
-        url.searchParams.set('intent', 'save_daily_card');
+        url.searchParams.set('intent', PROFILE_SAVE_INTENT);
         url.searchParams.set('card', cardName);
         return `${url.pathname}${url.search}`;
     }
@@ -68,6 +71,33 @@
         });
     }
 
+    function readPendingProfileSave() {
+        try {
+            return JSON.parse(sessionStorage.getItem(PROFILE_SAVE_PENDING_KEY) || 'null');
+        } catch {
+            return null;
+        }
+    }
+
+    function rememberProfileSaveIntent(card) {
+        try {
+            sessionStorage.setItem(PROFILE_SAVE_PENDING_KEY, JSON.stringify({
+                dateKey: getLocalDateKey(),
+                card: card.name
+            }));
+        } catch {
+            // Session storage can be unavailable in strict browser modes.
+        }
+    }
+
+    function clearProfileSaveIntent() {
+        try {
+            sessionStorage.removeItem(PROFILE_SAVE_PENDING_KEY);
+        } catch {
+            // Nothing to clear if storage is unavailable.
+        }
+    }
+
     function dailyAdvice(card) {
         const meaning = String(card.meaning || '').toLowerCase();
         return meaning
@@ -77,8 +107,17 @@
 
     function isProfileSaveReturn() {
         const params = new URLSearchParams(window.location.search);
-        return params.get('source') === 'tarot_daily_card_profile_save_return'
-            || params.get('intent') === 'save_daily_card';
+        return params.get('source') === PROFILE_SAVE_RETURN_SOURCE
+            || params.get('intent') === PROFILE_SAVE_INTENT;
+    }
+
+    function shouldAutoSaveProfileReturn(card) {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('source') === PROFILE_SAVE_RETURN_SOURCE) return true;
+
+        const pending = readPendingProfileSave();
+        return pending?.dateKey === getLocalDateKey()
+            && (!pending.card || pending.card === card.name);
     }
 
     function buildProfileReadingPayload(card) {
@@ -307,7 +346,81 @@
         saveButton.onclick = () => saveDailyCardImage(saveButton, card);
     }
 
-    function setupProfileSaveButton(profileButton, card) {
+    async function saveCardToProfile(profileButton, card, options = {}) {
+        const auth = window.Auth;
+        const isAutoSave = options.auto === true;
+
+        if (!auth?.isLoggedIn?.()) {
+            if (isAutoSave) {
+                trackDailyCard('tarot_daily_card_profile_auto_save_waiting', card.name);
+                return false;
+            }
+
+            rememberProfileSaveIntent(card);
+            trackDailyCard('tarot_daily_card_profile_signup_clicked', card.name);
+            window.location.href = buildProfileSignupUrl(card.name);
+            return false;
+        }
+
+        if (typeof auth.saveReading !== 'function') {
+            trackDailyCard('tarot_daily_card_profile_save_unavailable', card.name);
+            if (!isAutoSave) window.location.href = '/profil.html';
+            return false;
+        }
+
+        if (profileButton.dataset.saving === 'true' || profileButton.dataset.saved === 'true') {
+            return false;
+        }
+
+        const previousText = profileButton.textContent;
+        profileButton.dataset.saving = 'true';
+        profileButton.disabled = true;
+        profileButton.textContent = isAutoSave ? 'Dokončuji uložení...' : 'Ukládám...';
+
+        try {
+            const savedReading = await auth.saveReading('tarot', buildProfileReadingPayload(card));
+            if (!savedReading) {
+                profileButton.textContent = 'Zkusit znovu';
+                trackDailyCard('tarot_daily_card_profile_save_failed', card.name, {
+                    save_trigger: isAutoSave ? 'post_signup_return' : 'manual'
+                });
+                return false;
+            }
+
+            clearProfileSaveIntent();
+            window.__lastTarotDailySavedReading = savedReading;
+            profileButton.dataset.saved = 'true';
+            profileButton.textContent = 'Uloženo v profilu';
+            auth.showToast?.(
+                'Karta dne je uložená',
+                'Najdete ji v profilu mezi svými výklady.',
+                'success'
+            );
+            trackDailyCard('tarot_daily_card_profile_saved', card.name, {
+                reading_id: savedReading.id || savedReading._id || null,
+                save_trigger: isAutoSave ? 'post_signup_return' : 'manual'
+            });
+            return true;
+        } catch (error) {
+            console.warn('[Tarot karta dne] Profile save failed:', error.message);
+            profileButton.textContent = 'Zkusit znovu';
+            trackDailyCard('tarot_daily_card_profile_save_failed', card.name, {
+                save_trigger: isAutoSave ? 'post_signup_return' : 'manual'
+            });
+            return false;
+        } finally {
+            delete profileButton.dataset.saving;
+            setTimeout(() => {
+                if (profileButton.dataset.saved === 'true') return;
+                profileButton.disabled = false;
+                if (profileButton.textContent !== 'Uloženo v profilu') {
+                    profileButton.textContent = previousText || (isProfileSaveReturn() ? 'Dokončit uložení' : 'Uložit do profilu');
+                }
+            }, 1600);
+        }
+    }
+
+    function setupProfileSaveButton(profileButton, card, options = {}) {
         if (!profileButton) return;
 
         const defaultText = window.Auth?.isLoggedIn?.()
@@ -315,52 +428,13 @@
             : 'Uložit do profilu zdarma';
         profileButton.hidden = false;
         profileButton.textContent = defaultText;
-        profileButton.onclick = async () => {
-            const auth = window.Auth;
-            if (!auth?.isLoggedIn?.()) {
-                trackDailyCard('tarot_daily_card_profile_signup_clicked', card.name);
-                window.location.href = buildProfileSignupUrl(card.name);
-                return;
-            }
+        profileButton.onclick = () => saveCardToProfile(profileButton, card);
 
-            if (typeof auth.saveReading !== 'function') {
-                trackDailyCard('tarot_daily_card_profile_save_unavailable', card.name);
-                window.location.href = '/profil.html';
-                return;
-            }
-
-            const previousText = profileButton.textContent;
-            profileButton.disabled = true;
-            profileButton.textContent = 'Ukládám...';
-
-            try {
-                const savedReading = await auth.saveReading('tarot', buildProfileReadingPayload(card));
-                if (!savedReading) {
-                    profileButton.textContent = 'Zkusit znovu';
-                    trackDailyCard('tarot_daily_card_profile_save_failed', card.name);
-                    return;
-                }
-
-                window.__lastTarotDailySavedReading = savedReading;
-                profileButton.dataset.saved = 'true';
-                profileButton.textContent = 'Uloženo v profilu';
-                trackDailyCard('tarot_daily_card_profile_saved', card.name, {
-                    reading_id: savedReading.id || savedReading._id || null
-                });
-            } catch (error) {
-                console.warn('[Tarot karta dne] Profile save failed:', error.message);
-                profileButton.textContent = 'Zkusit znovu';
-                trackDailyCard('tarot_daily_card_profile_save_failed', card.name);
-            } finally {
-                setTimeout(() => {
-                    if (profileButton.dataset.saved === 'true') return;
-                    profileButton.disabled = false;
-                    if (profileButton.textContent !== 'Uloženo v profilu') {
-                        profileButton.textContent = previousText || defaultText;
-                    }
-                }, 1600);
-            }
-        };
+        if (options.autoSave && shouldAutoSaveProfileReturn(card)) {
+            window.setTimeout(() => {
+                saveCardToProfile(profileButton, card, { auto: true });
+            }, 0);
+        }
     }
 
     function revealCard(card, elements, options = {}) {
@@ -375,7 +449,7 @@
         elements.detail.href = buildDetailUrl(card.name);
         elements.button.textContent = 'Zobrazit znovu dnešní kartu';
         window.__lastTarotDailyShareResult = card;
-        setupProfileSaveButton(elements.profileSave, card);
+        setupProfileSaveButton(elements.profileSave, card, { autoSave: options.autoSave === true });
         setupSaveImageButton(elements.saveImage, card);
         setupShareButton(elements.share, card.name, card);
         trackDailyCard('tarot_daily_card_revealed', card.name, {
@@ -410,14 +484,14 @@
             elements.button.disabled = false;
             elements.button.textContent = 'Otočit kartu dne';
             let revealed = false;
-            const revealOnce = (reason = 'manual') => {
+            const revealOnce = (reason = 'manual', revealOptions = {}) => {
                 if (revealed && reason !== 'manual') return;
                 revealed = true;
-                revealCard(card, elements, { reason });
+                revealCard(card, elements, { reason, ...revealOptions });
             };
             elements.button.addEventListener('click', () => revealOnce('manual'));
             if (isProfileSaveReturn()) {
-                revealOnce('profile_save_return');
+                revealOnce('profile_save_return', { autoSave: true });
                 elements.result.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         } catch (error) {

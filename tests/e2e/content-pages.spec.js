@@ -407,6 +407,65 @@ test.describe('Tarot karta dne', () => {
         await expect(page.locator('#tarot-daily-save-profile')).toContainText('Uložit do profilu');
     });
 
+    test('návrat po registraci přihlášenému automaticky uloží denní kartu do profilu', async ({ page }) => {
+        const savedPayloads = [];
+
+        await page.addInitScript(() => {
+            localStorage.setItem('auth_user', JSON.stringify({
+                id: 'user-daily-tarot',
+                email: 'tarot@example.test'
+            }));
+            sessionStorage.setItem('mh_pending_tarot_daily_profile_save', JSON.stringify({
+                dateKey: new Date().toISOString().slice(0, 10)
+            }));
+        });
+
+        await page.route('**/api/auth/profile', route => route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+                success: true,
+                user: {
+                    id: 'user-daily-tarot',
+                    email: 'tarot@example.test'
+                }
+            })
+        }));
+
+        await page.route('**/api/user/readings', async route => {
+            const request = route.request();
+            savedPayloads.push(request.postDataJSON());
+            return route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    reading: {
+                        id: 'daily-return-reading',
+                        type: 'tarot'
+                    }
+                })
+            });
+        });
+
+        await page.goto('/tarot-karta-dne.html?source=tarot_daily_card_profile_save_return&intent=save_daily_card#denni-karta');
+        await waitForPageReady(page);
+
+        const saveProfileButton = page.locator('#tarot-daily-save-profile');
+        await expect(saveProfileButton).toHaveText('Uloženo v profilu');
+        await expect(saveProfileButton).toBeDisabled();
+
+        expect(savedPayloads).toHaveLength(1);
+        expect(savedPayloads[0]).toEqual(expect.objectContaining({
+            type: 'tarot',
+            data: expect.objectContaining({
+                spreadType: 'Tarot karta dne',
+                source: 'tarot_daily_card_widget'
+            })
+        }));
+
+        await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_tarot_daily_profile_save'))).toBeNull();
+    });
+
     test('přihlášenému uživateli uloží denní kartu přes existující profil API', async ({ page }) => {
         await page.goto('/tarot-karta-dne.html');
         await waitForPageReady(page);
