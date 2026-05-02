@@ -21,10 +21,8 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="img/icon-192.webp">
 
-    <link rel="preload" href="/fonts/cinzel-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="/fonts/local-fonts.css">
-    <link rel="stylesheet" href="css/style.v2.min.css?v=11">
-    <link rel="stylesheet" href="css/pages/osobni-mapa.css?v=2">
+    <link rel="stylesheet" href="css/site.min.css?v=1">
+    <link rel="stylesheet" href="css/pages/osobni-mapa.css?v=3">
     <script defer src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@1.13.0/dist/umd/lucide.min.js" integrity="sha384-EHKCF1r0kkLgXLXtUe79iQzyUeZou+h3FZLoZWdcIAyctVNKMHqqy5wqYWQFUq6k" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/dist/analytics-init.js" defer></script>
@@ -102,6 +100,16 @@
                 <i data-lucide="sparkles" aria-hidden="true"></i>
                 <h2>Platba proběhla úspěšně</h2>
                 <p>Tvoje Osobní mapa se právě připravuje. PDF pošleme na e-mail během několika minut. Pokud nedorazí do 20 minut, zkontroluj složku hromadná pošta nebo spam.</p>
+                <div class="pm-status__actions">
+                    <a class="pm-button pm-button--primary" href="/cenik.html?source=personal_map_success&feature=premium_membership&plan=pruvodce" data-success-upsell>
+                        <i data-lucide="sparkles" aria-hidden="true"></i>
+                        Pokračovat s Průvodcem
+                    </a>
+                    <button class="pm-button pm-button--ghost" type="button" data-scroll-target="preview">
+                        <i data-lucide="eye" aria-hidden="true"></i>
+                        Projít si ukázky PDF
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -110,6 +118,16 @@
                 <i data-lucide="circle-alert" aria-hidden="true"></i>
                 <h2>Platba nebyla dokončena</h2>
                 <p>Objednávka se neztratila. Můžeš se vrátit k formuláři a pokračovat, až budeš chtít.</p>
+                <div class="pm-status__actions">
+                    <button class="pm-button pm-button--primary" type="button" data-scroll-target="order" data-cancel-recovery>
+                        <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+                        Vrátit se k objednávce
+                    </button>
+                    <a class="pm-button pm-button--ghost" href="/tarot.html?source=personal_map_cancel&feature=tarot" data-cancel-recovery>
+                        <i data-lucide="shuffle" aria-hidden="true"></i>
+                        Dát si nejdřív tarot
+                    </a>
+                </div>
             </div>
         </section>
 
@@ -147,6 +165,28 @@
                     <img class="pm-preview-stack__page pm-preview-stack__page--front" src="img/personal-map/preview-cover.webp" alt="Obálka produktu Osobní mapa zbytku roku 2026" width="760" height="1075" loading="eager">
                 </div>
             </div>
+        </section>
+
+        <section class="pm-offer-bar" aria-label="Shrnutí nabídky">
+            <div>
+                <span>Výstup</span>
+                <strong>16 stran PDF</strong>
+                <small>osobní výklad pro zbytek roku 2026</small>
+            </div>
+            <div>
+                <span>Doručení</span>
+                <strong>Do e-mailu</strong>
+                <small>obvykle během 10 až 20 minut</small>
+            </div>
+            <div>
+                <span>Cena</span>
+                <strong>299 Kč</strong>
+                <small>jednorázově, bez předplatného</small>
+            </div>
+            <button class="pm-button pm-button--primary" type="button" data-scroll-target="order" data-cta-location="offer_bar">
+                <i data-lucide="lock-keyhole" aria-hidden="true"></i>
+                Objednat mapu za 299 Kč
+            </button>
         </section>
 
         <section class="pm-proof-strip" aria-label="Rychlé shrnutí">

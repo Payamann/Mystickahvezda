@@ -207,6 +207,23 @@ body.page-personal-map::before {
     opacity: 0.72;
 }
 
+.pm-status__actions,
+.pm-offer-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.pm-status__actions {
+    justify-content: center;
+    margin-top: 22px;
+}
+
+.pm-status__actions .pm-button {
+    min-width: 220px;
+}
+
 .pm-hero__meta {
     display: flex;
     flex-wrap: wrap;
@@ -265,10 +282,62 @@ body.page-personal-map::before {
 
 .pm-proof-strip {
     width: min(var(--pm-max), calc(100% - 40px));
-    margin: -24px auto 0;
+    margin: 16px auto 0;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
+}
+
+.pm-offer-bar {
+    width: min(var(--pm-max), calc(100% - 40px));
+    margin: -24px auto 0;
+    padding: 16px;
+    border: 1px solid rgba(242, 217, 135, 0.24);
+    border-radius: var(--pm-radius);
+    background: rgba(12, 20, 33, 0.86);
+    box-shadow: 0 18px 56px rgba(0, 0, 0, 0.32);
+}
+
+.pm-offer-bar div {
+    min-width: 170px;
+    flex: 1 1 0;
+    padding: 4px 4px 4px 12px;
+    border-left: 1px solid rgba(98, 213, 199, 0.24);
+}
+
+.pm-offer-bar span,
+.pm-offer-bar small {
+    display: block;
+}
+
+.pm-offer-bar span {
+    color: var(--pm-teal);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    line-height: 1.3;
+    text-transform: uppercase;
+}
+
+.pm-offer-bar strong {
+    display: block;
+    margin-top: 5px;
+    color: var(--pm-text);
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 1.12rem;
+    line-height: 1.2;
+}
+
+.pm-offer-bar small {
+    margin-top: 5px;
+    color: var(--pm-muted);
+    font-size: 0.82rem;
+    line-height: 1.35;
+}
+
+.pm-offer-bar .pm-button {
+    flex: 0 0 auto;
+    min-width: 230px;
 }
 
 .pm-proof-strip div {
@@ -962,6 +1031,7 @@ body.page-personal-map::before {
     .pm-section,
     .pm-order,
     .pm-faq,
+    .pm-offer-bar,
     .pm-proof-strip {
         width: min(100% - 28px, var(--pm-max));
     }
@@ -980,6 +1050,7 @@ body.page-personal-map::before {
     }
 
     .pm-proof-strip,
+    .pm-offer-bar,
     .pm-gallery,
     .pm-benefits__grid,
     .pm-human-fit__list,
@@ -1001,8 +1072,15 @@ body.page-personal-map::before {
         border-bottom: 0;
     }
 
+    .pm-offer-bar,
     .pm-proof-strip {
-        margin-top: 0;
+        margin-top: 14px;
+    }
+
+    .pm-offer-bar div,
+    .pm-offer-bar .pm-button,
+    .pm-status__actions .pm-button {
+        flex: 1 1 100%;
     }
 
     .pm-section,
@@ -1074,7 +1152,8 @@ body.page-personal-map::before {
 
     .pm-order__summary,
     .pm-form,
-    .pm-status__inner {
+    .pm-status__inner,
+    .pm-offer-bar {
         padding: 22px;
     }
 }

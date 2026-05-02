@@ -672,6 +672,58 @@ test.describe('Aura', () => {
 });
 
 // ═══════════════════════════════════════════════════════════
+// OSOBNÍ MAPA
+// ═══════════════════════════════════════════════════════════════════
+
+test.describe('Osobní mapa', () => {
+
+    test('landing ukazuje nákupní shrnutí a CTA odscrolluje k formuláři', async ({ page }) => {
+        await page.goto('/osobni-mapa.html?source=e2e_personal_map');
+        await waitForPageReady(page);
+
+        const offer = page.locator('.pm-offer-bar');
+        await expect(offer).toBeVisible();
+        await expect(offer).toContainText('16 stran PDF');
+        await expect(offer).toContainText('299 Kč');
+
+        await offer.locator('[data-scroll-target="order"]').click();
+        await expect.poll(() => page.evaluate(() =>
+            Math.round(document.getElementById('order')?.getBoundingClientRect().top || 9999)
+        )).toBeLessThanOrEqual(140);
+    });
+
+    test('úspěšná platba ukáže upsell na Průvodce a schová objednávku', async ({ page }) => {
+        await page.goto('/osobni-mapa.html?status=success&source=e2e_success&session_id=cs_test_123');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#bannerSuccess')).toBeVisible();
+        await expect(page.locator('#order')).toBeHidden();
+        await expect(page.locator('[data-success-upsell]')).toHaveAttribute(
+            'href',
+            /cenik\.html\?source=personal_map_success&feature=premium_membership&plan=pruvodce/
+        );
+    });
+
+    test('nedokončená platba má recovery CTA a bez mobilního overflow', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.goto('/osobni-mapa.html?status=cancel&source=e2e_cancel');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#bannerCancel')).toBeVisible();
+        await expect(page.locator('[data-cancel-recovery][data-scroll-target="order"]')).toBeVisible();
+        await expect(page.locator('a[data-cancel-recovery]')).toHaveAttribute(
+            'href',
+            /tarot\.html\?source=personal_map_cancel&feature=tarot/
+        );
+
+        const overflow = await page.evaluate(() =>
+            document.documentElement.scrollWidth > document.documentElement.clientWidth
+        );
+        expect(overflow, 'Osobní mapa má na mobilu horizontální scroll').toBe(false);
+    });
+});
+
+// ═══════════════════════════════════════════════════════════════════
 // KALKULAČKA ČÍSLA OSUDU
 // ═══════════════════════════════════════════════════════════
 
