@@ -37,6 +37,12 @@ import {
     setHtmlContentSecurityPolicy,
     setHtmlFileContentSecurityPolicy,
 } from './utils/csp.js';
+import {
+    getRuntimeEnvironmentName,
+    isDevelopmentRuntime,
+    isProductionRuntime,
+    isTestRuntime,
+} from './config/runtime.js';
 
 // Route modules
 import oracleRoutes from './routes/oracle.js';
@@ -67,24 +73,9 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 const app = express();
 // Enable trust proxy for Railway/Heroku/Vercel to correctly identify user IPs
 app.set('trust proxy', 1);
+app.disable('x-powered-by');
 
 const PORT = process.env.PORT || 3001;
-
-function getRuntimeEnvironmentName() {
-    return process.env.RAILWAY_ENVIRONMENT_NAME ||
-        process.env.RAILWAY_ENVIRONMENT ||
-        process.env.NODE_ENV ||
-        'development';
-}
-
-function isTestRuntime() {
-    return process.env.NODE_ENV === 'test';
-}
-
-function isProductionRuntime() {
-    return process.env.NODE_ENV === 'production' ||
-        getRuntimeEnvironmentName() === 'production';
-}
 
 function shouldRunScheduledJobs() {
     return process.env.DISABLE_SCHEDULED_JOBS !== 'true' &&
@@ -136,7 +127,7 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
     : ['http://localhost:3001', 'http://localhost:3000'];
 
 // Security: Strip localhost origins in production
-if (process.env.NODE_ENV === 'production') {
+if (isProductionRuntime()) {
     const localhostPattern = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
     for (let i = ALLOWED_ORIGINS.length - 1; i >= 0; i--) {
         if (localhostPattern.test(ALLOWED_ORIGINS[i])) {
@@ -165,17 +156,25 @@ PRODUCTION_DOMAINS.forEach(domain => {
     if (!ALLOWED_ORIGINS.includes(domain)) ALLOWED_ORIGINS.push(domain);
 });
 
+const localhostOriginPattern = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+
+function isAllowedCorsOrigin(origin) {
+    if (!origin) return true;
+    if (ALLOWED_ORIGINS.includes(origin)) return true;
+    return !isProductionRuntime() && localhostOriginPattern.test(origin);
+}
+
+function rejectDisallowedCorsOrigin(req, res, next) {
+    const origin = req.headers.origin;
+    if (isAllowedCorsOrigin(origin)) return next();
+
+    console.warn(`[CORS] Blocked origin: ${origin}. Allowed: ${ALLOWED_ORIGINS.join(', ')}`);
+    return res.status(403).json({ error: 'CORS origin not allowed' });
+}
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (server-to-server, mobile apps, same-origin)
-        if (!origin) return callback(null, true);
-        if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
-        // Allow any localhost port in development (Claude Preview, dev tools, etc.)
-        const localhostPattern = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
-        if (process.env.NODE_ENV !== 'production' && localhostPattern.test(origin)) return callback(null, true);
-        console.warn(`[CORS] Blocked origin: ${origin}. Allowed: ${ALLOWED_ORIGINS.join(', ')}`);
-        callback(new Error('CORS not allowed'));
+        callback(null, isAllowedCorsOrigin(origin));
     },
     credentials: true
 }));
@@ -267,9 +266,10 @@ app.use(helmet({
     xssFilter: true, // X-XSS-Protection
 }));
 app.use(setBaseContentSecurityPolicy);
+app.use(rejectDisallowedCorsOrigin);
 
 // Force HTTPS in production (early, before any routes)
-if (process.env.NODE_ENV === 'production') {
+if (isProductionRuntime()) {
     app.use((req, res, next) => {
         if (req.headers['x-forwarded-proto'] !== 'https') {
             return res.redirect(301, `https://www.${req.hostname.replace(/^www\./, '')}${req.url}`);
@@ -283,14 +283,14 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // CSRF Protection Middleware (Simple implementation)
-if (process.env.NODE_ENV === 'production' && !process.env.CSRF_SECRET) {
+if (isProductionRuntime() && !process.env.CSRF_SECRET) {
     console.error('[SECURITY ERROR] CSRF_SECRET environment variable is required in production!');
     process.exit(1);
 }
 const csrfSecret = process.env.CSRF_SECRET || crypto.randomBytes(32).toString('hex');
 const csrfTokenLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: process.env.NODE_ENV === 'test' ? 1000 : 60,
+    max: isTestRuntime() ? 1000 : 60,
     standardHeaders: true,
     legacyHeaders: false,
     validate: { xForwardedForHeader: false },
@@ -490,7 +490,7 @@ app.get('/api/health', (req, res) => {
 // Helper functions moved to services/astrology.js
 
 // DEVELOPMENT: Disable caching for all static files
-if (process.env.NODE_ENV !== 'production') {
+if (!isProductionRuntime()) {
     app.use((req, res, next) => {
         res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         res.set('Pragma', 'no-cache');
@@ -611,7 +611,7 @@ function setStaticHeaders(res, filePath) {
 }
 
 const staticOptions = {
-    ...(process.env.NODE_ENV === 'production'
+    ...(isProductionRuntime()
         ? {
             maxAge: '1y',
             immutable: true,
@@ -731,7 +731,7 @@ app.use((err, req, res, next) => {
         path: req.path,
         statusCode: err.status || 500,
         errorMessage: err.message,
-        errorStack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+        errorStack: isDevelopmentRuntime() ? err.stack : undefined,
         userAgent: req.headers['user-agent'],
         ip: req.ip,
         timestamp: new Date().toISOString(),
@@ -767,7 +767,7 @@ app.use((err, req, res, next) => {
     res.status(statusCode).json({
         error: 'An error occurred. Please try again later.',
         // Only include details in development mode
-        ...(process.env.NODE_ENV === 'development' && {
+        ...(isDevelopmentRuntime() && {
             debug: {
                 message: err.message,
                 status: statusCode,
@@ -791,7 +791,7 @@ const isMain = process.argv[1] && (
     (import.meta.url && import.meta.url === `file://${path.resolve(process.argv[1])}`)
 );
 
-if (isMain || process.env.NODE_ENV === 'production') {
+if (isMain || isProductionRuntime()) {
     app.listen(PORT, () => {
         console.warn(`✨ Mystická Hvězda API running on port ${PORT}`);
         console.warn(`🚀 Environment: ${getRuntimeEnvironmentName()}`);

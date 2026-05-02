@@ -211,7 +211,8 @@
         image.className = 'kdd-card-image';
         image.src = `/img/daily-cards/${slug}.webp`;
         image.alt = `${card.name} - ${card.keyword}`;
-        image.loading = 'eager';
+        image.loading = 'lazy';
+        image.fetchPriority = 'low';
         image.decoding = 'async';
         target.appendChild(image);
     }
@@ -278,12 +279,19 @@
         }
 
         const card = CARDS[cardIndex];
+        let cardVisualRendered = false;
 
         // Poplate content
-        renderCardSymbol(el('kdd-emoji'), card);
         if (el('kdd-name')) el('kdd-name').textContent = card.name;
         if (el('kdd-keyword')) el('kdd-keyword').textContent = card.keyword;
         if (el('kdd-text')) el('kdd-text').textContent = card.text;
+
+        const renderCardVisual = () => {
+            if (cardVisualRendered) return;
+            cardVisualRendered = true;
+            renderCardSymbol(el('kdd-emoji'), card);
+            el('kdd-front')?.classList.add('kdd-front--image-ready');
+        };
 
         const detailLink = el('kdd-lexicon-link');
         if (detailLink) {
@@ -331,6 +339,7 @@
         const revealCard = () => {
             // If already flipped, do nothing
             if (inner.classList.contains('kdd-inner--flipped')) return;
+            renderCardVisual();
 
             // They flipped it! Now increment the streak if appropriate.
             // We need a separate flag so we don't increment multiple times a day if they refresh and flip again.

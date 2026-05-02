@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { isProductionRuntime } from './config/runtime.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -286,7 +287,7 @@ function createMockSupabaseClient() {
 }
 
 if (!USE_MOCK_SUPABASE && (!projectUrl || !serviceKey)) {
-    if (process.env.NODE_ENV === 'production') {
+    if (isProductionRuntime()) {
         throw new Error('Supabase credentials missing in production (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY). Refusing to start degraded.');
     }
     console.warn('WARNING: Supabase credentials missing in .env (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)');

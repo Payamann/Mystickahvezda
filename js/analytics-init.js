@@ -5,10 +5,32 @@
 
 (function () {
     const GA_ID = 'G-H22CGHF34K';
+    let googleTagLoadScheduled = false;
 
     window.dataLayer = window.dataLayer || [];
     function gtag() { window.dataLayer.push(arguments); }
     window.gtag = gtag;
+
+    function loadGoogleTag() {
+        if (googleTagLoadScheduled || document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) return;
+        googleTagLoadScheduled = true;
+
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+        document.head.appendChild(script);
+    }
+
+    function scheduleGoogleTagLoad() {
+        const schedule = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 1200));
+        if (document.readyState === 'complete') {
+            schedule(loadGoogleTag);
+        } else {
+            window.addEventListener('load', function () {
+                schedule(loadGoogleTag);
+            }, { once: true });
+        }
+    }
 
     function updateConsent(analytics, marketing) {
         gtag('consent', 'update', {
@@ -17,6 +39,10 @@
             'ad_user_data': marketing ? 'granted' : 'denied',
             'ad_personalization': marketing ? 'granted' : 'denied'
         });
+
+        if (analytics || marketing) {
+            scheduleGoogleTagLoad();
+        }
     }
 
     gtag('consent', 'default', {
@@ -38,13 +64,6 @@
             updateConsent(true, true);
         }
     } catch (e) {}
-
-    window.addEventListener('load', function () {
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
-        document.head.appendChild(script);
-    }, { once: true });
 
     window.addEventListener('mh_cookie_consent', function (e) {
         if (e.detail) {

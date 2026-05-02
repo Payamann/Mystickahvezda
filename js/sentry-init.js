@@ -1,5 +1,7 @@
 const SENTRY_WAIT_ATTEMPTS = 20;
 const SENTRY_WAIT_INTERVAL_MS = 100;
+const SENTRY_SDK_URL = 'https://browser.sentry-cdn.com/7.99.0/bundle.min.js';
+const SENTRY_SDK_INTEGRITY = 'sha384-KhWx6ggiGYQEFvq5iRp7UFjJ9dQcTepbcWs3UTfB6Kyg7E6A6HUmc6KOt808Y3yh';
 
 function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -15,6 +17,24 @@ async function waitForSentrySdk() {
     }
 
     return null;
+}
+
+function loadSentrySdk() {
+    if (window.Sentry?.init) return Promise.resolve(window.Sentry);
+
+    const existingScript = document.querySelector(`script[src="${SENTRY_SDK_URL}"]`);
+    if (existingScript) return waitForSentrySdk();
+
+    return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = SENTRY_SDK_URL;
+        script.async = true;
+        script.integrity = SENTRY_SDK_INTEGRITY;
+        script.crossOrigin = 'anonymous';
+        script.onload = async () => resolve(await waitForSentrySdk());
+        script.onerror = () => resolve(null);
+        document.head.appendChild(script);
+    });
 }
 
 function getSentryEnvironment() {
@@ -41,7 +61,7 @@ async function initializeSentry() {
         return false;
     }
 
-    const sentry = await waitForSentrySdk();
+    const sentry = await loadSentrySdk();
     if (!sentry) {
         return false;
     }

@@ -16,7 +16,8 @@ html body .mh-inline-4795b4daf4 { position:relative;width:220px;height:360px;mar
 html body .mh-inline-772de5169d { position:absolute;inset:0;background:linear-gradient(145deg,#1c0d2b,#0f0518);border:1px solid rgba(212,175,55,0.3);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:inset 0 0 20px rgba(212,175,55,0.05), 0 15px 40px rgba(0,0,0,0.5); overflow:hidden; }
 html body .mh-inline-be9b8f857e { font-size:3.5rem; color:rgba(212,175,55,0.7); filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
 html body .mh-inline-80036b2c95 { font-family:'Cinzel',serif; color:rgba(212,175,55,0.5); font-size:0.8rem; margin-top:1rem; letter-spacing:3px; }
-html body .mh-inline-c27fa3eab8 { position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,5,16,0.05) 0%,rgba(5,5,16,0.18) 48%,rgba(5,5,16,0.78) 100%),url('/img/daily-cards/cosmic-card-bg.webp') center/cover no-repeat;border:2px solid var(--color-mystic-gold);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);-webkit-transform:rotateY(180deg);padding:1.35rem 1.1rem 1.55rem;box-shadow:inset 0 0 30px rgba(212,175,55,0.1), 0 20px 60px rgba(212,175,55,0.15);overflow:hidden; }
+html body .mh-inline-c27fa3eab8 { position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,5,16,0.05) 0%,rgba(5,5,16,0.18) 48%,rgba(5,5,16,0.78) 100%),#070713;border:2px solid var(--color-mystic-gold);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);-webkit-transform:rotateY(180deg);padding:1.35rem 1.1rem 1.55rem;box-shadow:inset 0 0 30px rgba(212,175,55,0.1), 0 20px 60px rgba(212,175,55,0.15);overflow:hidden; }
+html body .mh-inline-c27fa3eab8.kdd-front--image-ready { background:linear-gradient(180deg,rgba(5,5,16,0.05) 0%,rgba(5,5,16,0.18) 48%,rgba(5,5,16,0.78) 100%),url('/img/daily-cards/cosmic-card-bg.webp') center/cover no-repeat; }
 html body .mh-inline-65ce88ab5a { width:min(86%,180px);aspect-ratio:1;margin-bottom:0.75rem;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 18px rgba(170,108,255,0.4)) drop-shadow(0 8px 18px rgba(0,0,0,0.35)); }
 html body .kdd-card-image { display:block;width:100%;height:100%;object-fit:contain; }
 html body .mh-inline-c70b6bed96 { font-family:'Cinzel',serif;color:var(--color-mystic-gold);font-size:1.25rem;font-weight:700;margin-bottom:0.5rem;text-align:center; line-height:1.2;text-shadow:0 3px 12px rgba(0,0,0,0.65); }
@@ -27,6 +28,7 @@ html body .mh-inline-801b029a7f { color:rgba(255,255,255,0.9);line-height:1.8;fo
 html body .mh-inline-e2499203ee { font-size:0.85rem;padding:0.6rem 1.2rem; display:none; border:1px solid rgba(212,175,55,0.3); color:var(--color-mystic-gold); }
 html body .mh-inline-b4125ccaf5 { margin-right:6px; vertical-align:text-bottom; }
 html body .mh-inline-9ab0bdd18e { font-size:.85rem;padding:.6rem 1.2rem; }
+html body .testimonial-disclosure { max-width:720px;margin:.85rem auto 0;font-size:.88rem;color:rgba(255,255,255,.58); }
 html body .mh-inline-486a7e41f0 { gap: var(--space-xl); }
 html body .mh-inline-a6575faab4 { margin-bottom: var(--space-md); color: var(--color-mystic-gold); }
 html body .mh-inline-c233b4bfc7 { gap: var(--space-lg); }

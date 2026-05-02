@@ -127,10 +127,11 @@ describe('manual script guardrails', () => {
 
     test('local server does not run scheduled jobs by default', () => {
         const source = readScript('server/index.js');
+        const runtime = readScript('server/config/runtime.js');
         const envExample = readScript('server/.env.example');
 
-        expect(source).toContain("process.env.RAILWAY_ENVIRONMENT_NAME");
-        expect(source).toContain("function isProductionRuntime()");
+        expect(runtime).toContain("process.env.RAILWAY_ENVIRONMENT_NAME");
+        expect(runtime).toContain("function isProductionRuntime()");
         expect(source).toContain("isProductionRuntime() || process.env.ENABLE_SCHEDULED_JOBS === 'true'");
         expect(source).toContain("process.env.DISABLE_SCHEDULED_JOBS !== 'true'");
         expect(source).toContain("process.env.ENABLE_DAILY_HOROSCOPE_EMAILS === 'true'");

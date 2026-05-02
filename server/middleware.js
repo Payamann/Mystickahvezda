@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import { JWT_SECRET } from './config/jwt.js';
+import { isDevelopmentRuntime, isProductionRuntime, isTestRuntime } from './config/runtime.js';
 import {
     getRequiredPlanForFeature,
     planTypeMeetsRequirement,
@@ -65,7 +66,7 @@ export const authenticateToken = async (req, res, next) => {
 // AUTHORIZATION MIDDLEWARE
 // ============================================
 export const requirePremium = (req, res, next) => {
-    if (process.env.NODE_ENV === 'development') {
+    if (isDevelopmentRuntime()) {
         return next();
     }
 
@@ -85,7 +86,7 @@ export const requirePremiumSoft = (req, res, next) => {
 };
 
 export const requireExclusive = (req, res, next) => {
-    if (process.env.NODE_ENV === 'development') {
+    if (isDevelopmentRuntime()) {
         return next();
     }
 
@@ -102,7 +103,7 @@ export const requireExclusive = (req, res, next) => {
 };
 
 export const requireFeature = (featureName) => (req, res, next) => {
-    if (process.env.NODE_ENV === 'development') {
+    if (isDevelopmentRuntime()) {
         return next();
     }
 
@@ -179,7 +180,7 @@ export async function trackPaywallHit(userId, toolName) {
 export const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 300,
-    skip: (req) => process.env.NODE_ENV === 'test' || req.path.match(/\.(js|css|jpg|jpeg|png|gif|ico|svg|ttf|webp|woff|woff2)$/),
+    skip: (req) => isTestRuntime() || req.path.match(/\.(js|css|jpg|jpeg|png|gif|ico|svg|ttf|webp|woff|woff2)$/),
     standardHeaders: true,
     legacyHeaders: false,
     validate: { xForwardedForHeader: false },
@@ -195,9 +196,9 @@ const STATIC_ASSET_PATTERN = /\.(?:js|css|jpg|jpeg|png|gif|ico|svg|ttf|webp|woff
 
 export const staticLimiter = rateLimit({
     windowMs: 1 * 60 * 1000,
-    max: process.env.NODE_ENV === 'production' ? 2400 : 10000,
+    max: isProductionRuntime() ? 2400 : 10000,
     skip: (req) => (
-        process.env.NODE_ENV === 'test' ||
+        isTestRuntime() ||
         req.path.startsWith('/api/') ||
         STATIC_ASSET_PATTERN.test(req.path)
     ),
@@ -209,7 +210,7 @@ export const staticLimiter = rateLimit({
 export const aiLimiter = rateLimit({
     windowMs: 24 * 60 * 60 * 1000,
     max: (req) => {
-        if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') return 10000;
+        if (isDevelopmentRuntime() || isTestRuntime()) return 10000;
         return req.user?.isPremium ? 100 : 10;
     },
     message: { error: 'Překročen denní limit pro generování výkladů. Upgradujte na premium pro neomezený přístup.' },

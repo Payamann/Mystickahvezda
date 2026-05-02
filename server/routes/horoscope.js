@@ -10,6 +10,7 @@ import { callClaude } from '../services/claude.js';
 import { SYSTEM_PROMPTS } from '../config/prompts.js';
 import { getHoroscopeCacheKey, getCachedHoroscope, saveCachedHoroscope } from '../services/astrology.js';
 import { normalizeHoroscopeAiResponse } from '../services/horoscope-response.js';
+import { isDevelopmentRuntime } from '../config/runtime.js';
 
 export const router = express.Router();
 
@@ -122,7 +123,7 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
         const langName = langNames[targetLang];
 
         // PREMIUM GATE: Free users can only access daily horoscope (bypass in dev)
-        if (!req.isPremium && period !== 'daily' && process.env.NODE_ENV !== 'development') {
+        if (!req.isPremium && period !== 'daily' && !isDevelopmentRuntime()) {
             const feature = period === 'weekly' ? 'weekly_horoscope' : 'monthly_horoscope';
             trackPaywallHit(req.user?.id, feature).catch(() => {});
             const errorMsgs = {

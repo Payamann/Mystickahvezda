@@ -8,6 +8,7 @@ import { validateEmail, validatePassword, validateName, validateBirthDate } from
 import { PREMIUM_PLAN_TYPES } from './config/constants.js';
 import { blacklistToken } from './utils/token-blacklist.js';
 import { recordFailedAttempt, checkAccountLockout, recordSuccessfulLogin } from './utils/account-lockout.js';
+import { isProductionRuntime } from './config/runtime.js';
 
 const router = express.Router();
 const LOCKOUT_DURATION_MINUTES = 15;
@@ -72,7 +73,7 @@ const sensitiveLimiter = rateLimit({
     validate: false,
 });
 
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const IS_PRODUCTION = isProductionRuntime();
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
 const DEV_AUTO_LOGIN_AFTER_REGISTER = !IS_PRODUCTION && process.env.DEV_AUTO_LOGIN_AFTER_REGISTER !== 'false';
 

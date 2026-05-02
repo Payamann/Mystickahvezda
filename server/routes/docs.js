@@ -12,6 +12,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { isProductionRuntime } from '../config/runtime.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,7 +21,7 @@ const router = express.Router();
 const SPEC_PATH = path.join(__dirname, '..', 'openapi.yaml');
 
 export function isDocAllowed(req) {
-    if (process.env.NODE_ENV !== 'production') return true;
+    if (!isProductionRuntime()) return true;
 
     const docsToken = process.env.DOCS_TOKEN;
     if (!docsToken) return false; // Production without DOCS_TOKEN = disabled

@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import fs from 'fs';
+import { isProductionRuntime } from '../config/runtime.js';
 
 const htmlFileCspCache = new Map();
 
@@ -71,7 +72,7 @@ export function buildContentSecurityPolicy({ inlineScriptHashes = [] } = {}) {
         'frame-ancestors': ["'none'"],
     };
 
-    if (process.env.NODE_ENV === 'production') {
+    if (isProductionRuntime()) {
         directives['upgrade-insecure-requests'] = [];
     }
 

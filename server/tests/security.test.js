@@ -387,11 +387,12 @@ describe('🔒 Security Tests', () => {
             const res = await request(app)
                 .get('/api/health')
                 .set('Origin', 'https://evil.com')
-                .expect((res) => {
-                    // May be accepted or rejected depending on ALLOWED_ORIGINS config
-                    // Just verify no credentials leak
-                    expect(res.headers['access-control-allow-credentials']).not.toBe('true');
-                });
+                .expect(403);
+
+            expect(res.body.error).toBe('CORS origin not allowed');
+            expect(res.headers['access-control-allow-credentials']).not.toBe('true');
+            expect(res.headers['x-powered-by']).toBeUndefined();
+            expect(res.headers['content-security-policy']).toContain("default-src 'self'");
         });
 
         test('Localhost origin allowed', async () => {

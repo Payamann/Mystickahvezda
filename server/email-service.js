@@ -2,6 +2,7 @@ import { Resend } from 'resend';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { isProductionRuntime } from './config/runtime.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '.env') });
@@ -14,7 +15,7 @@ const REPLY_TO_EMAIL = sanitizeHeaderValue(process.env.REPLY_TO_EMAIL || process
 const APP_URL = process.env.APP_URL || 'https://www.mystickahvezda.cz';
 
 // Validate email configuration on startup
-if (!process.env.FROM_EMAIL && process.env.NODE_ENV === 'production') {
+if (!process.env.FROM_EMAIL && isProductionRuntime()) {
   console.warn('⚠️ WARNING: FROM_EMAIL not set in environment variables. Using fallback.');
 }
 

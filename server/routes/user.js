@@ -11,6 +11,7 @@ import { supabase } from '../db-supabase.js';
 import rateLimit from 'express-rate-limit';
 import { validatePassword } from '../utils/validation.js';
 import { blacklistToken, blacklistAllUserTokens } from '../utils/token-blacklist.js';
+import { isProductionRuntime } from '../config/runtime.js';
 
 export const router = express.Router();
 
@@ -251,7 +252,7 @@ router.put('/password', sensitiveOpLimiter, authenticateToken, async (req, res) 
         // Clear auth cookie on this device as well
         res.clearCookie('auth_token', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: isProductionRuntime(),
             sameSite: 'strict',
             path: '/'
         });

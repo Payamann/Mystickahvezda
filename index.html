@@ -69,7 +69,6 @@
 
   <!-- DNS Prefetch for external resources -->
   <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-  <link rel="dns-prefetch" href="https://browser.sentry-cdn.com">
   <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
   <!-- Local Fonts - Eliminates 750ms Google Fonts CDN latency -->
@@ -83,16 +82,8 @@
   <link rel="preload" href="/css/style.v2.min.css?v=11" as="style">
   <link rel="stylesheet" href="/css/style.v2.min.css?v=11">
 
-  <!-- Preload Critical Assets - Hero image responsive (matches srcset in <img>) -->
-  <link rel="preload" as="image" imagesrcset="img/hero-3d-mobile.webp 400w, img/hero-3d.webp 800w" imagesizes="(max-width: 500px) 55vw, 50vw" fetchpriority="high">
-
-  <!-- Preload CSS background images (LCP fix: browser discovers these only after CSS parse without preload) -->
-  <link rel="preload" as="image" href="/img/bg-cosmic-mobile.webp" media="(max-width: 768px)" fetchpriority="high">
-  <link rel="preload" as="image" href="/img/bg-cosmic-hd.webp" media="(min-width: 769px)" fetchpriority="high">
-
   <!-- Modulepreload for critical JS (parallel download with CSS/fonts) -->
   <link rel="modulepreload" href="/js/dist/main.js">
-  <link rel="modulepreload" href="/js/dist/personalization.js">
 
   <!-- SEO Schema -->
 
@@ -398,7 +389,7 @@
 
             <div class="hero__glow-effect"></div>
 
-            <img src="img/hero-3d.webp" alt="Mystické astroláby a nebeské symboly" class="hero__image floating-anim" srcset="img/hero-3d-mobile.webp 400w, img/hero-3d.webp 800w" sizes="(max-width: 500px) 55vw, 50vw" fetchpriority="high" width="800" height="751" loading="eager">
+            <img src="img/hero-3d.webp" alt="Mystické astroláby a nebeské symboly" class="hero__image floating-anim" srcset="img/hero-3d-mobile.webp 400w, img/hero-3d-mobile-640.webp 640w, img/hero-3d-mobile-720.webp 720w, img/hero-3d.webp 800w" sizes="(max-width: 500px) 50vw, (max-width: 768px) 55vw, 50vw" width="800" height="751" loading="eager">
 
           </div>
 
@@ -470,8 +461,8 @@
 
           </div>
 
-          <a href="osobni-mapa.html?source=homepage_spotlight_preview" class="personal-map-spotlight__preview" aria-label="Otevřít Osobní mapu zbytku roku 2026">
-            <img src="img/personal-map/preview-cover.webp" alt="Obálka prémiového PDF Osobní mapa zbytku roku 2026" width="760" height="1075" loading="lazy">
+          <a href="osobni-mapa.html?source=homepage_spotlight_preview" class="personal-map-spotlight__preview">
+            <img src="img/personal-map/preview-cover.webp" alt="Osobní mapa zbytku roku 2026 - náhled prémiového PDF" width="760" height="1075" loading="lazy">
             <div class="personal-map-spotlight__preview-note">Náhled prémiového PDF</div>
           </a>
 
@@ -662,7 +653,7 @@
 
             <div class="step__number">1</div>
 
-            <h4 class="step__title">Vybereš, co řešíš</h4>
+            <h3 class="step__title">Vybereš, co řešíš</h3>
 
             <p class="step__text">
 
@@ -678,7 +669,7 @@
 
             <div class="step__number">2</div>
 
-            <h4 class="step__title">Doplníš jen potřebná data</h4>
+            <h3 class="step__title">Doplníš jen potřebná data</h3>
 
             <p class="step__text">
 
@@ -694,7 +685,7 @@
 
             <div class="step__number">3</div>
 
-            <h4 class="step__title">Dostaneš jasný směr</h4>
+            <h3 class="step__title">Dostaneš jasný směr</h3>
 
             <p class="step__text">
 
@@ -816,7 +807,7 @@
 
             </div>
 
-            <h4 class="card__title">Výpočty pod povrchem</h4>
+            <h3 class="card__title">Výpočty pod povrchem</h3>
 
             <p class="card__text">
 
@@ -848,7 +839,7 @@
 
             </div>
 
-            <h4 class="card__title">Symboly bez strašení</h4>
+            <h3 class="card__title">Symboly bez strašení</h3>
 
             <p class="card__text">
 
@@ -876,7 +867,7 @@
 
             </div>
 
-            <h4 class="card__title">Česky, ne jako překlad</h4>
+            <h3 class="card__title">Česky, ne jako překlad</h3>
 
             <p class="card__text">
 
@@ -904,7 +895,7 @@
 
             </div>
 
-            <h4 class="card__title">Soukromí na prvním místě</h4>
+            <h3 class="card__title">Soukromí na prvním místě</h3>
 
             <p class="card__text">
 
@@ -941,6 +932,7 @@
           <h2 class="section__title">Jak lidé používají Mystickou Hvězdu</h2>
 
           <p class="section__text">Tahle část ukazuje, k čemu se výklady používají v praxi: ranní rutina, pojmenování tématu dne a klidnější rozhodování.</p>
+          <p class="section__text testimonial-disclosure">Příběhy jsou anonymizované a redakčně zkrácené pro soukromí. Ber je jako osobní zkušenosti, ne jako záruku výsledku.</p>
 
         </div>
 
@@ -1419,7 +1411,7 @@
 
           <div class="card card--pricing">
 
-            <h4 class="card__title">Poutník</h4>
+            <h3 class="card__title">Poutník</h3>
 
             <p class="card__text">Pro první vyzkoušení</p>
 
@@ -1457,7 +1449,7 @@
 
               Nejoblíbenější</div>
 
-            <h4 class="card__title">Hvězdný Průvodce</h4>
+            <h3 class="card__title">Hvězdný Průvodce</h3>
 
             <p class="card__text">Pro pravidelné vedení</p>
 
@@ -1690,7 +1682,7 @@
         </div>
 
         <div>
-          <h5 class="footer__title">Astrologie</h5>
+          <div class="footer__title">Astrologie</div>
           <ul class="footer__links">
             <li><a href="horoskopy.html">Horoskopy</a></li>
             <li><a href="horoskop/index.html" class="mh-inline-c33f766568">Znamení zvěrokruhu</a></li>
@@ -1703,7 +1695,7 @@
         </div>
 
         <div>
-          <h5 class="footer__title">Věštění & energie</h5>
+          <div class="footer__title">Věštění & energie</div>
           <ul class="footer__links">
             <li><a href="tarot.html">Tarot & výklady</a></li>
             <li><a href="tarot-karta-dne.html">Tarot karta dne</a></li>
@@ -1720,7 +1712,7 @@
         </div>
 
         <div>
-          <h5 class="footer__title">Poznání</h5>
+          <div class="footer__title">Poznání</div>
           <ul class="footer__links">
             <li><a href="testy/index.html" class="mh-inline-c33f766568">Mystické testy</a></li>
             <li><a href="blog.html">Mystický blog</a></li>
@@ -1730,7 +1722,7 @@
         </div>
 
         <div>
-          <h5 class="footer__title">Podpora</h5>
+          <div class="footer__title">Podpora</div>
           <ul class="footer__links">
             <li><a href="o-nas.html">O nás</a></li>
             <li><a href="cenik.html">Ceník</a></li>
@@ -1821,9 +1813,6 @@
 
     <script src="/js/dist/register-sw.js" defer></script>
 
-  <!-- Sentry for error tracking (Browser SDK) -->
-  <script src="https://browser.sentry-cdn.com/7.99.0/bundle.min.js" integrity="sha384-KhWx6ggiGYQEFvq5iRp7UFjJ9dQcTepbcWs3UTfB6Kyg7E6A6HUmc6KOt808Y3yh" crossorigin="anonymous" async></script>
-
   <script src="js/dist/analytics-init.js" defer></script>
   <script src="js/dist/csp-hover-handler.js" defer></script>
   <script src="js/dist/analytics.js" defer></script>
@@ -1909,9 +1898,6 @@
   <script src="js/dist/index-lazy-load.js?v=1" defer></script>
 
   <!-- Hamburger menu failsafe (in case module chain fails) -->
-  <script src="js/dist/nav-failsafe.js" defer></script>
-
-
 
 </body>
 
@@ -1920,4 +1906,3 @@
 </html>
 
 <!-- Deployment trigger: Mon Mar 16 21:22:39     2026 -->
-

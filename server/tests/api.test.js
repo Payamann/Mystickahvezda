@@ -246,6 +246,7 @@ describe('API Endpoint Tests', () => {
     describe('API Docs', () => {
         const originalNodeEnv = process.env.NODE_ENV;
         const originalDocsToken = process.env.DOCS_TOKEN;
+        const originalRailwayEnvironmentName = process.env.RAILWAY_ENVIRONMENT_NAME;
 
         afterEach(() => {
             process.env.NODE_ENV = originalNodeEnv;
@@ -253,6 +254,11 @@ describe('API Endpoint Tests', () => {
                 delete process.env.DOCS_TOKEN;
             } else {
                 process.env.DOCS_TOKEN = originalDocsToken;
+            }
+            if (originalRailwayEnvironmentName === undefined) {
+                delete process.env.RAILWAY_ENVIRONMENT_NAME;
+            } else {
+                process.env.RAILWAY_ENVIRONMENT_NAME = originalRailwayEnvironmentName;
             }
         });
 
@@ -313,6 +319,14 @@ describe('API Endpoint Tests', () => {
 
         test('docs access denies production without DOCS_TOKEN', () => {
             process.env.NODE_ENV = 'production';
+            delete process.env.DOCS_TOKEN;
+
+            expect(isDocAllowed({ query: {}, headers: {} })).toBe(false);
+        });
+
+        test('docs access denies Railway production without DOCS_TOKEN', () => {
+            process.env.NODE_ENV = 'development';
+            process.env.RAILWAY_ENVIRONMENT_NAME = 'production';
             delete process.env.DOCS_TOKEN;
 
             expect(isDocAllowed({ query: {}, headers: {} })).toBe(false);

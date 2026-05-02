@@ -359,6 +359,11 @@
                     title: 'Vítejte v Mystické Hvězdě',
                     message: 'Navážete rovnou vícekartovým tarotem a prvním hlubším vhledem.'
                 },
+                tarot_daily_card_profile_save: {
+                    path: '/tarot-karta-dne.html',
+                    title: 'Karta je připravená k uložení',
+                    message: 'Vracíme vás ke kartě dne, aby se mohla uložit do profilu bez ztráty kontextu.'
+                },
                 horoskopy: {
                     path: '/horoskopy.html',
                     title: 'Vítejte v Mystické Hvězdě',
@@ -474,6 +479,11 @@
                     path: '/horoskopy.html',
                     title: 'Registrace je hotová',
                     message: 'Začněte denním horoskopem a hned uvidíte, co účet zdarma umí.'
+                },
+                tarot_daily_card_profile_save: {
+                    path: '/tarot-karta-dne.html',
+                    title: 'Karta je připravená k uložení',
+                    message: 'Vracíme vás ke kartě dne, aby se mohla uložit do profilu bez ztráty kontextu.'
                 },
                 newsletter_form: {
                     path: '/horoskopy.html',

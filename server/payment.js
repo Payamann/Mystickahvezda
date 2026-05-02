@@ -12,6 +12,7 @@ import {
     markOneTimeOrderInputFulfilled,
     sanitizeOneTimePurchaseMetadata
 } from './services/one-time-orders.js';
+import { isProductionRuntime } from './config/runtime.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,7 +21,7 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
-if (process.env.NODE_ENV === 'production') {
+if (isProductionRuntime()) {
     const missingStripeEnv = [
         ['STRIPE_SECRET_KEY', stripeSecretKey],
         ['STRIPE_WEBHOOK_SECRET', STRIPE_WEBHOOK_SECRET]
