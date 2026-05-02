@@ -387,7 +387,7 @@ test.describe('Tarot karta dne', () => {
         const target = new URL(page.url());
         expect(target.pathname).toBe('/prihlaseni.html');
         expect(target.searchParams.get('mode')).toBe('register');
-        expect(target.searchParams.get('redirect')).toBe('/tarot-karta-dne.html#denni-karta');
+        expect(target.searchParams.get('redirect')).toBe('/tarot-karta-dne.html?source=tarot_daily_card_profile_save_return&intent=save_daily_card#denni-karta');
         expect(target.searchParams.get('source')).toBe('tarot_daily_card_profile_save');
         expect(target.searchParams.get('feature')).toBe('tarot_daily_card_profile_save');
         expect(target.searchParams.get('intent')).toBe('save_daily_card');
@@ -395,6 +395,16 @@ test.describe('Tarot karta dne', () => {
 
         await waitForPageReady(page);
         await expect(page.locator('#checkout-context-title')).toContainText('Uložte kartu dne do profilu');
+    });
+
+    test('návrat po registraci automaticky otevře denní kartu', async ({ page }) => {
+        await page.goto('/tarot-karta-dne.html?source=tarot_daily_card_profile_save_return&intent=save_daily_card#denni-karta');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#tarot-daily-card-result')).toHaveAttribute('data-state', 'revealed');
+        await expect(page.locator('#tarot-daily-card-name')).not.toHaveText('Tvoje dnešní karta');
+        await expect(page.locator('#tarot-daily-save-profile')).toBeVisible();
+        await expect(page.locator('#tarot-daily-save-profile')).toContainText('Uložit do profilu');
     });
 
     test('přihlášenému uživateli uloží denní kartu přes existující profil API', async ({ page }) => {

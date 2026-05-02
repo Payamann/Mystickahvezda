@@ -45,8 +45,12 @@
 
     function buildProfileSignupUrl(cardName) {
         const url = new URL('/prihlaseni.html', window.location.origin);
+        const redirectUrl = new URL('/tarot-karta-dne.html', window.location.origin);
+        redirectUrl.searchParams.set('source', 'tarot_daily_card_profile_save_return');
+        redirectUrl.searchParams.set('intent', 'save_daily_card');
+        redirectUrl.hash = 'denni-karta';
         url.searchParams.set('mode', 'register');
-        url.searchParams.set('redirect', '/tarot-karta-dne.html#denni-karta');
+        url.searchParams.set('redirect', `${redirectUrl.pathname}${redirectUrl.search}${redirectUrl.hash}`);
         url.searchParams.set('source', 'tarot_daily_card_profile_save');
         url.searchParams.set('feature', 'tarot_daily_card_profile_save');
         url.searchParams.set('intent', 'save_daily_card');
@@ -69,6 +73,12 @@
         return meaning
             ? `Konkrétní krok: všimněte si dnes tématu „${meaning}“ a udělejte jednu malou věc, která s ním bude v souladu.`
             : 'Konkrétní krok: vezměte kartu jako jemnou připomínku a vyberte si jednu věc, kterou dnes nebudete odkládat.';
+    }
+
+    function isProfileSaveReturn() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('source') === 'tarot_daily_card_profile_save_return'
+            || params.get('intent') === 'save_daily_card';
     }
 
     function buildProfileReadingPayload(card) {
@@ -300,7 +310,9 @@
     function setupProfileSaveButton(profileButton, card) {
         if (!profileButton) return;
 
-        const defaultText = window.Auth?.isLoggedIn?.() ? 'Uložit do profilu' : 'Uložit do profilu zdarma';
+        const defaultText = window.Auth?.isLoggedIn?.()
+            ? (isProfileSaveReturn() ? 'Dokončit uložení' : 'Uložit do profilu')
+            : 'Uložit do profilu zdarma';
         profileButton.hidden = false;
         profileButton.textContent = defaultText;
         profileButton.onclick = async () => {
@@ -351,7 +363,7 @@
         };
     }
 
-    function revealCard(card, elements) {
+    function revealCard(card, elements, options = {}) {
         elements.result.dataset.state = 'revealed';
         elements.image.src = card.image || 'img/tarot/tarot_card_back_straight_v2.webp';
         elements.image.alt = `Tarot karta dne: ${card.name}`;
@@ -366,7 +378,9 @@
         setupProfileSaveButton(elements.profileSave, card);
         setupSaveImageButton(elements.saveImage, card);
         setupShareButton(elements.share, card.name, card);
-        trackDailyCard('tarot_daily_card_revealed', card.name);
+        trackDailyCard('tarot_daily_card_revealed', card.name, {
+            reveal_reason: options.reason || 'manual'
+        });
     }
 
     async function initDailyTarotCard() {
@@ -395,7 +409,17 @@
             const card = cards[getDailyIndex(cards.length)];
             elements.button.disabled = false;
             elements.button.textContent = 'Otočit kartu dne';
-            elements.button.addEventListener('click', () => revealCard(card, elements));
+            let revealed = false;
+            const revealOnce = (reason = 'manual') => {
+                if (revealed && reason !== 'manual') return;
+                revealed = true;
+                revealCard(card, elements, { reason });
+            };
+            elements.button.addEventListener('click', () => revealOnce('manual'));
+            if (isProfileSaveReturn()) {
+                revealOnce('profile_save_return');
+                elements.result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         } catch (error) {
             console.warn('[Tarot karta dne] Could not load daily card:', error.message);
             elements.button.disabled = false;
