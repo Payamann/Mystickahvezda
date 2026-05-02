@@ -26,13 +26,29 @@
         return href && href !== '#' && !href.startsWith('#') && !href.toLowerCase().startsWith(blockedScriptScheme);
     }
 
+    function hasLoginCookie() {
+        return document.cookie.split(';').some((cookie) => cookie.trim() === 'logged_in=1');
+    }
+
+    function readCachedUser() {
+        if (!hasLoginCookie()) {
+            localStorage.removeItem('auth_user');
+            return null;
+        }
+
+        try {
+            return JSON.parse(localStorage.getItem('auth_user') || 'null');
+        } catch {
+            localStorage.removeItem('auth_user');
+            return null;
+        }
+    }
+
     const Auth = {
         // Token is stored in HttpOnly cookie (secure, XSS-proof)
-        // JS cannot read it - that's the point. We track login state via user data.
-        user: (() => {
-            try { return JSON.parse(localStorage.getItem('auth_user') || 'null'); }
-            catch { localStorage.removeItem('auth_user'); return null; }
-        })(),
+        // JS cannot read it - that's the point. Use the server-set login
+        // indicator cookie as the source of truth and treat auth_user as cache.
+        user: readCachedUser(),
 
         isStandaloneAuthPage() {
             return document.body?.classList.contains('page-login') || window.location.pathname.endsWith('/prihlaseni.html') || window.location.pathname.endsWith('prihlaseni.html');
@@ -145,8 +161,12 @@
         },
 
         isLoggedIn() {
-            // Check indicator cookie (set by server) or cached user profile
-            return document.cookie.includes('logged_in=1') || !!this.user;
+            const loggedIn = hasLoginCookie();
+            if (!loggedIn && this.user) {
+                this.user = null;
+                localStorage.removeItem('auth_user');
+            }
+            return loggedIn;
         },
 
         isPremium() {

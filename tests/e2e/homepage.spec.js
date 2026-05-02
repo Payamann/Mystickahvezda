@@ -61,6 +61,25 @@ test.describe('Homepage', () => {
         expect(href).toContain('feature=daily_guidance');
     });
 
+    test('stary auth_user bez session cookie neprepina homepage do prihlaseneho stavu', async ({ page }) => {
+        await page.evaluate(() => {
+            localStorage.setItem('auth_user', JSON.stringify({
+                id: 'stale-user',
+                email: 'stale@example.com',
+                subscription_status: 'free'
+            }));
+            localStorage.setItem('mh_user_prefs', JSON.stringify({ sign: 'lev' }));
+        });
+
+        await page.reload();
+        await waitForPageReady(page);
+
+        await expect(page.locator('#auth-register-btn')).toBeVisible();
+        await expect(page.locator('#profile-link')).toBeHidden();
+        await expect(page.locator('#personalized-greeting')).toHaveAttribute('aria-hidden', 'true');
+        await expect.poll(() => page.evaluate(() => localStorage.getItem('auth_user'))).toBeNull();
+    });
+
     test('hero karta dne ma vlastni analyticky signal', async ({ page }) => {
         await page.evaluate(() => {
             window.MH_ANALYTICS_QUEUE = [];

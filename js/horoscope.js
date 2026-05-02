@@ -36,6 +36,9 @@ function startHoroscopeUpgradeFlow(period, reason) {
 }
 
 function getSavedZodiacSign() {
+    const hasLoginCookie = document.cookie.split(';').some((cookie) => cookie.trim() === 'logged_in=1');
+    if (!hasLoginCookie || !window.Auth?.isLoggedIn?.()) return null;
+
     const personalizedSign = window.MH_PERSONALIZATION?.getSign?.();
     if (personalizedSign) return personalizedSign;
 

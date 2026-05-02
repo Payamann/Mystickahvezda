@@ -15,6 +15,12 @@ import { waitForPageReady, getCsrfToken, MOBILE_VIEWPORT } from './helpers.js';
 test.describe('Mentor — Hvězdný průvodce', () => {
 
     test.beforeEach(async ({ page }) => {
+        await page.context().addCookies([{
+            name: 'logged_in',
+            value: '1',
+            url: 'http://localhost:3001'
+        }]);
+
         await page.addInitScript(() => {
             localStorage.setItem('auth_user', JSON.stringify({
                 id: 'e2e-mentor-user',

@@ -410,6 +410,12 @@ test.describe('Tarot karta dne', () => {
     test('návrat po registraci přihlášenému automaticky uloží denní kartu do profilu', async ({ page }) => {
         const savedPayloads = [];
 
+        await page.context().addCookies([{
+            name: 'logged_in',
+            value: '1',
+            url: 'http://localhost:3001'
+        }]);
+
         await page.addInitScript(() => {
             localStorage.setItem('auth_user', JSON.stringify({
                 id: 'user-daily-tarot',

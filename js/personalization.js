@@ -53,6 +53,12 @@ const MH_PERSONALIZATION = {
 // Make globally available
 window.MH_PERSONALIZATION = MH_PERSONALIZATION;
 
+function hasConfirmedAuthSession() {
+    const hasLoginCookie = document.cookie.split(';').some((cookie) => cookie.trim() === 'logged_in=1');
+    if (!hasLoginCookie) return false;
+    return window.Auth?.isLoggedIn?.() ?? true;
+}
+
 // Signs metadata (pro sanitaci ve šablonách)
 const SIGNS_CZ = {
     beran: { label: 'Beran', emoji: '♈', dates: '21. 3. – 19. 4.' },
@@ -75,8 +81,7 @@ function initIndexGreeting() {
     const greetingEl = document.getElementById('personalized-greeting');
     if (!greetingEl) return;
 
-    const hasConfirmedSession = Boolean(window.Auth?.user && window.Auth?.isLoggedIn?.()) && document.cookie.includes('logged_in=1');
-    if (!hasConfirmedSession) {
+    if (!hasConfirmedAuthSession() || !window.Auth?.user) {
         greetingEl.classList.remove('personalized-greeting--visible');
         greetingEl.setAttribute('aria-hidden', 'true');
         greetingEl.removeAttribute('href');
@@ -112,6 +117,14 @@ function initIndexGreeting() {
 
 /** Highlight user sign on horoskopy.html and auto-scroll to it */
 function initHoroscopeHighlight() {
+    if (!hasConfirmedAuthSession()) {
+        document.querySelectorAll('.zodiac-card').forEach(card => {
+            card.classList.remove('zodiac-card--highlighted');
+            card.querySelector('.zodiac-card__badge')?.remove();
+        });
+        return;
+    }
+
     const sign = MH_PERSONALIZATION.getSign();
     if (!sign) return;
 
@@ -248,6 +261,15 @@ function handlePickerClick(e) {
 function initSignPicker() {
     const picker = document.getElementById('mh-sign-picker');
     if (!picker) return;
+
+    if (!hasConfirmedAuthSession()) {
+        picker.hidden = true;
+        picker.replaceChildren();
+        picker.removeEventListener('click', handlePickerClick);
+        return;
+    }
+
+    picker.hidden = false;
 
     // Render pouze HTML - bez event listeners
     renderSignPickerHTML(picker);
@@ -394,7 +416,11 @@ window.MH_STREAK = MH_STREAK;
 
 function initPersonalizationRuntime() {
     initIndexGreeting();
-    document.addEventListener('auth:changed', initIndexGreeting);
+    document.addEventListener('auth:changed', () => {
+        initIndexGreeting();
+        initSignPicker();
+        initHoroscopeHighlight();
+    });
 
     // Inicializuj sign picker pouze pokud existuje element
     const picker = document.getElementById('mh-sign-picker');

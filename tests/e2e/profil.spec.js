@@ -108,6 +108,12 @@ test.describe('Profil aktivace', () => {
             subscription_status: 'free'
         };
 
+        await page.context().addCookies([{
+            name: 'logged_in',
+            value: '1',
+            url: 'http://localhost:3001'
+        }]);
+
         await page.addInitScript((authUser) => {
             localStorage.setItem('auth_user', JSON.stringify(authUser));
             localStorage.setItem('mh_zodiac', 'lev');

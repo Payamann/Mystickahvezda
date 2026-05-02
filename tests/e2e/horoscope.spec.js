@@ -141,7 +141,28 @@ test.describe('Horoskopy', () => {
         await expect(page.locator('#detail-name')).toContainText('Ryby');
     });
 
-    test('ulozene znameni z onboardingu automaticky otevre osobni horoskop', async ({ page }) => {
+    test('ulozene znameni bez prihlaseni automaticky neotevre osobni horoskop', async ({ page }) => {
+        await page.evaluate(() => {
+            localStorage.setItem('mh_zodiac', 'lev');
+            localStorage.setItem('mh_user_prefs', JSON.stringify({ sign: 'lev' }));
+        });
+
+        await page.reload();
+        await waitForPageReady(page);
+
+        await expect(page.locator('#mh-sign-picker')).toBeHidden();
+        await expect(page.locator('.zodiac-card.active')).toHaveCount(0);
+        await expect(page.locator('.zodiac-card--highlighted')).toHaveCount(0);
+        await expect(page.locator('.zodiac-card__badge')).toHaveCount(0);
+    });
+
+    test('ulozene znameni prihlaseneho uzivatele automaticky otevre osobni horoskop', async ({ page }) => {
+        await page.context().addCookies([{
+            name: 'logged_in',
+            value: '1',
+            url: 'http://localhost:3001'
+        }]);
+
         await page.evaluate(() => {
             localStorage.setItem('mh_zodiac', 'lev');
             localStorage.setItem('mh_user_prefs', JSON.stringify({ sign: 'lev' }));
