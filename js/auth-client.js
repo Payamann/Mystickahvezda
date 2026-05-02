@@ -480,6 +480,7 @@
                 medicine_wheel: featureMap.shamanske_kolo_plne_cteni,
                 natal_chart: featureMap.natalni_interpretace,
                 numerology: featureMap.numerologie_vyklad,
+                osobni_mapa_2026: featureMap.personal_map,
                 past_life: featureMap.minuly_zivot,
                 rituals: {
                     path: '/ritualy/',

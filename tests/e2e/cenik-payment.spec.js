@@ -130,6 +130,25 @@ test.describe('Ceník — platební tlačítka', () => {
         expect(href).toContain('entry_feature=numerologie_vyklad');
     });
 
+    test('personal map email return zobrazi konkretni navazujici krok', async ({ page }) => {
+        await page.goto('/cenik.html?source=personal_map_email_day3&feature=premium_membership&plan=pruvodce&utm_source=email&utm_campaign=personal_map_day3');
+        await waitForPageReady(page);
+
+        const banner = page.locator('#pricing-plan-recommendation');
+        await expect(banner).toBeVisible();
+        await expect(banner).toContainText('Navazuje na Osobní mapu');
+        await expect(banner).toContainText('Mapa ti dala směr');
+        await expect(banner.locator('[data-recommended-plan="pruvodce"]')).toBeVisible();
+
+        const previewLink = banner.locator('[data-preview-destination]');
+        await expect(previewLink).toBeVisible();
+        const href = await previewLink.getAttribute('href');
+        expect(href).toContain('/mentor.html');
+        expect(href).toContain('source=pricing_recommendation_preview');
+        expect(href).toContain('entry_source=personal_map_email_day3');
+        expect(href).toContain('entry_feature=premium_membership');
+    });
+
     test('bezny cenik bez feature kontextu neduplikuje preview CTA', async ({ page }) => {
         await page.goto('/cenik.html');
         await waitForPageReady(page);
@@ -300,6 +319,58 @@ test.describe('Ceník — platební tlačítka', () => {
             source: 'inline_paywall',
             feature: 'numerologie_vyklad',
             billingInterval: 'yearly'
+        }));
+    });
+
+    test('prihlaseny checkout z personal map emailu posila UTM metadata', async ({ page }) => {
+        let checkoutPayload = null;
+
+        await page.route('**/api/payment/create-checkout-session', async (route) => {
+            checkoutPayload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    id: 'cs_test_personal_map_email',
+                    url: '/profil.html?payment=success&plan=pruvodce&session_id=cs_test_personal_map_email'
+                })
+            });
+        });
+
+        await page.context().addCookies([{
+            name: 'logged_in',
+            value: '1',
+            url: 'http://localhost:3001'
+        }]);
+
+        await page.addInitScript(() => {
+            localStorage.setItem('auth_user', JSON.stringify({
+                id: 'e2e-user',
+                email: 'e2e@example.com',
+                role: 'user'
+            }));
+        });
+
+        await page.goto('/cenik.html?source=personal_map_email_day3&feature=premium_membership&plan=pruvodce&utm_source=email&utm_campaign=personal_map_day3&utm_content=day3_cta');
+        await waitForPageReady(page);
+
+        await Promise.all([
+            page.waitForURL(/profil\.html\?payment=success/),
+            page.locator('[data-plan="pruvodce"]').click(),
+        ]);
+
+        expect(checkoutPayload).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            source: 'personal_map_email_day3',
+            feature: 'premium_membership',
+            billingInterval: 'monthly',
+            metadata: expect.objectContaining({
+                entry_source: 'personal_map_email_day3',
+                entry_feature: 'premium_membership',
+                utm_source: 'email',
+                utm_campaign: 'personal_map_day3',
+                utm_content: 'day3_cta'
+            })
         }));
     });
 

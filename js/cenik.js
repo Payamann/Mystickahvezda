@@ -53,12 +53,14 @@ const FALLBACK_FEATURE_PLAN_MAP = {
     medicine_wheel: 'pruvodce',
     minuly_zivot: 'pruvodce',
     monthly_horoscope: 'pruvodce',
+    osobni_mapa_2026: 'pruvodce',
     synastry: 'pruvodce',
     partnerska_detail: 'pruvodce',
     natalni_interpretace: 'pruvodce',
     natal_chart: 'pruvodce',
     numerologie_vyklad: 'pruvodce',
     past_life: 'pruvodce',
+    premium_membership: 'pruvodce',
     rituals: 'pruvodce',
     runy_hluboky_vyklad: 'pruvodce',
     runes_deep_reading: 'pruvodce',
@@ -91,8 +93,10 @@ const FEATURE_PREVIEW_DESTINATIONS = {
     natalni_interpretace: { path: '/natalni-karta.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt nat\u00e1ln\u00ed kartu' },
     numerologie_vyklad: { path: '/numerologie.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt numerologii zdarma' },
     numerology: { path: '/numerologie.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt numerologii zdarma' },
+    osobni_mapa_2026: { path: '/osobni-mapa.html', label: 'Vr\u00e1tit se k Osobn\u00ed map\u011b' },
     partnerska_detail: { path: '/partnerska-shoda.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt partnerskou shodu' },
     past_life: { path: '/minuly-zivot.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt minul\u00fd \u017eivot' },
+    premium_membership: { path: '/mentor.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt Hv\u011bzdn\u00e9ho pr\u016fvodce' },
     rituals: { path: '/lunace.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt lun\u00e1rn\u00ed kalend\u00e1\u0159' },
     runes_deep_reading: { path: '/runy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt runy zdarma' },
     runy_hluboky_vyklad: { path: '/runy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt runy zdarma' },
@@ -103,6 +107,29 @@ const FEATURE_PREVIEW_DESTINATIONS = {
     tarot_multi_card: { path: '/tarot.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt tarot zdarma' },
     weekly_horoscope: { path: '/horoskopy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt horoskopy zdarma' }
 };
+
+const SOURCE_RECOMMENDATION_COPY = {
+    personal_map_email_day3: {
+        eyebrow: 'Navazuje na Osobn\u00ed mapu',
+        title: 'Mapa ti dala sm\u011br. Pr\u016fvodce pom\u016f\u017ee dr\u017eet rytmus.',
+        text: 'Osobn\u00ed mapa uk\u00e1zala hlavn\u00ed t\u00e9ma. Hv\u011bzdn\u00fd Pr\u016fvodce k tomu p\u0159id\u00e1 pravideln\u00e9 v\u00fdklady, historii a n\u00e1vrat k tomu, co \u0159e\u0161\u00ed\u0161 pr\u00e1v\u011b te\u010f.',
+        actionLabel: 'Uk\u00e1zat pl\u00e1n Pr\u016fvodce'
+    },
+    personal_map_success: {
+        eyebrow: 'Dal\u0161\u00ed krok po Osobn\u00ed map\u011b',
+        title: 'Jednor\u00e1zov\u00fd vhled m\u00e1 navazovat na ka\u017edodenn\u00ed veden\u00ed.',
+        text: 'Hv\u011bzdn\u00fd Pr\u016fvodce odemkne hlub\u0161\u00ed v\u00fdklady a osobn\u00ed historii, aby se z mapy stal pravideln\u00fd kompas.',
+        actionLabel: 'Uk\u00e1zat pl\u00e1n Pr\u016fvodce'
+    }
+};
+
+const CHECKOUT_METADATA_PARAM_KEYS = [
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_content',
+    'requested_card'
+];
 
 function setFeatureText(item, text) {
     if (!item) return;
@@ -283,6 +310,45 @@ function sanitizeRedirectUrl(url) {
     return `${parsed.pathname}${parsed.search}${parsed.hash}`;
 }
 
+function sanitizeCheckoutMetadataValue(value, maxLength = 120) {
+    if (typeof value !== 'string') return null;
+
+    const cleaned = value.trim().replace(/[^\w.:-]/g, '');
+    if (!cleaned) return null;
+
+    return cleaned.slice(0, maxLength);
+}
+
+function setCheckoutMetadataValue(metadata, key, value) {
+    const sanitized = sanitizeCheckoutMetadataValue(value);
+    if (sanitized) metadata[key] = sanitized;
+}
+
+function resolveCheckoutMetadata(params, pendingContext = {}) {
+    const metadata = {};
+    const pendingMetadata = pendingContext.metadata && typeof pendingContext.metadata === 'object' && !Array.isArray(pendingContext.metadata)
+        ? pendingContext.metadata
+        : {};
+
+    setCheckoutMetadataValue(
+        metadata,
+        'entry_source',
+        params.get('entry_source') || pendingMetadata.entry_source || params.get('source') || pendingContext.source
+    );
+    setCheckoutMetadataValue(
+        metadata,
+        'entry_feature',
+        params.get('entry_feature') || pendingMetadata.entry_feature || params.get('feature') || pendingContext.feature
+    );
+
+    CHECKOUT_METADATA_PARAM_KEYS.forEach((key) => {
+        setCheckoutMetadataValue(metadata, key, params.get(key) || pendingMetadata[key]);
+    });
+    setCheckoutMetadataValue(metadata, 'card_param', params.get('card') || pendingMetadata.card_param);
+
+    return metadata;
+}
+
 function resolveCheckoutContext() {
     const params = new URLSearchParams(window.location.search);
     const pendingContext = window.Auth?.getPendingCheckoutContext?.() || {};
@@ -290,11 +356,13 @@ function resolveCheckoutContext() {
     const explicitPlan = params.get('plan') || pendingContext.planId || null;
     const source = params.get('source') || pendingContext.source || 'pricing_page';
     const recommendedPlan = explicitPlan || featurePlanMap[feature] || 'pruvodce';
+    const metadata = resolveCheckoutMetadata(params, pendingContext);
 
     return {
         feature,
         source,
-        recommendedPlan
+        recommendedPlan,
+        metadata
     };
 }
 
@@ -349,6 +417,7 @@ async function trackPricingFunnelEvent(eventName, context, metadata = {}) {
                 planId: context.recommendedPlan || null,
                 metadata: {
                     path: window.location.pathname,
+                    ...(context.metadata || {}),
                     ...metadata
                 }
             })
@@ -440,7 +509,8 @@ function showPaymentReturnState(context) {
     if (paymentState === 'cancel') {
         window.MH_ANALYTICS?.trackPaymentResult?.('cancel', {
             source: context.source || 'pricing_page_return',
-            feature: context.feature || null
+            feature: context.feature || null,
+            ...(context.metadata || {})
         });
         window.Auth?.showToast?.(
             'Platba byla zrušena',
@@ -465,14 +535,15 @@ function renderRecommendationBanner(context) {
 
     const banner = document.createElement('div');
     const hasVisiblePlanCard = !!document.querySelector(`.plan-checkout-btn[data-plan="${context.recommendedPlan}"]`);
-    const actionLabel = hasVisiblePlanCard ? 'Ukázat doporučený plán' : 'Pokračovat k doporučenému plánu';
+    const sourceCopy = SOURCE_RECOMMENDATION_COPY[context.source] || null;
+    const actionLabel = sourceCopy?.actionLabel || (hasVisiblePlanCard ? 'Ukázat doporučený plán' : 'Pokračovat k doporučenému plánu');
     const previewDestination = getPreviewDestination(context);
     banner.id = 'pricing-plan-recommendation';
     banner.className = 'pricing-plan-recommendation';
     banner.innerHTML = `
-        <div class="pricing-plan-recommendation__eyebrow">Doporučený další krok</div>
-        <strong class="pricing-plan-recommendation__title">${planMeta.name}</strong>
-        <p class="pricing-plan-recommendation__text">${planMeta.headline} ${planMeta.recommendedFor}</p>
+        <div class="pricing-plan-recommendation__eyebrow">${sourceCopy?.eyebrow || 'Doporučený další krok'}</div>
+        <strong class="pricing-plan-recommendation__title">${sourceCopy?.title || planMeta.name}</strong>
+        <p class="pricing-plan-recommendation__text">${sourceCopy?.text || `${planMeta.headline} ${planMeta.recommendedFor}`}</p>
         <div class="pricing-plan-recommendation__actions">
             <button type="button" class="pricing-plan-recommendation__action" data-recommended-plan="${context.recommendedPlan}">${actionLabel}</button>
             ${previewDestination ? `<a class="pricing-plan-recommendation__preview" href="${previewDestination.href}" data-preview-destination>${previewDestination.label}</a>` : ''}
@@ -543,6 +614,7 @@ function startRecommendedCheckout(planId, context) {
     const checkoutContext = {
         source: context.source || 'pricing_recommendation',
         feature: context.feature || null,
+        metadata: context.metadata || {},
         redirect: '/cenik.html',
         authMode: 'register'
     };
@@ -572,6 +644,7 @@ function bindCheckoutButtons(context) {
             const checkoutContext = {
                 source: context.source || 'pricing_page',
                 feature: context.feature || null,
+                metadata: context.metadata || {},
                 billing_interval: currentBilling,
                 redirect: '/cenik.html',
                 authMode: 'register'
@@ -584,7 +657,8 @@ function bindCheckoutButtons(context) {
                 destination: isLoggedIn ? 'stripe_checkout_session' : '/prihlaseni.html',
                 source: checkoutContext.source,
                 feature: checkoutContext.feature,
-                billing_interval: currentBilling
+                billing_interval: currentBilling,
+                ...(context.metadata || {})
             });
 
             if (window.Auth?.startPlanCheckout) {
@@ -661,7 +735,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     window.MH_ANALYTICS?.trackPricingViewed?.(context.recommendedPlan, {
         source: context.source || 'pricing_page',
-        feature: context.feature || null
+        feature: context.feature || null,
+        ...(context.metadata || {})
     });
 
     const toggleMonthly = document.getElementById('toggle-monthly');
