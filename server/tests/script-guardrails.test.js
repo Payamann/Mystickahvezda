@@ -131,9 +131,15 @@ describe('manual script guardrails', () => {
 
         expect(source).toContain("process.env.NODE_ENV === 'production' || process.env.ENABLE_SCHEDULED_JOBS === 'true'");
         expect(source).toContain("process.env.DISABLE_SCHEDULED_JOBS !== 'true'");
+        expect(source).toContain("process.env.ENABLE_DAILY_HOROSCOPE_EMAILS === 'true'");
+        expect(source).toContain("process.env.DISABLE_DAILY_HOROSCOPE_EMAILS !== 'true'");
+        expect(source).toContain('dailyHoroscopeEmail: SHOULD_RUN_DAILY_HOROSCOPE_EMAILS');
+        expect(source).toContain('scheduledJobs: getBackgroundJobStatus()');
         expect(source).toContain('startup_catchup');
         expect(source).toContain('hourly_catchup');
         expect(envExample).toContain('ENABLE_SCHEDULED_JOBS=false');
+        expect(envExample).toContain('ENABLE_DAILY_HOROSCOPE_EMAILS=false');
+        expect(envExample).toContain('DISABLE_DAILY_HOROSCOPE_EMAILS=false');
     });
 
     test('exit intent feature map uses existing pages and covered auth features', () => {

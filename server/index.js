@@ -72,11 +72,23 @@ const PORT = process.env.PORT || 3001;
 const SHOULD_RUN_SCHEDULED_JOBS = process.env.DISABLE_SCHEDULED_JOBS !== 'true' &&
     process.env.NODE_ENV !== 'test' &&
     (process.env.NODE_ENV === 'production' || process.env.ENABLE_SCHEDULED_JOBS === 'true');
+const SHOULD_RUN_DAILY_HOROSCOPE_EMAILS = process.env.DISABLE_DAILY_HOROSCOPE_EMAILS !== 'true' &&
+    process.env.NODE_ENV !== 'test' &&
+    (process.env.NODE_ENV === 'production' ||
+        process.env.ENABLE_DAILY_HOROSCOPE_EMAILS === 'true' ||
+        process.env.ENABLE_SCHEDULED_JOBS === 'true');
 const DAILY_HOROSCOPE_SEND_HOUR_UTC = 7;
 let dailyHoroscopeJobRunning = false;
 
 function isAfterDailyHoroscopeSendWindow(date = new Date()) {
     return date.getUTCHours() >= DAILY_HOROSCOPE_SEND_HOUR_UTC;
+}
+
+function getBackgroundJobStatus() {
+    return {
+        general: SHOULD_RUN_SCHEDULED_JOBS ? 'enabled' : 'disabled',
+        dailyHoroscopeEmail: SHOULD_RUN_DAILY_HOROSCOPE_EMAILS ? 'enabled' : 'disabled'
+    };
 }
 
 async function runDailyHoroscopeJob(reason = 'scheduled') {
@@ -439,7 +451,8 @@ function getRuntimeHealth() {
             ai: aiOk ? 'ok' : 'unavailable'
         },
         features: {
-            pushNotifications: getPushNotificationStatus()
+            pushNotifications: getPushNotificationStatus(),
+            scheduledJobs: getBackgroundJobStatus()
         },
         deployment: getDeploymentMetadata()
     };
@@ -763,96 +776,99 @@ if (isMain || process.env.NODE_ENV === 'production') {
         console.warn(`✨ Mystická Hvězda API running on port ${PORT}`);
         console.warn(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
 
-        if (!SHOULD_RUN_SCHEDULED_JOBS) {
-            console.warn('[JOBS] Scheduled jobs skipped for this environment.');
-            return;
-        }
+        if (SHOULD_RUN_SCHEDULED_JOBS) {
+            // Initialize email queue job processor
+            try {
+                initializeEmailQueueJob();
+            } catch (jobErr) {
+                console.error('[JOBS] Failed to init email queue:', jobErr.message);
+            }
 
-        // Initialize email queue job processor
-        try {
-            initializeEmailQueueJob();
-        } catch (jobErr) {
-            console.error('[JOBS] Failed to init email queue:', jobErr.message);
-        }
+            try {
+                initializeDataRetentionJob(schedule);
+            } catch (jobErr) {
+                console.error('[JOBS] Failed to init data retention:', jobErr.message);
+            }
 
-        try {
-            initializeDataRetentionJob(schedule);
-        } catch (jobErr) {
-            console.error('[JOBS] Failed to init data retention:', jobErr.message);
-        }
+            // ============================================
+            // SOCIAL MEDIA AGENT SCHEDULER (Railway)
+            // ============================================
 
-        // ============================================
-        // SOCIAL MEDIA AGENT SCHEDULER (Railway)
-        // ============================================
+            const runSocialAgent = (action) => {
+                const agentPath = path.resolve(rootDir, 'social-media-agent', 'railway_runner.py');
+                console.log(`[SOCIAL] Triggering agent: ${action}`);
 
-        const runSocialAgent = (action) => {
-            const agentPath = path.resolve(rootDir, 'social-media-agent', 'railway_runner.py');
-            console.log(`[SOCIAL] Triggering agent: ${action}`);
-            
-            const pythonPath = process.env.PYTHON_PATH || 'python';
-            const child = spawn(pythonPath, [agentPath, action]);
+                const pythonPath = process.env.PYTHON_PATH || 'python';
+                const child = spawn(pythonPath, [agentPath, action]);
 
-            child.stdout.on('data', (data) => console.log(`[SOCIAL-OUT] ${data}`));
-            child.stderr.on('data', (data) => console.error(`[SOCIAL-ERR] ${data}`));
-            
-            child.on('close', (code) => {
-                console.log(`[SOCIAL] Agent process finished with code ${code}`);
-            });
-        };
+                child.stdout.on('data', (data) => console.log(`[SOCIAL-OUT] ${data}`));
+                child.stderr.on('data', (data) => console.error(`[SOCIAL-ERR] ${data}`));
 
-        // 1. Generate new content daily (08:00 UTC)
-        if (process.env.ANTHROPIC_API_KEY) {
-            schedule.scheduleJob('0 8 * * *', () => {
-                runSocialAgent('auto');
-            });
+                child.on('close', (code) => {
+                    console.log(`[SOCIAL] Agent process finished with code ${code}`);
+                });
+            };
 
-            // 2. Sync comments and auto-reply every 6 hours
-            schedule.scheduleJob('0 */6 * * *', () => {
-                runSocialAgent('sync');
-            });
+            // 1. Generate new content daily (08:00 UTC)
+            if (process.env.ANTHROPIC_API_KEY) {
+                schedule.scheduleJob('0 8 * * *', () => {
+                    runSocialAgent('auto');
+                });
 
-            console.warn('📅 Social Media Agent schedules initialized.');
-        } else {
-            console.warn('⚠️ Social Media Agent skipped (missing ANTHROPIC_API_KEY).');
-        }
+                // 2. Sync comments and auto-reply every 6 hours
+                schedule.scheduleJob('0 */6 * * *', () => {
+                    runSocialAgent('sync');
+                });
 
-        // Prefill horoscope cache — every day at 05:00 UTC (6:00 CET)
-        // Hits all 12 sign URLs; Claude generates and saves to the production cache.
-        schedule.scheduleJob('0 5 * * *', async () => {
-            const signs = ['beran','byk','blizenci','rak','lev','panna','vahy','stir','strelec','kozoroh','vodnar','ryby'];
-            const dates = [0, 1, 2].map(offset => {
-                const d = new Date();
-                d.setUTCDate(d.getUTCDate() + offset);
-                return d.toISOString().split('T')[0];
-            });
-            console.log(`[CRON] Prefilling horoscope cache for: ${dates.join(', ')}...`);
-            for (const date of dates) {
-                for (const sign of signs) {
-                    try {
-                        await fetch(`https://www.mystickahvezda.cz/horoskop/${sign}/${date}`);
-                    } catch (e) {
-                        console.error(`[CRON] Prefill failed for ${sign}/${date}: ${e.message}`);
+                console.warn('📅 Social Media Agent schedules initialized.');
+            } else {
+                console.warn('⚠️ Social Media Agent skipped (missing ANTHROPIC_API_KEY).');
+            }
+
+            // Prefill horoscope cache — every day at 05:00 UTC (6:00 CET)
+            // Hits all 12 sign URLs; Claude generates and saves to the production cache.
+            schedule.scheduleJob('0 5 * * *', async () => {
+                const signs = ['beran','byk','blizenci','rak','lev','panna','vahy','stir','strelec','kozoroh','vodnar','ryby'];
+                const dates = [0, 1, 2].map(offset => {
+                    const d = new Date();
+                    d.setUTCDate(d.getUTCDate() + offset);
+                    return d.toISOString().split('T')[0];
+                });
+                console.log(`[CRON] Prefilling horoscope cache for: ${dates.join(', ')}...`);
+                for (const date of dates) {
+                    for (const sign of signs) {
+                        try {
+                            await fetch(`https://www.mystickahvezda.cz/horoskop/${sign}/${date}`);
+                        } catch (e) {
+                            console.error(`[CRON] Prefill failed for ${sign}/${date}: ${e.message}`);
+                        }
+                        await new Promise(r => setTimeout(r, 1000));
                     }
-                    await new Promise(r => setTimeout(r, 1000));
+                    console.log(`[CRON] Prefill done for ${date}.`);
                 }
-                console.log(`[CRON] Prefill done for ${date}.`);
-            }
-        });
-        console.warn('📅 Horoscope prefill cron scheduled (05:00 UTC).');
+            });
+            console.warn('📅 Horoscope prefill cron scheduled (05:00 UTC).');
+        } else {
+            console.warn('[JOBS] General scheduled jobs skipped for this environment.');
+        }
 
-        // Daily horoscope emails — every day at 07:00 UTC, with catch-up after restarts.
-        schedule.scheduleJob('0 7 * * *', () => runDailyHoroscopeJob('scheduled_07_utc'));
-        schedule.scheduleJob('20 * * * *', () => {
-            if (isAfterDailyHoroscopeSendWindow()) {
-                runDailyHoroscopeJob('hourly_catchup');
-            }
-        });
-        setTimeout(() => {
-            if (isAfterDailyHoroscopeSendWindow()) {
-                runDailyHoroscopeJob('startup_catchup');
-            }
-        }, 5000);
-        console.warn('📅 Daily horoscope cron scheduled (07:00 UTC + startup/hourly catch-up).');
+        if (SHOULD_RUN_DAILY_HOROSCOPE_EMAILS) {
+            // Daily horoscope emails — every day at 07:00 UTC, with catch-up after restarts.
+            schedule.scheduleJob('0 7 * * *', () => runDailyHoroscopeJob('scheduled_07_utc'));
+            schedule.scheduleJob('20 * * * *', () => {
+                if (isAfterDailyHoroscopeSendWindow()) {
+                    runDailyHoroscopeJob('hourly_catchup');
+                }
+            });
+            setTimeout(() => {
+                if (isAfterDailyHoroscopeSendWindow()) {
+                    runDailyHoroscopeJob('startup_catchup');
+                }
+            }, 5000);
+            console.warn('📅 Daily horoscope cron scheduled (07:00 UTC + startup/hourly catch-up).');
+        } else {
+            console.warn('[JOBS] Daily horoscope schedules skipped for this environment.');
+        }
     });
 }
 
