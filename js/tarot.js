@@ -16,12 +16,61 @@ function getTarotFeatureForSpread(spreadType) {
     return spreadType === 'Celtic Cross' ? 'tarot_celtic_cross' : 'tarot_multi_card';
 }
 
+function cleanTarotContextValue(value, maxLength = 120) {
+    if (value === null || value === undefined) return null;
+    const cleaned = String(value).trim();
+    if (!cleaned) return null;
+    return cleaned.slice(0, maxLength);
+}
+
+function getTarotEntryContext() {
+    const params = new URLSearchParams(window.location.search);
+    const context = {};
+    const entrySource = cleanTarotContextValue(params.get('source'));
+    const entryFeature = cleanTarotContextValue(params.get('feature'));
+    const requestedCard = cleanTarotContextValue(getRequestedTarotCardName());
+    const rawCard = cleanTarotContextValue(params.get('card'));
+
+    if (entrySource) context.entry_source = entrySource;
+    if (entryFeature) context.entry_feature = entryFeature;
+
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'].forEach((key) => {
+        const value = cleanTarotContextValue(params.get(key));
+        if (value) context[key] = value;
+    });
+
+    if (requestedCard) context.requested_card = requestedCard;
+    if (rawCard && rawCard !== requestedCard) context.card_param = rawCard;
+
+    return context;
+}
+
+function appendTarotEntryContextToUrl(url) {
+    const context = getTarotEntryContext();
+
+    if (context.requested_card) {
+        url.searchParams.set('card', context.requested_card);
+    } else if (context.card_param) {
+        url.searchParams.set('card', context.card_param);
+    }
+
+    if (context.entry_source) url.searchParams.set('entry_source', context.entry_source);
+    if (context.entry_feature) url.searchParams.set('entry_feature', context.entry_feature);
+
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'].forEach((key) => {
+        if (context[key]) url.searchParams.set(key, context[key]);
+    });
+
+    return context;
+}
+
 function buildTarotUpgradeUrl(spreadType, source = 'tarot_inline_upsell') {
     const planId = getTarotPlanForSpread(spreadType);
     const pricingUrl = new URL('/cenik.html', window.location.origin);
     pricingUrl.searchParams.set('plan', planId);
     pricingUrl.searchParams.set('source', source);
     pricingUrl.searchParams.set('feature', getTarotFeatureForSpread(spreadType));
+    appendTarotEntryContextToUrl(pricingUrl);
     return `${pricingUrl.pathname}${pricingUrl.search}`;
 }
 
@@ -46,6 +95,7 @@ async function trackTarotFunnelEvent(eventName, source, spreadType, metadata = {
                 metadata: {
                     path: window.location.pathname,
                     spread_type: spreadType,
+                    ...getTarotEntryContext(),
                     ...metadata
                 }
             })
@@ -58,10 +108,12 @@ async function trackTarotFunnelEvent(eventName, source, spreadType, metadata = {
 function startTarotUpgradeFlow(spreadType, source = 'tarot_inline_upsell') {
     const planId = getTarotPlanForSpread(spreadType);
     const feature = getTarotFeatureForSpread(spreadType);
+    const entryContext = getTarotEntryContext();
     window.MH_ANALYTICS?.trackCTA?.(source, {
         plan_id: planId,
         spread_type: spreadType,
-        feature
+        feature,
+        ...entryContext
     });
 
     void trackTarotFunnelEvent('paywall_cta_clicked', source, spreadType, {
@@ -72,6 +124,7 @@ function startTarotUpgradeFlow(spreadType, source = 'tarot_inline_upsell') {
         window.Auth.startPlanCheckout(planId, {
             source,
             feature,
+            metadata: entryContext,
             redirect: '/cenik.html',
             authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register'
         });
@@ -325,7 +378,8 @@ async function startReading(spreadType, isSoftGated = false) {
         window.MH_ANALYTICS?.trackAction?.('tarot_card_context_used', {
             source: 'tarot_card_parameter',
             card: requestedCardName,
-            spread_type: spreadType
+            spread_type: spreadType,
+            ...getTarotEntryContext()
         });
     }
 
@@ -406,6 +460,7 @@ async function startReading(spreadType, isSoftGated = false) {
             feature: getTarotFeatureForSpread(spreadType),
             plan_id: getTarotPlanForSpread(spreadType),
             spread_type: spreadType,
+            ...getTarotEntryContext(),
             cards_total: numCards,
             cards_locked: Math.max(0, numCards - 1)
         });

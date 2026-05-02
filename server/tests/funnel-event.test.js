@@ -1,5 +1,6 @@
 import request from 'supertest';
 import app from '../index.js';
+import { buildCheckoutContextMetadata, buildPricingCancelUrl } from '../payment.js';
 
 async function getCsrfToken() {
     const res = await request(app).get('/api/csrf-token').expect(200);
@@ -91,5 +92,46 @@ describe('Public funnel event endpoint', () => {
 
         expect(downsellRes.status).toBe(200);
         expect(downsellRes.body.success).toBe(true);
+    });
+});
+
+describe('Checkout funnel context metadata', () => {
+    test('keeps only attribution fields that are safe for checkout metadata', () => {
+        const metadata = buildCheckoutContextMetadata({
+            entry_source: 'tarot_card_detail',
+            utm_source: 'pinterest',
+            utm_campaign: 'tarot_card_hvezda',
+            requested_card: 'Hvězda',
+            path: '/tarot.html',
+            email: 'test@example.com',
+            card_param: ''
+        });
+
+        expect(metadata).toEqual({
+            entry_source: 'tarot_card_detail',
+            utm_source: 'pinterest',
+            utm_campaign: 'tarot_card_hvezda',
+            requested_card: 'Hvězda'
+        });
+    });
+
+    test('preserves tarot card context in checkout cancel URL', () => {
+        const cancelUrl = new URL(buildPricingCancelUrl({
+            planId: 'pruvodce',
+            source: 'tarot_teaser_banner',
+            feature: 'tarot_multi_card',
+            metadata: {
+                entry_source: 'tarot_card_detail',
+                utm_source: 'pinterest',
+                requested_card: 'Hvězda'
+            }
+        }));
+
+        expect(cancelUrl.pathname).toBe('/cenik.html');
+        expect(cancelUrl.searchParams.get('payment')).toBe('cancel');
+        expect(cancelUrl.searchParams.get('source')).toBe('tarot_teaser_banner');
+        expect(cancelUrl.searchParams.get('entry_source')).toBe('tarot_card_detail');
+        expect(cancelUrl.searchParams.get('utm_source')).toBe('pinterest');
+        expect(cancelUrl.searchParams.get('card')).toBe('Hvězda');
     });
 });

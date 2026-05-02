@@ -49,6 +49,16 @@ import {
 
 const PLANS = SUBSCRIPTION_PLANS;
 const USE_LIVE_STRIPE_PRICE_IDS = stripeSecretKey.startsWith('sk_live_');
+const CHECKOUT_CONTEXT_METADATA_KEYS = new Set([
+    'entry_source',
+    'entry_feature',
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_content',
+    'requested_card',
+    'card_param',
+]);
 
 const STRIPE_PRICE_ENV_KEYS = Object.freeze({
     pruvodce: 'STRIPE_PRICE_PRUVODCE_MONTHLY',
@@ -90,12 +100,31 @@ function buildSubscriptionLineItem(plan, stripePriceId) {
     };
 }
 
-export function buildPricingCancelUrl({ planId = null, source = null, feature = null } = {}) {
+export function buildPricingCancelUrl({ planId = null, source = null, feature = null, metadata = {} } = {}) {
     const url = new URL('/cenik.html', APP_URL);
     url.searchParams.set('payment', 'cancel');
     if (planId) url.searchParams.set('plan', planId);
     if (source) url.searchParams.set('source', source);
     if (feature) url.searchParams.set('feature', feature);
+
+    const contextMetadata = buildCheckoutContextMetadata(metadata);
+    const cancelParamMap = {
+        entry_source: 'entry_source',
+        entry_feature: 'entry_feature',
+        utm_source: 'utm_source',
+        utm_medium: 'utm_medium',
+        utm_campaign: 'utm_campaign',
+        utm_content: 'utm_content',
+        requested_card: 'card',
+        card_param: 'card'
+    };
+
+    Object.entries(cancelParamMap).forEach(([key, param]) => {
+        if (contextMetadata[key] && !url.searchParams.has(param)) {
+            url.searchParams.set(param, contextMetadata[key]);
+        }
+    });
+
     return url.toString();
 }
 
@@ -114,6 +143,18 @@ function cleanFunnelValue(value, fallback = null, maxLength = 120) {
     const trimmed = value.trim();
     if (!trimmed) return fallback;
     return trimmed.slice(0, maxLength);
+}
+
+export function buildCheckoutContextMetadata(metadata) {
+    const sanitized = sanitizeFunnelMetadata(metadata);
+    const contextMetadata = {};
+
+    Object.entries(sanitized).forEach(([key, value]) => {
+        if (!CHECKOUT_CONTEXT_METADATA_KEYS.has(key) || value === null || value === '') return;
+        contextMetadata[key] = String(value).slice(0, 240);
+    });
+
+    return contextMetadata;
 }
 
 async function recordFunnelEvent(eventName, {
@@ -285,11 +326,13 @@ router.post('/funnel-event', optionalPremiumCheck, async (req, res) => {
 // POST /create-checkout-session - Create Stripe Checkout for subscription
 // ============================================
 router.post('/create-checkout-session', authenticateToken, async (req, res) => {
+    let checkoutContextMetadata = {};
     try {
         const { planId } = req.body;
         const user = req.user;
         const source = cleanFunnelValue(req.body?.source, 'direct');
         const feature = cleanFunnelValue(req.body?.feature);
+        checkoutContextMetadata = buildCheckoutContextMetadata(req.body?.metadata);
 
         // Validate planId - must be one of the defined plans
         const validPlanIds = Object.keys(PLANS);
@@ -299,7 +342,7 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
                 source,
                 feature,
                 planId: cleanFunnelValue(planId),
-                metadata: { reason: 'invalid_plan_id' }
+                metadata: { ...checkoutContextMetadata, reason: 'invalid_plan_id' }
             });
             return res.status(400).json({ error: 'Invalid plan selected' });
         }
@@ -313,7 +356,7 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
                 feature,
                 planId,
                 planType: plan.type,
-                metadata: { reason: 'free_plan_checkout_blocked' }
+                metadata: { ...checkoutContextMetadata, reason: 'free_plan_checkout_blocked' }
             });
             return res.status(400).json({ error: 'Cannot create session for free plan' });
         }
@@ -330,7 +373,7 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
             payment_method_collection: 'always',
             locale: 'cs',
             success_url: `${APP_URL}/profil.html?payment=success&plan=${encodeURIComponent(planId)}&session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: buildPricingCancelUrl({ planId, source, feature }),
+            cancel_url: buildPricingCancelUrl({ planId, source, feature, metadata: checkoutContextMetadata }),
             client_reference_id: user.id,
             metadata: {
                 userId: user.id,
@@ -338,7 +381,8 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
                 planType: plan.type,
                 billingInterval: plan.interval,
                 source,
-                feature: feature || ''
+                feature: feature || '',
+                ...checkoutContextMetadata
             },
             subscription_data: {
                 ...(plan.trialDays > 0 && { trial_period_days: plan.trialDays }),
@@ -348,7 +392,8 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
                     planType: plan.type,
                     billingInterval: plan.interval,
                     source,
-                    feature: feature || ''
+                    feature: feature || '',
+                    ...checkoutContextMetadata
                 }
             }
         });
@@ -361,6 +406,7 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
             planType: plan.type,
             stripeSessionId: session.id,
             metadata: {
+                ...checkoutContextMetadata,
                 billingInterval: plan.interval,
                 amount: plan.price,
                 currency: 'czk',
@@ -376,7 +422,7 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
             source: req.body?.source,
             feature: req.body?.feature,
             planId: req.body?.planId,
-            metadata: { error: error.message }
+            metadata: { ...checkoutContextMetadata, error: error.message }
         });
         res.status(500).json({ error: 'Platba se nezdařila. Zkuste to prosím později.' });
     }

@@ -105,6 +105,9 @@ test.describe('Tarot', () => {
     });
 
     test('free teaser pro tři karty ukáže zamčené karty a pošle funnel event', async ({ page }) => {
+        await page.goto('/tarot.html?card=Hvězda&source=tarot_card_detail&utm_source=pinterest&utm_campaign=tarot_card_hvezda&utm_content=pin_01');
+        await waitForPageReady(page);
+
         await page.evaluate(() => {
             localStorage.removeItem('tarot_free_usage');
             window.Auth = {
@@ -136,6 +139,13 @@ test.describe('Tarot', () => {
         await expect(page.locator('#tarot-results .tarot-flip-card')).toHaveCount(3);
         await expect(page.locator('#tarot-results .locked-card')).toHaveCount(2);
         await expect(page.locator('.tarot-soft-gate')).toContainText('Odemkněte celý tříkartový výklad');
+        const upgradeHref = await page.locator('.tarot-soft-gate .tarot-upgrade-btn').getAttribute('href');
+        const upgradeUrl = new URL(upgradeHref, page.url());
+        expect(upgradeUrl.searchParams.get('source')).toBe('tarot_teaser_banner');
+        expect(upgradeUrl.searchParams.get('entry_source')).toBe('tarot_card_detail');
+        expect(upgradeUrl.searchParams.get('utm_source')).toBe('pinterest');
+        expect(upgradeUrl.searchParams.get('utm_campaign')).toBe('tarot_card_hvezda');
+        expect(upgradeUrl.searchParams.get('card')).toBe('Hvězda');
 
         await expect.poll(() => page.evaluate(() => window.__tarotFunnelEvents.length)).toBeGreaterThan(0);
         const events = await page.evaluate(() => window.__tarotFunnelEvents);
@@ -145,6 +155,15 @@ test.describe('Tarot', () => {
             feature: 'tarot_multi_card',
             planId: 'pruvodce'
         }));
+        const paywallEvent = events.find((event) => event.eventName === 'paywall_viewed' && event.source === 'tarot_teaser_banner');
+        expect(paywallEvent).toBeTruthy();
+        expect(paywallEvent.metadata).toMatchObject({
+            entry_source: 'tarot_card_detail',
+            utm_source: 'pinterest',
+            utm_campaign: 'tarot_card_hvezda',
+            utm_content: 'pin_01',
+            requested_card: 'Hvězda'
+        });
     });
 
     // ── Freemium banner ──────────────────────────────────────────────────────

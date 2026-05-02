@@ -1065,7 +1065,11 @@
         async _startCheckout(planId, context = {}) {
             try {
                 const source = context.source || this.getPendingCheckoutContext().source || 'auth_pending_plan';
+                const checkoutMetadata = context.metadata && typeof context.metadata === 'object' && !Array.isArray(context.metadata)
+                    ? context.metadata
+                    : {};
                 window.MH_ANALYTICS?.trackCheckoutStarted?.(planId, {
+                    ...checkoutMetadata,
                     source,
                     feature: context.feature || null
                 });
@@ -1081,6 +1085,7 @@
                         planId,
                         source,
                         feature: context.feature || null,
+                        metadata: checkoutMetadata,
                         billingInterval: context.billing_interval || context.billingInterval || null
                     })
                 });
