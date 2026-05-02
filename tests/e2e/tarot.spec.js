@@ -280,6 +280,8 @@ test.describe('Tarot význam karet', () => {
         expect(canonical).toBe('https://www.mystickahvezda.cz/tarot-vyznam/hvezda.html');
 
         await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1);
+        await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', /tarot_hvezda\.webp/);
+        await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', /Hvězda tarot karta/);
         await expect(page.locator('.tarot-card-detail-panel')).toContainText('Nad');
         await expect(page.locator('.tarot-related-card')).toHaveCount(3);
         await expect(page.locator('.tarot-related-card').first()).toHaveAttribute('href', /\/tarot-vyznam\/.+\.html/);

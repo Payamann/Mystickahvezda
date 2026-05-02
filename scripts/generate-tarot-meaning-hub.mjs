@@ -291,9 +291,13 @@ function buildDetailPage(name, card, relatedCards = []) {
     <meta property="og:description" content="${escapeHtml(description)}">
     <meta property="og:url" content="${escapeHtml(canonical)}">
     <meta property="og:image" content="${escapeHtml(assetUrl(image))}">
+    <meta property="og:image:alt" content="${escapeHtml(`${name} tarot karta`)}">
     <meta property="og:locale" content="cs_CZ">
     <meta property="og:site_name" content="Mystická Hvězda">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${escapeHtml(title)}">
+    <meta name="twitter:description" content="${escapeHtml(description)}">
+    <meta name="twitter:image" content="${escapeHtml(assetUrl(image))}">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/img/icon-192.webp">
