@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ['partnerska-shoda.html', 'Partnerská shoda'],
         ['cinsky-horoskop.html', 'Čínský horoskop'],
         ['minuly-zivot.html', 'Minulý život'],
+        ['tarot-karta-dne.html', 'Tarot karta dne'],
         ['andelske-karty.html', 'Andělské karty'],
         ['andelska-posta.html', 'Andělská pošta'],
         ['runy.html', 'Výklad z run'],

@@ -35,6 +35,13 @@ test.describe('Tarot', () => {
         await expect(h1).toBeVisible();
     });
 
+    test('crosslink vede na tarot kartu dne s kampanovým kontextem', async ({ page }) => {
+        const link = page.locator('a[href*="tarot-karta-dne.html?source=tarot_crosslink"]').first();
+        await expect(link).toBeVisible();
+        await expect(link).toHaveAttribute('href', /intent=daily_card/);
+        await expect(link).toContainText('Tarot karta dne');
+    });
+
     // ── Spread výběr ─────────────────────────────────────────────────────────
 
     test('zobrazí 3 spread možnosti', async ({ page }) => {

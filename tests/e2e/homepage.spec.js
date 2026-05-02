@@ -353,6 +353,11 @@ test.describe('Homepage', () => {
         await expect(link).toBeAttached();
     });
 
+    test('stránka obsahuje navigační odkaz na tarot kartu dne', async ({ page }) => {
+        const link = page.locator('.nav__dropdown-link[href*="tarot-karta-dne.html"]').first();
+        await expect(link).toContainText('Tarot karta dne');
+    });
+
     test('spodní CTA vede na registraci zdarma s denním tracking kontextem', async ({ page }) => {
         const href = await page.locator('#cta-banner-btn').getAttribute('href');
         expect(href).toContain('mode=register');
