@@ -344,7 +344,14 @@ test.describe('Tarot karta dne', () => {
         expect(fullReadingHref).toContain('card=');
 
         await expect(page.locator('#tarot-daily-card-detail')).toHaveAttribute('href', /\/tarot-vyznam\/.+\.html/);
+        await expect(page.locator('#tarot-daily-save-image')).toBeVisible();
         await expect(page.locator('#tarot-daily-share')).toBeVisible();
+
+        await expect.poll(() => page.evaluate(() => Boolean(window.__lastTarotDailyShareResult))).toBe(true);
+        const downloadPromise = page.waitForEvent('download');
+        await page.locator('#tarot-daily-save-image').click();
+        const download = await downloadPromise;
+        expect(download.suggestedFilename()).toMatch(/^tarot-karta-dne-.+\.png$/);
     });
 
     test('obsahuje další kroky a FAQ schema', async ({ page }) => {
