@@ -66,6 +66,7 @@
 }
 
 .tarot-daily-steps,
+.tarot-daily-primer__grid,
 .tarot-daily-intent-grid,
 .tarot-daily-faq__grid {
     display: grid;
@@ -74,6 +75,7 @@
 }
 
 .tarot-daily-steps article,
+.tarot-daily-primer__card,
 .tarot-daily-intent-card,
 .tarot-daily-faq__grid article {
     min-width: 0;
@@ -84,6 +86,7 @@
 }
 
 .tarot-daily-steps strong,
+.tarot-daily-primer__card h3,
 .tarot-daily-intent-card strong,
 .tarot-daily-faq__grid h3 {
     display: block;
@@ -94,6 +97,7 @@
 }
 
 .tarot-daily-steps p,
+.tarot-daily-primer__card p,
 .tarot-daily-faq__grid p,
 .tarot-daily-intent-card em {
     margin: 0;
@@ -101,6 +105,24 @@
     font-size: 0.92rem;
     line-height: 1.65;
     font-style: normal;
+}
+
+.tarot-daily-primer {
+    max-width: 1080px;
+}
+
+.tarot-daily-primer__card a {
+    display: inline-flex;
+    margin-top: 0.9rem;
+    color: var(--color-mystic-gold);
+    font-size: 0.86rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.tarot-daily-primer__card a:hover,
+.tarot-daily-primer__card a:focus-visible {
+    color: var(--color-mystic-gold-light);
 }
 
 .tarot-daily-intent-grid {
@@ -273,6 +295,7 @@
     }
 
     .tarot-daily-steps,
+    .tarot-daily-primer__grid,
     .tarot-daily-intent-grid,
     .tarot-daily-faq__grid {
         grid-template-columns: 1fr;

@@ -351,6 +351,10 @@ test.describe('Tarot karta dne', () => {
         await page.goto('/tarot-karta-dne.html');
         await waitForPageReady(page);
 
+        await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+        await expect(page.locator('.tarot-daily-visual img').first()).toHaveAttribute('width', '600');
+        await expect(page.locator('.tarot-daily-primer__card')).toHaveCount(3);
+        await expect(page.locator('a[href*="tarot-vyznam-karet.html?source=tarot_daily_card_primer"]')).toBeVisible();
         await expect(page.locator('.tarot-daily-intent-card')).toHaveCount(4);
         await expect(page.locator('a[href*="cenik.html?plan=pruvodce"][href*="source=tarot_daily_card_landing"]')).toBeVisible();
 
