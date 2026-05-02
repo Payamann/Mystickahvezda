@@ -136,6 +136,18 @@ function formatTextContent(value = '') {
     .join('');
 }
 
+function formatEmailName(value = '', fallback = 'Ahoj') {
+  const cleaned = String(value || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 80);
+
+  return escapeHtml(cleaned || fallback);
+}
+
 function buildResendPayload({ to, subject, html, text, replyTo, headers, attachments }) {
   const payload = {
     from: FROM_EMAIL,
@@ -804,6 +816,57 @@ export async function sendTrialReminderEmails(userId, email, trialEndDate) {
   }
 }
 
+/**
+ * Schedule post-purchase lifecycle emails for the one-time Personal Map product.
+ * The sequence is intentionally short: product value first, subscription upsell second.
+ */
+export async function sendPersonalMapLifecycleSequence({
+  orderId = null,
+  email,
+  name,
+  sign,
+  productId = 'osobni_mapa_2026',
+  source = 'personal_map_checkout',
+  stripeSessionId = null,
+  delays = {}
+}) {
+  if (!email) {
+    throw new Error('Missing email for personal map lifecycle sequence.');
+  }
+
+  try {
+    const { scheduleEmailLater } = await import('./jobs/email-queue.js');
+    const baseData = {
+      orderId,
+      name,
+      sign,
+      productId,
+      source,
+      stripeSessionId
+    };
+
+    await scheduleEmailLater({
+      email,
+      template: 'personal_map_reflection_day1',
+      data: baseData,
+      delaySeconds: delays.reflectionDay1 ?? 86400
+    });
+
+    await scheduleEmailLater({
+      email,
+      template: 'personal_map_pruvodce_day3',
+      data: baseData,
+      delaySeconds: delays.pruvodceDay3 ?? 259200
+    });
+
+    console.log(`[EMAIL] Personal map lifecycle sequence scheduled for ${email}`);
+    return { success: true, scheduled: 2 };
+  } catch (error) {
+    console.error('[EMAIL] Failed to schedule personal map lifecycle sequence:', error);
+    throw error;
+  }
+}
+
 EMAIL_TEMPLATES.horoscope_subscription_confirm = {
   subject: 'Odběr denního horoskopu potvrzen',
   getHtml: (data) => {
@@ -857,6 +920,74 @@ EMAIL_TEMPLATES.daily_horoscope = {
   }
 };
 
+EMAIL_TEMPLATES.personal_map_reflection_day1 = {
+  subject: 'Jak z Osobní mapy vytěžit první krok',
+  getHtml: (data) => {
+    const name = formatEmailName(data.name);
+    const mentorUrl = toAbsoluteUrl('/mentor.html?source=personal_map_email_day1&feature=mentor&utm_source=email&utm_campaign=personal_map_day1');
+    const mapUrl = toAbsoluteUrl('/osobni-mapa.html?source=personal_map_email_day1&feature=osobni_mapa_2026&utm_source=email&utm_campaign=personal_map_day1');
+
+    return getBaseTemplate(`
+    <h1 class="h1">Vrať se k jedné větě</h1>
+    <p>${name}, Osobní mapa nejlíp funguje, když z ní neuděláš další dlouhý text, který jen přečteš a odložíš.</p>
+    <p>Dnes si zkus vybrat jednu větu, která se tě dotkla. Ne tu nejhezčí. Tu, u které cítíš malé napětí nebo úlevu.</p>
+
+    <div class="feature-item">
+      <strong>Krátké cvičení na 5 minut:</strong>
+      <ul style="margin-top:10px;padding-left:20px;">
+        <li>Otevři PDF a najdi jednu větu, která tě zastavila.</li>
+        <li>Napiš si: "Co mi tahle věta dovoluje přestat tlačit silou?"</li>
+        <li>Vyber jeden malý krok pro dalších 24 hodin.</li>
+      </ul>
+    </div>
+
+    <p>Pokud chceš další denní vedení k tomu, co ti mapa otevřela, nech si položit doplňující otázku v Průvodci.</p>
+
+    <div class="cta-box">
+      <a href="${mentorUrl}" class="btn">Pokračovat v Průvodci &rarr;</a>
+    </div>
+
+    <p style="font-size:13px;opacity:0.62;text-align:center;margin-top:2rem;">
+      Tohle je navazující e-mail k nákupu Osobní mapy. K produktu se můžeš vrátit také tady:
+      <a href="${mapUrl}" style="color:#d4af37;">Osobní mapa</a>.
+    </p>
+  `, 'První krok s Osobní mapou', 'Vyber jednu větu z mapy a převeď ji do jednoho malého kroku na dnešek.');
+  }
+};
+
+EMAIL_TEMPLATES.personal_map_pruvodce_day3 = {
+  subject: 'Mapa ti dala směr. Co tě povede dál?',
+  getHtml: (data) => {
+    const name = formatEmailName(data.name);
+    const pricingUrl = toAbsoluteUrl('/cenik.html?source=personal_map_email_day3&feature=premium_membership&plan=pruvodce&utm_source=email&utm_campaign=personal_map_day3');
+    const horoscopeUrl = toAbsoluteUrl('/horoskopy.html?source=personal_map_email_day3&feature=horoskopy&utm_source=email&utm_campaign=personal_map_day3');
+
+    return getBaseTemplate(`
+    <h1 class="h1">Mapa ukazuje směr. Průvodce drží rytmus.</h1>
+    <p>${name}, Osobní mapa je dobrá pro velký odstup: co se opakuje, kde ztrácíš energii a kam dát pozornost.</p>
+    <p>Jenže změna se většinou neděje v jednom velkém rozhodnutí. Děje se v malých návratech: dnes si všimneš vzorce, zítra si uhlídáš hranici, pozítří položíš lepší otázku.</p>
+
+    <div class="feature-item">
+      <strong>Proto dává smysl navázat Průvodcem:</strong>
+      <ul style="margin-top:10px;padding-left:20px;">
+        <li>denní a týdenní vedení, které navazuje na tvoje aktuální období,</li>
+        <li>tarot, horoskopy a mentor na otázky, které se po mapě objeví,</li>
+        <li>jedno místo, kam se vrátíš, když nechceš zase všechno řešit jen v hlavě.</li>
+      </ul>
+    </div>
+
+    <div class="cta-box">
+      <a href="${pricingUrl}" class="btn">Odemknout Průvodce &rarr;</a>
+    </div>
+
+    <p style="font-size:13px;opacity:0.62;text-align:center;margin-top:2rem;">
+      Chceš zatím zůstat u volného obsahu? Otevři si
+      <a href="${horoscopeUrl}" style="color:#d4af37;">dnešní horoskop</a>.
+    </p>
+  `, 'Navázat na Osobní mapu', 'Osobní mapa ti dala směr. Průvodce ti pomůže vracet se k němu každý den.');
+  }
+};
+
 const SIGN_NAMES_EMAIL = {
   beran: 'Beran', byk: 'Býk', blizenci: 'Blíženci', rak: 'Rak',
   lev: 'Lev', panna: 'Panna', vahy: 'Váhy', stir: 'Štír',
@@ -874,12 +1005,13 @@ export async function sendHoroscopePdf({ to, name, sign, pdfBuffer }) {
   }
 
   const signName = SIGN_NAMES_EMAIL[sign] || sign;
+  const safeName = formatEmailName(name, 'Ahoj');
   const year = new Date().getFullYear();
 
   const html = getBaseTemplate(`
     <div style="text-align:center;padding:20px 0 10px;">
       <p style="font-family:'Cinzel',serif;font-size:18px;color:#d4af37;letter-spacing:2px;margin:0 0 6px;">Tvůj horoskop je tady ✦</p>
-      <p style="font-size:15px;color:rgba(255,255,255,0.8);margin:0;">Ahoj ${name},</p>
+      <p style="font-size:15px;color:rgba(255,255,255,0.8);margin:0;">Ahoj ${safeName},</p>
     </div>
     <div style="padding:20px 0;">
       <p>Právě ti posílám tvůj <strong style="color:#d4af37;">Roční Horoskop na míru ${year}</strong> — personalizovaný výklad speciálně pro tebe jako ${signName}.</p>
@@ -924,12 +1056,13 @@ export async function sendPersonalMapPdf({ to, name, sign, pdfBuffer }) {
   }
 
   const signName = SIGN_NAMES_EMAIL[sign] || sign;
+  const safeName = formatEmailName(name, 'Ahoj');
   const year = new Date().getFullYear();
 
   const html = getBaseTemplate(`
     <div style="text-align:center;padding:20px 0 10px;">
       <p style="font-family:'Cinzel',serif;font-size:18px;color:#d4af37;letter-spacing:2px;margin:0 0 6px;">Tvoje osobní mapa je tady ✦</p>
-      <p style="font-size:15px;color:rgba(255,255,255,0.8);margin:0;">Ahoj ${name},</p>
+      <p style="font-size:15px;color:rgba(255,255,255,0.8);margin:0;">Ahoj ${safeName},</p>
     </div>
     <div style="padding:20px 0;">
       <p>Právě ti posílám tvou <strong style="color:#d4af37;">Osobní mapu zbytku roku ${year}</strong> — prémiový výklad vytvořený pro tvoje znamení ${signName} a téma, se kterým teď přicházíš.</p>
@@ -972,6 +1105,7 @@ export default {
   sendChurnRecoveryEmail,
   sendWeeklyFeatureEmail,
   sendTrialReminderEmails,
+  sendPersonalMapLifecycleSequence,
   sendHoroscopePdf,
   sendPersonalMapPdf,
   EMAIL_TEMPLATES

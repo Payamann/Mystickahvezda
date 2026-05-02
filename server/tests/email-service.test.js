@@ -14,7 +14,12 @@ jest.unstable_mockModule('resend', () => ({
     }))
 }));
 
-const { sendEmail, htmlToPlainText } = await import('../email-service.js');
+const {
+    sendEmail,
+    htmlToPlainText,
+    sendPersonalMapLifecycleSequence
+} = await import('../email-service.js');
+const { supabase } = await import('../db-supabase.js');
 
 describe('Email service deliverability payload', () => {
     beforeEach(() => {
@@ -96,6 +101,63 @@ describe('Email service deliverability payload', () => {
         expect(payload.headers['List-Unsubscribe']).toBe('<https://yourdomain.com/api/subscribe/horoscope/unsubscribe?token=confirm-token>');
         expect(payload.html).toContain('Odběr je aktivní');
         expect(payload.html).not.toContain('undefined');
+    });
+
+    test('renders personal map upsell email with tracked pricing link and escaped customer data', async () => {
+        await sendEmail({
+            to: 'recipient@example.com',
+            template: 'personal_map_pruvodce_day3',
+            data: {
+                name: 'Jana <script>alert(1)</script>',
+                sign: 'lev',
+                productId: 'osobni_mapa_2026'
+            }
+        });
+
+        const payload = sendMock.mock.calls[0][0];
+        expect(payload.html).toContain('source=personal_map_email_day3');
+        expect(payload.html).toContain('plan=pruvodce');
+        expect(payload.html).not.toContain('<script>');
+        expect(payload.html).not.toContain('alert(1)');
+        expect(payload.text).toContain('Odemknout');
+    });
+
+    test('schedules anonymous personal map lifecycle without sensitive form focus', async () => {
+        await sendPersonalMapLifecycleSequence({
+            orderId: 'order-email-sequence-test',
+            email: 'buyer-lifecycle@example.com',
+            name: 'Jana',
+            sign: 'lev',
+            productId: 'osobni_mapa_2026',
+            source: 'personal_map_checkout',
+            stripeSessionId: 'cs_test_lifecycle',
+            delays: {
+                reflectionDay1: 60,
+                pruvodceDay3: 120
+            }
+        });
+
+        const { data: queued } = await supabase
+            .from('email_queue')
+            .select('*')
+            .eq('email_to', 'buyer-lifecycle@example.com')
+            .order('scheduled_for', { ascending: true });
+
+        expect(queued).toHaveLength(2);
+        expect(queued.map(email => email.template)).toEqual([
+            'personal_map_reflection_day1',
+            'personal_map_pruvodce_day3'
+        ]);
+        expect(queued.every(email => email.user_id === null)).toBe(true);
+
+        const firstPayload = JSON.parse(queued[0].data);
+        expect(firstPayload).toMatchObject({
+            orderId: 'order-email-sequence-test',
+            productId: 'osobni_mapa_2026',
+            source: 'personal_map_checkout',
+            stripeSessionId: 'cs_test_lifecycle'
+        });
+        expect(firstPayload.focus).toBeUndefined();
     });
 
     test('converts html links into readable plain text', () => {

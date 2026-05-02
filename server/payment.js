@@ -760,7 +760,7 @@ async function handlePersonalMapPurchase(session, stripeEventId = null) {
     setImmediate(async () => {
         try {
             const { generatePersonalMapContent, renderPersonalMapPdf } = await import('./services/personal-map-pdf.js');
-            const { sendPersonalMapPdf } = await import('./email-service.js');
+            const { sendPersonalMapLifecycleSequence, sendPersonalMapPdf } = await import('./email-service.js');
 
             const sections = await generatePersonalMapContent({
                 name: customerName,
@@ -784,6 +784,44 @@ async function handlePersonalMapPurchase(session, stripeEventId = null) {
 
             await sendPersonalMapPdf({ to: customerEmail, name: customerName, sign, pdfBuffer });
             await markOneTimeOrderInputFulfilled(orderInput?.id);
+            await recordFunnelEvent('one_time_pdf_delivered', {
+                source: session.metadata?.source || 'personal_map_checkout',
+                feature: productId,
+                stripeSessionId: session.id,
+                stripeEventId,
+                metadata: {
+                    productType: 'personal_map',
+                    productId,
+                    deliveryChannel: 'email'
+                }
+            });
+
+            try {
+                await sendPersonalMapLifecycleSequence({
+                    orderId: orderInput?.id || session.metadata?.orderId || null,
+                    email: customerEmail,
+                    name: customerName,
+                    sign,
+                    productId,
+                    source: session.metadata?.source || 'personal_map_checkout',
+                    stripeSessionId: session.id
+                });
+                await recordFunnelEvent('one_time_lifecycle_sequence_scheduled', {
+                    source: session.metadata?.source || 'personal_map_checkout',
+                    feature: productId,
+                    stripeSessionId: session.id,
+                    stripeEventId,
+                    metadata: {
+                        productType: 'personal_map',
+                        productId,
+                        sequence: 'personal_map_post_purchase',
+                        emailsScheduled: 2
+                    }
+                });
+            } catch (sequenceError) {
+                console.warn(`[PERSONAL_MAP] Lifecycle sequence scheduling failed for paid session ${session.id}:`, sequenceError.message);
+            }
+
             console.log(`[PERSONAL_MAP] PDF sent for paid session ${session.id}`);
         } catch (err) {
             console.error(`[PERSONAL_MAP] PDF generation/delivery failed for paid session ${session.id}:`, err.message);

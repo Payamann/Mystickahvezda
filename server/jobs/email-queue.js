@@ -113,7 +113,7 @@ export async function processEmailQueue() {
 export async function scheduleEmailLater(emailConfig) {
     try {
         const {
-            userId,
+            userId = null,
             email,
             template,
             data = {},
@@ -126,7 +126,7 @@ export async function scheduleEmailLater(emailConfig) {
         const { error } = await supabase
             .from('email_queue')
             .insert({
-                user_id: userId,
+                user_id: userId || null,
                 email_to: email,
                 template,
                 data: JSON.stringify(data),
