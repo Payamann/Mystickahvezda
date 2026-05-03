@@ -521,6 +521,135 @@ html body .mh-block-visible {
     background-image: linear-gradient(to bottom, rgba(20, 15, 30, 0.3), rgba(20, 15, 30, 0.9)), url('/img/angel-archetypes/strength.webp');
 }
 
+.angel-card-back--daily {
+    background-size: cover;
+    background-position: center;
+}
+
+.angel-card-back--daily-andele-ochranci {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/andele-ochranci.webp');
+}
+
+.angel-card-back--daily-hojnost {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/hojnost.webp');
+}
+
+.angel-card-back--daily-novy-zacatek {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/novy-zacatek.webp');
+}
+
+.angel-card-back--daily-vnitrni-mir {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/vnitrni-mir.webp');
+}
+
+.angel-card-back--daily-odvaha {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/odvaha.webp');
+}
+
+.angel-card-back--daily-laska {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/laska.webp');
+}
+
+.angel-card-back--daily-intuice {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/intuice.webp');
+}
+
+.angel-card-back--daily-transformace {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/transformace.webp');
+}
+
+.angel-card-back--daily-vdecnost {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/vdecnost.webp');
+}
+
+.angel-card-back--daily-harmonie {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/harmonie.webp');
+}
+
+.angel-card-back--daily-vudce {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/vudce.webp');
+}
+
+.angel-card-back--daily-propojeni {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/propojeni.webp');
+}
+
+.angel-card-back--daily-hojeni {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/hojeni.webp');
+}
+
+.angel-card-back--daily-moudrost {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/moudrost.webp');
+}
+
+.angel-card-back--daily-radost {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/radost.webp');
+}
+
+.angel-card-back--daily-prulom {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/prulom.webp');
+}
+
+.angel-card-back--daily-duvera {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/duvera.webp');
+}
+
+.angel-card-back--daily-kreativita {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/kreativita.webp');
+}
+
+.angel-card-back--daily-uvolneni {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/uvolneni.webp');
+}
+
+.angel-card-back--daily-zamer {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/zamer.webp');
+}
+
+.angel-card-back--daily-koreny {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/koreny.webp');
+}
+
+.angel-card-back--daily-zrcadlo {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/zrcadlo.webp');
+}
+
+.angel-card-back--daily-prijeti {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/prijeti.webp');
+}
+
+.angel-card-back--daily-zazrak {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/zazrak.webp');
+}
+
+.angel-card-back--daily-pratelstvi {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/pratelstvi.webp');
+}
+
+.angel-card-back--daily-ohraniceni {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/ohraniceni.webp');
+}
+
+.angel-card-back--daily-vizionar {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/vizionar.webp');
+}
+
+.angel-card-back--daily-hravost {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/hravost.webp');
+}
+
+.angel-card-back--daily-propojen-se-zemi {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/propojen-se-zemi.webp');
+}
+
+.angel-card-back--daily-paradox {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/paradox.webp');
+}
+
+.angel-card-back--daily-vitez {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.08)), url('/img/daily-cards/vitez.webp');
+}
+
 .angel-card-sparkle {
     margin-bottom: 1rem;
     font-size: 3rem;

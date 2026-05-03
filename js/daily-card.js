@@ -72,6 +72,20 @@
         return CARD_IMAGES[card?.name] || '';
     }
 
+    function rememberDailyCard(card) {
+        if (!card) return;
+
+        try {
+            localStorage.setItem('mh_kdd_card', JSON.stringify({
+                date: new Date().toISOString().split('T')[0],
+                slug: getCardSlug(card),
+                card
+            }));
+        } catch (error) {
+            if (window.MH_DEBUG) console.debug('Daily card persistence failed:', error);
+        }
+    }
+
     function buildAngelCardsUrl(source, card, feature = 'daily_angel_card') {
         const url = new URL('/andelske-karty.html', window.location.origin);
         const slug = getCardSlug(card);
@@ -280,6 +294,7 @@
 
         const card = CARDS[cardIndex];
         let cardVisualRendered = false;
+        rememberDailyCard(card);
 
         // Poplate content
         if (el('kdd-name')) el('kdd-name').textContent = card.name;

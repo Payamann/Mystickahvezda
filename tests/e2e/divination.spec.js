@@ -75,6 +75,22 @@ test.describe('Andělské karty', () => {
         await page.locator('#draw-btn').click();
         await expect(page.locator('#btn-deep-angel')).toBeVisible({ timeout: 3_000 });
     });
+
+    test('daily_card deep link opens the selected homepage card detail', async ({ page }) => {
+        await page.evaluate(() => localStorage.clear());
+        await page.goto('/andelske-karty.html?source=homepage_daily_card_detail&feature=daily_angel_card&daily_card=intuice');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#draw-btn')).toHaveClass(/is-flipped/);
+        await expect(page.locator('#angel-results')).toHaveClass(/mh-block-visible/);
+        await expect(page.locator('.angel-name')).toHaveText('Intuice');
+        await expect(page.locator('.angel-theme')).toHaveText('Vhled');
+        await expect(page.locator('#angel-short-message')).toContainText('smysl');
+        await expect(page.locator('.angel-card-back')).toHaveClass(/angel-card-back--daily/);
+
+        const backgroundImage = await page.locator('.angel-card-back').evaluate(element => getComputedStyle(element).backgroundImage);
+        expect(backgroundImage).toContain('intuice.webp');
+    });
 });
 
 // ═══════════════════════════════════════════════════════════
