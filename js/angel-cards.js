@@ -455,13 +455,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // 2. Check homepage daily-card deep links before the random angel deck lock.
+    // 2. Homepage daily-card deep links preselect a card, but still let the user reveal it by click.
     const linkedDailyCard = getDailyCardFromUrl();
     if (linkedDailyCard) {
         drawnCard = linkedDailyCard;
-        revealPreDrawnCard({
-            message: 'Tahle karta k vám dnes přišla z Karty dne.'
-        });
     } else {
         checkDailyLock();
     }
@@ -632,16 +629,20 @@ function drawCard() {
     const container = document.getElementById('draw-btn');
     if (container.classList.contains('is-flipped')) return; // Already drawn
 
-    // Select random card
-    const randomIndex = Math.floor(Math.random() * angelCardsData.length);
-    drawnCard = angelCardsData[randomIndex];
+    const hasPreselectedDailyCard = Boolean(drawnCard?.isDailyCardDetail);
 
-    // Save to Daily Lock
-    const today = new Date().toISOString().split('T')[0];
-    localStorage.setItem('angelCardDaily', JSON.stringify({
-        date: today,
-        cardData: drawnCard
-    }));
+    if (!hasPreselectedDailyCard) {
+        // Select random card
+        const randomIndex = Math.floor(Math.random() * angelCardsData.length);
+        drawnCard = angelCardsData[randomIndex];
+
+        // Save to Daily Lock
+        const today = new Date().toISOString().split('T')[0];
+        localStorage.setItem('angelCardDaily', JSON.stringify({
+            date: today,
+            cardData: drawnCard
+        }));
+    }
 
     // Populate Back of Card
     const backEl = container.querySelector('.angel-card-back');

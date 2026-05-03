@@ -81,6 +81,10 @@ test.describe('Andělské karty', () => {
         await page.goto('/andelske-karty.html?source=homepage_daily_card_detail&feature=daily_angel_card&daily_card=intuice');
         await waitForPageReady(page);
 
+        await expect(page.locator('#draw-btn')).not.toHaveClass(/is-flipped/);
+        await expect(page.locator('#angel-results')).not.toHaveClass(/mh-block-visible/);
+
+        await page.locator('#draw-btn').click();
         await expect(page.locator('#draw-btn')).toHaveClass(/is-flipped/);
         await expect(page.locator('#angel-results')).toHaveClass(/mh-block-visible/);
         await expect(page.locator('.angel-name')).toHaveText('Intuice');
