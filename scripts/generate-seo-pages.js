@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.join(__dirname, '..');
 const DATA_FILE = path.join(ROOT_DIR, 'data', 'zodiac-matrix.json');
 const TEMPLATE_FILE = path.join(ROOT_DIR, 'templates', 'compatibility-template.html');
-const OUTPUT_DIR = path.join(ROOT_DIR, 'partnerska-shoda');
+const OUTPUT_DIR = path.join(ROOT_DIR, 'kompatibilita');
 const ENV_FILE = path.join(ROOT_DIR, 'server', '.env');
 const SHOULD_WRITE = process.argv.includes('--write') || process.env.GENERATE_SEO_PAGES_ALLOW_WRITE === 'true';
 
@@ -34,6 +34,32 @@ const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/
 // Load Data
 const zodiacSigns = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
 const template = fs.readFileSync(TEMPLATE_FILE, 'utf8');
+const CZECH_SLUGS = {
+    aries: 'beran',
+    taurus: 'byk',
+    gemini: 'blizenci',
+    cancer: 'rak',
+    leo: 'lev',
+    virgo: 'panna',
+    libra: 'vahy',
+    scorpio: 'stir',
+    sagittarius: 'strelec',
+    capricorn: 'kozoroh',
+    aquarius: 'vodnar',
+    pisces: 'ryby',
+};
+
+function slugFor(sign) {
+    return CZECH_SLUGS[sign.id] || sign.id;
+}
+
+function pairFileName(sign1, sign2) {
+    return `${slugFor(sign1)}-${slugFor(sign2)}.html`;
+}
+
+function pairUrl(sign1, sign2) {
+    return `https://www.mystickahvezda.cz/kompatibilita/${pairFileName(sign1, sign2)}`;
+}
 
 // System Prompt
 const SYSTEM_PROMPT = `Jsi expert na partnerskou astrologii. Píšeš poutavé, mystické, ale realistické rozbory pro web.
@@ -92,7 +118,7 @@ Vytvoř detailní rozbor kompatibility.`;
 }
 
 // Generate JSON-LD Schema
-function generateSchema(sign1, sign2, result) {
+function generateSchema(sign1, sign2, result, pageUrl) {
     const schema = {
         "@context": "https://schema.org",
         "@graph": [
@@ -125,12 +151,12 @@ function generateSchema(sign1, sign2, result) {
                     "@type": "ListItem",
                     "position": 2,
                     "name": "Partnerská shoda",
-                    "item": "https://www.mystickahvezda.cz/partnerska-shoda"
+                    "item": "https://www.mystickahvezda.cz/partnerska-shoda.html"
                 }, {
                     "@type": "ListItem",
                     "position": 3,
                     "name": `${sign1.name} a ${sign2.name}`,
-                    "item": `https://www.mystickahvezda.cz/partnerska-shoda/${sign1.id}-${sign2.id}.html`
+                    "item": pageUrl
                 }]
             }
         ]
@@ -161,16 +187,13 @@ async function main() {
 
     console.log('✨ Starting Programmatic SEO Generation (Enhanced)...');
 
-    // Generating just a few combinations for demonstration and speed
-    // To generate ALL 144, remove the .slice()
-    // We will generate ALL signs against all others (144 pages)
-    const sourceSigns = zodiacSigns;
-
     let count = 0;
 
-    for (const sign1 of sourceSigns) {
-        for (const sign2 of zodiacSigns) {
-            const fileName = `${sign1.id}-${sign2.id}.html`;
+    for (let i = 0; i < zodiacSigns.length; i++) {
+        const sign1 = zodiacSigns[i];
+        for (let j = i + 1; j < zodiacSigns.length; j++) {
+            const sign2 = zodiacSigns[j];
+            const fileName = pairFileName(sign1, sign2);
             const filePath = path.join(OUTPUT_DIR, fileName);
 
             // Force regenerate to apply new template features
@@ -186,13 +209,16 @@ async function main() {
             if (result) {
                 // Generate Related Links
                 const relatedLinks = zodiacSigns
-                    .filter(s => s.id !== sign1.id) // Don't link to self-compatibility if weird, or keep it
-                    .map(s => `<a href="${sign1.id}-${s.id}.html" class="related-chip">${sign1.name} + ${s.name}</a>`)
+                    .filter((s, index) => index > i)
+                    .filter(s => s.id !== sign2.id)
+                    .map(s => `<a href="${pairFileName(sign1, s)}" class="related-chip">${sign1.name} + ${s.name}</a>`)
                     .join('\n');
 
-                const schemaJson = generateSchema(sign1, sign2, result);
+                const pageUrl = pairUrl(sign1, sign2);
+                const schemaJson = generateSchema(sign1, sign2, result, pageUrl);
 
                 let html = template
+                    .replace(/{{PAGE_URL}}/g, pageUrl)
                     .replace(/{{SIGN1_NAME}}/g, sign1.name)
                     .replace(/{{SIGN2_NAME}}/g, sign2.name)
                     .replace(/{{COMPATIBILITY_SCORE}}/g, result.score_number + '%')
