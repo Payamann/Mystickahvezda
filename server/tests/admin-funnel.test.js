@@ -144,21 +144,30 @@ describe('Admin funnel report helpers', () => {
             { event_name: 'login_gate_viewed', source: 'inline_login_gate', feature: 'mentor', created_at: '2026-04-20T10:03:00.000Z' },
             { event_name: 'pricing_plan_cta_clicked', source: 'inline_paywall', feature: 'tarot', plan_id: 'pruvodce', created_at: '2026-04-20T10:03:30.000Z' },
             { event_name: 'pricing_plan_cta_clicked', source: 'inline_login_gate', feature: 'mentor', plan_id: 'pruvodce', created_at: '2026-04-20T10:03:45.000Z' },
+            { event_name: 'pricing_product_cta_clicked', source: 'pricing_addon', feature: 'osobni_mapa_2026', created_at: '2026-04-20T10:03:50.000Z' },
             { event_name: 'checkout_session_created', source: 'inline_paywall', feature: 'tarot', created_at: '2026-04-20T10:04:00.000Z' },
             { event_name: 'checkout_session_created', source: 'inline_login_gate', feature: 'mentor', created_at: '2026-04-20T10:05:00.000Z' },
+            { event_name: 'checkout_session_created', source: 'pricing_addon', feature: 'osobni_mapa_2026', created_at: '2026-04-20T10:06:00.000Z' },
         ]);
 
         expect(report.metrics.paywallViewed).toBe(4);
-        expect(report.metrics.pricingIntent).toBe(2);
-        expect(report.metrics.checkoutStarted).toBe(2);
-        expect(report.metrics.paywallToPricingIntentRate).toBe(50);
+        expect(report.metrics.pricingIntent).toBe(3);
+        expect(report.metrics.checkoutStarted).toBe(3);
+        expect(report.metrics.paywallToPricingIntentRate).toBe(75);
         expect(report.metrics.pricingIntentToCheckoutRate).toBe(100);
-        expect(report.metrics.paywallToCheckoutRate).toBe(50);
+        expect(report.metrics.paywallToCheckoutRate).toBe(75);
         expect(report.daily[0]).toEqual(expect.objectContaining({
             date: '2026-04-20',
             paywallViewed: 4,
-            pricingIntent: 2,
-            checkoutStarted: 2
+            pricingIntent: 3,
+            checkoutStarted: 3
+        }));
+        expect(report.sourceFeatureSegments).toContainEqual(expect.objectContaining({
+            source: 'pricing_addon',
+            feature: 'osobni_mapa_2026',
+            pricingIntent: 1,
+            checkoutStarted: 1,
+            pricingIntentToCheckoutRate: 100
         }));
     });
 

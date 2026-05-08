@@ -41,6 +41,7 @@ const FUNNEL_PAYWALL_VIEW_EVENTS = new Set([
 
 const FUNNEL_PRICING_INTENT_EVENTS = new Set([
     'pricing_plan_cta_clicked',
+    'pricing_product_cta_clicked',
 ]);
 
 function incrementCounter(counter, key) {
