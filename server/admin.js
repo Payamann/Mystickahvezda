@@ -26,6 +26,8 @@ const MONTHLY_REVENUE_BY_PLAN_TYPE = Object.freeze({
 const FUNNEL_FAILURE_EVENTS = new Set([
     'checkout_validation_failed',
     'checkout_session_failed',
+    'one_time_form_validation_failed',
+    'one_time_checkout_failed',
     'stripe_webhook_failed',
     'subscription_payment_failed',
 ]);
@@ -42,6 +44,8 @@ const FUNNEL_PAYWALL_VIEW_EVENTS = new Set([
 const FUNNEL_PRICING_INTENT_EVENTS = new Set([
     'pricing_plan_cta_clicked',
     'pricing_product_cta_clicked',
+    'one_time_product_cta_clicked',
+    'one_time_form_started',
 ]);
 
 function incrementCounter(counter, key) {

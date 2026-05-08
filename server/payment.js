@@ -139,6 +139,10 @@ const PUBLIC_FUNNEL_EVENTS = new Set([
     'pricing_plan_cta_clicked',
     'pricing_product_cta_clicked',
     'pricing_recommendation_clicked',
+    'one_time_product_cta_clicked',
+    'one_time_form_started',
+    'one_time_form_validation_failed',
+    'one_time_checkout_failed',
     'upgrade_cta_viewed',
 ]);
 

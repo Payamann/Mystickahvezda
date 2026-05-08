@@ -48,6 +48,20 @@ function cleanCheckoutSource(value) {
     return trimmed.replace(/[^\w:-]/g, '_').slice(0, 80);
 }
 
+async function recordCheckoutValidationFailed(source, reason) {
+    await recordFunnelEvent('checkout_validation_failed', {
+        source,
+        feature: PRODUCT.id,
+        planId: PRODUCT.id,
+        planType: PRODUCT.type,
+        metadata: {
+            product_id: PRODUCT.id,
+            product_type: PRODUCT.type,
+            reason
+        }
+    });
+}
+
 function isValidIsoDate(value) {
     const date = new Date(`${value}T00:00:00Z`);
     return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
@@ -92,22 +106,27 @@ router.post('/checkout', async (req, res) => {
     const source = cleanCheckoutSource(req.body.source);
 
     if (!customerName || !birthDate || !sign || !email) {
+        await recordCheckoutValidationFailed(source, 'missing_required_fields');
         return res.status(400).json({ error: 'Vyplňte všechna pole.' });
     }
 
     if (!EMAIL_PATTERN.test(email)) {
+        await recordCheckoutValidationFailed(source, 'invalid_email');
         return res.status(400).json({ error: 'Neplatná e-mailová adresa.' });
     }
 
     if (customerName.length > 100) {
+        await recordCheckoutValidationFailed(source, 'invalid_name');
         return res.status(400).json({ error: 'Neplatné jméno.' });
     }
 
     if (!VALID_SIGNS.includes(sign)) {
+        await recordCheckoutValidationFailed(source, 'invalid_sign');
         return res.status(400).json({ error: 'Neplatné znamení.' });
     }
 
     if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate) || !isValidIsoDate(birthDate) || new Date(`${birthDate}T00:00:00Z`) >= new Date()) {
+        await recordCheckoutValidationFailed(source, 'invalid_birth_date');
         return res.status(400).json({ error: 'Neplatné datum narození.' });
     }
 

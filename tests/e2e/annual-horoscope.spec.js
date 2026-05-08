@@ -13,11 +13,55 @@ test.describe('Roční horoskop — jednorázový checkout', () => {
     });
 
     test('mobilni CTA skok nezakryje formular fixni navigaci', async ({ page }) => {
+        let resolveProductIntent;
+        const productIntent = new Promise((resolve) => {
+            resolveProductIntent = resolve;
+        });
+
+        await page.route('**/api/csrf-token', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ csrfToken: 'e2e-annual-intent-token' })
+            });
+        });
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            const payload = route.request().postDataJSON();
+            if (payload?.eventName === 'one_time_product_cta_clicked') {
+                resolveProductIntent(payload);
+            }
+
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
         await page.setViewportSize(MOBILE_VIEWPORT);
         await page.goto('/rocni-horoskop.html?source=pricing_addon');
         await waitForPageReady(page);
 
-        await page.locator('[data-scroll-target="form"]').click();
+        await Promise.all([
+            productIntent,
+            page.locator('[data-scroll-target="form"]').click()
+        ]);
+        await expect.poll(async () => {
+            const payload = await productIntent;
+            return payload;
+        }).toEqual(expect.objectContaining({
+            eventName: 'one_time_product_cta_clicked',
+            source: 'pricing_addon',
+            feature: 'rocni_horoskop_2026',
+            planId: 'rocni_horoskop_2026',
+            planType: 'annual_horoscope',
+            metadata: expect.objectContaining({
+                product_id: 'rocni_horoskop_2026',
+                target: 'form'
+            })
+        }));
+
         await expect.poll(() => page.evaluate(() =>
             Math.round(document.getElementById('form')?.getBoundingClientRect().top || 9999)
         )).toBeLessThanOrEqual(150);
@@ -38,6 +82,31 @@ test.describe('Roční horoskop — jednorázový checkout', () => {
 
     test('odeslání formuláře posílá zdroj do one-time checkoutu', async ({ page }) => {
         let checkoutPayload = null;
+        let resolveFormStarted;
+        const formStarted = new Promise((resolve) => {
+            resolveFormStarted = resolve;
+        });
+
+        await page.route('**/api/csrf-token', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ csrfToken: 'e2e-annual-form-token' })
+            });
+        });
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            const payload = route.request().postDataJSON();
+            if (payload?.eventName === 'one_time_form_started') {
+                resolveFormStarted(payload);
+            }
+
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
 
         await page.route('**/api/rocni-horoskop/checkout', async (route) => {
             checkoutPayload = route.request().postDataJSON();
@@ -54,6 +123,20 @@ test.describe('Roční horoskop — jednorázový checkout', () => {
         await waitForPageReady(page);
 
         await page.locator('#name').fill('Jana');
+        await expect.poll(async () => {
+            const payload = await formStarted;
+            return payload;
+        }).toEqual(expect.objectContaining({
+            eventName: 'one_time_form_started',
+            source: 'pricing_addon',
+            feature: 'rocni_horoskop_2026',
+            planId: 'rocni_horoskop_2026',
+            metadata: expect.objectContaining({
+                field: 'name',
+                product_id: 'rocni_horoskop_2026'
+            })
+        }));
+
         await page.locator('#birthDate').fill('1990-01-01');
         await page.locator('#sign').selectOption('beran');
         await page.locator('#email').fill('jana@example.cz');

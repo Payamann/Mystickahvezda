@@ -14,16 +14,69 @@ function getAnnualContext() {
     };
 }
 
-function trackAnnualProductView() {
+function getAnnualEventPayload(extra = {}) {
     const context = getAnnualContext();
-    window.MH_ANALYTICS?.trackEvent?.('one_time_product_viewed', {
+    return {
         product_id: ANNUAL_HOROSCOPE_PRODUCT.id,
         product_type: ANNUAL_HOROSCOPE_PRODUCT.type,
+        product_name: ANNUAL_HOROSCOPE_PRODUCT.name,
         price: ANNUAL_HOROSCOPE_PRODUCT.price,
         currency: ANNUAL_HOROSCOPE_PRODUCT.currency,
         source: context.source,
-        feature: context.feature
-    });
+        feature: context.feature,
+        ...extra
+    };
+}
+
+function trackAnnualEvent(eventName, payload = {}) {
+    const eventPayload = getAnnualEventPayload(payload);
+    window.MH_ANALYTICS?.trackEvent?.(eventName, eventPayload);
+    void trackAnnualFunnelEvent(eventName, eventPayload);
+}
+
+async function trackAnnualFunnelEvent(eventName, payload = {}) {
+    if (![
+        'one_time_product_cta_clicked',
+        'one_time_form_started',
+        'one_time_form_validation_failed',
+        'one_time_checkout_failed'
+    ].includes(eventName)) {
+        return;
+    }
+
+    try {
+        const csrfToken = await getCsrfToken();
+        await fetch('/api/payment/funnel-event', {
+            method: 'POST',
+            credentials: 'include',
+            keepalive: true,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({
+                eventName,
+                source: payload.source || getAnnualContext().source,
+                feature: ANNUAL_HOROSCOPE_PRODUCT.id,
+                planId: ANNUAL_HOROSCOPE_PRODUCT.id,
+                planType: ANNUAL_HOROSCOPE_PRODUCT.type,
+                metadata: {
+                    product_id: ANNUAL_HOROSCOPE_PRODUCT.id,
+                    product_type: ANNUAL_HOROSCOPE_PRODUCT.type,
+                    product_name: ANNUAL_HOROSCOPE_PRODUCT.name,
+                    price: ANNUAL_HOROSCOPE_PRODUCT.price,
+                    currency: ANNUAL_HOROSCOPE_PRODUCT.currency,
+                    ...payload
+                }
+            })
+        });
+    } catch (error) {
+        console.warn('[Annual horoscope funnel] Could not record event:', error.message);
+    }
+}
+
+function trackAnnualProductView() {
+    trackAnnualEvent('one_time_product_viewed');
 }
 
 function handleAnnualPaymentStatus() {
@@ -75,6 +128,10 @@ function bindAnnualScrollButtons() {
     document.querySelectorAll('[data-scroll-target]').forEach((button) => {
         button.addEventListener('click', () => {
             const target = document.getElementById(button.dataset.scrollTarget);
+            trackAnnualEvent('one_time_product_cta_clicked', {
+                cta_location: button.className || 'annual_horoscope_page',
+                target: button.dataset.scrollTarget || null
+            });
             target?.scrollIntoView({ behavior: 'smooth' });
         });
     });
@@ -121,6 +178,15 @@ function bindAnnualOrderForm() {
 
     if (!form || !button || !errorElement) return;
 
+    let formStartedTracked = false;
+    form.addEventListener('focusin', (event) => {
+        if (formStartedTracked) return;
+        formStartedTracked = true;
+        trackAnnualEvent('one_time_form_started', {
+            field: event.target?.name || event.target?.id || 'unknown'
+        });
+    });
+
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -128,6 +194,15 @@ function bindAnnualOrderForm() {
         button.textContent = 'Přesměrovávám na platbu...';
         errorElement.hidden = true;
         errorElement.classList.remove('visible');
+
+        if (!form.checkValidity()) {
+            trackAnnualEvent('one_time_form_validation_failed', {
+                validation_source: 'browser'
+            });
+            form.reportValidity();
+            resetAnnualSubmitButton(button);
+            return;
+        }
 
         try {
             window.MH_ANALYTICS?.trackCheckoutStarted?.(ANNUAL_HOROSCOPE_PRODUCT.id, {
@@ -161,6 +236,10 @@ function bindAnnualOrderForm() {
                 error_message: err.message,
                 source: getAnnualContext().source,
                 feature: getAnnualContext().feature
+            });
+            void trackAnnualFunnelEvent('one_time_checkout_failed', {
+                ...getAnnualEventPayload(),
+                error_message: err.message
             });
             errorElement.textContent = err.message;
             errorElement.hidden = false;

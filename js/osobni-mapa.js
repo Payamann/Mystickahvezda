@@ -30,7 +30,50 @@
     }
 
     function trackEvent(eventName, payload = {}) {
-        window.MH_ANALYTICS?.trackEvent?.(eventName, getBaseEventPayload(payload));
+        const eventPayload = getBaseEventPayload(payload);
+        window.MH_ANALYTICS?.trackEvent?.(eventName, eventPayload);
+        void trackFunnelEvent(eventName, eventPayload);
+    }
+
+    async function trackFunnelEvent(eventName, payload = {}) {
+        if (![
+            'one_time_product_cta_clicked',
+            'one_time_form_started',
+            'one_time_form_validation_failed',
+            'one_time_checkout_failed'
+        ].includes(eventName)) {
+            return;
+        }
+
+        try {
+            const csrfToken = await getCsrfToken();
+            await fetch('/api/payment/funnel-event', {
+                method: 'POST',
+                credentials: 'include',
+                keepalive: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                    eventName,
+                    source: payload.source || getAttribution().source,
+                    feature: PRODUCT.id,
+                    planId: PRODUCT.id,
+                    planType: PRODUCT.type,
+                    metadata: {
+                        product_id: PRODUCT.id,
+                        product_type: PRODUCT.type,
+                        product_name: PRODUCT.name,
+                        price: PRODUCT.price,
+                        currency: PRODUCT.currency,
+                        ...payload
+                    }
+                })
+            });
+        } catch (error) {
+            console.warn('[Personal map funnel] Could not record event:', error.message);
+        }
     }
 
     function trackView() {

@@ -678,6 +678,32 @@ test.describe('Aura', () => {
 test.describe('Osobní mapa', () => {
 
     test('landing ukazuje nákupní shrnutí a CTA odscrolluje k formuláři', async ({ page }) => {
+        let resolveProductIntent;
+        const productIntent = new Promise((resolve) => {
+            resolveProductIntent = resolve;
+        });
+
+        await page.route('**/api/csrf-token', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ csrfToken: 'e2e-personal-map-intent-token' })
+            });
+        });
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            const payload = route.request().postDataJSON();
+            if (payload?.eventName === 'one_time_product_cta_clicked') {
+                resolveProductIntent(payload);
+            }
+
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
         await page.goto('/osobni-mapa.html?source=e2e_personal_map');
         await waitForPageReady(page);
 
@@ -686,10 +712,49 @@ test.describe('Osobní mapa', () => {
         await expect(offer).toContainText('16 stran PDF');
         await expect(offer).toContainText('299 Kč');
 
-        await offer.locator('[data-scroll-target="order"]').click();
+        await Promise.all([
+            productIntent,
+            offer.locator('[data-scroll-target="order"]').click()
+        ]);
+        await expect.poll(async () => {
+            const payload = await productIntent;
+            return payload;
+        }).toEqual(expect.objectContaining({
+            eventName: 'one_time_product_cta_clicked',
+            source: 'e2e_personal_map',
+            feature: 'osobni_mapa_2026',
+            planId: 'osobni_mapa_2026',
+            planType: 'personal_map',
+            metadata: expect.objectContaining({
+                cta_location: 'offer_bar',
+                product_id: 'osobni_mapa_2026',
+                target: 'order'
+            })
+        }));
+
         await expect.poll(() => page.evaluate(() =>
             Math.round(document.getElementById('order')?.getBoundingClientRect().top || 9999)
         )).toBeLessThanOrEqual(140);
+
+        await page.waitForTimeout(1200);
+        await page.locator('#submitBtn').scrollIntoViewIfNeeded();
+        const cookieMetrics = await page.evaluate(() => {
+            const submit = document.getElementById('submitBtn')?.getBoundingClientRect();
+            const banner = document.getElementById('cookie-banner')?.getBoundingClientRect();
+            const overlapsSubmit = !!(submit && banner && !(
+                banner.right < submit.left
+                || banner.left > submit.right
+                || banner.bottom < submit.top
+                || banner.top > submit.bottom
+            ));
+            return {
+                overlapsSubmit,
+                overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+            };
+        });
+
+        expect(cookieMetrics.overlapsSubmit).toBe(false);
+        expect(cookieMetrics.overflow).toBe(false);
     });
 
     test('odeslani formulare posila zdroj do personal map checkoutu', async ({ page }) => {

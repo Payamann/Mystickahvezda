@@ -1159,3 +1159,73 @@ body.page-personal-map::before {
         padding: 22px;
     }
 }
+
+body.page-personal-map .cookie-banner {
+    left: 16px;
+    right: auto;
+    width: min(360px, calc(100vw - 32px));
+    max-width: 360px !important;
+    padding: 0.62rem 0.7rem;
+    border-radius: 14px;
+}
+
+body.page-personal-map .cookie-banner__content {
+    gap: 0.38rem;
+}
+
+body.page-personal-map .cookie-banner__text {
+    font-size: 0.72rem;
+    line-height: 1.25;
+}
+
+body.page-personal-map .cookie-banner__content > div:not(.cookie-banner__actions) {
+    gap: 0.2rem 0.45rem;
+    font-size: 0.64rem;
+    line-height: 1.18;
+}
+
+body.page-personal-map .cookie-banner__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem;
+}
+
+body.page-personal-map .cookie-banner__actions .btn {
+    min-height: 32px;
+    padding: 0.42rem 0.5rem;
+    font-size: 0.62rem;
+}
+
+body.page-personal-map #cookie-accept {
+    grid-column: 1 / -1;
+    min-height: 36px;
+}
+
+@media (max-width: 520px) {
+    body.page-personal-map .cookie-banner {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        width: auto;
+        max-width: none !important;
+        padding: 0.5rem 0.55rem;
+    }
+
+    body.page-personal-map .cookie-banner__text {
+        font-size: 0.68rem;
+    }
+
+    body.page-personal-map .cookie-banner__content > div:not(.cookie-banner__actions) {
+        font-size: 0.62rem;
+    }
+
+    body.page-personal-map .cookie-banner__actions .btn {
+        min-height: 32px;
+        padding: 0.38rem 0.44rem;
+        font-size: 0.6rem;
+    }
+
+    body.page-personal-map #cookie-accept {
+        min-height: 34px;
+    }
+}

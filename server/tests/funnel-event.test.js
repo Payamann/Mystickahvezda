@@ -152,6 +152,43 @@ describe('Public funnel event endpoint', () => {
 
         expect(productRes.status).toBe(200);
         expect(productRes.body.success).toBe(true);
+
+        const formStartedRes = await request(app)
+            .post('/api/payment/funnel-event')
+            .set('x-csrf-token', csrfToken)
+            .send({
+                eventName: 'one_time_form_started',
+                source: 'homepage_spotlight',
+                feature: 'osobni_mapa_2026',
+                planId: 'osobni_mapa_2026',
+                planType: 'personal_map',
+                metadata: {
+                    path: '/osobni-mapa.html',
+                    field: 'email',
+                    product_id: 'osobni_mapa_2026'
+                }
+            });
+
+        expect(formStartedRes.status).toBe(200);
+        expect(formStartedRes.body.success).toBe(true);
+
+        const failedRes = await request(app)
+            .post('/api/payment/funnel-event')
+            .set('x-csrf-token', csrfToken)
+            .send({
+                eventName: 'one_time_form_validation_failed',
+                source: 'annual_horoscope_page',
+                feature: 'rocni_horoskop_2026',
+                planId: 'rocni_horoskop_2026',
+                planType: 'annual_horoscope',
+                metadata: {
+                    path: '/rocni-horoskop.html',
+                    validation_source: 'browser'
+                }
+            });
+
+        expect(failedRes.status).toBe(200);
+        expect(failedRes.body.success).toBe(true);
     });
 });
 

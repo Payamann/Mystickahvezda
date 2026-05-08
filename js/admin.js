@@ -611,7 +611,7 @@ function renderFunnel(report) {
     const summary = document.getElementById('funnel-summary');
     const metricCards = [
         ['Paywall views', formatInteger(metrics.paywallViewed), `${formatPercent(metrics.paywallToPricingIntentRate)} klikne na placený plán`],
-        ['Ceník intent', formatInteger(metrics.pricingIntent), `${formatPercent(metrics.pricingIntentToCheckoutRate)} pokračuje do checkoutu`],
+        ['Nákupní intent', formatInteger(metrics.pricingIntent), `${formatPercent(metrics.pricingIntentToCheckoutRate)} pokračuje do checkoutu`],
         ['Checkouty', formatInteger(metrics.checkoutStarted), 'Zahájené Stripe checkout sessions'],
         ['Premium konverze', formatInteger(metrics.subscriptionCompleted), `${formatPercent(metrics.conversionRate)} z checkoutů`],
         ['Jednorázové nákupy', formatInteger(metrics.oneTimeCompleted), 'Roční horoskop a další produkty'],

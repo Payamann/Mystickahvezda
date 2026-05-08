@@ -4,6 +4,7 @@
 
 import request from 'supertest';
 import app from '../index.js';
+import { supabase } from '../db-supabase.js';
 
 async function getCsrfToken() {
     const res = await request(app).get('/api/csrf-token').expect(200);
@@ -40,6 +41,7 @@ describe('Roční horoskop one-time product', () => {
 
     test('POST /api/rocni-horoskop/checkout validates e-mail before Stripe', async () => {
         const csrfToken = await getCsrfToken();
+        const source = `annual_validation_${Date.now()}`;
         const res = await request(app)
             .post('/api/rocni-horoskop/checkout')
             .set('x-csrf-token', csrfToken)
@@ -47,11 +49,28 @@ describe('Roční horoskop one-time product', () => {
                 name: 'Test User',
                 email: 'not-an-email',
                 birthDate: '1990-01-01',
-                sign: 'beran'
+                sign: 'beran',
+                source
             });
 
         expect(res.status).toBe(400);
         expect(res.body.error).toMatch(/e-mail/i);
+
+        const { data } = await supabase
+            .from('funnel_events')
+            .select('*')
+            .eq('source', source)
+            .eq('event_name', 'checkout_validation_failed');
+
+        expect(data).toContainEqual(expect.objectContaining({
+            feature: 'rocni_horoskop_2026',
+            plan_id: 'rocni_horoskop_2026',
+            plan_type: 'rocni_horoskop',
+            metadata: expect.objectContaining({
+                product_id: 'rocni_horoskop_2026',
+                reason: 'invalid_email'
+            })
+        }));
     });
 
     test('POST /api/rocni-horoskop/checkout validates zodiac sign before Stripe', async () => {
@@ -88,6 +107,7 @@ describe('Roční horoskop one-time product', () => {
 
     test('POST /api/osobni-mapa/checkout rejects rollover birth date before Stripe', async () => {
         const csrfToken = await getCsrfToken();
+        const source = `personal_map_validation_${Date.now()}`;
         const res = await request(app)
             .post('/api/osobni-mapa/checkout')
             .set('x-csrf-token', csrfToken)
@@ -99,10 +119,27 @@ describe('Roční horoskop one-time product', () => {
                 birthPlace: 'Praha',
                 sign: 'beran',
                 grammaticalGender: 'neutral',
-                focus: 'Chci pochopit hlavni tema roku.'
+                focus: 'Chci pochopit hlavni tema roku.',
+                source
             });
 
         expect(res.status).toBe(400);
         expect(res.body.error).toMatch(/datum/i);
+
+        const { data } = await supabase
+            .from('funnel_events')
+            .select('*')
+            .eq('source', source)
+            .eq('event_name', 'checkout_validation_failed');
+
+        expect(data).toContainEqual(expect.objectContaining({
+            feature: 'osobni_mapa_2026',
+            plan_id: 'osobni_mapa_2026',
+            plan_type: 'personal_map',
+            metadata: expect.objectContaining({
+                product_id: 'osobni_mapa_2026',
+                reason: 'invalid_birth_date'
+            })
+        }));
     });
 });
