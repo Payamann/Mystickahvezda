@@ -378,6 +378,38 @@ function auditLocalLinks(file, html) {
     }
 }
 
+function normalizeHtmlUrlAttribute(value) {
+    return value.replace(/&amp;/gi, '&');
+}
+
+function auditBlogPricingContext(file, html) {
+    const rel = relative(file);
+    if (!rel.startsWith('blog/') || !rel.endsWith('.html')) return;
+
+    const linkPattern = /<a\b[^>]*href\s*=\s*["']([^"']*cenik\.html[^"']*)["'][^>]*>/gi;
+    let match;
+
+    while ((match = linkPattern.exec(html)) !== null) {
+        let parsed;
+        try {
+            parsed = new URL(normalizeHtmlUrlAttribute(match[1]), `${siteOrigin}/${rel}`);
+        } catch {
+            report('invalid_blog_pricing_link', rel, match[1]);
+            continue;
+        }
+
+        if (!parsed.pathname.endsWith('/cenik.html')) continue;
+
+        if (!parsed.searchParams.get('source') || !parsed.searchParams.get('feature')) {
+            report(
+                'missing_blog_pricing_context',
+                rel,
+                'Blog links to the pricing page must include source and feature query params for funnel attribution.'
+            );
+        }
+    }
+}
+
 function auditMetaImageTargets(file, html) {
     const metaPattern = /<meta\b[^>]*>/gi;
     let match;
@@ -637,6 +669,7 @@ for (const file of walkHtml()) {
     auditSitemapCoverage(file, html, sitemapLocs);
     collectIndexableCanonical(file, html, canonicalOwners);
     auditLocalLinks(file, html);
+    auditBlogPricingContext(file, html);
     auditMetaImageTargets(file, html);
 }
 
