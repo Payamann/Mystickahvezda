@@ -491,7 +491,7 @@ window.Premium = {
                     const planId = this.getFeaturePlanId('premium_membership', 'pruvodce');
                     const upgradeCTA = document.createElement('a');
                     upgradeCTA.id = 'upgrade-cta';
-                    upgradeCTA.href = '/cenik.html';
+                    upgradeCTA.href = '/cenik.html?plan=pruvodce&source=header_upgrade_cta&feature=premium_membership';
                     upgradeCTA.className = 'btn btn--sm btn--gold upgrade-cta-btn';
                     upgradeCTA.addEventListener('click', (event) => {
                         event.preventDefault();
