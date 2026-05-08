@@ -161,7 +161,7 @@ export function buildCheckoutContextMetadata(metadata) {
     return contextMetadata;
 }
 
-async function recordFunnelEvent(eventName, {
+export async function recordFunnelEvent(eventName, {
     userId = null,
     source = null,
     feature = null,
@@ -188,7 +188,7 @@ async function recordFunnelEvent(eventName, {
     }
 }
 
-function sanitizeFunnelMetadata(metadata) {
+export function sanitizeFunnelMetadata(metadata) {
     if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
         return {};
     }

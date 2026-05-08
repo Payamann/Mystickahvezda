@@ -369,6 +369,7 @@ body.page-personal-map::before {
     width: min(var(--pm-max), calc(100% - 40px));
     margin: 0 auto;
     padding: 96px 0 0;
+    scroll-margin-top: 110px;
 }
 
 .pm-section__header {
@@ -1087,6 +1088,7 @@ body.page-personal-map::before {
     .pm-order,
     .pm-faq {
         padding-top: 72px;
+        scroll-margin-top: 86px;
     }
 
     .pm-section__header h2,

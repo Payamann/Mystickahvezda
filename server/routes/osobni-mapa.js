@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createOneTimeOrderInput, attachStripeSessionToOrderInput } from '../services/one-time-orders.js';
+import { recordFunnelEvent } from '../payment.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -130,8 +131,9 @@ router.post('/checkout', async (req, res) => {
         return res.status(400).json({ error: 'Napište prosím alespoň krátce, co teď řešíte.' });
     }
 
+    let order = null;
     try {
-        const order = await createOneTimeOrderInput({
+        order = await createOneTimeOrderInput({
             productType: PRODUCT.type,
             productId: PRODUCT.id,
             customerEmail: email,
@@ -166,9 +168,38 @@ router.post('/checkout', async (req, res) => {
         });
 
         await attachStripeSessionToOrderInput(order.id, session.id);
+        await recordFunnelEvent('checkout_session_created', {
+            source,
+            feature: PRODUCT.id,
+            planId: PRODUCT.id,
+            planType: PRODUCT.type,
+            stripeSessionId: session.id,
+            metadata: {
+                product_id: PRODUCT.id,
+                product_type: PRODUCT.type,
+                product_name: PRODUCT.name,
+                amount: PRODUCT.price,
+                currency: PRODUCT.currency,
+                order_id: order.id
+            }
+        });
+
         return res.json({ url: session.url });
     } catch (err) {
         console.error('[PERSONAL_MAP] Checkout session error:', err.message);
+        await recordFunnelEvent('checkout_session_failed', {
+            source,
+            feature: PRODUCT.id,
+            planId: PRODUCT.id,
+            planType: PRODUCT.type,
+            metadata: {
+                product_id: PRODUCT.id,
+                product_type: PRODUCT.type,
+                order_id: order?.id || null,
+                error: err.message
+            }
+        });
+
         return res.status(500).json({ error: 'Platba se nezdařila. Zkuste to prosím znovu.' });
     }
 });
