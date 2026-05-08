@@ -402,6 +402,9 @@ async function trackPricingFunnelEvent(eventName, context, metadata = {}) {
         const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
         if (!csrfToken) return;
 
+        const { planId, plan_id: planIdSnake, ...eventMetadata } = metadata;
+        const eventPlanId = planId || planIdSnake || context.recommendedPlan || null;
+
         await fetch(`${getApiBaseUrl()}/payment/funnel-event`, {
             method: 'POST',
             credentials: 'include',
@@ -414,17 +417,24 @@ async function trackPricingFunnelEvent(eventName, context, metadata = {}) {
                 eventName,
                 source: context.source || 'pricing_page',
                 feature: context.feature || null,
-                planId: context.recommendedPlan || null,
+                planId: eventPlanId,
                 metadata: {
                     path: window.location.pathname,
                     ...(context.metadata || {}),
-                    ...metadata
+                    ...eventMetadata
                 }
             })
         });
     } catch (error) {
         console.warn('[Pricing] Could not record funnel event:', error.message);
     }
+}
+
+function waitForFunnelEventBeforeNavigation(funnelEventPromise) {
+    return Promise.race([
+        funnelEventPromise,
+        new Promise((resolve) => setTimeout(resolve, 800))
+    ]);
 }
 
 function renderCheckoutCancelRecovery(context) {
@@ -635,7 +645,7 @@ function startRecommendedCheckout(planId, context) {
 
 function bindCheckoutButtons(context) {
     document.querySelectorAll('.plan-checkout-btn').forEach((button) => {
-        button.addEventListener('click', (event) => {
+        button.addEventListener('click', async (event) => {
             event.preventDefault();
             const planId = button.dataset.plan;
             if (!planId) return;
@@ -660,6 +670,16 @@ function bindCheckoutButtons(context) {
                 billing_interval: currentBilling,
                 ...(context.metadata || {})
             });
+
+            await waitForFunnelEventBeforeNavigation(trackPricingFunnelEvent('pricing_plan_cta_clicked', {
+                ...context,
+                recommendedPlan: planId
+            }, {
+                label: button.textContent?.trim() || 'checkout',
+                requires_auth: !isLoggedIn,
+                destination: isLoggedIn ? 'stripe_checkout_session' : '/prihlaseni.html',
+                billing_interval: currentBilling
+            }));
 
             if (window.Auth?.startPlanCheckout) {
                 window.Auth.startPlanCheckout(planId, checkoutContext);

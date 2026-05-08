@@ -135,6 +135,7 @@ const PUBLIC_FUNNEL_EVENTS = new Set([
     'login_gate_viewed',
     'pricing_downsell_clicked',
     'pricing_preview_clicked',
+    'pricing_plan_cta_clicked',
     'pricing_recommendation_clicked',
     'upgrade_cta_viewed',
 ]);

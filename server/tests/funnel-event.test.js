@@ -93,6 +93,29 @@ describe('Public funnel event endpoint', () => {
         expect(downsellRes.status).toBe(200);
         expect(downsellRes.body.success).toBe(true);
     });
+
+    test('accepts pricing plan intent before auth or checkout', async () => {
+        const csrfToken = await getCsrfToken();
+        const res = await request(app)
+            .post('/api/payment/funnel-event')
+            .set('x-csrf-token', csrfToken)
+            .send({
+                eventName: 'pricing_plan_cta_clicked',
+                source: 'inline_paywall',
+                feature: 'tarot_multi_card',
+                planId: 'pruvodce',
+                metadata: {
+                    path: '/cenik.html',
+                    label: 'Odemknout Hvězdného Průvodce',
+                    requires_auth: true,
+                    billing_interval: 'monthly',
+                    destination: '/prihlaseni.html'
+                }
+            });
+
+        expect(res.status).toBe(200);
+        expect(res.body.success).toBe(true);
+    });
 });
 
 describe('Checkout funnel context metadata', () => {

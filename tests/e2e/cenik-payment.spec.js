@@ -206,6 +206,59 @@ test.describe('Ceník — platební tlačítka', () => {
         await expect(footer).not.toContainText('Karta požadována');
     });
 
+    test('klik na placeny plan zapise serverovy funnel intent pred registraci', async ({ page }) => {
+        let resolvePricingIntent;
+        const pricingIntent = new Promise((resolve) => {
+            resolvePricingIntent = resolve;
+        });
+
+        await page.route('**/api/csrf-token', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ csrfToken: 'e2e-pricing-intent-token' })
+            });
+        });
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            const payload = route.request().postDataJSON();
+            if (payload?.eventName === 'pricing_plan_cta_clicked') {
+                resolvePricingIntent(payload);
+            }
+
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.goto('/cenik.html?source=inline_paywall&feature=tarot_multi_card&plan=pruvodce');
+        await waitForPageReady(page);
+
+        await Promise.all([
+            pricingIntent,
+            page.waitForURL(/prihlaseni\.html/),
+            page.locator('.plan-checkout-btn[data-plan="pruvodce"]').click()
+        ]);
+
+        await expect.poll(async () => {
+            const payload = await pricingIntent;
+            return payload;
+        }).toEqual(expect.objectContaining({
+            eventName: 'pricing_plan_cta_clicked',
+            source: 'inline_paywall',
+            feature: 'tarot_multi_card',
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                path: '/cenik.html',
+                requires_auth: true,
+                destination: '/prihlaseni.html',
+                billing_interval: 'monthly'
+            })
+        }));
+    });
+
     test('zruseny checkout zobrazi recovery panel s kontextovym navratem', async ({ page }) => {
         await page.goto('/cenik.html?payment=cancel&plan=pruvodce&source=inline_paywall&feature=tarot_multi_card');
         await waitForPageReady(page);
