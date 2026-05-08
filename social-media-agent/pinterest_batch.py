@@ -30,7 +30,7 @@ import shutil
 import sys
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
-from urllib.parse import urlencode
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from zoneinfo import ZoneInfo
 
 if sys.platform == "win32":
@@ -65,6 +65,31 @@ IMAGE_PROMPT_SUFFIX = (
     "If symbols are needed, use abstract mystical glyphs instead of readable text. "
     "Keep the main object in the top 60 percent and keep the bottom 40 percent clean, dark, and low-detail for the text overlay."
 )
+
+FEATURE_BY_PATH = [
+    ("/tarot-vyznam/", "tarot_multi_card"),
+    ("/tarot-vyznam-karet.html", "tarot_multi_card"),
+    ("/tarot-zdarma.html", "tarot_multi_card"),
+    ("/tarot-ano-ne.html", "tarot_multi_card"),
+    ("/tarot-karta-dne.html", "tarot_multi_card"),
+    ("/tarot-laska.html", "tarot_multi_card"),
+    ("/tarot.html", "tarot_multi_card"),
+    ("/partnerska-shoda.html", "partnerska_detail"),
+    ("/numerologie.html", "numerologie_vyklad"),
+    ("/kalkulacka-cisla-osudu.html", "numerologie_vyklad"),
+    ("/natalni-karta.html", "natalni_interpretace"),
+    ("/horoskopy.html", "horoskopy"),
+    ("/lunace.html", "rituals"),
+    ("/andelske-karty.html", "andelske_karty_hluboky_vhled"),
+    ("/runy.html", "runy_hluboky_vyklad"),
+    ("/kristalova-koule.html", "crystal_ball_unlimited"),
+    ("/mentor.html", "mentor"),
+    ("/shamanske-kolo.html", "shamanske_kolo_plne_cteni"),
+    ("/shamansko-kolo.html", "shamanske_kolo_plne_cteni"),
+    ("/minuly-zivot.html", "past_life"),
+    ("/osobni-mapa.html", "osobni_mapa_2026"),
+    ("/rocni-horoskop.html", "rocni_horoskop_2026"),
+]
 
 for d in (INBOX_DIR, IMAGES_DIR):
     d.mkdir(parents=True, exist_ok=True)
@@ -142,13 +167,39 @@ def resolve_hooks(slug: str) -> list:
     return val if isinstance(val, list) else [val]
 
 
-def build_tool_link(campaign: dict, variant_idx: int = 0) -> str:
+def infer_feature_from_path(path: str) -> str:
+    clean_path = path.lower()
+    for prefix, feature in FEATURE_BY_PATH:
+        if clean_path == prefix or clean_path.startswith(prefix):
+            return feature
+    return ""
+
+
+def build_tool_tracking_params(campaign: dict, variant_idx: int = 0) -> dict:
     params = {
         "utm_source": "pinterest",
         "utm_medium": "organic",
         "utm_campaign": campaign.get("utm_campaign", campaign["slug"]),
         "utm_content": f"{campaign['slug']}_v{variant_idx + 1}",
+        "source": campaign.get("source", "pinterest"),
     }
+    feature = campaign.get("feature") or infer_feature_from_path(campaign.get("path", ""))
+    if feature:
+        params["feature"] = feature
+    return params
+
+
+def ensure_tool_tracking_params(url: str, campaign: dict, variant_idx: int = 0) -> str:
+    parsed = urlparse(url)
+    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
+    for key, value in build_tool_tracking_params(campaign, variant_idx).items():
+        if value and not query.get(key):
+            query[key] = value
+    return urlunparse(parsed._replace(query=urlencode(query)))
+
+
+def build_tool_link(campaign: dict, variant_idx: int = 0) -> str:
+    params = build_tool_tracking_params(campaign, variant_idx)
     return f"{SITE_URL}{campaign['path']}?{urlencode(params)}"
 
 
@@ -249,7 +300,7 @@ def cmd_tool_prompts():
         if status == "NEEDS_IMAGE":
             waiting += 1
         lines.append(f"[{i}/{len(campaigns)}] {slug} - {status}")
-        lines.append(f"URL: {SITE_URL}{campaign['path']}")
+        lines.append(f"URL: {build_tool_link(campaign)}")
         lines.append(f"HOOKS: {len(campaign.get('hooks', []))}")
         lines.append(f"PROMPT: {prompt}")
         lines.append(f"SOUBOR: inbox/{slug}.png")
@@ -380,6 +431,8 @@ def cmd_csv():
         hook = override.get("title", hook)
         board = override.get("board", board)
         url = override.get("link", url)
+        if tool_campaign:
+            url = ensure_tool_tracking_params(url, tool_campaign, var_idx)
         description = override.get(
             "description",
             post.get("short_description", "") if post else tool_campaign.get("description", "")
@@ -483,6 +536,8 @@ def cmd_bulk_csv():
         override = metadata.get(pin_path.name) or metadata.get(pin_path.stem) or {}
         media_url = _public_media_url(pin_path)
         link = override.get("link", f"{SITE_URL}/blog/{slug}.html" if post else build_tool_link(tool_campaign, var_idx))
+        if tool_campaign:
+            link = ensure_tool_tracking_params(link, tool_campaign, var_idx)
 
         rows.append({
             "Title": internal["title"][:100],

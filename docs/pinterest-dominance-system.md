@@ -80,6 +80,8 @@ utm_source=pinterest
 utm_medium=organic
 utm_campaign=<tool_cluster>
 utm_content=<slug>_v<variant>
+source=<campaign_or_result_context>
+feature=<paid_feature_key>
 ```
 
 This lets us compare:
@@ -88,11 +90,23 @@ This lets us compare:
 - hook performance
 - save/click ratio
 - downstream signup and paywall clicks
+- downstream paywall, checkout, and purchase by admin `sourceFeatureSegments`
+
+The weekly decision report is:
+
+```bash
+cd social-media-agent
+python growth_review.py --funnel-csv path/to/admin-funnel-segments.csv
+```
+
+If the report shows `ambiguous_pins`, the link has UTMs but cannot be matched
+cleanly to `sourceFeatureSegments`. Fix the campaign URL before producing more
+variants for that tool.
 
 ## Weekly operating cadence
 
 - Monday: publish/export next 21 pins.
-- Wednesday: review top saves and outbound clicks.
+- Wednesday: run `growth_review.py` and review top saves/outbound clicks.
 - Friday: generate 10 new hook variants for the best two URLs.
 - Monthly: retire weak hooks and create new visual backgrounds for winners.
 

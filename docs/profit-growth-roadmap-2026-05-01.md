@@ -109,6 +109,8 @@ Mandate: grow profit, not just ship features. The near-term strategy is to turn 
 3. Add social-to-tool landing discipline
    - Every Pinterest/TikTok/Instagram post should map to exactly one URL and one first action.
    - Avoid sending social traffic to generic homepage unless the post is brand-level.
+   - Run `social-media-agent/growth_review.py` weekly with the admin funnel CSV before creating the next content batch.
+   - Decision rule: scale campaigns with checkout starts/purchases first; fix stale schedules or ambiguous source/feature attribution before adding more variants.
 
 ### P2 - 30 Days
 

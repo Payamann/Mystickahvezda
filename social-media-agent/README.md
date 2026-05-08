@@ -63,6 +63,31 @@ social-media-agent/
 1. Generování → 2. Review HTML náhled → 3. Approve → 4. Publikace
 ```
 
+### Weekly Revenue Content Review
+
+Use this before creating more social/Pinterest assets. It connects content output,
+Pinterest inventory, and admin funnel data so the next batch scales the best
+measured loop instead of the loudest content idea.
+
+```bash
+cd social-media-agent
+
+# 1) Export the admin funnel CSV from:
+# /api/admin/funnel?format=csv&view=segments
+
+# 2) Run the review with the export
+python growth_review.py --funnel-csv path/to/admin-funnel-segments.csv
+
+# Optional: run with current local Pinterest/content data only
+python growth_review.py
+```
+
+Decision rule:
+- scale campaigns with checkout starts or purchases first
+- fix stale Pinterest schedules before generating more pins
+- add `source` + `feature` params when a campaign only has UTMs
+- rebalance the next social batch when recent memory misses engagement, promotion, or inspiration
+
 ### Fáze 1 (nyní): Content Generation
 - Generuj posty lokálně
 - Prohlíž HTML náhledy v prohlížeči
