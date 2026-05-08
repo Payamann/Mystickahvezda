@@ -271,9 +271,12 @@ test.describe('Homepage', () => {
         await expect(spotlight).toBeVisible();
         await expect(spotlight).toContainText('Osobní mapa zbytku roku 2026');
         await expect(spotlight).toContainText('299 Kč');
+        await expect(spotlight).toContainText('Roční horoskop na míru za 199 Kč');
         await expect(spotlight.locator('img[alt*="Osobní mapa"]')).toBeVisible();
         await expect(spotlight.locator('a.btn--primary')).toHaveAttribute('href', /osobni-mapa\.html\?source=homepage_spotlight/);
+        await expect(spotlight.locator('a[href*="rocni-horoskop.html"]')).toHaveAttribute('href', /rocni-horoskop\.html\?source=homepage_spotlight_secondary/);
         await expect(page.locator('.nav__dropdown-link[href*="osobni-mapa.html"]').first()).toContainText('Osobní mapa');
+        await expect(page.locator('.nav__dropdown-link[href*="rocni-horoskop.html"]').first()).toContainText('Roční horoskop');
     });
 
     test('header registrace neotevira stary modal a vede na dedikovanou registraci', async ({ page, isMobile }) => {

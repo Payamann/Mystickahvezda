@@ -169,6 +169,29 @@ html body .mh-inline-f0e77c93f3 { display:flex;flex-wrap:wrap;gap:0.5rem;margin:
     font-weight: 650;
 }
 
+.personal-map-spotlight__secondary-cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.62rem 0.95rem;
+    border: 1px solid rgba(212, 175, 55, 0.28);
+    border-radius: 999px;
+    background: rgba(5, 5, 16, 0.34);
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 0.92rem;
+    font-weight: 750;
+    line-height: 1.25;
+    text-decoration: none;
+    transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+.personal-map-spotlight__secondary-cta:hover,
+.personal-map-spotlight__secondary-cta:focus-visible {
+    border-color: rgba(255, 215, 0, 0.7);
+    background: rgba(212, 175, 55, 0.12);
+    color: #fff6c7;
+}
+
 .personal-map-spotlight__preview {
     position: relative;
     display: block;
@@ -251,6 +274,11 @@ html body .mh-inline-f0e77c93f3 { display:flex;flex-wrap:wrap;gap:0.5rem;margin:
     }
 
     .personal-map-spotlight__actions .btn {
+        width: 100%;
+    }
+
+    .personal-map-spotlight__secondary-cta {
+        justify-content: center;
         width: 100%;
     }
 
