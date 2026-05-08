@@ -135,7 +135,7 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
                 success: false,
                 error: errorMsgs[targetLang],
                 code: 'PREMIUM_REQUIRED',
-                feature: 'horoscope_extended'
+                feature
             });
         }
 

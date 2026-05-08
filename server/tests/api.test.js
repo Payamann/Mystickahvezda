@@ -451,6 +451,7 @@ describe('API Endpoint Tests', () => {
 
             expect(res.status).toBe(402);
             expect(res.body.code).toBe('PREMIUM_REQUIRED');
+            expect(res.body.feature).toBe('weekly_horoscope');
         });
 
         test('Monthly horoscope without premium returns 402', async () => {
@@ -462,6 +463,7 @@ describe('API Endpoint Tests', () => {
 
             expect(res.status).toBe(402);
             expect(res.body.code).toBe('PREMIUM_REQUIRED');
+            expect(res.body.feature).toBe('monthly_horoscope');
         });
 
         test('Missing sign returns 400', async () => {

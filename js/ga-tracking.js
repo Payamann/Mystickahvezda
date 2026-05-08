@@ -78,7 +78,7 @@ export function trackUpgradeCTAClicked(data = {}) {
     gtag('event', 'upgrade_cta_clicked', {
         'feature_name': data.feature || 'unknown',
         'plan_id': data.plan || 'pruvodce',
-        'upgrade_url': data.upgradeUrl || '/cenik',
+        'upgrade_url': data.upgradeUrl || '/cenik.html',
         'timestamp': new Date().toISOString()
     });
 
