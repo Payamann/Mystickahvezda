@@ -484,21 +484,43 @@ window.Premium = {
             });
         }
 
-        if (!isPremium && document.getElementById('header-placeholder')) {
+        if (!isPremium && (document.getElementById('header-placeholder') || document.querySelector('header nav'))) {
             const addUpgradeCTA = () => {
-                const header = document.querySelector('header nav');
-                if (header && !document.getElementById('upgrade-cta')) {
-                    const planId = this.getFeaturePlanId('premium_membership', 'pruvodce');
+                const headerActions = document.querySelector('.header__actions .auth-buttons');
+                const mobileActions = document.querySelector('.mobile-auth-buttons');
+                const planId = this.getFeaturePlanId('premium_membership', 'pruvodce');
+                const ctaUrl = new URL('/cenik.html', window.location.origin);
+                ctaUrl.searchParams.set('plan', planId);
+                ctaUrl.searchParams.set('source', 'header_upgrade_cta');
+                ctaUrl.searchParams.set('feature', 'premium_membership');
+                let inserted = false;
+
+                const createUpgradeCTA = (id, label) => {
                     const upgradeCTA = document.createElement('a');
-                    upgradeCTA.id = 'upgrade-cta';
-                    upgradeCTA.href = '/cenik.html?plan=pruvodce&source=header_upgrade_cta&feature=premium_membership';
+                    upgradeCTA.id = id;
+                    upgradeCTA.href = `${ctaUrl.pathname}${ctaUrl.search}`;
                     upgradeCTA.className = 'btn btn--sm btn--gold upgrade-cta-btn';
+                    upgradeCTA.title = 'Vyzkoušet Premium';
+                    upgradeCTA.setAttribute('aria-label', 'Vyzkoušet Premium');
                     upgradeCTA.addEventListener('click', (event) => {
                         event.preventDefault();
                         this.startUpgradeFlow(planId, 'premium_membership', 'header_upgrade_cta');
                     });
-                    upgradeCTA.innerHTML = '\u2728 Vyzkou\u0161et Premium';
-                    header.appendChild(upgradeCTA);
+                    upgradeCTA.innerHTML = label;
+                    return upgradeCTA;
+                };
+
+                if (headerActions && !document.getElementById('upgrade-cta')) {
+                    headerActions.prepend(createUpgradeCTA('upgrade-cta', '\u2728 Premium'));
+                    inserted = true;
+                }
+
+                if (mobileActions && !document.getElementById('mobile-upgrade-cta')) {
+                    mobileActions.prepend(createUpgradeCTA('mobile-upgrade-cta', '\u2728 Vyzkou\u0161et Premium'));
+                    inserted = true;
+                }
+
+                if (inserted) {
                     void this.trackServerFunnelEvent('upgrade_cta_viewed', {
                         source: 'header_upgrade_cta',
                         feature: 'premium_membership',
@@ -519,6 +541,10 @@ window.Premium = {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        window.Premium.init();
+    });
+} else {
     window.Premium.init();
-});
+}

@@ -32,6 +32,13 @@
         fw.defer = true;
         document.head.appendChild(fw);
     }
+
+    if (!window.Premium && !document.querySelector('script[src*="premium-gates.js"]')) {
+        const pg = document.createElement('script');
+        pg.src = basePath + 'js/dist/premium-gates.js?v=3';
+        pg.defer = true;
+        document.head.appendChild(pg);
+    }
 })();
 
 document.addEventListener('DOMContentLoaded', async () => {

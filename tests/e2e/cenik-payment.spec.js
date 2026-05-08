@@ -165,6 +165,28 @@ test.describe('Ceník — platební tlačítka', () => {
         await expect(page.locator('[data-preview-destination]')).toHaveCount(0);
     });
 
+    test('homepage header zobrazi premium CTA s cenikovym kontextem', async ({ page }) => {
+        await page.goto('/');
+        await waitForPageReady(page);
+
+        const viewport = page.viewportSize();
+        const isMobile = (viewport?.width || 0) < 993;
+
+        if (isMobile) {
+            await page.locator('.nav__toggle').click();
+        }
+
+        const cta = page.locator(isMobile ? '#mobile-upgrade-cta' : '#upgrade-cta');
+        await expect(cta).toBeVisible();
+        await expect(cta).toHaveAttribute('aria-label', /Premium/);
+
+        const href = await cta.getAttribute('href');
+        expect(href).toContain('/cenik.html');
+        expect(href).toContain('plan=pruvodce');
+        expect(href).toContain('source=header_upgrade_cta');
+        expect(href).toContain('feature=premium_membership');
+    });
+
     test('zruseny checkout zobrazi recovery panel s kontextovym navratem', async ({ page }) => {
         await page.goto('/cenik.html?payment=cancel&plan=pruvodce&source=inline_paywall&feature=tarot_multi_card');
         await waitForPageReady(page);
