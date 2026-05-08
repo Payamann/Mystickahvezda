@@ -472,6 +472,7 @@ document.addEventListener('click', (event) => {
             destination: href || null,
             feature: target.dataset.analyticsFeature || null,
             intent: target.dataset.analyticsIntent || null,
+            product_id: target.dataset.analyticsProduct || null,
             plan_id: target.dataset.analyticsPlan || target.dataset.plan || null
         });
         return;
