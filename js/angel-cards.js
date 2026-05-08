@@ -329,7 +329,20 @@ function ensureDeepInsightElements() {
 
 function renderDeepInsightText(container, text) {
     container.textContent = '';
-    String(text || '')
+    const content = String(text || '').trim();
+    const looksLikeHtml = /<\/?[a-z][\s\S]*>/i.test(content);
+
+    if (looksLikeHtml && window.DOMPurify) {
+        container.innerHTML = window.DOMPurify.sanitize(content, {
+            ALLOWED_TAGS: ['div', 'h4', 'p', 'ul', 'li', 'em', 'strong', 'b', 'i', 'br', 'span'],
+            ALLOWED_ATTR: ['class']
+        });
+        container.hidden = false;
+        container.classList.add('mh-block-visible');
+        return;
+    }
+
+    content
         .split(/\n{2,}/)
         .map(part => part.trim())
         .filter(Boolean)

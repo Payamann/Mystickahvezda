@@ -89,6 +89,7 @@ function generate() {
 
         let html = template
             .replace(/\{\{TITLE\}\}/g, term.title)
+            .replace(/\{\{SLUG\}\}/g, term.slug)
             .replace(/\{\{DESCRIPTION\}\}/g, term.short_description)
             .replace(/\{\{CATEGORY\}\}/g, term.category)
             .replace(/\{\{CONTENT_HTML\}\}/g, fullContentHtml)

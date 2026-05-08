@@ -71,6 +71,15 @@ test.describe('Ceník — platební tlačítka', () => {
         await expect(guide.locator('[data-pricing-choice]')).toHaveCount(3);
     });
 
+    test('cenik ukazuje duverove odkazy pred platbou', async ({ page }) => {
+        const trustLinks = page.locator('.pricing-trust-links');
+        await expect(trustLinks).toBeVisible();
+        await expect(trustLinks.locator('a[href="podminky.html"]')).toBeVisible();
+        await expect(trustLinks.locator('a[href="soukromi.html"]')).toBeVisible();
+        await expect(trustLinks.locator('a[href="#cookie-banner"]')).toBeVisible();
+        await expect(trustLinks.locator('a[href="kontakt.html"]')).toBeVisible();
+    });
+
     test('rychla volba zdarma zvyrazni bezplatny tarif', async ({ page }) => {
         await page.locator('[data-pricing-choice="free"]').click();
 

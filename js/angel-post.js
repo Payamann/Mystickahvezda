@@ -137,7 +137,11 @@ function updateCounter() {
 }
 
 async function submitMessage() {
+    if (submitMessage.isSubmitting) return;
+
     const textInput = document.getElementById('msg-text');
+    if (!textInput) return;
+
     const text = textInput.value.trim();
     const nickname = document.getElementById('msg-nickname').value.trim() || 'Anonym';
     const category = document.getElementById('msg-category').value;
@@ -151,8 +155,12 @@ async function submitMessage() {
     textInput.classList.remove('form-input--invalid');
 
     let newMsg = null;
+    const submitButton = document.getElementById('btn-submit-msg');
 
     try {
+        submitMessage.isSubmitting = true;
+        if (submitButton) submitButton.disabled = true;
+
         const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
         const baseUrl = window.API_CONFIG?.BASE_URL || '/api';
         const res = await fetch(`${baseUrl}/angel-post`, {
@@ -185,6 +193,9 @@ async function submitMessage() {
         console.warn('AngelPost API unavailable:', e);
         showSubmitMessage('error', '❌ Vzkaz se nepodařilo uložit. Zkuste to prosím znovu za chvíli.', 5000);
         return;
+    } finally {
+        submitMessage.isSubmitting = false;
+        if (submitButton) submitButton.disabled = false;
     }
 
     if (!newMsg) return;
@@ -236,7 +247,15 @@ renderMessages();
 loadMessages();
 
 const btnSubmit = document.getElementById('btn-submit-msg');
-if (btnSubmit) btnSubmit.addEventListener('click', submitMessage);
+const angelPostForm = document.getElementById('angel-post-form');
+if (angelPostForm) {
+    angelPostForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        submitMessage();
+    });
+} else if (btnSubmit) {
+    btnSubmit.addEventListener('click', submitMessage);
+}
 
 const msgInput = document.getElementById('msg-text');
 if (msgInput) msgInput.addEventListener('input', updateCounter);

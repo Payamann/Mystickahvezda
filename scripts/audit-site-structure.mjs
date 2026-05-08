@@ -301,6 +301,17 @@ function auditCanonical(file, html) {
     }
 }
 
+function auditIndexableCanonicalPresence(file, html) {
+    if (isNoindex(html)) return;
+    if (getCanonical(html)) return;
+
+    report(
+        'missing_canonical_or_noindex',
+        relative(file),
+        'Public HTML pages must either declare a canonical URL or explicitly use noindex.'
+    );
+}
+
 function auditHreflangTargets(file, html) {
     const linkPattern = /<link\b[^>]*>/gi;
     let match;
@@ -616,6 +627,7 @@ auditCanonicalOriginReferences();
 for (const file of walkHtml()) {
     const html = read(file);
     auditJsonLd(file, html);
+    auditIndexableCanonicalPresence(file, html);
     auditCanonical(file, html);
     auditHreflangTargets(file, html);
     auditConsentManagedAnalytics(file, html);

@@ -103,6 +103,33 @@ describe('Oracle AI fallbacks', () => {
         expect(res.body.response).toEqual(expect.stringContaining('The Sun'));
     });
 
+    test('POST /api/tarot soft upsell uses current pricing and pricing URL context', async () => {
+        const csrfToken = await getCsrfToken();
+        const token = createPremiumToken({ isPremium: false, subscription_status: 'free' });
+        const res = await request(app)
+            .post('/api/tarot')
+            .set('x-csrf-token', csrfToken)
+            .set('Cookie', `auth_token=${token}`)
+            .send({
+                question: 'What should I understand?',
+                spreadType: 'three-card',
+                cards: ['The Sun', 'The Moon', 'The Star']
+            })
+            .expect(402);
+
+        expect(res.body).toMatchObject({
+            success: false,
+            code: 'PREMIUM_REQUIRED',
+            upsell: {
+                feature: 'tarot_multi_card',
+                plan: 'pruvodce',
+                price: 199,
+                priceLabel: 'Kč/měsíc',
+                upgradeUrl: '/cenik.html?plan=pruvodce&source=tarot_upsell&feature=tarot_multi_card'
+            }
+        });
+    });
+
     test('POST /api/tarot-summary returns fallback when AI fails', async () => {
         const csrfToken = await getCsrfToken();
         const token = createPremiumToken();

@@ -19,9 +19,39 @@ import {
 } from '../services/astrology.js';
 import { supabase } from '../db-supabase.js';
 import { trackPaywallHit } from '../middleware.js';
-import { getRequiredPlanForFeature } from '../config/constants.js';
+import { getPlanById, getRequiredPlanForFeature } from '../config/constants.js';
 
 export const router = express.Router();
+
+const DEFAULT_UPSELL_PLAN_ID = 'pruvodce';
+
+function getPlanPriceCzk(planId) {
+    const plan = getPlanById(planId);
+    return plan?.price ? plan.price / 100 : 199;
+}
+
+function buildPricingUpgradeUrl({ planId, source, feature }) {
+    const params = new URLSearchParams({
+        plan: planId,
+        source
+    });
+    if (feature) params.set('feature', feature);
+    return `/cenik.html?${params.toString()}`;
+}
+
+function buildSubscriptionUpsell({ title, message, feature, source, features }) {
+    const plan = getRequiredPlanForFeature(feature, DEFAULT_UPSELL_PLAN_ID);
+    return {
+        title,
+        message,
+        feature,
+        plan,
+        price: getPlanPriceCzk(plan),
+        priceLabel: 'Kč/měsíc',
+        upgradeUrl: buildPricingUpgradeUrl({ planId: plan, source, feature }),
+        features
+    };
+}
 
 function isValidIsoDate(value) {
     const date = new Date(`${value}T00:00:00Z`);
@@ -102,20 +132,17 @@ router.post('/crystal-ball', oracleLimiter, optionalPremiumCheck, async (req, re
                         error: 'Denní limit 3 otázek byl vyčerpán.',
                         code: 'LIMIT_REACHED',
                         feature: 'crystal_ball_unlimited',
-                        upsell: {
-                            title: 'Chcete neomezený přístup k Křišťálové kouli?',
-                            message: 'Zažijte bez omezení. Hvězdný Průvodce vám otevře nekonečný přístup.',
+                        upsell: buildSubscriptionUpsell({
+                            title: 'Chcete neomezený přístup ke Křišťálové kouli?',
+                            message: 'Zažijte bez omezení. Hvězdný Průvodce vám otevře neomezený přístup.',
                             feature: 'crystal_ball_unlimited',
-                            plan: 'pruvodce',
-                            price: 179,
-                            priceLabel: 'Kč/měsíc',
-                            upgradeUrl: '/cenik?selected=pruvodce&utm_source=crystal_ball_upsell',
+                            source: 'crystal_ball_upsell',
                             features: [
                                 '✓ Neomezené otázky',
                                 '✓ Hlubší vhledy',
                                 '✓ Uložit historii'
                             ]
-                        }
+                        })
                     });
                 }
             } catch (limitError) {
@@ -233,26 +260,24 @@ router.post('/tarot', oracleLimiter, authenticateToken, requirePremiumSoft, asyn
 
         // Free users can only do 1-card spreads
         if (!req.isPremium && cards.length > 1) {
-            trackPaywallHit(req.user?.id, 'tarot_advanced').catch(() => {});
+            const feature = 'tarot_multi_card';
+            trackPaywallHit(req.user?.id, feature).catch(() => {});
             // SOFT WALL: Show upgrade offer
             return res.status(402).json({
                 success: false,
                 error: 'Komplexní výklady jsou dostupné pouze pro Hvězdné Průvodce.',
                 code: 'PREMIUM_REQUIRED',
-                upsell: {
+                upsell: buildSubscriptionUpsell({
                     title: 'Odemknutí tarotických vhledů',
                     message: 'Používejte vícekaretové výklady s hlubší interpretací. Jen pro Premium.',
-                    feature: 'tarot_advanced',
-                    plan: 'pruvodce',
-                    price: 179,
-                    priceLabel: 'Kč/měsíc',
-                    upgradeUrl: '/cenik?selected=pruvodce&utm_source=tarot_upsell',
+                    feature,
+                    source: 'tarot_upsell',
                     features: [
                         '✓ Všechny tarotové výklady',
                         '✓ Synastry & Natalní karty',
                         '✓ Detailní interpretace'
                     ]
-                }
+                })
             });
         }
 

@@ -592,13 +592,27 @@ app.get('/jmena/:name', (req, res, next) => {
 
 const STATIC_PAGE_REDIRECTS = new Map([
     ['/shamanske-kolo.html', '/shamansko-kolo.html'],
+    ['/horoskop/vodnár.html', '/horoskop/vodnar.html'],
+    ['/blog/vidite-vsude-1111-poselstvi-andelu.html', '/blog/andelska-cisla-1111.html'],
 ]);
 
-app.get(Array.from(STATIC_PAGE_REDIRECTS.keys()), (req, res) => {
-    const targetPath = STATIC_PAGE_REDIRECTS.get(req.path);
+function getDecodedRequestPath(req) {
+    try {
+        return decodeURIComponent(req.path);
+    } catch {
+        return req.path;
+    }
+}
+
+app.use((req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+
+    const targetPath = STATIC_PAGE_REDIRECTS.get(getDecodedRequestPath(req));
+    if (!targetPath) return next();
+
     const queryIndex = req.originalUrl.indexOf('?');
     const queryString = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
-    res.redirect(301, `${targetPath}${queryString}`);
+    return res.redirect(301, `${targetPath}${queryString}`);
 });
 
 // Serve static files from the parent directory (MystickaHvezda root)
@@ -609,6 +623,9 @@ function setStaticHeaders(res, filePath) {
     // so deployments are reflected immediately
     if (filePath.endsWith('.html')) {
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        if (shouldNoindexStaticHtml(filePath)) {
+            res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+        }
         setHtmlFileContentSecurityPolicy(res, filePath);
     } else if (filePath.endsWith('service-worker.js')) {
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -617,6 +634,16 @@ function setStaticHeaders(res, filePath) {
     }
     // Tell caches that responses vary by encoding (gzip/br)
     res.setHeader('Vary', 'Accept-Encoding');
+}
+
+function shouldNoindexStaticHtml(filePath) {
+    const relativePath = path.relative(rootDir, filePath).replace(/\\/g, '/');
+    return relativePath === 'admin.html' ||
+        relativePath === 'offline.html' ||
+        relativePath === 'horoscope-card-preview.html' ||
+        relativePath.startsWith('components/') ||
+        relativePath.startsWith('templates/') ||
+        relativePath.startsWith('tests/');
 }
 
 const staticOptions = {

@@ -218,7 +218,10 @@ test.describe('Onboarding', () => {
 
     test('onboarding netaha externi fonty ani nepouzity sanitizer z CDN', async ({ page }) => {
         const html = await page.content();
-        expect(html).toContain('/fonts/local-fonts.css');
+        expect(html).toContain('css/site.min.css');
+        const siteCss = await page.request.get('/css/site.min.css?v=1');
+        expect(siteCss.ok()).toBe(true);
+        expect(await siteCss.text()).toContain('@font-face');
         expect(html).not.toContain('fonts.googleapis.com');
         expect(html).not.toContain('cdnjs.cloudflare.com/ajax/libs/dompurify');
     });

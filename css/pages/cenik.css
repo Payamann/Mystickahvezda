@@ -19,6 +19,11 @@
         .pricing-checkout-assurance > div { padding:1rem; border:1px solid rgba(255,255,255,0.1); border-radius:14px; background:rgba(255,255,255,0.035); }
         .pricing-checkout-assurance strong { display:block; margin-bottom:0.35rem; color:#fff; font-size:0.88rem; line-height:1.35; }
         .pricing-checkout-assurance span { display:block; color:rgba(255,255,255,0.66); font-size:0.82rem; line-height:1.55; }
+        .pricing-trust-links { margin:0.95rem auto 0; display:flex; flex-wrap:wrap; gap:0.45rem 0.8rem; align-items:center; justify-content:center; color:rgba(255,255,255,0.58); font-size:0.82rem; text-align:center; }
+        .pricing-trust-links span { color:rgba(255,255,255,0.68); }
+        .pricing-trust-links a { color:rgba(255,215,0,0.9); text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px; }
+        .pricing-trust-links a:hover,
+        .pricing-trust-links a:focus-visible { color:#fff; }
         .pricing-addon__products { display:grid; gap:0.8rem; }
         .pricing-addon__product { padding:1rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.035); text-decoration:none; }
         .pricing-addon__product strong { display:flex; justify-content:space-between; gap:0.8rem; color:#fff; margin-bottom:0.35rem; }

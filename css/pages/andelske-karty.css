@@ -663,3 +663,24 @@ html body .mh-block-visible {
 .angel-return-message {
     color: var(--color-silver-mist);
 }
+
+.angel-ai-response .insight-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(235, 192, 102, 0.18);
+}
+
+.angel-ai-response .insight-section:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+.angel-ai-response h4 {
+    margin: 0 0 0.5rem;
+    color: var(--color-mystic-gold);
+}
+
+.angel-ai-response p {
+    margin: 0;
+}
