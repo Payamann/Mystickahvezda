@@ -9,7 +9,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { waitForPageReady, getCsrfToken } from './helpers.js';
+import { waitForPageReady, getCsrfToken, MOBILE_VIEWPORT } from './helpers.js';
 
 async function expectNoHorizontalOverflow(page) {
     const horizontalOverflow = await page.evaluate(() => (
@@ -191,6 +191,66 @@ test.describe('Login stránka', () => {
         expect(box?.height || 0).toBeLessThan(190);
         expect(box?.width || 0).toBeLessThanOrEqual(366);
         await expect(page.locator('#auth-submit')).toBeVisible();
+
+        const overlap = await page.evaluate(() => {
+            const submit = document.getElementById('auth-submit')?.getBoundingClientRect();
+            const consent = document.getElementById('gdpr-consent-wrapper')?.getBoundingClientRect();
+            const cookie = document.getElementById('cookie-banner')?.getBoundingClientRect();
+            const overlaps = (a, b) => !!(a && b && !(
+                b.right < a.left
+                || b.left > a.right
+                || b.bottom < a.top
+                || b.top > a.bottom
+            ));
+            return {
+                submit: overlaps(submit, cookie),
+                consent: overlaps(consent, cookie)
+            };
+        });
+
+        expect(overlap.submit).toBe(false);
+        expect(overlap.consent).toBe(false);
+    });
+
+    test('mobilni mentor auth gate ma registracni CTA nad cookie listou', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.evaluate(() => {
+            localStorage.removeItem('mh_cookie_prefs');
+            localStorage.removeItem('cookieConsent');
+        });
+
+        await page.goto('/mentor.html?source=e2e_mentor_auth_gate');
+        await waitForPageReady(page);
+
+        await expect(page).toHaveURL(/prihlaseni\.html.*source=mentor_entry_auth_gate/);
+        await expect(page.locator('#auth-submit')).toContainText('Vytvořit účet zdarma');
+        await expect(page.locator('#gdpr-consent-wrapper')).toBeVisible();
+
+        const metrics = await page.evaluate(() => {
+            const submit = document.getElementById('auth-submit')?.getBoundingClientRect();
+            const consent = document.getElementById('gdpr-consent-wrapper')?.getBoundingClientRect();
+            const cookie = document.getElementById('cookie-banner')?.getBoundingClientRect();
+            const overlaps = (a, b) => !!(a && b && !(
+                b.right < a.left
+                || b.left > a.right
+                || b.bottom < a.top
+                || b.top > a.bottom
+            ));
+            return {
+                submitBottom: Math.round(submit?.bottom || 9999),
+                consentBottom: Math.round(consent?.bottom || 9999),
+                cookieTop: Math.round(cookie?.top || window.innerHeight),
+                submitOverlapsCookie: overlaps(submit, cookie),
+                consentOverlapsCookie: overlaps(consent, cookie),
+                overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
+            };
+        });
+
+        expect(metrics.overflow).toBe(false);
+        expect(metrics.submitOverlapsCookie).toBe(false);
+        expect(metrics.consentOverlapsCookie).toBe(false);
+        expect(metrics.submitBottom).toBeLessThanOrEqual(metrics.cookieTop);
+        expect(metrics.consentBottom).toBeLessThanOrEqual(metrics.cookieTop);
     });
 
     test('registrace z headeru pouziva lidsky account kontext', async ({ page }) => {

@@ -100,6 +100,106 @@
         }
         @media (max-width: 480px) { .login-card { padding: 2rem 1.25rem; } }
 
+        @media (max-width: 480px) {
+            body.auth-register-mode .login-section {
+                align-items: flex-start;
+                padding: 4.8rem 0.75rem 12rem;
+            }
+
+            body.auth-register-mode .login-card {
+                padding: 1.05rem 1rem 1.15rem;
+            }
+
+            body.auth-register-mode .login-card__title {
+                margin-bottom: 0.35rem;
+                font-size: 1.42rem;
+            }
+
+            body.auth-register-mode .login-card .hero__subtitle {
+                margin-bottom: 0.2rem;
+                font-size: 0.88rem;
+                line-height: 1.38;
+            }
+
+            body.auth-register-mode #login-form {
+                margin-top: 0.75rem;
+            }
+
+            body.auth-register-mode .login-card .form-group {
+                margin-bottom: 0.62rem;
+            }
+
+            body.auth-register-mode .login-card .form-input {
+                min-height: 44px;
+                padding: 0.64rem 0.85rem;
+            }
+
+            body.auth-register-mode .password-toggle {
+                min-height: 38px;
+                padding: 0 0.58rem;
+                font-size: 0.66rem;
+            }
+
+            body.auth-register-mode .login-form-help,
+            body.auth-register-mode .signup-safety-note {
+                display: none !important;
+            }
+
+            body.auth-register-mode .mh-inline-6dada34cf2 {
+                gap: 0.42rem;
+                font-size: 0.76rem;
+                line-height: 1.34;
+            }
+
+            body.auth-register-mode .mh-inline-c0b8a97c16 {
+                margin-top: 0.62rem;
+                padding: 0.72rem;
+                font-size: 0.86rem;
+            }
+
+            body.auth-register-mode .mh-inline-68221bb3c6 {
+                margin-top: 1rem;
+            }
+
+            body.page-login .cookie-banner {
+                bottom: 6px;
+                padding: 0.44rem 0.5rem;
+            }
+
+            body.page-login .cookie-banner__content {
+                gap: 0.3rem;
+            }
+
+            body.page-login .cookie-banner__text {
+                font-size: 0.66rem;
+                line-height: 1.18;
+            }
+
+            body.page-login .cookie-banner__content > div:not(.cookie-banner__actions) {
+                gap: 0.18rem 0.42rem;
+                font-size: 0.6rem;
+                line-height: 1.08;
+            }
+
+            body.page-login .cookie-banner__actions {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.3rem;
+            }
+
+            body.page-login .cookie-banner__actions .btn {
+                width: 100%;
+                min-height: 32px;
+                padding: 0.34rem 0.42rem;
+                font-size: 0.58rem;
+                line-height: 1.1;
+            }
+
+            body.page-login #cookie-accept {
+                grid-column: 1 / -1;
+            }
+        }
+
 .signup-value-panel {
     margin-top: 1.15rem;
     padding: 1rem 0 0;
