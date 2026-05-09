@@ -343,7 +343,7 @@ window.Premium = {
     },
 
     showLoginGate(container, message = null, featureName = null, source = 'inline_login_gate') {
-        const defaultMsg = '⭐ Přihlaste se zdarma a získejte plný osobní výklad';
+        const defaultMsg = '⭐ Vytvořte účet a pokračujte k odemčení plného osobního výkladu';
         const safeMsg = this._escapeHTML(message || defaultMsg);
         const planId = this.getFeaturePlanId(featureName, 'pruvodce');
         this.trackPaywallHit(featureName, source, planId, 'login_gate_viewed');
@@ -352,8 +352,8 @@ window.Premium = {
         gate.className = 'login-gate';
         gate.innerHTML = `
             <p class="login-gate__message">${safeMsg}</p>
-            <p class="login-gate__hint">Registrace je zdarma, trvá 30 sekund</p>
-            <button class="btn btn--primary login-gate-btn">Přihlásit se zdarma →</button>
+            <p class="login-gate__hint">Účet vytvoříte zdarma. Placený plán potvrdíte až na zabezpečeném checkoutu.</p>
+            <button class="btn btn--primary login-gate-btn">Pokračovat k odemčení</button>
         `;
 
         container.appendChild(gate);

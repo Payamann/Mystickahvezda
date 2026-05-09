@@ -743,7 +743,7 @@ async function generateNatalChart(planetsGroup) {
             if (window.Premium) {
                 window.Premium.showLoginGate(
                     contentDiv,
-                    '\u2B50 P\u0159ihlaste se zdarma a odhalte sv\u016Fj vesm\u00EDrn\u00FD pl\u00E1n',
+                    '\u2B50 Vytvo\u0159te \u00FA\u010Det a pokra\u010Dujte k odem\u010Den\u00ED sv\u00E9ho vesm\u00EDrn\u00E9ho pl\u00E1nu',
                     'natalni_interpretace',
                     'natal_teaser_gate'
                 );

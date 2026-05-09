@@ -313,6 +313,36 @@ test.describe('Ceník — platební tlačítka', () => {
         await expect(footer).not.toContainText('Karta požadována');
     });
 
+    test('login gate copy jasne oddeluje ucet zdarma od placeneho checkoutu', async ({ page }) => {
+        await page.goto('/tests/premium-test.html');
+        await waitForPageReady(page);
+        await page.waitForFunction(() => !!window.Premium?.showLoginGate);
+
+        await page.evaluate(() => {
+            const host = document.createElement('div');
+            host.id = 'login-gate-test-host';
+            document.body.appendChild(host);
+            window.Premium._featurePlanMap = { natalni_interpretace: 'pruvodce' };
+            window.Premium.showLoginGate(host, null, 'natalni_interpretace', 'natal_teaser_gate');
+        });
+
+        const gate = page.locator('#login-gate-test-host .login-gate');
+        await expect(gate).toBeVisible();
+        await expect(gate).toContainText('Placený plán potvrdíte');
+        await expect(gate.locator('.login-gate-btn')).toContainText('Pokračovat k odemčení');
+        await expect(gate).not.toContainText('Přihlásit se zdarma');
+
+        await Promise.all([
+            page.waitForURL(/prihlaseni\.html/),
+            gate.locator('.login-gate-btn').click(),
+        ]);
+
+        const url = new URL(page.url());
+        expect(url.searchParams.get('plan')).toBe('pruvodce');
+        expect(url.searchParams.get('source')).toBe('natal_teaser_gate');
+        expect(url.searchParams.get('feature')).toBe('natalni_interpretace');
+    });
+
     test('klik na placeny plan zapise serverovy funnel intent pred registraci', async ({ page }) => {
         let resolvePricingIntent;
         const pricingIntent = new Promise((resolve) => {

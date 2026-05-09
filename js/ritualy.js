@@ -80,7 +80,12 @@
                 // Gate: requires Průvodce (premium) plan
                 if (!window.Auth || !window.Auth.isLoggedIn()) {
                     e.preventDefault();
-                    window.Premium?.showLoginGate(document.querySelector('.ritual-result') || document.body, '🌙 Přihlaste se zdarma a odemkněte lunární rituály');
+                    window.Premium?.showLoginGate(
+                        document.querySelector('.ritual-result') || document.body,
+                        '🌙 Vytvořte účet a pokračujte k odemčení lunárních rituálů',
+                        'rituals',
+                        'rituals_auth_gate'
+                    );
                     return;
                 }
                 if (!window.Auth.isPremium()) {
