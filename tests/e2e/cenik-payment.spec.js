@@ -272,7 +272,7 @@ test.describe('Ceník — platební tlačítka', () => {
         await expect(page.locator('[data-preview-destination]')).toHaveCount(0);
     });
 
-    test('homepage header zobrazi premium CTA s cenikovym kontextem', async ({ page }) => {
+    test('homepage header zobrazi cenik CTA bez duplicitniho premium labelu', async ({ page }) => {
         await page.goto('/');
         await waitForPageReady(page);
 
@@ -285,7 +285,9 @@ test.describe('Ceník — platební tlačítka', () => {
 
         const cta = page.locator(isMobile ? '#mobile-upgrade-cta' : '#upgrade-cta');
         await expect(cta).toBeVisible();
-        await expect(cta).toHaveAttribute('aria-label', /Premium/);
+        await expect(cta).toHaveText(/Ceník/i);
+        await expect(cta).toHaveAttribute('aria-label', /ceník/i);
+        await expect(cta).not.toHaveText(/Premium/i);
 
         const href = await cta.getAttribute('href');
         expect(href).toContain('/cenik.html');

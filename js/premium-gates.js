@@ -505,8 +505,8 @@ window.Premium = {
                     upgradeCTA.id = id;
                     upgradeCTA.href = `${ctaUrl.pathname}${ctaUrl.search}`;
                     upgradeCTA.className = 'btn btn--sm btn--gold upgrade-cta-btn';
-                    upgradeCTA.title = 'Vyzkoušet Premium';
-                    upgradeCTA.setAttribute('aria-label', 'Vyzkoušet Premium');
+                    upgradeCTA.title = 'Zobrazit ceník';
+                    upgradeCTA.setAttribute('aria-label', 'Zobrazit ceník');
                     upgradeCTA.addEventListener('click', (event) => {
                         event.preventDefault();
                         this.startUpgradeFlow(planId, 'premium_membership', 'header_upgrade_cta');
@@ -516,12 +516,12 @@ window.Premium = {
                 };
 
                 if (headerActions && !document.getElementById('upgrade-cta')) {
-                    headerActions.prepend(createUpgradeCTA('upgrade-cta', '\u2728 Premium'));
+                    headerActions.prepend(createUpgradeCTA('upgrade-cta', 'Ceník'));
                     inserted = true;
                 }
 
                 if (mobileActions && !document.getElementById('mobile-upgrade-cta')) {
-                    mobileActions.prepend(createUpgradeCTA('mobile-upgrade-cta', '\u2728 Vyzkou\u0161et Premium'));
+                    mobileActions.prepend(createUpgradeCTA('mobile-upgrade-cta', 'Ceník'));
                     inserted = true;
                 }
 
