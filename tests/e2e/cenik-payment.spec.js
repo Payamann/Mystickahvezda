@@ -65,10 +65,10 @@ test.describe('Ceník — platební tlačítka', () => {
         expect(href).toContain('feature=daily_guidance');
     });
 
-    test('rychla volba v ceniku nabizi 3 jasne dalsi kroky', async ({ page }) => {
+    test('rychla volba v ceniku nabizi 4 jasne dalsi kroky', async ({ page }) => {
         const guide = page.locator('.pricing-decision');
         await expect(guide).toBeVisible();
-        await expect(guide.locator('[data-pricing-choice]')).toHaveCount(3);
+        await expect(guide.locator('[data-pricing-choice]')).toHaveCount(4);
     });
 
     test('cenik ukazuje duverove odkazy pred platbou', async ({ page }) => {
@@ -94,6 +94,14 @@ test.describe('Ceník — platební tlačítka', () => {
 
         const yearlyGuideCard = page.locator('.card--pricing', { has: page.locator('[data-plan="pruvodce-rocne"]') });
         await expect(yearlyGuideCard).toHaveClass(/pricing-card--recommended/);
+    });
+
+    test('rychla volba jednorazoveho PDF zvyrazni rocni horoskop', async ({ page }) => {
+        await page.locator('[data-pricing-choice="one_time"]').click();
+
+        await expect(page.locator('[data-pricing-choice="one_time"]')).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.locator('.pricing-addon')).toHaveClass(/pricing-addon--recommended/);
+        await expect(page.locator('[data-product="rocni_horoskop_2026"]')).toHaveClass(/pricing-addon__product--recommended/);
     });
 
     test('mobilni cookie lista v ceniku zustava kompaktni', async ({ page }) => {
@@ -343,8 +351,8 @@ test.describe('Ceník — platební tlačítka', () => {
 
         await Promise.all([
             productIntent,
-            page.waitForURL(/osobni-mapa\.html/),
-            page.locator('[data-product="osobni_mapa_2026"]').click()
+            page.waitForURL(/rocni-horoskop\.html/),
+            page.locator('[data-product="rocni_horoskop_2026"]').click()
         ]);
 
         await expect.poll(async () => {
@@ -353,14 +361,14 @@ test.describe('Ceník — platební tlačítka', () => {
         }).toEqual(expect.objectContaining({
             eventName: 'pricing_product_cta_clicked',
             source: 'pricing_addon',
-            feature: 'osobni_mapa_2026',
+            feature: 'rocni_horoskop_2026',
             metadata: expect.objectContaining({
                 path: '/cenik.html',
-                product_id: 'osobni_mapa_2026',
-                label: 'Osobní mapa zbytku roku 2026',
+                product_id: 'rocni_horoskop_2026',
+                label: 'Roční horoskop na míru 2026',
                 entry_source: 'pricing_page',
                 entry_feature: 'premium_membership',
-                destination: 'osobni-mapa.html?source=pricing_addon'
+                destination: 'rocni-horoskop.html?source=pricing_addon'
             })
         }));
     });

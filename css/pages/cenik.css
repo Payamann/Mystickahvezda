@@ -25,9 +25,16 @@
         .pricing-trust-links a:hover,
         .pricing-trust-links a:focus-visible { color:#fff; }
         .pricing-addon__products { display:grid; gap:0.8rem; }
-        .pricing-addon__product { padding:1rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.035); text-decoration:none; }
-        .pricing-addon__product strong { display:flex; justify-content:space-between; gap:0.8rem; color:#fff; margin-bottom:0.35rem; }
-        .pricing-addon__product span { color:rgba(255,255,255,0.64); font-size:0.86rem; line-height:1.5; }
+        .pricing-addon__product { display:block; position:relative; padding:1rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.035); text-decoration:none; transition:border-color 0.2s ease, background 0.2s ease, transform 0.2s ease; }
+        .pricing-addon__product:hover,
+        .pricing-addon__product:focus-visible { border-color:rgba(212,175,55,0.34); background:rgba(212,175,55,0.075); transform:translateY(-2px); outline:none; }
+        .pricing-addon__product strong { display:flex; justify-content:space-between; align-items:baseline; gap:0.8rem; color:#fff; margin-bottom:0.35rem; }
+        .pricing-addon__product strong span:last-child { white-space:nowrap; color:#fff; }
+        .pricing-addon__description { display:block; color:rgba(255,255,255,0.64); font-size:0.86rem; line-height:1.5; }
+        .pricing-addon__badge { display:inline-flex; width:max-content; max-width:100%; margin-bottom:0.5rem; padding:0.18rem 0.55rem; border-radius:999px; background:rgba(46,204,113,0.16); color:#6dff9d; font-size:0.68rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; }
+        .pricing-addon__cta { display:inline-flex; margin-top:0.65rem; color:var(--color-mystic-gold); font-size:0.78rem; font-weight:800; line-height:1.4; }
+        .pricing-addon--recommended { box-shadow:0 0 0 2px rgba(212,175,55,0.32), 0 18px 50px rgba(0,0,0,0.28); }
+        .pricing-addon__product--recommended { border-color:rgba(212,175,55,0.58); background:rgba(212,175,55,0.11); }
         .comparison-mobile { display: none; margin-top: 1.5rem; gap: 1rem; }
         .comparison-mobile__card { padding: 1.25rem; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); }
         .comparison-mobile__card--featured { border-color: rgba(212,175,55,0.35); background: rgba(212,175,55,0.06); }
@@ -122,7 +129,7 @@ html body .pricing-toggle--active {
 
 .pricing-decision__grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.9rem;
 }
 
@@ -343,7 +350,17 @@ html body .pricing-toggle--active {
     box-shadow: 0 0 0 2px rgba(212,175,55,0.45), 0 18px 50px rgba(0,0,0,0.35);
 }
 
-@media (max-width: 900px) {
+.page-pricing .faq-question .faq-icon {
+    display: none;
+}
+
+@media (max-width: 1100px) {
+    .pricing-decision__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 680px) {
     .pricing-decision__grid {
         grid-template-columns: 1fr;
     }

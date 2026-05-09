@@ -618,6 +618,10 @@ function highlightPricingCard(card) {
     document.querySelectorAll('.card--pricing').forEach((card) => {
         card.classList.remove('pricing-card--recommended');
     });
+    document.querySelector('.pricing-addon')?.classList.remove('pricing-addon--recommended');
+    document.querySelectorAll('.pricing-addon__product--recommended').forEach((product) => {
+        product.classList.remove('pricing-addon__product--recommended');
+    });
 
     if (!card) return false;
 
@@ -641,6 +645,21 @@ function resolveDisplayedPlanId(planKey) {
 function highlightFreePlan() {
     const card = document.querySelector('[data-pricing-free-cta]')?.closest('.card--pricing');
     return highlightPricingCard(card);
+}
+
+function highlightOneTimeProducts() {
+    highlightPricingCard(null);
+
+    const addon = document.querySelector('.pricing-addon');
+    if (!addon) return false;
+
+    const entryProduct = addon.querySelector('[data-product="rocni_horoskop_2026"]')
+        || addon.querySelector('.pricing-addon__product');
+
+    addon.classList.add('pricing-addon--recommended');
+    entryProduct?.classList.add('pricing-addon__product--recommended');
+    addon.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return true;
 }
 
 function startRecommendedCheckout(planId, context) {
@@ -802,6 +821,11 @@ function bindPricingDecisionGuide(context) {
 
             if (choice === 'free') {
                 highlightFreePlan();
+                return;
+            }
+
+            if (choice === 'one_time') {
+                highlightOneTimeProducts();
                 return;
             }
 
