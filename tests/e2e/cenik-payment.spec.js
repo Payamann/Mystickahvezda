@@ -110,7 +110,7 @@ test.describe('Ceník — platební tlačítka', () => {
             localStorage.removeItem('mh_cookie_prefs');
             localStorage.removeItem('cookieConsent');
         });
-        await page.goto('/cenik.html?source=e2e_pricing_cookie&feature=mentor');
+        await page.goto('/cenik.html');
         await waitForPageReady(page);
 
         const banner = page.locator('#cookie-banner');
@@ -120,32 +120,61 @@ test.describe('Ceník — platební tlačítka', () => {
         expect(box?.height || 0).toBeLessThan(190);
         expect(box?.width || 0).toBeLessThanOrEqual(366);
 
-        await expect.poll(() => page.evaluate(() => {
-            const cta = document.querySelector('.plan-checkout-btn[data-plan="pruvodce"]')?.getBoundingClientRect();
-            return Math.round(cta?.bottom || 9999);
-        }), { timeout: 6000 }).toBeLessThanOrEqual(760);
-
         const metrics = await page.evaluate(() => {
             const cta = document.querySelector('.plan-checkout-btn[data-plan="pruvodce"]')?.getBoundingClientRect();
-            const cookie = document.getElementById('cookie-banner')?.getBoundingClientRect();
+            const cookieEl = document.getElementById('cookie-banner');
+            const cookie = cookieEl?.getBoundingClientRect();
             const overlapsCookie = !!(cta && cookie && !(
                 cookie.right < cta.left
                 || cookie.left > cta.right
                 || cookie.bottom < cta.top
                 || cookie.top > cta.bottom
             ));
+            const visibleControlOverlaps = [...document.querySelectorAll('a,button,input[type="submit"],.cta,.btn')]
+                .filter((el) => {
+                    if (cookieEl?.contains(el)) return false;
+                    const rect = el.getBoundingClientRect();
+                    const label = (el.innerText || el.value || el.getAttribute('aria-label') || '').trim();
+                    return label && rect.width > 20 && rect.height > 12 && rect.bottom > 0 && rect.top < window.innerHeight;
+                })
+                .map((el) => {
+                    const rect = el.getBoundingClientRect();
+                    const overlap = !!(cookie && !(
+                        rect.right <= cookie.left
+                        || rect.left >= cookie.right
+                        || rect.bottom <= cookie.top
+                        || rect.top >= cookie.bottom
+                    ));
+                    return {
+                        text: (el.innerText || el.value || el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ').slice(0, 80),
+                        top: Math.round(rect.top),
+                        bottom: Math.round(rect.bottom),
+                        overlap
+                    };
+                })
+                .filter((item) => item.overlap);
 
             return {
                 ctaBottom: Math.round(cta?.bottom || 9999),
                 cookieTop: Math.round(cookie?.top || window.innerHeight),
                 overlapsCookie,
+                visibleControlOverlaps,
                 overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
             };
         });
 
         expect(metrics.overflow).toBe(false);
         expect(metrics.overlapsCookie).toBe(false);
-        expect(metrics.ctaBottom).toBeLessThanOrEqual(metrics.cookieTop);
+        expect(metrics.visibleControlOverlaps).toEqual([]);
+
+        await page.goto('/cenik.html?source=e2e_pricing_cookie&feature=mentor');
+        await waitForPageReady(page);
+
+        await expect.poll(() => page.evaluate(() => {
+            const cta = document.querySelector('.plan-checkout-btn[data-plan="pruvodce"]')?.getBoundingClientRect();
+            const cookie = document.getElementById('cookie-banner')?.getBoundingClientRect();
+            return Math.round(cta?.bottom || 9999) <= Math.round(cookie?.top || window.innerHeight);
+        }), { timeout: 6000 }).toBe(true);
     });
 
     test('feature kontext zobrazi doporuceny plan a umi ho zvyraznit', async ({ page }) => {
