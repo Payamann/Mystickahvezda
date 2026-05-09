@@ -1,6 +1,8 @@
 import {
+    buildFallbackDailyHoroscope,
     filterDueSubscriptions,
     getDailyHoroscopeDateKey,
+    normalizeSignKey,
     resolveSupabaseUrl
 } from '../scripts/send-daily-horoscope.js';
 
@@ -30,5 +32,22 @@ describe('daily horoscope email script', () => {
             'yesterday@example.com',
             'invalid-date@example.com'
         ]);
+    });
+
+    test('normalizes Czech sign names for fallback lookup', () => {
+        expect(normalizeSignKey('Býk')).toBe('byk');
+        expect(normalizeSignKey('Střelec')).toBe('strelec');
+        expect(normalizeSignKey('Vodnář')).toBe('vodnar');
+    });
+
+    test('builds non-empty sign-specific fallback when AI providers are unavailable', () => {
+        const now = new Date('2026-05-09T07:05:00Z');
+        const beran = buildFallbackDailyHoroscope('Beran', now);
+        const ryby = buildFallbackDailyHoroscope('Ryby', now);
+
+        expect(beran).toContain('Beran');
+        expect(ryby).toContain('Ryby');
+        expect(beran).not.toBe(ryby);
+        expect(beran.length).toBeGreaterThan(120);
     });
 });

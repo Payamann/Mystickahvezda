@@ -53,18 +53,65 @@ export function filterDueSubscriptions(subscriptions = [], now = new Date()) {
     });
 }
 
+export function normalizeSignKey(sign = '') {
+    return String(sign)
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '');
+}
+
+const FALLBACK_SIGN_PROFILES = {
+    beran: ['Beran', 'odvaha a novy zacatek', 'vyber jeden krok, ktery lze udelat hned, a nenech ho rozpustit v dlouhem premysleni'],
+    byk: ['Byk', 'klid, telo a pevna puda', 'zpomalu tam, kde vznikl tlak, a opiraj se o to, co je skutecne stabilni'],
+    blizenci: ['Blizenci', 'rozhovor, zvedavost a nova souvislost', 'poloz jednu primou otazku a nech odpoved ukazat dalsi smer'],
+    rak: ['Rak', 'intuice, domov a vnitrni bezpeci', 'vsimni si, kde telo rika ano, a kde uz potrebuje jemnou hranici'],
+    lev: ['Lev', 'sebevyjadreni, radost a viditelnost', 'udelej prostor tomu, co chces tvorit, ne jen tomu, co od tebe nekdo ceka'],
+    panna: ['Panna', 'rad, detail a uzitecny krok', 'zjednodus jednu vec, ktera bere pozornost, a vrat si prehled'],
+    vahy: ['Vahy', 'rovnovaha, vztahy a jasna dohoda', 'pojmenuj, co potrebujes, bez snahy vse zjemnit za kazdou cenu'],
+    stir: ['Stir', 'hloubka, pravda a transformace', 'nech odejit jednu starou obranu, ktera uz nechrani, jen unavuje'],
+    strelec: ['Strelec', 'svoboda, nadhled a odvaznejsi smer', 'podivej se na situaci z vetsi vysky a vyber moznost, ktera rozsiruje obzor'],
+    kozoroh: ['Kozoroh', 'disciplina, odpovednost a dlouhy tah', 'udelej jednu praktickou vec pro budoucnost, i kdyz je mala'],
+    vodnar: ['Vodnar', 'originalita, odstup a nova perspektiva', 'dovol si reseni, ktere neni obvykle, ale dava vnitrne smysl'],
+    ryby: ['Ryby', 'citlivost, sny a tiche vedeni', 'chran si klid, protoze dnes v nem uslysis vic nez v tlaku']
+};
+
+export function buildFallbackDailyHoroscope(sign, now = new Date()) {
+    const fallbackLabel = String(sign || 'tvoje znameni').trim() || 'tvoje znameni';
+    const [label, energy, advice] = FALLBACK_SIGN_PROFILES[normalizeSignKey(sign)] || [
+        fallbackLabel,
+        'klidne naladeni a jeden vedomy krok',
+        'vyber jednu malou vec, ktera dnes vrati smer a lehkost'
+    ];
+    const dateLabel = now.toLocaleDateString('cs-CZ', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        timeZone: DAILY_HOROSCOPE_TIME_ZONE
+    });
+
+    return [
+        `Pro ${label} dnes (${dateLabel}) vystupuje energie: ${energy}.`,
+        'Neni potreba tlacit na velky obrat; dulezite je vsimnout si jednoho mista, kde se da jednat vedomeji.',
+        `Doporuceni pro dnesek: ${advice}.`
+    ].join(' ');
+}
+
 async function getRuntimeDeps() {
     if (runtimeDeps) return runtimeDeps;
 
     const [
         { createClient },
         { callClaude },
+        { callGemini },
         { SYSTEM_PROMPTS },
         { sendEmail },
         astrology
     ] = await Promise.all([
         import('@supabase/supabase-js'),
         import('../services/claude.js'),
+        import('../services/gemini.js'),
         import('../config/prompts.js'),
         import('../email-service.js'),
         import('../services/astrology.js')
@@ -76,6 +123,7 @@ async function getRuntimeDeps() {
             process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
         ),
         callClaude,
+        callGemini,
         SYSTEM_PROMPTS,
         sendEmail,
         getHoroscopeCacheKey: astrology.getHoroscopeCacheKey,
@@ -90,6 +138,7 @@ async function getRuntimeDeps() {
 async function getOrGenerateHoroscope(sign) {
     const {
         callClaude,
+        callGemini,
         SYSTEM_PROMPTS,
         getHoroscopeCacheKey,
         getCachedHoroscope,
@@ -104,7 +153,19 @@ async function getOrGenerateHoroscope(sign) {
     // Generate fresh via Claude and save to cache (website will reuse it)
     const systemPrompt = SYSTEM_PROMPTS?.horoscope || 'Jsi astrologický asistent.';
     const userMsg = `Napiš denní horoskop pro znamení ${sign}. Buď inspirativní, konkrétní a osobní. Délka: 3-4 věty.`;
-    const text = await callClaude(systemPrompt, userMsg);
+    let text;
+
+    try {
+        text = await callClaude(systemPrompt, userMsg);
+    } catch (claudeError) {
+        console.warn(`[DailyHoroscope] Claude unavailable for ${sign}: ${claudeError.message}`);
+        try {
+            text = await callGemini(systemPrompt, userMsg);
+        } catch (geminiError) {
+            console.warn(`[DailyHoroscope] Gemini unavailable for ${sign}: ${geminiError.message}`);
+            text = buildFallbackDailyHoroscope(sign);
+        }
+    }
 
     const today = new Date().toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' });
     await saveCachedHoroscope(cacheKey, sign, 'daily', text, today);
