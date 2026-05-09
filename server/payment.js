@@ -624,7 +624,10 @@ export async function handleStripeWebhook(rawBody, sig) {
         // RECORD PROCESSED EVENT (idempotency guard — must succeed)
         const { error: updateError } = await supabase
             .from('payment_events')
-            .update({ status: 'success' })
+            .update({
+                status: 'success',
+                processed_at: new Date().toISOString()
+            })
             .eq('event_id', event.id);
         if (updateError) {
             console.error(`[STRIPE] Failed to mark event ${event.id} as success:`, updateError.message);

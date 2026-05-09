@@ -203,11 +203,12 @@ router.post('/send-weekly-feature', authenticateToken, requireAdmin, async (req,
       return res.status(400).json({ error: 'email and feature_title required' });
     }
 
-    // Fetch all active users with their email preferences in one query
+    // Fetch users with their email preferences in one query. Older Supabase
+    // schemas did not have a users.status column, so preferences opt-outs are
+    // the source of truth here.
     const { data: users, error: usersError } = await supabase
       .from('users')
-      .select('id, email, email_preferences(weekly_features, unsubscribe_all)')
-      .eq('status', 'active');
+      .select('id, email, email_preferences(weekly_features, unsubscribe_all)');
 
     if (usersError) {
       return res.status(500).json({ error: 'Failed to fetch users' });

@@ -150,7 +150,9 @@ describe('Email service deliverability payload', () => {
         ]);
         expect(queued.every(email => email.user_id === null)).toBe(true);
 
-        const firstPayload = JSON.parse(queued[0].data);
+        const firstPayload = typeof queued[0].data === 'string'
+            ? JSON.parse(queued[0].data)
+            : queued[0].data;
         expect(firstPayload).toMatchObject({
             orderId: 'order-email-sequence-test',
             productId: 'osobni_mapa_2026',

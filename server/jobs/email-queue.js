@@ -9,6 +9,24 @@ import { supabase } from '../db-supabase.js';
 
 let jobRunning = false;
 
+export function parseQueuedEmailData(data) {
+    if (!data) return {};
+
+    if (typeof data === 'string') {
+        try {
+            return JSON.parse(data);
+        } catch {
+            return {};
+        }
+    }
+
+    if (typeof data === 'object' && !Array.isArray(data)) {
+        return data;
+    }
+
+    return {};
+}
+
 export async function processEmailQueue() {
     // Prevent concurrent execution
     if (jobRunning) {
@@ -56,7 +74,7 @@ export async function processEmailQueue() {
                 const result = await sendEmail({
                     to: email_to,
                     template,
-                    data: data ? JSON.parse(data) : {}
+                    data: parseQueuedEmailData(data)
                 });
 
                 // Mark as sent in database
@@ -76,18 +94,23 @@ export async function processEmailQueue() {
                 failureCount++;
                 console.error(`[JOB] ✗ Failed to send email ${emailRecord.id}:`, emailErr.message);
 
+                const nextRetryCount = (emailRecord.retry_count || 0) + 1;
+                const maxRetries = Number.isFinite(Number(emailRecord.max_retries))
+                    ? Number(emailRecord.max_retries)
+                    : 3;
+
                 // Increment retry count
                 await supabase
                     .from('email_queue')
                     .update({
-                        retry_count: (emailRecord.retry_count || 0) + 1,
+                        retry_count: nextRetryCount,
                         last_error: emailErr.message,
                         updated_at: new Date().toISOString()
                     })
                     .eq('id', emailRecord.id);
 
-                // Mark as failed after 3 retries
-                if ((emailRecord.retry_count || 0) >= 3) {
+                // Mark as failed once the configured retry budget is exhausted
+                if (nextRetryCount >= maxRetries) {
                     await supabase
                         .from('email_queue')
                         .update({ status: 'failed' })
@@ -129,7 +152,7 @@ export async function scheduleEmailLater(emailConfig) {
                 user_id: userId || null,
                 email_to: email,
                 template,
-                data: JSON.stringify(data),
+                data,
                 scheduled_for: scheduledFor.toISOString(),
                 status: 'pending',
                 retry_count: 0,
