@@ -1490,6 +1490,158 @@ body.page-mentor .header {
 
 }
 
+@media (min-width: 993px) and (max-width: 1320px) {
+
+  .header .container {
+
+    max-width: none;
+
+    padding-left: 1.5rem;
+
+    padding-right: 1.5rem;
+
+  }
+
+  .header__inner {
+
+    justify-content: space-between;
+
+    gap: 0.75rem;
+
+  }
+
+  .logo {
+
+    flex: 0 0 auto;
+
+    margin-right: 0;
+
+    gap: 0.35rem;
+
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+
+  }
+
+  .logo__image {
+
+    height: 46px;
+
+  }
+
+  .logo__text {
+
+    margin-left: 0.25rem;
+
+  }
+
+  .nav {
+
+    flex: 1 1 auto;
+
+    min-width: 0;
+
+    justify-content: center;
+
+    gap: 0.4rem;
+
+  }
+
+  .nav__list {
+
+    gap: 0.45rem;
+
+    margin-right: 0;
+
+  }
+
+  .nav__link {
+
+    font-size: 0.72rem;
+
+    letter-spacing: 0;
+
+  }
+
+  .nav__item--has-dropdown > .nav__link {
+
+    padding-right: 10px;
+
+  }
+
+  .header__actions {
+
+    flex: 0 0 auto;
+
+    min-width: 0;
+
+  }
+
+  .auth-buttons {
+
+    gap: 0.35rem;
+
+  }
+
+  .header .btn {
+
+    padding: 0.34rem 0.62rem;
+
+    font-size: 0.66rem;
+
+    letter-spacing: 0.06em;
+
+  }
+
+}
+
+@media (min-width: 993px) and (max-width: 1160px) {
+
+  .header .container {
+
+    padding-left: 1rem;
+
+    padding-right: 1rem;
+
+  }
+
+  .logo__text {
+
+    display: none;
+
+  }
+
+  .nav__link {
+
+    font-size: 0.68rem;
+
+  }
+
+  .header .btn {
+
+    padding: 0.32rem 0.5rem;
+
+    font-size: 0.64rem;
+
+  }
+
+  .header__actions .upgrade-cta-btn {
+
+    display: none;
+
+  }
+
+}
+
+@media (min-width: 993px) and (max-width: 1240px) {
+
+  .header__actions .upgrade-cta-btn {
+
+    display: none;
+
+  }
+
+}
+
 
 
 .nav__link {

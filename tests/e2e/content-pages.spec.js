@@ -134,6 +134,60 @@ test.describe('Ceník', () => {
         expect(canonical).toBeTruthy();
     });
 
+    test('desktop header udrzi auth CTA uvnitr viewportu', async ({ page }) => {
+        await page.addInitScript(() => {
+            localStorage.setItem('cookieConsent', JSON.stringify({ necessary: true }));
+        });
+
+        for (const width of [994, 1180, 1280]) {
+            await page.setViewportSize({ width, height: 720 });
+            await page.goto('/cenik.html');
+            await waitForPageReady(page);
+
+            const layoutProblems = await page.evaluate(() => {
+                const visibleItems = Array.from(document.querySelectorAll('header a, header button'))
+                    .filter((element) => {
+                        const styles = window.getComputedStyle(element);
+                        const rect = element.getBoundingClientRect();
+                        return styles.display !== 'none'
+                            && styles.visibility !== 'hidden'
+                            && rect.width > 0
+                            && rect.height > 0;
+                    })
+                    .map((element) => {
+                        const rect = element.getBoundingClientRect();
+                        return {
+                            text: (element.textContent || '').replace(/\s+/g, ' ').trim(),
+                            left: rect.left,
+                            right: rect.right,
+                            top: rect.top,
+                            bottom: rect.bottom,
+                        };
+                    });
+
+                const offscreen = visibleItems
+                    .filter(item => item.left < -1 || item.right > window.innerWidth + 1)
+                    .map(item => item.text);
+
+                const overlaps = [];
+                for (let i = 0; i < visibleItems.length; i += 1) {
+                    for (let j = i + 1; j < visibleItems.length; j += 1) {
+                        const a = visibleItems[i];
+                        const b = visibleItems[j];
+                        if (a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom) {
+                            overlaps.push(`${a.text} <> ${b.text}`);
+                        }
+                    }
+                }
+
+                return { offscreen, overlaps };
+            });
+
+            expect(layoutProblems.offscreen, `header prvky mimo viewport pri ${width}px`).toEqual([]);
+            expect(layoutProblems.overlaps, `header prvky se prekryvaji pri ${width}px`).toEqual([]);
+        }
+    });
+
     // Payment API
     test('POST /api/payment/create-checkout-session bez auth vrátí 401', async ({ page }) => {
         await page.goto('/cenik.html');
