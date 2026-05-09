@@ -401,6 +401,50 @@ html body .mh-inline-de7ffff2a8 { opacity: 0.8; }
     .synastry-faq-item {
         padding: var(--space-md);
     }
+
+    body.page-compatibility .cookie-banner {
+        left: 12px;
+        right: 12px;
+        bottom: 8px;
+        width: auto;
+        max-width: none !important;
+        padding: 0.48rem 0.54rem;
+    }
+
+    body.page-compatibility .cookie-banner__content {
+        gap: 0.28rem;
+    }
+
+    body.page-compatibility .cookie-banner__text {
+        font-size: 0.66rem;
+        line-height: 1.18;
+    }
+
+    body.page-compatibility .cookie-banner__content > div:not(.cookie-banner__actions) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.16rem 0.42rem;
+        font-size: 0.6rem;
+        line-height: 1.1;
+    }
+
+    body.page-compatibility .cookie-banner__actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.3rem;
+    }
+
+    body.page-compatibility .cookie-banner__actions .btn {
+        width: 100%;
+        min-height: 32px;
+        padding: 0.36rem 0.44rem;
+        font-size: 0.58rem;
+        line-height: 1.1;
+    }
+
+    body.page-compatibility #cookie-accept {
+        grid-column: 1 / -1;
+    }
 }
 
 .synastry-teaser-card {

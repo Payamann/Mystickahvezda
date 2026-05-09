@@ -10,6 +10,41 @@ body.page-home {
         font-family: var(--font-body);
         font-weight: 850;
     }
+
+    body.page-home .cookie-banner {
+        bottom: 8px;
+        padding: 0.56rem 0.62rem;
+    }
+
+    body.page-home .cookie-banner__content {
+        gap: 0.3rem;
+    }
+
+    body.page-home .cookie-banner__text {
+        font-size: 0.68rem;
+        line-height: 1.18;
+    }
+
+    body.page-home .cookie-banner__content > div:not(.cookie-banner__actions) {
+        gap: 0.18rem 0.42rem;
+        font-size: 0.6rem;
+        line-height: 1.1;
+    }
+
+    body.page-home .cookie-banner__actions {
+        gap: 0.3rem;
+    }
+
+    body.page-home .cookie-banner__actions .btn {
+        min-height: 32px;
+        padding: 0.36rem 0.44rem;
+        font-size: 0.58rem;
+        line-height: 1.1;
+    }
+
+    body.page-home.cookie-banner-active .hero__trust-strip {
+        display: none;
+    }
 }
 
 /* Migrated from index.html static style attributes. */

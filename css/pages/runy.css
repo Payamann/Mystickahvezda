@@ -323,3 +323,53 @@ html body .mh-inline-de33ec85ca { color: var(--color-silver-mist); margin: 0; }
 html body .mh-inline-7c806d36e5 { font-family: var(--font-heading); color: var(--color-mystic-gold); margin-bottom: 1.5rem; }
 html body .mh-inline-45df8e19ce { color: var(--color-silver-mist); line-height: 1.7; font-size: 1.05rem; }
 html body .mh-inline-ea59635151 { color: var(--color-starlight); margin: 2rem 0 1rem; font-size: 1.3rem; }
+
+@media (max-width: 640px) {
+    body.page-runes .cookie-banner {
+        left: 12px;
+        right: 12px;
+        bottom: 8px;
+        width: auto;
+        max-width: none !important;
+        padding: 0.48rem 0.54rem;
+    }
+
+    body.page-runes .cookie-banner__content {
+        gap: 0.28rem;
+    }
+
+    body.page-runes .cookie-banner__text {
+        font-size: 0.66rem;
+        line-height: 1.18;
+    }
+
+    body.page-runes .cookie-banner__content > div:not(.cookie-banner__actions) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.16rem 0.42rem;
+        font-size: 0.6rem;
+        line-height: 1.1;
+    }
+
+    body.page-runes .cookie-banner__actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.3rem;
+    }
+
+    body.page-runes .cookie-banner__actions .btn {
+        width: 100%;
+        min-height: 32px;
+        padding: 0.36rem 0.44rem;
+        font-size: 0.58rem;
+        line-height: 1.1;
+    }
+
+    body.page-runes #cookie-accept {
+        grid-column: 1 / -1;
+    }
+
+    body.page-runes.cookie-banner-active .runes-hero {
+        margin-bottom: 8rem;
+    }
+}

@@ -268,4 +268,8 @@ html body .mh-inline-bc2787405c { color: var(--color-silver-mist); opacity: 0.8;
     body.page-numerology.cookie-banner-active {
         padding-bottom: 0;
     }
+
+    body.page-numerology.cookie-banner-active .section--alt {
+        margin-top: 14rem;
+    }
 }

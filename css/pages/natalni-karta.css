@@ -280,6 +280,115 @@ html body .mh-inline-e8965e1cb8 { margin: 0; color: var(--color-mystic-gold); }
     .natal-engine-grid {
         grid-template-columns: 1fr;
     }
+
+    body.page-natal .hero--compact {
+        padding-top: 5.15rem;
+        padding-bottom: 1rem;
+    }
+
+    body.page-natal .hero__title {
+        margin-bottom: 0.6rem;
+        font-size: 2rem;
+        line-height: 1.08;
+    }
+
+    body.page-natal .hero__subtitle {
+        max-width: 22rem;
+        margin: 0 auto;
+        font-size: 1rem;
+        line-height: 1.42;
+    }
+
+    body.page-natal .section:not(.section--hero) {
+        padding-top: 0.5rem;
+    }
+
+    body.page-natal .card {
+        padding: 0.95rem 0.85rem 1rem;
+        border-radius: 16px;
+    }
+
+    body.page-natal .card .flex-between {
+        margin-bottom: 0.65rem;
+    }
+
+    body.page-natal .card__title {
+        font-size: 1.45rem;
+        line-height: 1.15;
+    }
+
+    body.page-natal .form-group {
+        margin-bottom: 0.55rem;
+    }
+
+    body.page-natal .mh-inline-4d3c1b4aba {
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+        line-height: 1.2;
+    }
+
+    body.page-natal .mh-inline-2ee748ee9c {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    body.page-natal .email-form__input {
+        min-height: 42px;
+        padding: 0.65rem 0.8rem;
+        font-size: 1rem;
+    }
+
+    body.page-natal .mh-inline-f84cc648fc {
+        min-height: 44px;
+        margin-top: 0.2rem;
+        padding: 0.7rem 0.9rem;
+        font-size: 0.78rem;
+        line-height: 1.15;
+    }
+
+    body.page-natal .cookie-banner {
+        left: 12px;
+        right: 12px;
+        bottom: 8px;
+        width: auto;
+        max-width: none !important;
+        padding: 0.48rem 0.54rem;
+    }
+
+    body.page-natal .cookie-banner__content {
+        gap: 0.28rem;
+    }
+
+    body.page-natal .cookie-banner__text {
+        font-size: 0.66rem;
+        line-height: 1.18;
+    }
+
+    body.page-natal .cookie-banner__content > div:not(.cookie-banner__actions) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.16rem 0.42rem;
+        font-size: 0.6rem;
+        line-height: 1.1;
+    }
+
+    body.page-natal .cookie-banner__actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.3rem;
+    }
+
+    body.page-natal .cookie-banner__actions .btn {
+        width: 100%;
+        min-height: 32px;
+        padding: 0.36rem 0.44rem;
+        font-size: 0.58rem;
+        line-height: 1.1;
+    }
+
+    body.page-natal #cookie-accept {
+        grid-column: 1 / -1;
+    }
 }
 
 .planet-image--normal {

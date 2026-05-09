@@ -405,4 +405,20 @@ html body .mh-inline-9b240aa668 { color:rgba(255,255,255,0.7);line-height:1.8;ma
     body.page-life-number.cookie-banner-active {
         padding-bottom: 0;
     }
+
+    body.page-life-number.cookie-banner-active .life-number-intent-section {
+        margin-top: 8rem;
+    }
+
+    body.page-life-number.cookie-banner-active .life-number-intent-section .section__text {
+        display: none;
+    }
+
+    body.page-life-number.cookie-banner-active .life-number-intent-grid {
+        display: none;
+    }
+
+    body.page-life-number.cookie-banner-active .mh-inline-4ec9742dd9 {
+        margin-top: 12rem;
+    }
 }
