@@ -224,6 +224,42 @@ test.describe('Tarot', () => {
         );
         expect(hasHorizontalScroll).toBe(false);
     });
+
+    test('mobilni cookie lista neprekryva prvni tarot CTA', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.addInitScript(() => {
+            localStorage.removeItem('mh_cookie_prefs');
+            localStorage.removeItem('cookieConsent');
+        });
+        await page.goto('/tarot.html?source=e2e_tarot_cookie');
+        await waitForPageReady(page);
+
+        const trigger = page.locator('[data-spread-type="Jedna karta"]').first();
+        await expect(page.locator('#cookie-banner')).toBeVisible();
+        await expect(trigger).toBeVisible();
+
+        const metrics = await page.evaluate(() => {
+            const cta = document.querySelector('[data-spread-type="Jedna karta"]')?.getBoundingClientRect();
+            const cookie = document.getElementById('cookie-banner')?.getBoundingClientRect();
+            const overlapsCookie = !!(cta && cookie && !(
+                cookie.right < cta.left
+                || cookie.left > cta.right
+                || cookie.bottom < cta.top
+                || cookie.top > cta.bottom
+            ));
+
+            return {
+                ctaBottom: Math.round(cta?.bottom || 9999),
+                cookieTop: Math.round(cookie?.top || window.innerHeight),
+                overlapsCookie,
+                overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
+            };
+        });
+
+        expect(metrics.overflow).toBe(false);
+        expect(metrics.overlapsCookie).toBe(false);
+        expect(metrics.ctaBottom).toBeLessThanOrEqual(metrics.cookieTop);
+    });
 });
 
 // ── Význam tarotových karet ─────────────────────────────────────────────────
@@ -295,6 +331,7 @@ test.describe('Tarot význam karet', () => {
         );
         expect(hasHorizontalScroll).toBe(false);
     });
+
 });
 
 // ── Tarot Ano/Ne stránka ─────────────────────────────────────────────────────

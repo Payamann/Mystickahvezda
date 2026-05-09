@@ -161,3 +161,115 @@ html body .mh-inline-4665ff48a5 { font-size: 4rem; }
         flex-direction: column;
     }
 }
+
+@media (max-width: 480px) {
+    body.page-tarot .mh-inline-92c056aeba {
+        min-height: auto;
+        padding-top: 5.25rem;
+        padding-bottom: 2.25rem;
+    }
+
+    body.page-tarot .hero__title {
+        margin-bottom: 0.6rem;
+        font-size: 2.15rem;
+        line-height: 1.08;
+    }
+
+    body.page-tarot .hero__subtitle {
+        margin-bottom: 0.75rem !important;
+        font-size: 1rem;
+        line-height: 1.42;
+    }
+
+    body.page-tarot .t-spread-grid {
+        max-width: 21rem;
+        margin-top: 0.85rem !important;
+        gap: 0.85rem;
+    }
+
+    body.page-tarot .t-spread-card {
+        padding: 0.9rem 0.85rem 1rem;
+        border-radius: 16px;
+    }
+
+    body.page-tarot .t-spread-icon {
+        margin-bottom: 0.55rem;
+    }
+
+    body.page-tarot .t-spread-icon img {
+        width: 54px;
+    }
+
+    body.page-tarot .t-spread-title {
+        margin-bottom: 0.4rem;
+        font-size: 1rem;
+        line-height: 1.15;
+    }
+
+    body.page-tarot .t-spread-desc {
+        min-height: 0;
+        margin-bottom: 0.6rem;
+        font-size: 0.82rem;
+        line-height: 1.35;
+    }
+
+    body.page-tarot .t-spread-price {
+        margin-bottom: 0.65rem;
+        font-size: 0.72rem;
+    }
+
+    body.page-tarot .spread-trigger {
+        min-height: 44px;
+        padding: 0.68rem 0.8rem;
+        font-size: 0.78rem;
+        line-height: 1.15;
+    }
+
+    body.page-tarot .cookie-banner {
+        left: 12px;
+        right: 12px;
+        bottom: 8px;
+        width: auto;
+        max-width: none !important;
+        padding: 0.48rem 0.54rem;
+    }
+
+    body.page-tarot .cookie-banner__content {
+        gap: 0.28rem;
+    }
+
+    body.page-tarot .cookie-banner__text {
+        font-size: 0.66rem;
+        line-height: 1.18;
+    }
+
+    body.page-tarot .cookie-banner__content > div:not(.cookie-banner__actions) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.16rem 0.42rem;
+        font-size: 0.6rem;
+        line-height: 1.1;
+    }
+
+    body.page-tarot .cookie-banner__actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.3rem;
+    }
+
+    body.page-tarot .cookie-banner__actions .btn {
+        width: 100%;
+        min-height: 32px;
+        padding: 0.36rem 0.44rem;
+        font-size: 0.58rem;
+        line-height: 1.1;
+    }
+
+    body.page-tarot #cookie-accept {
+        grid-column: 1 / -1;
+    }
+
+    body.page-tarot.cookie-banner-active {
+        padding-bottom: 0;
+    }
+}

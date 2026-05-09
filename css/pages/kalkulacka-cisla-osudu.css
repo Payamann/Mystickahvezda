@@ -286,3 +286,123 @@ html body .mh-inline-7b21502de8 { color:#ebc066; }
 html body .mh-inline-dc28cffb30 { margin-top:3rem; }
 html body .mh-inline-da07287adf { color:#ebc066;cursor:pointer;font-weight:600; }
 html body .mh-inline-9b240aa668 { color:rgba(255,255,255,0.7);line-height:1.8;margin-top:0.75rem;margin-bottom:0; }
+
+@media (max-width: 560px) {
+    body.page-life-number .section--hero {
+        padding-top: 5.2rem;
+        padding-bottom: 0.35rem;
+    }
+
+    body.page-life-number .section__badge {
+        margin-bottom: 0.55rem;
+        font-size: 0.68rem;
+        letter-spacing: 0.14em;
+    }
+
+    body.page-life-number .hero__title {
+        margin-bottom: 0.55rem;
+        font-size: 2.05rem;
+        line-height: 1.08;
+    }
+
+    body.page-life-number .hero__subtitle {
+        max-width: 22rem;
+        margin: 0 auto;
+        font-size: 1rem;
+        line-height: 1.42;
+    }
+
+    body.page-life-number .mh-inline-f6e00d6753 {
+        padding-top: 0.45rem;
+        padding-bottom: 2.5rem;
+    }
+
+    body.page-life-number .calc-card {
+        width: calc(100% - 1.4rem);
+        padding: 0.95rem 0.85rem 1rem;
+        border-radius: 16px;
+    }
+
+    body.page-life-number .mh-inline-14bd58b6c6 {
+        font-size: 1.25rem;
+        line-height: 1.2;
+    }
+
+    body.page-life-number .mh-inline-40b3337173 {
+        display: none;
+    }
+
+    body.page-life-number .date-inputs {
+        grid-template-columns: 0.85fr 0.85fr 1.3fr;
+        gap: 0.45rem;
+        margin: 0.75rem 0 0.85rem;
+    }
+
+    body.page-life-number .date-inputs label {
+        margin-bottom: 0.2rem;
+        font-size: 0.62rem;
+        letter-spacing: 0.08em;
+    }
+
+    body.page-life-number .date-inputs input {
+        min-height: 42px;
+        padding: 0.58rem 0.35rem;
+        border-radius: 10px;
+        font-size: 0.95rem;
+    }
+
+    body.page-life-number #calc-btn {
+        min-height: 44px;
+        padding: 0.68rem 0.8rem;
+        font-size: 0.78rem;
+        line-height: 1.15;
+    }
+
+    body.page-life-number .cookie-banner {
+        left: 12px;
+        right: 12px;
+        bottom: 8px;
+        width: auto;
+        max-width: none !important;
+        padding: 0.48rem 0.54rem;
+    }
+
+    body.page-life-number .cookie-banner__content {
+        gap: 0.28rem;
+    }
+
+    body.page-life-number .cookie-banner__text {
+        font-size: 0.66rem;
+        line-height: 1.18;
+    }
+
+    body.page-life-number .cookie-banner__content > div:not(.cookie-banner__actions) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.16rem 0.42rem;
+        font-size: 0.6rem;
+        line-height: 1.1;
+    }
+
+    body.page-life-number .cookie-banner__actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.3rem;
+    }
+
+    body.page-life-number .cookie-banner__actions .btn {
+        width: 100%;
+        min-height: 32px;
+        padding: 0.36rem 0.44rem;
+        font-size: 0.58rem;
+        line-height: 1.1;
+    }
+
+    body.page-life-number #cookie-accept {
+        grid-column: 1 / -1;
+    }
+
+    body.page-life-number.cookie-banner-active {
+        padding-bottom: 0;
+    }
+}
