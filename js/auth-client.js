@@ -295,8 +295,26 @@
             // Token is now in HttpOnly cookie (set by server)
             // We only store user data in localStorage
             const pendingPlan = this.getPendingCheckoutPlan();
-            const pendingContext = pendingPlan ? this.getPendingCheckoutContext() : null;
-            const postAuthRedirect = pendingPlan ? null : this.resolvePostAuthRedirect(options);
+            const standaloneContext = this.getStandaloneAuthContext();
+            const standalonePlan = !pendingPlan && standaloneContext?.plan ? standaloneContext.plan : null;
+            const checkoutPlan = pendingPlan || standalonePlan;
+            const checkoutContext = pendingPlan
+                ? this.getPendingCheckoutContext()
+                : standalonePlan
+                    ? {
+                        planId: standalonePlan,
+                        source: standaloneContext.source || 'standalone_auth_plan',
+                        feature: standaloneContext.feature || null,
+                        redirect: typeof standaloneContext.redirect === 'string'
+                            && standaloneContext.redirect.startsWith('/')
+                            && !standaloneContext.redirect.startsWith('//')
+                            && standaloneContext.redirect !== '/profil.html'
+                            ? standaloneContext.redirect
+                            : '/cenik.html',
+                        authMode: standaloneContext.mode || options.mode || 'register'
+                    }
+                    : null;
+            const postAuthRedirect = checkoutPlan ? null : this.resolvePostAuthRedirect(options);
             if (postAuthRedirect) {
                 sessionStorage.setItem(POST_AUTH_REDIRECT_PENDING_KEY, postAuthRedirect);
             } else {
@@ -308,9 +326,9 @@
             this.closeModal();
 
             // After login/register success: check for pending plan redirect
-            if (pendingPlan) {
+            if (checkoutPlan) {
                 sessionStorage.removeItem(POST_AUTH_REDIRECT_PENDING_KEY);
-                this._startCheckout(pendingPlan, pendingContext);
+                this._startCheckout(checkoutPlan, checkoutContext);
                 return;
             }
 

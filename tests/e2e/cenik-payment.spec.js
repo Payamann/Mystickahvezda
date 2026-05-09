@@ -177,6 +177,49 @@ test.describe('Ceník — platební tlačítka', () => {
         }), { timeout: 6000 }).toBe(true);
     });
 
+    test('desktopni cookie lista neprekryva cenove CTA', async ({ page }) => {
+        await page.setViewportSize({ width: 1280, height: 720 });
+        await page.evaluate(() => {
+            localStorage.removeItem('mh_cookie_prefs');
+            localStorage.removeItem('cookieConsent');
+        });
+        await page.goto('/cenik.html');
+        await waitForPageReady(page);
+
+        const banner = page.locator('#cookie-banner');
+        await expect(banner).toBeVisible({ timeout: 4000 });
+        await page.locator('.pricing-grid').scrollIntoViewIfNeeded();
+
+        const metrics = await page.evaluate(() => {
+            const cookie = document.getElementById('cookie-banner')?.getBoundingClientRect();
+            const buttons = Array.from(document.querySelectorAll('.plan-checkout-btn'))
+                .map((button) => {
+                    const rect = button.getBoundingClientRect();
+                    const overlapsCookie = !!(cookie && !(
+                        cookie.right < rect.left
+                        || cookie.left > rect.right
+                        || cookie.bottom < rect.top
+                        || cookie.top > rect.bottom
+                    ));
+                    return {
+                        visible: rect.bottom > 0 && rect.top < window.innerHeight,
+                        overlapsCookie
+                    };
+                });
+
+            return {
+                cookieHeight: cookie?.height || 0,
+                buttons
+            };
+        });
+
+        expect(metrics.cookieHeight).toBeLessThanOrEqual(72);
+        for (const button of metrics.buttons) {
+            expect(button.visible).toBe(true);
+            expect(button.overlapsCookie).toBe(false);
+        }
+    });
+
     test('feature kontext zobrazi doporuceny plan a umi ho zvyraznit', async ({ page }) => {
         await page.goto('/cenik.html?source=inline_paywall&feature=astrocartography');
         await waitForPageReady(page);

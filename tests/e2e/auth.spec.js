@@ -348,6 +348,37 @@ test.describe('Login stránka', () => {
         }
     });
 
+    test('registrace z primeho checkout odkazu dokonci Stripe checkout', async ({ page }) => {
+        let checkoutPayload = null;
+        await mockSuccessfulRegister(page, 'direct-checkout@example.com');
+
+        await page.route('**/api/payment/create-checkout-session', async (route) => {
+            checkoutPayload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    id: 'cs_test_direct_checkout',
+                    url: '/profil.html?payment=success&plan=pruvodce&session_id=cs_test_direct_checkout'
+                })
+            });
+        });
+
+        await page.goto('/prihlaseni.html?mode=register&redirect=/cenik.html&plan=pruvodce&source=pricing_email&feature=premium_membership');
+        await waitForPageReady(page);
+
+        await Promise.all([
+            page.waitForURL(/profil\.html\?payment=success/, { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            submitRegisterForm(page, 'direct-checkout@example.com'),
+        ]);
+
+        expect(checkoutPayload).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            source: 'pricing_email',
+            feature: 'premium_membership'
+        }));
+    });
+
     test('registrace s feature kontextem presmeruje na aktivacni stranku', async ({ page }) => {
         await mockSuccessfulRegister(page);
 
