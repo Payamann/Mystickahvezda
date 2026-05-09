@@ -489,60 +489,6 @@ window.Premium = {
             });
         }
 
-        if (!isPremium && (document.getElementById('header-placeholder') || document.querySelector('header nav'))) {
-            const addUpgradeCTA = () => {
-                const headerActions = document.querySelector('.header__actions .auth-buttons');
-                const mobileActions = document.querySelector('.mobile-auth-buttons');
-                const planId = this.getFeaturePlanId('premium_membership', 'pruvodce');
-                const ctaUrl = new URL('/cenik.html', window.location.origin);
-                ctaUrl.searchParams.set('plan', planId);
-                ctaUrl.searchParams.set('source', 'header_upgrade_cta');
-                ctaUrl.searchParams.set('feature', 'premium_membership');
-                let inserted = false;
-
-                const createUpgradeCTA = (id, label) => {
-                    const upgradeCTA = document.createElement('a');
-                    upgradeCTA.id = id;
-                    upgradeCTA.href = `${ctaUrl.pathname}${ctaUrl.search}`;
-                    upgradeCTA.className = 'btn btn--sm btn--gold upgrade-cta-btn';
-                    upgradeCTA.title = 'Zobrazit ceník';
-                    upgradeCTA.setAttribute('aria-label', 'Zobrazit ceník');
-                    upgradeCTA.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        this.startUpgradeFlow(planId, 'premium_membership', 'header_upgrade_cta');
-                    });
-                    upgradeCTA.innerHTML = label;
-                    return upgradeCTA;
-                };
-
-                if (headerActions && !document.getElementById('upgrade-cta')) {
-                    headerActions.prepend(createUpgradeCTA('upgrade-cta', 'Ceník'));
-                    inserted = true;
-                }
-
-                if (mobileActions && !document.getElementById('mobile-upgrade-cta')) {
-                    mobileActions.prepend(createUpgradeCTA('mobile-upgrade-cta', 'Ceník'));
-                    inserted = true;
-                }
-
-                if (inserted) {
-                    void this.trackServerFunnelEvent('upgrade_cta_viewed', {
-                        source: 'header_upgrade_cta',
-                        feature: 'premium_membership',
-                        planId,
-                        metadata: {
-                            path: window.location.pathname
-                        }
-                    });
-                }
-            };
-
-            if (document.querySelector('header nav')) {
-                addUpgradeCTA();
-            } else {
-                document.addEventListener('components:loaded', addUpgradeCTA);
-            }
-        }
     }
 };
 

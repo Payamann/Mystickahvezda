@@ -272,28 +272,18 @@ test.describe('Ceník — platební tlačítka', () => {
         await expect(page.locator('[data-preview-destination]')).toHaveCount(0);
     });
 
-    test('homepage header zobrazi cenik CTA bez duplicitniho premium labelu', async ({ page }) => {
+    test('homepage header ma jen jeden cenik vstup bez checkout gate', async ({ page }) => {
         await page.goto('/');
         await waitForPageReady(page);
 
-        const viewport = page.viewportSize();
-        const isMobile = (viewport?.width || 0) < 993;
+        await expect(page.locator('#upgrade-cta')).toHaveCount(0);
+        await expect(page.locator('#mobile-upgrade-cta')).toHaveCount(0);
 
-        if (isMobile) {
-            await page.locator('.nav__toggle').click();
-        }
+        const pricingLinks = page.locator('.nav__dropdown-link', { hasText: /Ceník/i });
+        await expect(pricingLinks).toHaveCount(1);
 
-        const cta = page.locator(isMobile ? '#mobile-upgrade-cta' : '#upgrade-cta');
-        await expect(cta).toBeVisible();
-        await expect(cta).toHaveText(/Ceník/i);
-        await expect(cta).toHaveAttribute('aria-label', /ceník/i);
-        await expect(cta).not.toHaveText(/Premium/i);
-
-        const href = await cta.getAttribute('href');
-        expect(href).toContain('/cenik.html');
-        expect(href).toContain('plan=pruvodce');
-        expect(href).toContain('source=header_upgrade_cta');
-        expect(href).toContain('feature=premium_membership');
+        const href = await pricingLinks.first().getAttribute('href');
+        expect(href).toBe('cenik.html');
     });
 
     test('trial paywall fallback copy nezveda zbytecne platebni treni', async ({ page }) => {

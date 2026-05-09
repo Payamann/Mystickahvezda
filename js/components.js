@@ -35,7 +35,7 @@
 
     if (!window.Premium && !document.querySelector('script[src*="premium-gates.js"]')) {
         const pg = document.createElement('script');
-        pg.src = basePath + 'js/dist/premium-gates.js?v=3';
+        pg.src = basePath + 'js/dist/premium-gates.js?v=4';
         pg.defer = true;
         document.head.appendChild(pg);
     }
