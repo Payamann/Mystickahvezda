@@ -490,7 +490,9 @@ test.describe('Homepage', () => {
         const normalizedBodyText = bodyText.toLowerCase();
         expect(bodyText).not.toContain('efemeridami NASA');
         expect(bodyText).not.toContain('Začněte zdarma. Přechod na Premium udělejte až ve chvíli, kdy chcete víc.');
-        expect(bodyText).toContain('Výpočty pod povrchem');
+        expect(bodyText).toContain('Ne další ezoterická stránka');
+        expect(bodyText).toContain('Denní rituál, ne náhodné klikání');
+        expect(bodyText).toContain('Paměť výkladů, ne jednorázový obsah');
         expect(normalizedBodyText).toContain('ceník bez překvapení');
         expect(bodyText).toContain('Začni zdarma. Plať až ve chvíli, kdy chceš víc.');
         expect(bodyText).toContain('Chceš porovnat všechny tarify');

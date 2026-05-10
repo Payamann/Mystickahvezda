@@ -69,8 +69,8 @@ const SOURCE_INTEREST_MAP = {
 
 const CONTEXT_COPY_BY_INTEREST = {
     horoskopy: {
-        title: 'Začněte osobním horoskopem',
-        subtitle: 'Vyberte znamení a téma. Pak vás vezmeme rovnou na první denní vhled.'
+        title: 'Začni jedním rituálem, ne dalším menu',
+        subtitle: 'Vyber znamení a téma. Pak tě vezmeme rovnou k prvnímu dennímu kroku, který se dá uložit a později porovnat.'
     },
     tarot: {
         title: 'Navážeme tarotovým výkladem',
@@ -98,7 +98,7 @@ const CONTEXT_COPY_BY_INTEREST = {
     },
     spiritualita: {
         title: 'Začněte Hvězdným průvodcem',
-        subtitle: 'Vyberte znamení a téma. Potom otevřeme průvodce, aby první otázka navázala na váš záměr.'
+        subtitle: 'Vyberte znamení a téma. Potom otevřeme průvodce, aby první otázka navázala na váš denní záměr.'
     },
     runy: {
         title: 'Začněte runovým výkladem',
@@ -200,8 +200,8 @@ const INTEREST_DESTINATIONS = {
         href: (source) => withSource('/mentor.html', source)
     },
     vesteni: {
-        label: () => 'Otevřít věštecký výklad',
-        copy: () => 'Po dokončení přejdete k tarotu jako rychlému prvnímu výkladu.',
+        label: () => 'Otevřít symbolický vhled',
+        copy: () => 'Po dokončení přejdete k tarotu jako rychlému prvnímu symbolickému kroku.',
         href: (source) => withSource('/tarot.html', source)
     },
     kariera: {

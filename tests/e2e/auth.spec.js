@@ -557,7 +557,7 @@ test.describe('Login stránka', () => {
         expect(url.pathname).toBe('/onboarding.html');
         expect(url.searchParams.get('source')).toBe('header_register');
         expect(url.searchParams.get('feature')).toBe('account');
-        await expect(page.locator('#step-1 .step-title')).toContainText('osobním horoskopem');
+        await expect(page.locator('#step-1 .step-title')).toContainText('jedním rituálem');
     });
 
     // ── Klientská validace ────────────────────────────────────────────────────
