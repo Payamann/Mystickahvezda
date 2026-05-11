@@ -168,6 +168,28 @@ describe('Email service deliverability payload', () => {
         expect(payload.html).not.toContain('alert(1)');
     });
 
+    test('renders activation day 6 one-time offer with product attribution', async () => {
+        await sendEmail({
+            to: 'recipient@example.com',
+            template: 'activation_one_time_offer_day6',
+            data: {
+                name: 'Jana <script>alert(1)</script>',
+                source: 'life_number_result',
+                feature: 'numerologie_vyklad'
+            }
+        });
+
+        const payload = sendMock.mock.calls[0][0];
+        expect(payload.subject).toBe('Jeden další krok bez předplatného');
+        expect(payload.html).toContain('https://yourdomain.com/osobni-mapa.html');
+        expect(payload.html).toContain('utm_campaign=activation_day6_offer');
+        expect(payload.html).toContain('feature=osobni_mapa_2026');
+        expect(payload.html).toContain('entry_feature=numerologie_vyklad');
+        expect(payload.html).not.toContain('<script>');
+        expect(payload.html).not.toContain('alert(1)');
+        expect(payload.text).toContain('jednorázově');
+    });
+
     test('schedules anonymous personal map lifecycle without sensitive form focus', async () => {
         await sendPersonalMapLifecycleSequence({
             orderId: 'order-email-sequence-test',
@@ -282,7 +304,8 @@ describe('Email service deliverability payload', () => {
             delays: {
                 day0: 0,
                 day1: 60,
-                day3: 120
+                day3: 120,
+                day6: 180
             }
         });
         const duplicateSchedule = await sendActivationLifecycleSequence({
@@ -295,7 +318,8 @@ describe('Email service deliverability payload', () => {
             delays: {
                 day0: 0,
                 day1: 60,
-                day3: 120
+                day3: 120,
+                day6: 180
             }
         });
 
@@ -305,13 +329,14 @@ describe('Email service deliverability payload', () => {
             .eq('email_to', email)
             .order('scheduled_for', { ascending: true });
 
-        expect(firstSchedule).toMatchObject({ success: true, scheduled: 3, skipped: 0 });
-        expect(duplicateSchedule).toMatchObject({ success: true, scheduled: 0, skipped: 3 });
-        expect(queued).toHaveLength(3);
+        expect(firstSchedule).toMatchObject({ success: true, scheduled: 4, skipped: 0 });
+        expect(duplicateSchedule).toMatchObject({ success: true, scheduled: 0, skipped: 4 });
+        expect(queued).toHaveLength(4);
         expect(queued.map(emailRecord => emailRecord.template)).toEqual([
             'activation_first_step_day0',
             'activation_quick_win_day1',
-            'activation_depth_day3'
+            'activation_depth_day3',
+            'activation_one_time_offer_day6'
         ]);
         expect(queued.every(emailRecord => emailRecord.user_id === 'activation-user-1')).toBe(true);
 
@@ -323,6 +348,16 @@ describe('Email service deliverability payload', () => {
             feature: 'numerologie_vyklad',
             destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
             dedupeKey: 'activation:activation-user-1:day0'
+        });
+
+        const day6Payload = typeof queued[3].data === 'string'
+            ? JSON.parse(queued[3].data)
+            : queued[3].data;
+        expect(day6Payload).toMatchObject({
+            source: 'life_number_result',
+            feature: 'numerologie_vyklad',
+            skipIfPremium: true,
+            dedupeKey: 'activation:activation-user-1:day6'
         });
     });
 

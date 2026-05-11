@@ -1,5 +1,6 @@
 import schedule from 'node-schedule';
 import { supabase } from '../db-supabase.js';
+import { isPremiumPlanType } from '../config/constants.js';
 
 /**
  * EMAIL QUEUE JOB PROCESSOR
@@ -8,6 +9,7 @@ import { supabase } from '../db-supabase.js';
  */
 
 let jobRunning = false;
+const ACTIVE_SUBSCRIPTION_STATUSES = new Set(['active', 'trialing', 'cancel_pending']);
 
 export function parseQueuedEmailData(data) {
     if (!data) return {};
@@ -25,6 +27,44 @@ export function parseQueuedEmailData(data) {
     }
 
     return {};
+}
+
+function hasActivePremiumSubscription(subscription) {
+    if (!subscription) return false;
+    const statusIsActive = ACTIVE_SUBSCRIPTION_STATUSES.has(subscription.status);
+    const periodIsCurrent = !subscription.current_period_end || new Date(subscription.current_period_end) > new Date();
+    return statusIsActive && periodIsCurrent && isPremiumPlanType(subscription.plan_type);
+}
+
+export async function shouldSkipQueuedEmailForPremium(emailRecord, queuedData = parseQueuedEmailData(emailRecord?.data)) {
+    if (!queuedData?.skipIfPremium || !emailRecord?.user_id) return false;
+
+    const { data: user, error: userError } = await supabase
+        .from('users')
+        .select('is_premium')
+        .eq('id', emailRecord.user_id)
+        .maybeSingle();
+
+    if (userError) {
+        console.warn(`[JOB] Could not check premium flag for queued email ${emailRecord.id}:`, userError.message);
+    }
+
+    if (user?.is_premium === true || user?.isPremium === true) {
+        return true;
+    }
+
+    const { data: subscription, error: subscriptionError } = await supabase
+        .from('subscriptions')
+        .select('plan_type, status, current_period_end')
+        .eq('user_id', emailRecord.user_id)
+        .maybeSingle();
+
+    if (subscriptionError) {
+        console.warn(`[JOB] Could not check subscription for queued email ${emailRecord.id}:`, subscriptionError.message);
+        return false;
+    }
+
+    return hasActivePremiumSubscription(subscription);
 }
 
 export async function processEmailQueue() {
@@ -61,11 +101,29 @@ export async function processEmailQueue() {
 
         let successCount = 0;
         let failureCount = 0;
+        let skippedCount = 0;
 
         // Process each email
         for (const emailRecord of emails) {
             try {
                 const { id, email_to, template, data } = emailRecord;
+                const queuedData = parseQueuedEmailData(data);
+
+                if (await shouldSkipQueuedEmailForPremium(emailRecord, queuedData)) {
+                    await supabase
+                        .from('email_queue')
+                        .update({
+                            status: 'skipped',
+                            sent_at: new Date().toISOString(),
+                            last_error: 'Skipped because user became premium before send.',
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', id);
+
+                    skippedCount++;
+                    console.log(`[JOB] ↷ Email skipped for premium user: ${template} to ${email_to}`);
+                    continue;
+                }
 
                 // Dynamically import sendEmail to avoid circular dependency
                 const { sendEmail } = await import('../email-service.js');
@@ -74,7 +132,7 @@ export async function processEmailQueue() {
                 const result = await sendEmail({
                     to: email_to,
                     template,
-                    data: parseQueuedEmailData(data)
+                    data: queuedData
                 });
 
                 // Mark as sent in database
@@ -120,7 +178,7 @@ export async function processEmailQueue() {
             }
         }
 
-        console.log(`[JOB] Email queue processed: ${successCount} sent, ${failureCount} failed`);
+        console.log(`[JOB] Email queue processed: ${successCount} sent, ${skippedCount} skipped, ${failureCount} failed`);
 
     } catch (error) {
         console.error('[JOB] Unexpected error in email queue processor:', error);
@@ -159,7 +217,7 @@ export async function scheduleEmailLater(emailConfig) {
                 .select('id, data, scheduled_for, status')
                 .eq('email_to', email)
                 .eq('template', template)
-                .in('status', ['pending', 'sent'])
+                .in('status', ['pending', 'sent', 'skipped'])
                 .limit(50);
 
             if (existingError) {

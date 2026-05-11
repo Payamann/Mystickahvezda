@@ -267,11 +267,12 @@ describe('🔐 Auth Endpoint Tests', () => {
                 .eq('email_to', email)
                 .order('scheduled_for', { ascending: true });
 
-            expect(queued).toHaveLength(3);
+            expect(queued).toHaveLength(4);
             expect(queued.map(emailRecord => emailRecord.template)).toEqual([
                 'activation_first_step_day0',
                 'activation_quick_win_day1',
-                'activation_depth_day3'
+                'activation_depth_day3',
+                'activation_one_time_offer_day6'
             ]);
 
             const firstPayload = typeof queued[0].data === 'string'
@@ -282,6 +283,16 @@ describe('🔐 Auth Endpoint Tests', () => {
                 feature: 'numerologie_vyklad',
                 destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
                 dedupeKey: `activation:${userId}:day0`
+            });
+
+            const day6Payload = typeof queued[3].data === 'string'
+                ? JSON.parse(queued[3].data)
+                : queued[3].data;
+            expect(day6Payload).toMatchObject({
+                source: 'life_number_result',
+                feature: 'numerologie_vyklad',
+                skipIfPremium: true,
+                dedupeKey: `activation:${userId}:day6`
             });
         });
     });

@@ -273,6 +273,7 @@ router.get('/queue-stats', authenticateToken, async (req, res) => {
     const stats = {
       pending: data.filter(d => d.status === 'pending').length,
       sent: data.filter(d => d.status === 'sent').length,
+      skipped: data.filter(d => d.status === 'skipped').length,
       failed: data.filter(d => d.status === 'failed').length,
       total: data.length
     };

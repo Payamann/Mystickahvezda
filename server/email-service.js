@@ -242,12 +242,73 @@ Object.assign(ACTIVATION_FEATURES, {
 ACTIVATION_FEATURES.kristalova_koule = ACTIVATION_FEATURES.crystal_ball_unlimited;
 ACTIVATION_FEATURES.runy_hluboky_vyklad = ACTIVATION_FEATURES.runes_deep_reading;
 
+const ACTIVATION_PRODUCT_OFFERS = {
+  annual_horoscope: {
+    label: 'Roční horoskop 2026 na míru',
+    path: '/rocni-horoskop.html',
+    feature: 'rocni_horoskop_2026',
+    price: '199 Kč',
+    cta: 'Získat roční výhled',
+    promise: 'Jeden pevný PDF výstup pro celý rok, když nechceš hned řešit předplatné.'
+  },
+  personal_map: {
+    label: 'Osobní mapa zbytku roku 2026',
+    path: '/osobni-mapa.html',
+    feature: 'osobni_mapa_2026',
+    price: '299 Kč',
+    cta: 'Otevřít osobní mapu',
+    promise: 'Hlubší jednorázový výstup k datu narození, aktuálnímu tématu a dalším krokům.'
+  },
+  relationship_map: {
+    label: 'Osobní mapa pro vztahové téma',
+    path: '/osobni-mapa.html',
+    feature: 'osobni_mapa_2026',
+    price: '299 Kč',
+    cta: 'Zadat vztahové téma',
+    promise: 'Když se vztahové téma vrací, dej mu jeden konkrétní rámec bez měsíčního závazku.'
+  }
+};
+
+const ACTIVATION_FEATURE_OFFER_KEY = {
+  daily_guidance: 'annual_horoscope',
+  horoskopy: 'annual_horoscope',
+  numerologie_vyklad: 'personal_map',
+  numerology: 'personal_map',
+  natalni_interpretace: 'personal_map',
+  natal_chart: 'personal_map',
+  tarot: 'personal_map',
+  tarot_multi_card: 'personal_map',
+  tarot_celtic_cross: 'personal_map',
+  daily_angel_card: 'personal_map',
+  andelske_karty_hluboky_vhled: 'personal_map',
+  angel_card_deep: 'personal_map',
+  crystal_ball_unlimited: 'personal_map',
+  kristalova_koule: 'personal_map',
+  runes_deep_reading: 'personal_map',
+  runy_hluboky_vyklad: 'personal_map',
+  mentor: 'personal_map',
+  hvezdny_mentor: 'personal_map',
+  partnerska_detail: 'relationship_map',
+  synastry: 'relationship_map'
+};
+
 function getActivationFeature(feature) {
   return ACTIVATION_FEATURES[feature] || ACTIVATION_FEATURES.daily_guidance;
 }
 
-function buildTrackedActivationUrl({ path, campaign, feature, source }) {
-  const fallbackPath = getActivationFeature(feature).path || '/horoskopy.html';
+function getActivationProductOffer(feature) {
+  return ACTIVATION_PRODUCT_OFFERS[ACTIVATION_FEATURE_OFFER_KEY[feature] || 'personal_map'];
+}
+
+function buildTrackedLifecycleUrl({
+  path,
+  fallbackPath = '/horoskopy.html',
+  campaign,
+  feature,
+  source,
+  entryFeature,
+  extraParams = {}
+}) {
   let url;
 
   try {
@@ -264,8 +325,27 @@ function buildTrackedActivationUrl({ path, campaign, feature, source }) {
   url.searchParams.set('source', campaign);
   url.searchParams.set('feature', feature || 'daily_guidance');
   if (source) url.searchParams.set('entry_source', source);
-  if (feature) url.searchParams.set('entry_feature', feature);
+  if (entryFeature) url.searchParams.set('entry_feature', entryFeature);
+
+  Object.entries(extraParams || {}).forEach(([key, value]) => {
+    if (key && value != null && value !== '') {
+      url.searchParams.set(key, String(value));
+    }
+  });
+
   return url.toString();
+}
+
+function buildTrackedActivationUrl({ path, campaign, feature, source }) {
+  const fallbackPath = getActivationFeature(feature).path || '/horoskopy.html';
+  return buildTrackedLifecycleUrl({
+    path,
+    fallbackPath,
+    campaign,
+    feature: feature || 'daily_guidance',
+    source,
+    entryFeature: feature
+  });
 }
 
 function buildActivationTemplateData(data = {}, campaign = 'activation_day0') {
@@ -282,6 +362,28 @@ function buildActivationTemplateData(data = {}, campaign = 'activation_day0') {
     featureKey,
     feature,
     ctaUrl,
+    name: formatEmailName(data.name, 'Ahoj')
+  };
+}
+
+function buildActivationOfferTemplateData(data = {}) {
+  const featureKey = data.feature || 'daily_guidance';
+  const feature = getActivationFeature(featureKey);
+  const offer = getActivationProductOffer(featureKey);
+  const offerUrl = data.offerUrl || buildTrackedLifecycleUrl({
+    path: offer.path,
+    fallbackPath: offer.path,
+    campaign: 'activation_day6_offer',
+    feature: offer.feature,
+    source: data.source,
+    entryFeature: featureKey
+  });
+
+  return {
+    featureKey,
+    feature,
+    offer,
+    offerUrl,
     name: formatEmailName(data.name, 'Ahoj')
   };
 }
@@ -576,6 +678,28 @@ export const EMAIL_TEMPLATES = {
           <a href="${escapeHtml(upgradeUrl)}" style="color:#d4af37;">Hvězdného průvodce</a>.
         </p>
       `, 'Osobní vzorec')
+    }
+  },
+
+  activation_one_time_offer_day6: {
+    subject: 'Jeden další krok bez předplatného',
+    getHtml: (data) => {
+      const context = buildActivationOfferTemplateData(data);
+      return getBaseTemplate(`
+        <h1 class="h1">${context.name}, možná teď nepotřebuješ celý plán</h1>
+        <p>Pokud se k tématu <span class="highlight">${escapeHtml(context.feature.label)}</span> vracíš, ale předplatné pro tebe teď není správný krok, dává smysl jeden konkrétní výstup.</p>
+        <div class="feature-item">
+          <strong>${escapeHtml(context.offer.label)}</strong>
+          <p>${escapeHtml(context.offer.promise)}</p>
+          <p style="margin-bottom:0;"><span class="highlight">${escapeHtml(context.offer.price)}</span> jednorázově, bez měsíčního závazku.</p>
+        </div>
+        <div class="cta-box">
+          <a href="${escapeHtml(context.offerUrl)}" class="btn">${escapeHtml(context.offer.cta)} →</a>
+        </div>
+        <p style="font-size: 13px; text-align: center; opacity: 0.74;">
+          Pokud už sis mezitím aktivoval Průvodce, tento email se neodesílá.
+        </p>
+      `, 'Jeden další krok bez předplatného')
     }
   },
 
@@ -931,6 +1055,19 @@ export async function sendActivationLifecycleSequence({
       },
       delaySeconds: delays.day3 ?? 259200,
       dedupeKey: `activation:${dedupeBase}:day3`
+    }));
+
+    results.push(await scheduleEmailLater({
+      userId,
+      email,
+      template: 'activation_one_time_offer_day6',
+      data: {
+        ...context,
+        skipIfPremium: true,
+        dedupeKey: `activation:${dedupeBase}:day6`
+      },
+      delaySeconds: delays.day6 ?? 518400,
+      dedupeKey: `activation:${dedupeBase}:day6`
     }));
 
     const scheduled = results.filter(result => !result.skipped).length;
