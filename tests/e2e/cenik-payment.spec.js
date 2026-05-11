@@ -80,6 +80,14 @@ test.describe('Ceník — platební tlačítka', () => {
         await expect(trustLinks.locator('a[href="kontakt.html"]')).toBeVisible();
     });
 
+    test('cenik konkretizuje prvni tyden hodnoty po upgradu', async ({ page }) => {
+        const firstWeek = page.locator('.pricing-first-week');
+        await expect(firstWeek).toBeVisible();
+        await expect(firstWeek.locator('.pricing-first-week__step')).toHaveCount(4);
+        await expect(firstWeek.locator('[data-analytics-cta="pricing_first_week_natal"]')).toHaveAttribute('href', /natalni-karta\.html/);
+        await expect(firstWeek.locator('[data-analytics-cta="pricing_first_week_profile"]')).toHaveAttribute('href', /profil\.html/);
+    });
+
     test('rychla volba zdarma zvyrazni bezplatny tarif', async ({ page }) => {
         await page.locator('[data-pricing-choice="free"]').click();
 

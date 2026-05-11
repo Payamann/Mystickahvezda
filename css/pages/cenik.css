@@ -24,6 +24,17 @@
         .pricing-trust-links a { color:rgba(255,215,0,0.9); text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px; }
         .pricing-trust-links a:hover,
         .pricing-trust-links a:focus-visible { color:#fff; }
+        .pricing-first-week { margin-top:1.4rem; padding:1.35rem; border:1px solid rgba(255,255,255,0.1); border-radius:18px; background:rgba(255,255,255,0.035); display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.45fr); gap:1rem; align-items:start; text-align:left; }
+        .pricing-first-week__intro h3 { margin:0 0 0.55rem; color:#fff; font-family:var(--font-heading); font-size:1.45rem; line-height:1.2; }
+        .pricing-first-week__intro p { margin:0; color:rgba(255,255,255,0.68); line-height:1.65; }
+        .pricing-first-week__eyebrow { display:inline-block; margin-bottom:0.45rem; color:var(--color-mystic-gold); font-size:0.72rem; font-weight:800; letter-spacing:0.09em; text-transform:uppercase; }
+        .pricing-first-week__steps { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.75rem; }
+        .pricing-first-week__step { display:block; min-height:100%; padding:0.95rem; border:1px solid rgba(212,175,55,0.16); border-radius:14px; background:rgba(10,10,26,0.42); color:inherit; text-decoration:none; transition:border-color 0.2s ease, background 0.2s ease, transform 0.2s ease; }
+        .pricing-first-week__step:hover,
+        .pricing-first-week__step:focus-visible { border-color:rgba(212,175,55,0.42); background:rgba(212,175,55,0.08); transform:translateY(-2px); outline:none; }
+        .pricing-first-week__step span { display:inline-flex; margin-bottom:0.42rem; color:var(--color-mystic-gold); font-size:0.72rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; }
+        .pricing-first-week__step strong { display:block; margin-bottom:0.4rem; color:#fff; font-size:0.94rem; line-height:1.35; }
+        .pricing-first-week__step p { margin:0; color:rgba(255,255,255,0.66); font-size:0.82rem; line-height:1.5; }
         .pricing-addon__products { display:grid; gap:0.8rem; }
         .pricing-addon__product { display:block; position:relative; padding:1rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.035); text-decoration:none; transition:border-color 0.2s ease, background 0.2s ease, transform 0.2s ease; }
         .pricing-addon__product:hover,
@@ -46,6 +57,8 @@
         @media (max-width: 680px) {
             .pricing-grid { grid-template-columns: 1fr; }
             .pricing-checkout-assurance { grid-template-columns: 1fr; }
+            .pricing-first-week { grid-template-columns: 1fr; }
+            .pricing-first-week__steps { grid-template-columns: 1fr; }
             .pricing-addon { grid-template-columns: 1fr; }
             .comparison-table-wrap { display: none; }
             .comparison-mobile { display: grid; }
