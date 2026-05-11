@@ -198,6 +198,18 @@ const CONVERSION_LINK_CHECKS = [
         ]
     },
     {
+        path: '/lunace.html',
+        name: 'Lunar practical guidance cluster',
+        snippets: [
+            'lunar-practice-section',
+            'ne jako pevný osud',
+            'data-analytics-cta="lunar_practice_today"',
+            'natalni-karta.html?source=lunar_practice',
+            'mentor.html?source=lunar_practice',
+            'neurčují emoce ani rozhodnutí'
+        ]
+    },
+    {
         path: '/numerologie.html',
         name: 'Numerology intent cluster',
         snippets: [

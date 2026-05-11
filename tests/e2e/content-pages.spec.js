@@ -709,6 +709,28 @@ test.describe('Ostatní stránky — smoke testy (200 + h1)', () => {
     }
 });
 
+test.describe('Lunace', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/lunace.html', { waitUntil: 'domcontentloaded' });
+        await waitForPageReady(page);
+    });
+
+    test('praktický blok rámuje lunární fázi bez deterministických slibů', async ({ page }) => {
+        await expect(page.locator('.hero__subtitle')).toContainText('ne jako pevný osud');
+
+        const cluster = page.locator('.lunar-practice-section');
+        await expect(cluster).toBeVisible();
+        await expect(cluster).toContainText('Co s dnešní fází udělat konkrétně');
+        await expect(cluster.locator('.lunar-practice-card')).toHaveCount(4);
+        await expect(cluster.locator('[data-analytics-cta="lunar_practice_today"]')).toHaveAttribute('href', '#phaseCard');
+        await expect(cluster.locator('[data-analytics-cta="lunar_practice_natal"]')).toHaveAttribute('href', /natalni-karta\.html\?source=lunar_practice/);
+        await expect(cluster.locator('[data-analytics-cta="lunar_practice_mentor"]')).toHaveAttribute('href', /mentor\.html\?source=lunar_practice/);
+
+        await expect(page.locator('.faq-section')).toContainText('neurčují emoce ani rozhodnutí');
+        await expect(page.locator('.faq-section')).toContainText('ne jako pevné pravidlo');
+    });
+});
+
 // ═══════════════════════════════════════════════════════════
 // AURA — detailní testy
 // ═══════════════════════════════════════════════════════════

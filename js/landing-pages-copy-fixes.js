@@ -54,11 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (path.endsWith('/lunace.html') || path.endsWith('lunace.html')) {
         document.title = 'Dnešní Lunární Fáze | Co říká Měsíc právě dnes | Mystická Hvězda';
-        setMeta('meta[name="description"]', 'Zjistěte, v jaké fázi je dnes Měsíc a co to znamená pro vaši energii, vztahy a duchovní praxi. Lunární fáze zdarma, bez registrace.');
+        setMeta('meta[name="description"]', 'Zjistěte, v jaké fázi je dnes Měsíc a jak ji můžete použít jako praktický rámec pro denní rytmus, vztahy a reflexi.');
         setMeta('meta[property="og:title"]', 'Dnešní Lunární Fáze | Mystická Hvězda');
-        setMeta('meta[property="og:description"]', 'Zjistěte, v jaké fázi je dnes Měsíc a co to znamená pro vaši energii, vztahy a duchovní praxi.');
+        setMeta('meta[property="og:description"]', 'Aktuální fáze Měsíce jako symbolický rytmus pro dnešní krok, reflexi a jemnější plánování.');
         setHtml('.hero__title', 'Dnešní <span class="text-gradient">lunární fáze</span>');
-        setText('.hero__subtitle', 'Zjistěte, co lunární energie říká o vaší dnešní cestě, emocích a nejlepším načasování.');
+        setText('.hero__subtitle', 'Vezměte aktuální fázi jako jednoduchý rytmus pro dnešní krok, ne jako pevný osud.');
     }
 
     if (path.endsWith('/kristalova-koule.html') || path.endsWith('kristalova-koule.html')) {
