@@ -329,6 +329,53 @@ test.describe('Tarot 3 karty landing', () => {
     });
 });
 
+test.describe('Keltsky kriz tarot landing', () => {
+    test('tarot-keltsky-kriz.html vede do VIP tarot kontextu', async ({ page }) => {
+        const res = await page.request.get('/tarot-keltsky-kriz.html');
+        expect(res.status()).toBe(200);
+
+        await page.goto('/tarot-keltsky-kriz.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('h1')).toContainText('Keltský kříž');
+        const canonical = await page.getAttribute('link[rel="canonical"]', 'href');
+        expect(canonical).toBe('https://www.mystickahvezda.cz/tarot-keltsky-kriz.html');
+
+        const primary = page.locator('[data-analytics-cta="tarot_celtic_landing_primary"]');
+        await expect(primary).toBeVisible();
+        const href = await primary.getAttribute('href');
+        expect(href).toContain('tarot.html');
+        expect(href).toContain('source=tarot_celtic_cross_landing');
+        expect(href).toContain('feature=tarot_celtic_cross');
+        expect(href).toContain('intent=celtic_cross');
+
+        const pricing = page.locator('[data-analytics-cta="tarot_celtic_intent_pricing"]');
+        await expect(pricing).toHaveAttribute('href', /plan=vip-majestrat/);
+        await expect(pricing).toHaveAttribute('href', /feature=tarot_celtic_cross/);
+
+        const faqTypes = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((script) => {
+            try {
+                return JSON.parse(script.textContent || '{}')['@type'];
+            } catch {
+                return null;
+            }
+        }));
+        expect(faqTypes).toContain('FAQPage');
+    });
+
+    test('keltsky kriz landing nema na mobilu horizontalni scroll', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.goto('/tarot-keltsky-kriz.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('.tarot-celtic-intent-card')).toHaveCount(4);
+        const hasHorizontalScroll = await page.evaluate(() =>
+            document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+        );
+        expect(hasHorizontalScroll).toBe(false);
+    });
+});
+
 test.describe('Tarot význam karet', () => {
     test('hub načte 78 karet a umí filtrovat katalog', async ({ page }) => {
         await page.goto('/tarot-vyznam-karet.html');
