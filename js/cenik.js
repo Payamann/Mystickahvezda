@@ -61,6 +61,7 @@ const FALLBACK_FEATURE_PLAN_MAP = {
     numerologie_vyklad: 'pruvodce',
     past_life: 'pruvodce',
     premium_membership: 'pruvodce',
+    ritual_memory: 'pruvodce',
     rituals: 'pruvodce',
     runy_hluboky_vyklad: 'pruvodce',
     runes_deep_reading: 'pruvodce',
@@ -97,6 +98,7 @@ const FEATURE_PREVIEW_DESTINATIONS = {
     partnerska_detail: { path: '/partnerska-shoda.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt partnerskou shodu' },
     past_life: { path: '/minuly-zivot.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt minul\u00fd \u017eivot' },
     premium_membership: { path: '/mentor.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt Hv\u011bzdn\u00e9ho pr\u016fvodce' },
+    ritual_memory: { path: '/profil.html#ritual-memory-card', label: 'Vr\u00e1tit se k pam\u011bti ritu\u00e1lu' },
     rituals: { path: '/lunace.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt lun\u00e1rn\u00ed kalend\u00e1\u0159' },
     runes_deep_reading: { path: '/runy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt runy zdarma' },
     runy_hluboky_vyklad: { path: '/runy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt runy zdarma' },
@@ -132,6 +134,12 @@ const SOURCE_RECOMMENDATION_COPY = {
         title: 'Jednor\u00e1zov\u00fd vhled m\u00e1 navazovat na ka\u017edodenn\u00ed veden\u00ed.',
         text: 'Hv\u011bzdn\u00fd Pr\u016fvodce odemkne hlub\u0161\u00ed v\u00fdklady a osobn\u00ed historii, aby se z mapy stal pravideln\u00fd kompas.',
         actionLabel: 'Uk\u00e1zat pl\u00e1n Pr\u016fvodce'
+    },
+    profile_memory: {
+        eyebrow: 'Navazuje na Pam\u011b\u0165 ritu\u00e1lu',
+        title: 'Pam\u011b\u0165 uk\u00e1zala opakuj\u00edc\u00ed se t\u00e9ma. Pr\u016fvodce z n\u011bj ud\u011bl\u00e1 pravideln\u00fd sm\u011br.',
+        text: 'Profil u\u017e dr\u017e\u00ed v\u00fdklady, zp\u011btnou vazbu a reflexe pohromad\u011b. Hv\u011bzdn\u00fd Pr\u016fvodce p\u0159id\u00e1 hlub\u0161\u00ed v\u00fdklady a osobn\u00ed historii, aby se z opakovan\u00e9ho t\u00e9matu stal konkr\u00e9tn\u00ed dal\u0161\u00ed krok.',
+        actionLabel: 'Odemknout hlub\u0161\u00ed pam\u011b\u0165'
     }
 };
 

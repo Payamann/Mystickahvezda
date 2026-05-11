@@ -246,6 +246,26 @@ test.describe('Ceník — platební tlačítka', () => {
         expect(href).toContain('entry_feature=numerologie_vyklad');
     });
 
+    test('profilova pamet ma v ceniku vlastni navazujici upgrade kontext', async ({ page }) => {
+        await page.goto('/cenik.html?source=profile_memory&feature=ritual_memory');
+        await waitForPageReady(page);
+
+        const banner = page.locator('#pricing-plan-recommendation');
+        await expect(banner).toBeVisible();
+        await expect(banner).toContainText('Navazuje na Paměť rituálu');
+        await expect(banner).toContainText('Odemknout hlubší paměť');
+        await expect(banner.locator('[data-recommended-plan="pruvodce"]')).toBeVisible();
+
+        const previewLink = banner.locator('[data-preview-destination]');
+        await expect(previewLink).toBeVisible();
+        const href = await previewLink.getAttribute('href');
+        expect(href).toContain('/profil.html');
+        expect(href).toContain('#ritual-memory-card');
+        expect(href).toContain('source=pricing_recommendation_preview');
+        expect(href).toContain('entry_source=profile_memory');
+        expect(href).toContain('entry_feature=ritual_memory');
+    });
+
     test('personal map email return zobrazi konkretni navazujici krok', async ({ page }) => {
         await page.goto('/cenik.html?source=personal_map_email_day3&feature=premium_membership&plan=pruvodce&utm_source=email&utm_campaign=personal_map_day3');
         await waitForPageReady(page);

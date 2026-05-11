@@ -128,6 +128,7 @@ export const FEATURE_PLAN_MAP = Object.freeze({
     past_life: 'pruvodce',
     partnerska_detail: 'pruvodce',
     premium_membership: 'pruvodce',
+    ritual_memory: 'pruvodce',
     rituals: 'pruvodce',
     runy_hluboky_vyklad: 'pruvodce',
     runes_deep_reading: 'pruvodce',
