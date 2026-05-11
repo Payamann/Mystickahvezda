@@ -188,18 +188,18 @@
       document.title = 'Astrokartografie | Mystick\u00e1 Hv\u011bzda';
       setMetaByName(
         'description',
-        'Objevte sv\u00e1 silov\u00e1 m\u00edsta na Zemi. Astrokartografick\u00e1 mapa pro cestov\u00e1n\u00ed, relokaci i hled\u00e1n\u00ed prost\u0159ed\u00ed, kde se v\u00e1m bude da\u0159it.'
+        'Astrokartografie jako symbolick\u00e1 mapa prost\u0159ed\u00ed: porovnejte m\u00edsta pro cestov\u00e1n\u00ed, relokaci a osobn\u00ed z\u00e1m\u011br bez slibu, \u017ee planeta ur\u010d\u00ed v\u00fdsledek.'
       );
       setMetaByProperty('og:title', 'Astrokartografie | Mystick\u00e1 Hv\u011bzda');
       setMetaByProperty(
         'og:description',
-        'Objevte sv\u00e1 silov\u00e1 m\u00edsta na Zemi. Astrokartografick\u00e1 mapa pro cestov\u00e1n\u00ed a relokaci.'
+        'Porovnejte symbolick\u00e1 t\u00e9mata m\u00edst pro cestov\u00e1n\u00ed, relokaci nebo rozhodnut\u00ed. Mapa je podklad k \u00favaze, ne jistota v\u00fdsledku.'
       );
 
       setText('.skip-link', 'P\u0159esko\u010dit na obsah');
       setText(
         '.hero__subtitle',
-        'Kde na sv\u011bt\u011b na v\u00e1s \u010dek\u00e1 \u0161t\u011bst\u00ed? Zadejte sv\u00e9 narozen\u00ed a objevte planet\u00e1rn\u00ed linie, kter\u00e9 ovliv\u0148uj\u00ed v\u00e1\u0161 osud v r\u016fzn\u00fdch koutech sv\u011bta.'
+        'Kter\u00e1 m\u00edsta mohou otev\u0159\u00edt nov\u00fd impuls? Zadejte narozen\u00ed a z\u00e1m\u011br a z\u00edskejte symbolickou mapu t\u00e9mat pro cestov\u00e1n\u00ed, relokaci nebo rozhodnut\u00ed. Berte ji jako podklad k \u00favaze, ne jako jistotu v\u00fdsledku.'
       );
 
       const mainCardTitle = document.querySelector('.card__title');
@@ -241,19 +241,19 @@
       });
 
       const submit = document.querySelector('#astro-form button[type="submit"]');
-      if (submit) submit.textContent = '\ud83c\udf0d Odhalit mou mapu \u0161t\u011bst\u00ed';
+      if (submit) submit.textContent = '\ud83c\udf0d Sestavit symbolickou mapu';
 
       setAttr('.map-bg', 'alt', 'Astrokartografick\u00e1 mapa sv\u011bta');
       const loadingText = document.querySelector('#astro-loading span');
-      if (loadingText) loadingText.textContent = 'Analyzuji va\u0161e planet\u00e1rn\u00ed linie...';
+      if (loadingText) loadingText.textContent = 'Skl\u00e1d\u00e1m symbolickou mapu prost\u0159ed\u00ed...';
 
       const serviceTitles = document.querySelectorAll('.card.card--service .card__title');
       const serviceTexts = document.querySelectorAll('.card.card--service .card__text');
       const titles = ['Co je astrokartografie?', 'Relokace', 'Cestov\u00e1n\u00ed'];
       const texts = [
-        'Metoda, kter\u00e1 prom\u00edt\u00e1 v\u00e1\u0161 nat\u00e1ln\u00ed horoskop na mapu sv\u011bta. Ukazuje, ve kter\u00fdch zem\u00edch budou aktivov\u00e1ny konkr\u00e9tn\u00ed planety ve va\u0161em horoskopu.',
-        'P\u0159em\u00fd\u0161l\u00edte o st\u011bhov\u00e1n\u00ed? Zjist\u011bte p\u0159edem, jak\u00e1 energie v\u00e1s v nov\u00e9 destinaci \u010dek\u00e1. N\u011bkter\u00e1 m\u00edsta podporuj\u00ed kari\u00e9ru, jin\u00e1 rodinn\u00fd \u017eivot.',
-        'Napl\u00e1nujte si dovolenou podle hv\u011bzd. Vyberte si destinaci pod vlivem Venu\u0161e pro romantiku nebo Slunce pro na\u010derp\u00e1n\u00ed energie.'
+        'Symbolick\u00fd v\u00fdklad, kter\u00fd propojuje va\u0161e narozen\u00ed, z\u00e1m\u011br a mapu sv\u011bta. Ukazuje, ve kter\u00fdch zem\u00edch mohou b\u00fdt pro v\u00e1s zaj\u00edmav\u00e1 t\u00e9mata r\u016fstu, vztah\u016f nebo kari\u00e9ry.',
+        'P\u0159em\u00fd\u0161l\u00edte o st\u011bhov\u00e1n\u00ed? Porovnejte, jak\u00e1 t\u00e9mata m\u016f\u017ee nov\u00e1 destinace symbolicky otev\u0159\u00edt. V\u00fdsledek berte jako podklad k rozhodnut\u00ed, ne jako pokyn, kam se p\u0159est\u011bhovat.',
+        'P\u0159i pl\u00e1nov\u00e1n\u00ed cesty si v\u0161imn\u011bte, jak\u00fd typ z\u00e1\u017eitku hled\u00e1te: odpo\u010dinek, vztahy, pr\u00e1ci nebo inspiraci. Mapa pom\u016f\u017ee pojmenovat z\u00e1m\u011br, ne vybrat dovolenou za v\u00e1s.'
       ];
 
       serviceTitles.forEach((element, index) => {

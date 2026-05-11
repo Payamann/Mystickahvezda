@@ -255,7 +255,7 @@ test.describe('O nás', () => {
         await expect(trustCard.locator('a[href="soukromi.html"]')).toBeVisible();
         await expect(page.locator('.hero__title')).toContainText('jasnější další krok');
         await expect(page.locator('.hero__subtitle')).toContainText('ne jako slib pevného osudu');
-        await expect(page.locator('script[src*="secondary-pages-copy-fixes.js"]')).toHaveAttribute('src', /secondary-pages-copy-fixes\.js\?v=3/);
+        await expect(page.locator('script[src*="secondary-pages-copy-fixes.js"]')).toHaveAttribute('src', /secondary-pages-copy-fixes\.js\?v=4/);
         await expect(page.locator('.card--service', { hasText: 'Naše mise' })).toContainText('mapu témat');
         await expect(page.locator('.card--service', { hasText: 'Osobní přístup' })).toContainText('Nepředstíráme osobní guru péči');
         await expect(page.locator('.stat-item')).toHaveCount(4);
@@ -770,6 +770,32 @@ test.describe('Ostatní stránky — smoke testy (200 + h1)', () => {
     }
 });
 
+// ═══════════════════════════════════════════════════════════
+// ASTRO MAPA — detailní testy
+// ═══════════════════════════════════════════════════════════
+
+test.describe('Astro mapa', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/astro-mapa.html', { waitUntil: 'domcontentloaded' });
+        await waitForPageReady(page);
+    });
+
+    test('rámuje astrokartografii jako podklad k úvaze bez slibů štěstí nebo osudu', async ({ page }) => {
+        await expect(page.locator('.hero__subtitle')).toContainText('symbolickou mapu témat');
+        await expect(page.locator('.hero__subtitle')).toContainText('podklad k úvaze, ne jako jistotu výsledku');
+        await expect(page.locator('#astro-form button[type="submit"]')).toContainText('Sestavit symbolickou mapu');
+        await expect(page.locator('.card--service', { hasText: 'Relokace' })).toContainText('podklad k rozhodnutí');
+        await expect(page.locator('.card--service', { hasText: 'Cestování' })).toContainText('ne vybrat dovolenou za vás');
+        await expect(page.locator('script[src*="secondary-pages-copy-fixes.js"]')).toHaveAttribute('src', /secondary-pages-copy-fixes\.js\?v=4/);
+
+        const bodyText = await page.locator('body').innerText();
+        expect(bodyText).not.toContain('Odhalit mou mapu štěstí');
+        expect(bodyText).not.toContain('Kde na světě na vás čeká štěstí');
+        expect(bodyText).not.toContain('ovlivňují váš osud');
+        expect(bodyText).not.toContain('budou aktivovány konkrétní planety');
+    });
+});
+
 test.describe('Lunace', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/lunace.html', { waitUntil: 'domcontentloaded' });
@@ -809,7 +835,7 @@ test.describe('Šamanské kolo', () => {
         await expect(page.locator('.mw-form__subtitle')).toContainText('symbolický rámec pro další otázku');
         await expect(page.locator('.mw-premium-wall__title')).toContainText('plné symbolické čtení');
         await expect(page.locator('.mw-premium-wall__desc')).toContainText('bez slibů pevného osudu');
-        await expect(page.locator('script[src*="secondary-pages-copy-fixes.js"]')).toHaveAttribute('src', /secondary-pages-copy-fixes\.js\?v=3/);
+        await expect(page.locator('script[src*="secondary-pages-copy-fixes.js"]')).toHaveAttribute('src', /secondary-pages-copy-fixes\.js\?v=4/);
 
         const bodyText = await page.locator('body').innerText();
         expect(bodyText).not.toContain('Indiánská moudrost Severní Ameriky');
