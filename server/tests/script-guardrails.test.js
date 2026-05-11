@@ -149,10 +149,13 @@ describe('manual script guardrails', () => {
             'Horoscope intent cluster',
             'Numerology intent cluster',
             'Tarot intent cluster',
+            'Synastry intent cluster',
             'Pricing first week premium value',
             'data-analytics-cta="horoscope_hub_weekly"',
             'data-analytics-cta="numerology_hub_personal_year"',
             'data-analytics-cta="tarot_intent_three_card"',
+            'data-analytics-cta="synastry_intent_calculator"',
+            'partnerska-numerologie.html?source=synastry_intent_cluster',
             'data-analytics-cta="pricing_first_week_natal"',
             'profil.html?source=pricing_first_week&amp;feature=profile_history'
         ].forEach((snippet) => {

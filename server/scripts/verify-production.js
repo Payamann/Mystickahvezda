@@ -152,6 +152,17 @@ const CONVERSION_LINK_CHECKS = [
         ]
     },
     {
+        path: '/partnerska-shoda.html',
+        name: 'Synastry intent cluster',
+        snippets: [
+            'class="synastry-intent-section"',
+            'data-analytics-cta="synastry_intent_calculator"',
+            'blog/co-je-synastrie-jak-funguje-partnerska-astrologie.html?source=synastry_intent_cluster',
+            'partnerska-numerologie.html?source=synastry_intent_cluster',
+            'tarot-laska.html?source=synastry_intent_cluster'
+        ]
+    },
+    {
         path: '/cenik.html',
         name: 'Pricing first week premium value',
         snippets: [

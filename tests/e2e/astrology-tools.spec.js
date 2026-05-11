@@ -230,6 +230,15 @@ test.describe('Partnerská shoda', () => {
         expect(faqJson).toBeTruthy();
     });
 
+    test('partnerska shoda nabizi vztahovy intent cluster pred vypoctem', async ({ page }) => {
+        const cluster = page.locator('.synastry-intent-section');
+        await expect(cluster).toBeVisible();
+        await expect(cluster.locator('.synastry-intent-card')).toHaveCount(6);
+        await expect(cluster.locator('[data-analytics-cta="synastry_intent_calculator"]')).toHaveAttribute('href', '#synastry-form-card');
+        await expect(cluster.locator('[data-analytics-cta="synastry_intent_numerology"]')).toHaveAttribute('href', /partnerska-numerologie\.html/);
+        await expect(cluster.locator('[data-analytics-cta="synastry_intent_love_tarot"]')).toHaveAttribute('href', /tarot-laska\.html/);
+    });
+
     test('canonical link existuje', async ({ page }) => {
         const canonical = await page.getAttribute('link[rel="canonical"]', 'href');
         expect(canonical).toBeTruthy();

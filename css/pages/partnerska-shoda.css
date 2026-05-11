@@ -172,6 +172,69 @@ html body .mh-inline-de7ffff2a8 { opacity: 0.8; }
     line-height: 1.5;
 }
 
+.synastry-intent-section {
+    margin: var(--space-2xl) 0;
+    scroll-margin-top: 96px;
+}
+
+.synastry-intent-section .section__header {
+    margin-bottom: var(--space-lg);
+}
+
+.synastry-intent-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-md);
+}
+
+.synastry-intent-card {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: var(--space-lg);
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.synastry-intent-card:hover,
+.synastry-intent-card:focus-visible {
+    border-color: rgba(212, 175, 55, 0.5);
+    background: rgba(212, 175, 55, 0.075);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.synastry-intent-card--primary {
+    border-color: rgba(212, 175, 55, 0.5);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.14), rgba(219, 39, 119, 0.08));
+}
+
+.synastry-intent-card span {
+    color: var(--color-mystic-gold);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.synastry-intent-card strong {
+    color: var(--color-starlight);
+    font-family: var(--font-heading);
+    font-size: 1.08rem;
+    line-height: 1.25;
+}
+
+.synastry-intent-card em {
+    color: var(--color-silver-mist);
+    font-style: normal;
+    line-height: 1.55;
+}
+
 .premium-lock-host,
 .teaser-overlay-host {
     position: relative;
@@ -374,6 +437,7 @@ html body .mh-inline-de7ffff2a8 { opacity: 0.8; }
 
 @media (max-width: 900px) {
     .synastry-trust-strip,
+    .synastry-intent-grid,
     .synastry-next-grid,
     .synastry-faq-grid,
     .compat-index-grid {
@@ -383,6 +447,7 @@ html body .mh-inline-de7ffff2a8 { opacity: 0.8; }
 
 @media (max-width: 640px) {
     .synastry-trust-strip,
+    .synastry-intent-grid,
     .synastry-next-grid,
     .synastry-faq-grid,
     .compat-index-grid {
@@ -393,11 +458,20 @@ html body .mh-inline-de7ffff2a8 { opacity: 0.8; }
         margin-top: 0;
     }
 
+    .synastry-intent-section {
+        margin: var(--space-xl) 0;
+    }
+
+    .synastry-intent-section .section__header {
+        margin-bottom: var(--space-md);
+    }
+
     .synastry-next-step {
         padding-top: 4.5rem;
     }
 
     .synastry-next-card,
+    .synastry-intent-card,
     .synastry-faq-item {
         padding: var(--space-md);
     }
