@@ -236,11 +236,27 @@ Object.assign(ACTIVATION_FEATURES, {
     day3: 'Runy fungují nejlépe jako krátký rituál, ne jako nekonečné hledání.'
   },
   runy_hluboky_vyklad: null,
+  shamanske_kolo_plne_cteni: {
+    label: 'šamanské kolo',
+    path: '/shamansko-kolo.html',
+    day0: 'Otevři kolo pro jednu konkrétní otázku a vezmi si směr, který dnes půjde převést do praxe.',
+    day1: 'Vrať se ke směru kola a všimni si, kde ti pomohl zpomalit, rozhodnout nebo pojmenovat další krok.',
+    day3: 'Šamanské kolo dává větší hodnotu, když jeho symbol propojíš s tématem, které se ti opakuje.'
+  },
   synastry: ACTIVATION_FEATURES.partnerska_detail,
   tarot_celtic_cross: ACTIVATION_FEATURES.tarot_multi_card
 });
 ACTIVATION_FEATURES.kristalova_koule = ACTIVATION_FEATURES.crystal_ball_unlimited;
 ACTIVATION_FEATURES.runy_hluboky_vyklad = ACTIVATION_FEATURES.runes_deep_reading;
+ACTIVATION_FEATURES.medicine_wheel = ACTIVATION_FEATURES.shamanske_kolo_plne_cteni;
+ACTIVATION_FEATURES.minuly_zivot = {
+  label: 'symbolický výklad minulého života',
+  path: '/minuly-zivot.html',
+  day0: 'Otevři archetypální příběh pro sebereflexi a vezmi si jedno téma, které se může propsat do současnosti.',
+  day1: 'Vrať se k příběhu a zapiš si, který motiv sedí na tvoje dnešní rozhodování.',
+  day3: 'Minulý život dává největší smysl jako symbolický rámec, když ho propojíš s aktuálním tématem v profilu.'
+};
+ACTIVATION_FEATURES.past_life = ACTIVATION_FEATURES.minuly_zivot;
 
 const ACTIVATION_PRODUCT_OFFERS = {
   annual_horoscope: {
@@ -286,6 +302,10 @@ const ACTIVATION_FEATURE_OFFER_KEY = {
   kristalova_koule: 'personal_map',
   runes_deep_reading: 'personal_map',
   runy_hluboky_vyklad: 'personal_map',
+  shamanske_kolo_plne_cteni: 'personal_map',
+  medicine_wheel: 'personal_map',
+  minuly_zivot: 'personal_map',
+  past_life: 'personal_map',
   mentor: 'personal_map',
   hvezdny_mentor: 'personal_map',
   partnerska_detail: 'relationship_map',

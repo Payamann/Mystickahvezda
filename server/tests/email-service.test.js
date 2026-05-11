@@ -168,6 +168,46 @@ describe('Email service deliverability payload', () => {
         expect(payload.html).not.toContain('alert(1)');
     });
 
+    test('renders past life activation email with symbolic feature copy', async () => {
+        await sendEmail({
+            to: 'recipient@example.com',
+            template: 'activation_first_step_day0',
+            data: {
+                name: 'Jana',
+                source: 'past_life_result',
+                feature: 'minuly_zivot',
+                destination: '/minuly-zivot.html?source=signup_activation&feature=minuly_zivot'
+            }
+        });
+
+        const payload = sendMock.mock.calls[0][0];
+        expect(payload.html).toContain('https://yourdomain.com/minuly-zivot.html');
+        expect(payload.html).toContain('symbolický výklad minulého života');
+        expect(payload.html).toContain('archetypální příběh pro sebereflexi');
+        expect(payload.html).not.toContain('denní horoskop');
+        expect(payload.text).toContain('symbolický výklad minulého života');
+    });
+
+    test('renders shaman wheel activation email with tool-specific copy', async () => {
+        await sendEmail({
+            to: 'recipient@example.com',
+            template: 'activation_quick_win_day1',
+            data: {
+                name: 'Jana',
+                source: 'medicine_wheel_result',
+                feature: 'shamanske_kolo_plne_cteni',
+                destination: '/shamansko-kolo.html?source=signup_activation&feature=shamanske_kolo_plne_cteni'
+            }
+        });
+
+        const payload = sendMock.mock.calls[0][0];
+        expect(payload.html).toContain('https://yourdomain.com/shamansko-kolo.html');
+        expect(payload.html).toContain('šamanské kolo');
+        expect(payload.html).toContain('směru kola');
+        expect(payload.html).not.toContain('denní horoskop');
+        expect(payload.text).toContain('šamanské kolo');
+    });
+
     test('renders activation day 6 one-time offer with product attribution', async () => {
         await sendEmail({
             to: 'recipient@example.com',
