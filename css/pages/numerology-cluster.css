@@ -1,0 +1,198 @@
+.numerology-cluster-hero {
+    padding-top: 5.5rem;
+}
+
+.numerology-cluster-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+}
+
+.numerology-cluster-hero__copy {
+    max-width: 720px;
+}
+
+.numerology-cluster-hero__actions,
+.numerology-cluster-trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+}
+
+.numerology-cluster-hero__actions {
+    margin-top: 1.6rem;
+}
+
+.numerology-cluster-trust {
+    margin-top: 1.15rem;
+}
+
+.numerology-cluster-trust span {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(212, 175, 55, 0.24);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.045);
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.84rem;
+}
+
+.numerology-cluster-visual {
+    min-width: 0;
+}
+
+.numerology-cluster-visual img {
+    display: block;
+    width: min(100%, 440px);
+    margin: 0 auto;
+    border-radius: 8px;
+    filter: drop-shadow(0 24px 42px rgba(0, 0, 0, 0.48));
+}
+
+.numerology-cluster-grid,
+.numerology-cluster-intent-grid,
+.numerology-cluster-faq__grid,
+.numerology-cluster-link-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.numerology-cluster-card,
+.numerology-cluster-intent-card,
+.numerology-cluster-faq__grid article,
+.numerology-cluster-link-card {
+    min-width: 0;
+    padding: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.045);
+}
+
+.numerology-cluster-card span,
+.numerology-cluster-intent-card span,
+.numerology-cluster-link-card span {
+    display: block;
+    margin-bottom: 0.6rem;
+    color: var(--color-mystic-gold);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.numerology-cluster-card strong,
+.numerology-cluster-intent-card strong,
+.numerology-cluster-faq__grid h3,
+.numerology-cluster-link-card strong {
+    display: block;
+    margin-bottom: 0.55rem;
+    color: #f3d98b;
+    font-size: 1rem;
+    line-height: 1.35;
+}
+
+.numerology-cluster-card p,
+.numerology-cluster-intent-card em,
+.numerology-cluster-faq__grid p,
+.numerology-cluster-link-card em {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.66);
+    font-size: 0.92rem;
+    font-style: normal;
+    line-height: 1.65;
+}
+
+.numerology-cluster-intent-card,
+.numerology-cluster-link-card {
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.numerology-cluster-intent-card:hover,
+.numerology-cluster-intent-card:focus-visible,
+.numerology-cluster-link-card:hover,
+.numerology-cluster-link-card:focus-visible {
+    transform: translateY(-3px);
+    border-color: rgba(212, 175, 55, 0.45);
+    background: rgba(212, 175, 55, 0.08);
+    outline: none;
+}
+
+.numerology-cluster-intent-card--primary {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(63, 178, 255, 0.1));
+    border-color: rgba(212, 175, 55, 0.38);
+}
+
+.numerology-cluster-intent-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.numerology-cluster-faq__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.numerology-cluster-mini {
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 1080px) {
+    .numerology-cluster-intent-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 920px) {
+    .numerology-cluster-hero__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .numerology-cluster-hero {
+        padding-top: 4rem;
+        padding-bottom: 1.25rem;
+    }
+
+    .numerology-cluster-hero .section__title {
+        font-size: 2.45rem;
+        line-height: 1.08;
+    }
+
+    .numerology-cluster-hero__actions {
+        gap: 0.65rem;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+
+    .numerology-cluster-hero__actions .btn {
+        flex: 1 1 170px;
+        min-height: 48px;
+        padding: 0.9rem 0.95rem;
+        font-size: 0.78rem;
+        white-space: normal;
+    }
+
+    .numerology-cluster-trust {
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 0.85rem;
+    }
+
+    .numerology-cluster-trust span {
+        padding: 0.42rem 0.58rem;
+        font-size: 0.78rem;
+    }
+
+    .numerology-cluster-visual img {
+        width: min(100%, 260px);
+    }
+
+    .numerology-cluster-grid,
+    .numerology-cluster-intent-grid,
+    .numerology-cluster-faq__grid,
+    .numerology-cluster-link-grid {
+        grid-template-columns: 1fr;
+    }
+}
