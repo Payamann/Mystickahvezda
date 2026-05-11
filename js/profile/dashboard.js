@@ -48,7 +48,7 @@ const PREMIUM_ACTIONS = {
         {
             href: '/natalni-karta.html',
             title: 'Spustit natální kartu',
-            description: 'Využijte jeden z nejsilnějších důvodů, proč lidé zůstávají.'
+            description: 'Otevřete osobní mapu, ke které se dá vracet při dalších výkladech.'
         },
         {
             href: '/horoskopy.html',
@@ -77,7 +77,7 @@ const PREMIUM_ACTIONS = {
         {
             href: '/mentor.html',
             title: 'Začít VIP konzultaci',
-            description: 'Nejrychlejší cesta k první silné hodnotě po nákupu.'
+            description: 'Začněte jednou konkrétní otázkou, aby plán hned navázal na reálné téma.'
         },
         {
             href: '/rocni-horoskop.html',
@@ -87,7 +87,7 @@ const PREMIUM_ACTIONS = {
         {
             href: '/profil.html#tab-settings',
             title: 'Dokončit nastavení profilu',
-            description: 'Čím víc údajů doplníte, tím přesnější bude vedení.'
+            description: 'Čím víc údajů doplníte, tím lépe na sebe navážou další výklady.'
         }
     ]
 };
@@ -179,7 +179,7 @@ const SIGNUP_INTENT_DESTINATIONS = {
         href: (sign) => buildDailyHoroscopeHref(sign, 'profile_signup_intent'),
         description: (sign) => sign
             ? `Navázat na registraci dnešním horoskopem pro ${sign.name}.`
-            : 'Navázat na registraci denním horoskopem jako nejrychlejší první hodnotou.'
+            : 'Navázat na registraci denním horoskopem jako prvním konkrétním krokem.'
     },
     horoskopy: {
         feature: 'daily_guidance',
@@ -196,12 +196,12 @@ const SIGNUP_INTENT_DESTINATIONS = {
     tarot_multi_card: {
         feature: 'tarot_multi_card',
         href: () => 'tarot.html?source=profile_signup_intent&feature=tarot_multi_card',
-        description: () => 'Navázat hlubším tarotovým výkladem, kvůli kterému účet vznikl.'
+        description: () => 'Navázat vícekartovým tarotem na otázku, kvůli které účet vznikl.'
     },
     tarot_celtic_cross: {
         feature: 'tarot_celtic_cross',
         href: () => 'tarot-keltsky-kriz.html?source=profile_signup_intent&feature=tarot_celtic_cross',
-        description: () => 'Navázat keltským křížem jako prvním hlubším výkladem.'
+        description: () => 'Navázat keltským křížem pro situaci, která potřebuje víc kontextu.'
     },
     daily_angel_card: {
         feature: 'daily_angel_card',
@@ -211,7 +211,7 @@ const SIGNUP_INTENT_DESTINATIONS = {
     andelske_karty_hluboky_vhled: {
         feature: 'andelske_karty_hluboky_vhled',
         href: () => 'andelske-karty.html?source=profile_signup_intent&feature=andelske_karty_hluboky_vhled',
-        description: () => 'Navázat hlubším vhledem z andělských karet.'
+        description: () => 'Navázat andělskými kartami a vzít si jeden konkrétní signál.'
     },
     numerologie_vyklad: {
         feature: 'numerologie_vyklad',
@@ -251,7 +251,7 @@ const SIGNUP_INTENT_DESTINATIONS = {
     shamanske_kolo_plne_cteni: {
         feature: 'shamanske_kolo_plne_cteni',
         href: () => 'shamansko-kolo.html?source=profile_signup_intent&feature=shamanske_kolo_plne_cteni',
-        description: () => 'Navázat šamanským kolem jako hlubším prvním krokem.'
+        description: () => 'Navázat šamanským kolem jako symbolickým směrem pro další krok.'
     },
     minuly_zivot: {
         feature: 'minuly_zivot',
@@ -972,7 +972,7 @@ function renderActivationChecklist(user, readings, subscription) {
         ? 'Už máte první stopu, ke které se dá vracet.'
         : sign
             ? `Začněte dnešním horoskopem pro ${sign.name}, ať první krok naváže na profil.`
-            : 'Začněte tarotem, horoskopem nebo křišťálovou koulí.';
+            : 'Vyberte první konkrétní krok: tarot, horoskop nebo otázku pro křišťálovou kouli.';
 
     const effectiveFirstReadingDescription = signupIntentDestination?.description || firstReadingDescription;
 

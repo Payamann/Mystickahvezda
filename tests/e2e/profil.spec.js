@@ -250,6 +250,50 @@ test.describe('Profil aktivace', () => {
         await expect(firstReading).toContainText('numerologick');
     });
 
+    test('prazdny profil drzi symbolicky zamer minuleho zivota', async ({ page }) => {
+        await mockLoggedInProfile(page);
+        await page.addInitScript(() => {
+            localStorage.setItem('mh_signup_intent', JSON.stringify({
+                source: 'past_life_register_gate',
+                feature: 'minuly_zivot',
+                destination: '/minuly-zivot.html?source=signup_activation&feature=minuly_zivot',
+                createdAt: Date.now()
+            }));
+        });
+
+        await page.goto('/profil.html');
+        await waitForPageReady(page);
+
+        const firstReading = page.locator('[data-activation-step="first_reading"]');
+        const firstReadingHref = await firstReading.getAttribute('href');
+        expect(firstReadingHref).toContain('minuly-zivot.html');
+        expect(firstReadingHref).toContain('source=profile_signup_intent');
+        expect(firstReadingHref).toContain('entry_feature=minuly_zivot');
+        await expect(firstReading).toContainText('symbolickým výkladem minulého života');
+    });
+
+    test('prazdny profil drzi symbolicky smer samanskeho kola', async ({ page }) => {
+        await mockLoggedInProfile(page);
+        await page.addInitScript(() => {
+            localStorage.setItem('mh_signup_intent', JSON.stringify({
+                source: 'shaman_inline_upsell',
+                feature: 'shamanske_kolo_plne_cteni',
+                destination: '/shamansko-kolo.html?source=signup_activation&feature=shamanske_kolo_plne_cteni',
+                createdAt: Date.now()
+            }));
+        });
+
+        await page.goto('/profil.html');
+        await waitForPageReady(page);
+
+        const firstReading = page.locator('[data-activation-step="first_reading"]');
+        const firstReadingHref = await firstReading.getAttribute('href');
+        expect(firstReadingHref).toContain('shamansko-kolo.html');
+        expect(firstReadingHref).not.toContain('shamanske-kolo.html');
+        expect(firstReadingHref).toContain('entry_feature=shamanske_kolo_plne_cteni');
+        await expect(firstReading).toContainText('symbolickým směrem');
+    });
+
     test('pamet ritualu navaze na zpetnou vazbu a nabidne konkretni dalsi krok', async ({ page }) => {
         await mockLoggedInProfile(page, {
             readings: [
