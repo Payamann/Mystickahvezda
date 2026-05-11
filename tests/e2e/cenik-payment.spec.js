@@ -266,6 +266,50 @@ test.describe('Ceník — platební tlačítka', () => {
         expect(href).toContain('entry_feature=ritual_memory');
     });
 
+    test('tarot tri karty pricing kontext navazuje na vybrany rozklad', async ({ page }) => {
+        await page.goto('/cenik.html?plan=pruvodce&source=tarot_three_card_landing&feature=tarot_multi_card');
+        await waitForPageReady(page);
+
+        const banner = page.locator('#pricing-plan-recommendation');
+        await expect(banner).toBeVisible();
+        await expect(banner).toContainText('Navazuje na výklad 3 karet');
+        await expect(banner).toContainText('Odemknout výklad 3 karet');
+        await expect(banner.locator('[data-recommended-plan="pruvodce"]')).toBeVisible();
+
+        const previewLink = banner.locator('[data-preview-destination]');
+        await expect(previewLink).toBeVisible();
+        const href = await previewLink.getAttribute('href');
+        expect(href).toContain('/tarot.html');
+        expect(href).toContain('feature=tarot_multi_card');
+        expect(href).toContain('intent=three_cards');
+        expect(href).toContain('spread=three_cards');
+        expect(href).toContain('source=pricing_recommendation_preview');
+        expect(href).toContain('entry_source=tarot_three_card_landing');
+        expect(href).toContain('entry_feature=tarot_multi_card');
+    });
+
+    test('tarot keltsky kriz pricing kontext smeruje na vip a preview se vraci na rozklad', async ({ page }) => {
+        await page.goto('/cenik.html?plan=vip-majestrat&source=tarot_celtic_cross_landing&feature=tarot_celtic_cross');
+        await waitForPageReady(page);
+
+        const banner = page.locator('#pricing-plan-recommendation');
+        await expect(banner).toBeVisible();
+        await expect(banner).toContainText('Navazuje na Keltský kříž');
+        await expect(banner).toContainText('Odemknout Keltský kříž');
+        await expect(banner.locator('[data-recommended-plan="vip-majestrat"]')).toBeVisible();
+
+        const previewLink = banner.locator('[data-preview-destination]');
+        await expect(previewLink).toBeVisible();
+        const href = await previewLink.getAttribute('href');
+        expect(href).toContain('/tarot.html');
+        expect(href).toContain('feature=tarot_celtic_cross');
+        expect(href).toContain('intent=celtic_cross');
+        expect(href).toContain('spread=celtic_cross');
+        expect(href).toContain('source=pricing_recommendation_preview');
+        expect(href).toContain('entry_source=tarot_celtic_cross_landing');
+        expect(href).toContain('entry_feature=tarot_celtic_cross');
+    });
+
     test('personal map email return zobrazi konkretni navazujici krok', async ({ page }) => {
         await page.goto('/cenik.html?source=personal_map_email_day3&feature=premium_membership&plan=pruvodce&utm_source=email&utm_campaign=personal_map_day3');
         await waitForPageReady(page);

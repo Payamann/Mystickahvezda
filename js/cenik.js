@@ -105,8 +105,16 @@ const FEATURE_PREVIEW_DESTINATIONS = {
     shamanske_kolo_plne_cteni: { path: '/shamansko-kolo.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt \u0161amansk\u00e9 kolo' },
     synastry: { path: '/partnerska-shoda.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt partnerskou shodu' },
     tarot: { path: '/tarot.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt tarot zdarma' },
-    tarot_celtic_cross: { path: '/tarot.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt tarot zdarma' },
-    tarot_multi_card: { path: '/tarot.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt tarot zdarma' },
+    tarot_celtic_cross: {
+        path: '/tarot.html',
+        label: 'Vr\u00e1tit se ke Keltsk\u00e9mu k\u0159\u00ed\u017ei zdarma',
+        params: { feature: 'tarot_celtic_cross', intent: 'celtic_cross', spread: 'celtic_cross' }
+    },
+    tarot_multi_card: {
+        path: '/tarot.html',
+        label: 'Vr\u00e1tit se k v\u00fdkladu 3 karet zdarma',
+        params: { feature: 'tarot_multi_card', intent: 'three_cards', spread: 'three_cards' }
+    },
     weekly_horoscope: { path: '/horoskopy.html', label: 'Nejd\u0159\u00edv otev\u0159\u00edt horoskopy zdarma' }
 };
 
@@ -140,6 +148,21 @@ const SOURCE_RECOMMENDATION_COPY = {
         title: 'Pam\u011b\u0165 uk\u00e1zala opakuj\u00edc\u00ed se t\u00e9ma. Pr\u016fvodce z n\u011bj ud\u011bl\u00e1 pravideln\u00fd sm\u011br.',
         text: 'Profil u\u017e dr\u017e\u00ed v\u00fdklady, zp\u011btnou vazbu a reflexe pohromad\u011b. Hv\u011bzdn\u00fd Pr\u016fvodce p\u0159id\u00e1 hlub\u0161\u00ed v\u00fdklady a osobn\u00ed historii, aby se z opakovan\u00e9ho t\u00e9matu stal konkr\u00e9tn\u00ed dal\u0161\u00ed krok.',
         actionLabel: 'Odemknout hlub\u0161\u00ed pam\u011b\u0165'
+    }
+};
+
+const FEATURE_RECOMMENDATION_COPY = {
+    tarot_multi_card: {
+        eyebrow: 'Navazuje na v\u00fdklad 3 karet',
+        title: 'Jedna karta otev\u0159e t\u00e9ma. T\u0159i karty uk\u00e1\u017eou souvislosti.',
+        text: 'Hv\u011bzdn\u00fd Pr\u016fvodce odemkne cel\u00fd t\u0159\u00edkartov\u00fd v\u00fdklad s minulost\u00ed, p\u0159\u00edtomnost\u00ed a nejbli\u017e\u0161\u00edm krokem, aby odpov\u011b\u010f nebyla jen pocit, ale praktick\u00fd sm\u011br.',
+        actionLabel: 'Odemknout v\u00fdklad 3 karet'
+    },
+    tarot_celtic_cross: {
+        eyebrow: 'Navazuje na Keltsk\u00fd k\u0159\u00ed\u017e',
+        title: 'Velk\u00e1 ot\u00e1zka pot\u0159ebuje v\u00edc ne\u017e rychlou kartu.',
+        text: 'VIP Majestr\u00e1t odemkne Keltsk\u00fd k\u0159\u00ed\u017e s deseti pozicemi, hlub\u0161\u00edm kontextem a osobn\u00edm veden\u00edm pro situace, kde rozhoduje nuance.',
+        actionLabel: 'Odemknout Keltsk\u00fd k\u0159\u00ed\u017e'
     }
 };
 
@@ -398,6 +421,9 @@ function getPreviewDestination(context) {
         label: 'Nejd\u0159\u00edv otev\u0159\u00edt bezplatn\u00fd v\u00fdklad'
     };
     const url = new URL(destination.path, window.location.origin);
+    Object.entries(destination.params || {}).forEach(([key, value]) => {
+        url.searchParams.set(key, value);
+    });
     url.searchParams.set('source', 'pricing_recommendation_preview');
     if (context.source) url.searchParams.set('entry_source', context.source);
     if (context.feature) url.searchParams.set('entry_feature', context.feature);
@@ -588,15 +614,15 @@ function renderRecommendationBanner(context) {
 
     const banner = document.createElement('div');
     const hasVisiblePlanCard = !!document.querySelector(`.plan-checkout-btn[data-plan="${context.recommendedPlan}"]`);
-    const sourceCopy = SOURCE_RECOMMENDATION_COPY[context.source] || null;
-    const actionLabel = sourceCopy?.actionLabel || (hasVisiblePlanCard ? 'Ukázat doporučený plán' : 'Pokračovat k doporučenému plánu');
+    const recommendationCopy = SOURCE_RECOMMENDATION_COPY[context.source] || FEATURE_RECOMMENDATION_COPY[context.feature] || null;
+    const actionLabel = recommendationCopy?.actionLabel || (hasVisiblePlanCard ? 'Ukázat doporučený plán' : 'Pokračovat k doporučenému plánu');
     const previewDestination = getPreviewDestination(context);
     banner.id = 'pricing-plan-recommendation';
     banner.className = 'pricing-plan-recommendation';
     banner.innerHTML = `
-        <div class="pricing-plan-recommendation__eyebrow">${sourceCopy?.eyebrow || 'Doporučený další krok'}</div>
-        <strong class="pricing-plan-recommendation__title">${sourceCopy?.title || planMeta.name}</strong>
-        <p class="pricing-plan-recommendation__text">${sourceCopy?.text || `${planMeta.headline} ${planMeta.recommendedFor}`}</p>
+        <div class="pricing-plan-recommendation__eyebrow">${recommendationCopy?.eyebrow || 'Doporučený další krok'}</div>
+        <strong class="pricing-plan-recommendation__title">${recommendationCopy?.title || planMeta.name}</strong>
+        <p class="pricing-plan-recommendation__text">${recommendationCopy?.text || `${planMeta.headline} ${planMeta.recommendedFor}`}</p>
         <div class="pricing-plan-recommendation__actions">
             <button type="button" class="pricing-plan-recommendation__action" data-recommended-plan="${context.recommendedPlan}">${actionLabel}</button>
             ${previewDestination ? `<a class="pricing-plan-recommendation__preview" href="${previewDestination.href}" data-preview-destination>${previewDestination.label}</a>` : ''}
