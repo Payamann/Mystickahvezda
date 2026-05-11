@@ -122,6 +122,17 @@ const CONVERSION_LINK_CHECKS = [
         ]
     },
     {
+        path: '/runy.html',
+        name: 'Runes intent cluster',
+        snippets: [
+            'class="runes-intent-section"',
+            'data-analytics-cta="runes_intent_daily"',
+            'blog/runovy-vyklad-doma-pruvodce.html?source=runes_intent_cluster',
+            'tarot-ano-ne.html?source=runes_intent_cluster',
+            'kristalova-koule.html?source=runes_intent_cluster'
+        ]
+    },
+    {
         path: '/horoskopy.html',
         name: 'Horoscope intent cluster',
         snippets: [

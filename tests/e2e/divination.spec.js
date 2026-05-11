@@ -221,6 +221,15 @@ test.describe('Runy', () => {
         await expect(rune).toBeAttached();
     });
 
+    test('stranka vede uzivatele k jasnemu runovemu zameru', async ({ page }) => {
+        const cluster = page.locator('.runes-intent-section');
+        await expect(cluster).toBeVisible();
+        await expect(cluster.locator('.runes-intent-card')).toHaveCount(6);
+        await expect(cluster.locator('[data-analytics-cta="runes_intent_daily"]')).toHaveAttribute('href', '#btn-draw');
+        await expect(cluster.locator('[data-analytics-cta="runes_intent_home_spread"]')).toHaveAttribute('href', /runovy-vyklad-doma-pruvodce\.html/);
+        await expect(cluster.locator('[data-analytics-cta="runes_intent_crystal_ball"]')).toHaveAttribute('href', /kristalova-koule\.html/);
+    });
+
     test('kliknutí na tlačítko runy nezpůsobí JS crash', async ({ page }) => {
         const btn = page.locator('#btn-draw, button[id*="draw"]').first();
         if (await btn.isVisible()) {

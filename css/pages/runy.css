@@ -324,7 +324,77 @@ html body .mh-inline-7c806d36e5 { font-family: var(--font-heading); color: var(-
 html body .mh-inline-45df8e19ce { color: var(--color-silver-mist); line-height: 1.7; font-size: 1.05rem; }
 html body .mh-inline-ea59635151 { color: var(--color-starlight); margin: 2rem 0 1rem; font-size: 1.3rem; }
 
+.runes-intent-section {
+    padding-top: var(--space-xl);
+}
+
+.runes-intent-section .section__header {
+    margin-bottom: var(--space-lg);
+}
+
+.runes-intent-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-md);
+}
+
+.runes-intent-card {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: var(--space-lg);
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.runes-intent-card:hover,
+.runes-intent-card:focus-visible {
+    border-color: rgba(212, 175, 55, 0.52);
+    background: rgba(212, 175, 55, 0.08);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.runes-intent-card--primary {
+    border-color: rgba(212, 175, 55, 0.54);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.14), rgba(90, 98, 112, 0.1));
+}
+
+.runes-intent-card span {
+    color: var(--color-mystic-gold);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.runes-intent-card strong {
+    color: var(--color-starlight);
+    font-family: var(--font-heading);
+    font-size: 1.08rem;
+    line-height: 1.25;
+}
+
+.runes-intent-card em {
+    color: var(--color-silver-mist);
+    font-style: normal;
+    line-height: 1.55;
+}
+
 @media (max-width: 640px) {
+    .runes-intent-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .runes-intent-card {
+        padding: var(--space-md);
+    }
+
     body.page-runes .cookie-banner {
         left: 12px;
         right: 12px;
