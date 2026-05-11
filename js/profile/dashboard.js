@@ -1303,7 +1303,7 @@ async function initProfile() {
     if (!isLoggedIn) {
         setProfileBlockVisible(loginRequired, true);
         setProfileBlockVisible(dashboard, false);
-        if (greeting) greeting.textContent = 'Přihlaste se pro zobrazení vašeho profilu';
+        if (greeting) greeting.textContent = 'Přihlas se a měj výklady na jednom místě';
         return;
     }
 

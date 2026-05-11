@@ -47,6 +47,7 @@ test.describe('Profil stránka', () => {
 
     test('login gate vysvetluje hodnotu uctu a zachova meritelny kontext', async ({ page }) => {
         const gate = page.locator('#login-required');
+        await expect(page.locator('#profile-greeting')).toContainText('výklady na jednom místě');
         await expect(gate).toContainText('historii, oblíbené výklady a návratové poznámky');
         await expect(gate).toContainText('Bez přihlášení nic neukládáme do osobního profilu');
 
