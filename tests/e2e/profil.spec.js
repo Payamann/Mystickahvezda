@@ -297,6 +297,26 @@ test.describe('Profil aktivace', () => {
                 }
             ]
         });
+        await page.addInitScript(() => {
+            window.__profileEvents = [];
+            let analyticsValue = null;
+            Object.defineProperty(window, 'MH_ANALYTICS', {
+                configurable: true,
+                get: () => analyticsValue,
+                set: (value) => {
+                    analyticsValue = value && typeof value === 'object'
+                        ? {
+                            ...value,
+                            trackEvent: (eventName, payload) => {
+                                window.__profileEvents.push({ eventName, payload });
+                                return value.trackEvent?.call(value, eventName, payload);
+                            },
+                            trackCTA: (...args) => value.trackCTA?.call(value, ...args)
+                        }
+                        : value;
+                }
+            });
+        });
 
         await page.goto('/profil.html');
         await waitForPageReady(page);
@@ -308,6 +328,10 @@ test.describe('Profil aktivace', () => {
         await page.locator('[data-feedback-focus="relationships"]').click();
         await expect(page.locator('.reading-feedback__status')).toContainText('Paměť profilu');
         await expect(page.locator('#ritual-memory-title')).toContainText('Vztahy');
+
+        await expect.poll(async () => page.evaluate(() => window.__profileEvents
+            .filter(event => event.eventName === 'profile_ritual_memory_viewed')
+            .length)).toBe(1);
     });
 
     test('vecerni reflexe ulozi journal a oznaci navratovy ritual', async ({ page }) => {

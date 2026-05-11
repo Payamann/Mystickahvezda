@@ -21,6 +21,19 @@ import { toggleAvatarPicker, selectAvatar, loadSubscriptionStatus, initSettingsF
 import { viewReading, closeReadingModal, toggleFavoriteModal, toggleFavorite, deleteReading } from './modal.js';
 
 const PREMIUM_ACTIVATION_KEY = 'mh_premium_activation_seen';
+let ritualMemoryViewTracked = false;
+
+function trackProfileEvent(eventName, payload = {}, attemptsLeft = 12) {
+    if (window.MH_ANALYTICS?.trackEvent) {
+        window.MH_ANALYTICS.trackEvent(eventName, payload);
+        return;
+    }
+
+    if (attemptsLeft > 0) {
+        window.setTimeout(() => trackProfileEvent(eventName, payload, attemptsLeft - 1), 150);
+    }
+}
+
 const PREMIUM_ACTIONS = {
     premium_monthly: [
         {
@@ -684,15 +697,18 @@ function renderRitualMemory(user, readings, subscription) {
         </a>
     `).join('');
 
-    window.MH_ANALYTICS?.trackEvent?.('profile_ritual_memory_viewed', {
-        plan_type: planType,
-        reading_count: memory.totalReadings,
-        journal_count: memory.journalCount,
-        feedback_count: memory.feedbackCount,
-        top_theme: memory.topTheme?.key || null,
-        has_today_journal: memory.todayJournal,
-        strength: memory.strengthLabel
-    });
+    if (!ritualMemoryViewTracked) {
+        ritualMemoryViewTracked = true;
+        trackProfileEvent('profile_ritual_memory_viewed', {
+            plan_type: planType,
+            reading_count: memory.totalReadings,
+            journal_count: memory.journalCount,
+            feedback_count: memory.feedbackCount,
+            top_theme: memory.topTheme?.key || null,
+            has_today_journal: memory.todayJournal,
+            strength: memory.strengthLabel
+        });
+    }
 }
 
 function renderDailyGuidance(user, readings, subscription) {
