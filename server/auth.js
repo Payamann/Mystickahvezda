@@ -9,6 +9,7 @@ import { PREMIUM_PLAN_TYPES } from './config/constants.js';
 import { blacklistToken } from './utils/token-blacklist.js';
 import { recordFailedAttempt, checkAccountLockout, recordSuccessfulLogin } from './utils/account-lockout.js';
 import { isProductionRuntime } from './config/runtime.js';
+import { sendActivationLifecycleSequence } from './email-service.js';
 
 const router = express.Router();
 const LOCKOUT_DURATION_MINUTES = 15;
@@ -663,6 +664,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
 router.post('/onboarding/complete', authenticateToken, async (req, res) => {
     try {
         const userId = req.user?.id;
+        const { source = '', feature = '', destination = '', skipped = false } = req.body || {};
 
         if (!userId) {
             return res.status(401).json({ error: 'Authentication required' });
@@ -680,10 +682,30 @@ router.post('/onboarding/complete', authenticateToken, async (req, res) => {
 
         if (error) throw error;
 
+        let activationLifecycleQueued = false;
+
+        if (data?.email) {
+            try {
+                const lifecycleResult = await sendActivationLifecycleSequence({
+                    userId,
+                    email: data.email,
+                    name: data.first_name || '',
+                    source,
+                    feature: feature || 'daily_guidance',
+                    destination
+                });
+                activationLifecycleQueued = lifecycleResult?.success === true;
+            } catch (emailError) {
+                console.warn('[AUTH] Activation lifecycle scheduling failed:', emailError.message);
+            }
+        }
+
         res.json({
             success: true,
             message: 'Onboarding completed',
-            user: data
+            user: data,
+            activationLifecycleQueued,
+            onboardingSkipped: Boolean(skipped)
         });
     } catch (e) {
         console.error('Onboarding Complete Error:', e);

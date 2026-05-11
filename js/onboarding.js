@@ -467,9 +467,10 @@ function setCompletionPending(action, pending) {
     }
 }
 
-async function notifyBackendOnboardingComplete() {
+async function notifyBackendOnboardingComplete(context = {}) {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), ONBOARDING_NOTIFY_TIMEOUT_MS);
+    const entryContext = getOnboardingContext();
 
     try {
         const API_URL = window.API_CONFIG?.BASE_URL || '/api';
@@ -491,7 +492,13 @@ async function notifyBackendOnboardingComplete() {
             headers: {
                 'Content-Type': 'application/json',
                 ...(csrfToken && { 'X-CSRF-Token': csrfToken })
-            }
+            },
+            body: JSON.stringify({
+                source: entryContext.source || null,
+                feature: entryContext.feature || null,
+                destination: context.destination || null,
+                skipped: context.skipped === true
+            })
         });
 
         if (!res.ok) {
@@ -528,7 +535,7 @@ async function finishOnboarding(action) {
         entry_feature: getOnboardingContext().feature || null
     });
 
-    await notifyBackendOnboardingComplete();
+    await notifyBackendOnboardingComplete({ destination: destinationHref, skipped: false });
     window.location.href = destinationHref;
 }
 
@@ -547,7 +554,7 @@ async function skipOnboarding(event, action) {
     });
 
     const destination = getPrimaryDestination().href('onboarding_skip');
-    await notifyBackendOnboardingComplete();
+    await notifyBackendOnboardingComplete({ destination, skipped: true });
     window.location.href = destination;
 }
 

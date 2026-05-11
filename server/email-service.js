@@ -148,6 +148,144 @@ function formatEmailName(value = '', fallback = 'Ahoj') {
   return escapeHtml(cleaned || fallback);
 }
 
+const ACTIVATION_FEATURES = {
+  daily_guidance: {
+    label: 'denní horoskop',
+    path: '/horoskopy.html',
+    day0: 'Začni krátkým denním vhledem. Je to nejrychlejší způsob, jak z účtu udělat osobní místo.',
+    day1: 'Vrať se k dennímu vedení a ulož první stopu do profilu.',
+    day3: 'Když se k vedení vrátíš víckrát, začne dávat smysl paměť rituálu.'
+  },
+  horoskopy: {
+    label: 'denní horoskop',
+    path: '/horoskopy.html',
+    day0: 'Začni krátkým denním vhledem. Je to nejrychlejší způsob, jak z účtu udělat osobní místo.',
+    day1: 'Vrať se k dennímu vedení a ulož první stopu do profilu.',
+    day3: 'Když se k vedení vrátíš víckrát, začne dávat smysl paměť rituálu.'
+  },
+  tarot: {
+    label: 'tarotový výklad',
+    path: '/tarot.html',
+    day0: 'Polož jednu konkrétní otázku a nech tarot ukázat první směr.',
+    day1: 'Navazující karta pomůže rozlišit, co je pocit a co další krok.',
+    day3: 'Pokud se téma vrací, ulož výklad a sleduj vzorec v profilu.'
+  },
+  tarot_multi_card: {
+    label: 'vícekartový tarot',
+    path: '/tarot.html',
+    day0: 'Začni vícekartovým výkladem, pokud potřebuješ souvislost místo jedné odpovědi.',
+    day1: 'Vrať se k otázce a zkus druhý pohled: co teď pomůže, co drží zpět.',
+    day3: 'Hlubší výklady dávají největší smysl, když je můžeš porovnat v historii.'
+  },
+  numerologie_vyklad: {
+    label: 'numerologický výklad',
+    path: '/numerologie.html',
+    day0: 'Spočítej první osobní číslo a začni konkrétním rytmem, ne obecným textem.',
+    day1: 'Vrať se k číslu a podívej se, jak se propisuje do vztahů nebo práce.',
+    day3: 'Numerologie je silnější, když ji propojíš s horoskopem nebo partnerskou shodou.'
+  },
+  partnerska_detail: {
+    label: 'partnerská shoda',
+    path: '/partnerska-shoda.html',
+    day0: 'Zadej dva profily a získej první vztahový vhled bez hledání v menu.',
+    day1: 'Vrať se ke shodě a všimni si, jestli téma sedí na komunikaci, blízkost nebo hranice.',
+    day3: 'Vztahový vhled má větší hodnotu, když naváže na tarot nebo natální kartu.'
+  },
+  daily_angel_card: {
+    label: 'andělská karta',
+    path: '/andelske-karty.html',
+    day0: 'Otevři kartu dne a vezmi si jeden jednoduchý signál pro dnešek.',
+    day1: 'Vrať se ke kartě a zapiš si, co se opravdu potvrdilo.',
+    day3: 'Opakovaná karta nebo téma může být začátek osobního rituálu.'
+  },
+  natalni_interpretace: {
+    label: 'natální karta',
+    path: '/natalni-karta.html',
+    day0: 'Doplň narození až ve chvíli, kdy otevíráš natální kartu. Účet už je připravený.',
+    day1: 'Vrať se k natální kartě a začni jednou oblastí: vztahy, práce nebo energie.',
+    day3: 'Natální karta dává smysl jako mapa, ke které se budeš vracet.'
+  },
+  mentor: {
+    label: 'Hvězdný průvodce',
+    path: '/mentor.html',
+    day0: 'Polož jednu jasnou otázku a nech průvodce navázat na tvůj záměr.',
+    day1: 'Vrať se s druhou otázkou: co je další konkrétní krok.',
+    day3: 'Průvodce funguje nejlépe, když se ptáš na jednu situaci, ne na celý život najednou.'
+  }
+};
+
+Object.assign(ACTIVATION_FEATURES, {
+  andelske_karty_hluboky_vhled: ACTIVATION_FEATURES.daily_angel_card,
+  angel_card_deep: ACTIVATION_FEATURES.daily_angel_card,
+  crystal_ball_unlimited: {
+    label: 'křišťálová koule',
+    path: '/kristalova-koule.html',
+    day0: 'Polož jednu osobní otázku a sleduj, jaký směr se objeví.',
+    day1: 'Vrať se ke stejné otázce a porovnej, jestli se pocit zpřesnil.',
+    day3: 'Když se téma vrací, naváže na tarot nebo profilovou reflexi.'
+  },
+  hvezdny_mentor: ACTIVATION_FEATURES.mentor,
+  kristalova_koule: null,
+  natal_chart: ACTIVATION_FEATURES.natalni_interpretace,
+  numerology: ACTIVATION_FEATURES.numerologie_vyklad,
+  runes_deep_reading: {
+    label: 'runový výklad',
+    path: '/runy.html',
+    day0: 'Vytáhni runu pro jednu konkrétní otázku.',
+    day1: 'Vrať se k symbolu a všimni si, kde se ukázal v praxi.',
+    day3: 'Runy fungují nejlépe jako krátký rituál, ne jako nekonečné hledání.'
+  },
+  runy_hluboky_vyklad: null,
+  synastry: ACTIVATION_FEATURES.partnerska_detail,
+  tarot_celtic_cross: ACTIVATION_FEATURES.tarot_multi_card
+});
+ACTIVATION_FEATURES.kristalova_koule = ACTIVATION_FEATURES.crystal_ball_unlimited;
+ACTIVATION_FEATURES.runy_hluboky_vyklad = ACTIVATION_FEATURES.runes_deep_reading;
+
+function getActivationFeature(feature) {
+  return ACTIVATION_FEATURES[feature] || ACTIVATION_FEATURES.daily_guidance;
+}
+
+function buildTrackedActivationUrl({ path, campaign, feature, source }) {
+  const fallbackPath = getActivationFeature(feature).path || '/horoskopy.html';
+  let url;
+
+  try {
+    const baseUrl = new URL(APP_URL);
+    const candidate = new URL(path || fallbackPath, baseUrl);
+    url = candidate.origin === baseUrl.origin ? candidate : new URL(fallbackPath, baseUrl);
+  } catch {
+    url = new URL(fallbackPath, APP_URL);
+  }
+
+  url.searchParams.set('utm_source', 'email');
+  url.searchParams.set('utm_medium', 'lifecycle');
+  url.searchParams.set('utm_campaign', campaign);
+  url.searchParams.set('source', campaign);
+  url.searchParams.set('feature', feature || 'daily_guidance');
+  if (source) url.searchParams.set('entry_source', source);
+  if (feature) url.searchParams.set('entry_feature', feature);
+  return url.toString();
+}
+
+function buildActivationTemplateData(data = {}, campaign = 'activation_day0') {
+  const featureKey = data.feature || 'daily_guidance';
+  const feature = getActivationFeature(featureKey);
+  const ctaUrl = data.ctaUrl || buildTrackedActivationUrl({
+    path: data.destination || feature.path,
+    campaign,
+    feature: featureKey,
+    source: data.source
+  });
+
+  return {
+    featureKey,
+    feature,
+    ctaUrl,
+    name: formatEmailName(data.name, 'Ahoj')
+  };
+}
+
 function buildResendPayload({ to, subject, html, text, replyTo, headers, attachments }) {
   const payload = {
     from: FROM_EMAIL,
@@ -373,6 +511,72 @@ export const EMAIL_TEMPLATES = {
         "Vše, co hledáš venku, je již uvnitř tebe."
       </p>
     `, 'Objevuj Mystickou Hvězdu')
+  },
+
+  activation_first_step_day0: {
+    subject: 'Tvůj první krok je připravený',
+    getHtml: (data) => {
+      const context = buildActivationTemplateData(data, 'activation_day0');
+      return getBaseTemplate(`
+        <div style="display:none;max-height:0;overflow:hidden;">Navážeme tam, kde jsi začal. Jeden konkrétní krok, žádné hledání v menu.</div>
+        <h1 class="h1">${context.name}, začni tam, proč jsi přišel</h1>
+        <p>Účet už má smysl až ve chvíli, kdy tě dovede k první osobní hodnotě.</p>
+        <div class="feature-item">
+          <strong>${escapeHtml(context.feature.label)}</strong>
+          <p>${escapeHtml(context.feature.day0)}</p>
+        </div>
+        <div class="cta-box">
+          <a href="${escapeHtml(context.ctaUrl)}" class="btn">Otevřít první krok →</a>
+        </div>
+      `, 'První krok po registraci')
+    }
+  },
+
+  activation_quick_win_day1: {
+    subject: 'Vrať se k prvnímu signálu',
+    getHtml: (data) => {
+      const context = buildActivationTemplateData(data, 'activation_day1');
+      return getBaseTemplate(`
+        <h1 class="h1">Jedna otázka stačí</h1>
+        <p>Nemusíš projít celý web. Stačí se vrátit k tomu, co tě přivedlo dovnitř.</p>
+        <div class="feature-item">
+          <strong>${escapeHtml(context.feature.label)}</strong>
+          <p>${escapeHtml(context.feature.day1)}</p>
+        </div>
+        <div class="cta-box">
+          <a href="${escapeHtml(context.ctaUrl)}" class="btn">Pokračovat v osobním kroku →</a>
+        </div>
+      `, 'Rychlý návrat k první hodnotě')
+    }
+  },
+
+  activation_depth_day3: {
+    subject: 'Tady začíná osobní vzorec',
+    getHtml: (data) => {
+      const context = buildActivationTemplateData(data, 'activation_day3');
+      const upgradeUrl = buildTrackedActivationUrl({
+        path: '/cenik.html',
+        campaign: 'activation_day3_upgrade',
+        feature: context.featureKey,
+        source: data.source
+      });
+
+      return getBaseTemplate(`
+        <h1 class="h1">Když se téma vrací, stojí za to ho sledovat</h1>
+        <p>První výklad je začátek. Hodnota roste ve chvíli, kdy se k němu můžeš vrátit, porovnat ho a vidět opakující se motivy.</p>
+        <div class="feature-item">
+          <strong>${escapeHtml(context.feature.label)}</strong>
+          <p>${escapeHtml(context.feature.day3)}</p>
+        </div>
+        <div class="cta-box">
+          <a href="${escapeHtml(context.ctaUrl)}" class="btn">Vrátit se k výkladu →</a>
+        </div>
+        <p style="font-size: 14px; text-align: center; opacity: 0.82;">
+          Pokud už chceš hlubší historii a pravidelný návrat, můžeš se podívat i na
+          <a href="${escapeHtml(upgradeUrl)}" style="color:#d4af37;">Hvězdného průvodce</a>.
+        </p>
+      `, 'Osobní vzorec')
+    }
   },
 
   subscription_paused: {
@@ -661,6 +865,78 @@ export async function sendOnboardingSequence(userId, email, planType) {
     return { success: true };
   } catch (error) {
     console.error('[EMAIL] Failed to send onboarding sequence:', error);
+    throw error;
+  }
+}
+
+/**
+ * Schedule a short post-activation lifecycle for new free users.
+ * It is triggered after onboarding, when the user has enough context for a useful next step.
+ */
+export async function sendActivationLifecycleSequence({
+  userId,
+  email,
+  name = '',
+  source = '',
+  feature = 'daily_guidance',
+  destination = '',
+  delays = {}
+} = {}) {
+  if (!email) {
+    throw new Error('Missing email for activation lifecycle sequence.');
+  }
+
+  try {
+    const { scheduleEmailLater } = await import('./jobs/email-queue.js');
+    const dedupeBase = userId || email;
+    const context = {
+      name,
+      source,
+      feature: feature || 'daily_guidance',
+      destination
+    };
+
+    const results = [];
+    results.push(await scheduleEmailLater({
+      userId,
+      email,
+      template: 'activation_first_step_day0',
+      data: {
+        ...context,
+        dedupeKey: `activation:${dedupeBase}:day0`
+      },
+      delaySeconds: delays.day0 ?? 0,
+      dedupeKey: `activation:${dedupeBase}:day0`
+    }));
+
+    results.push(await scheduleEmailLater({
+      userId,
+      email,
+      template: 'activation_quick_win_day1',
+      data: {
+        ...context,
+        dedupeKey: `activation:${dedupeBase}:day1`
+      },
+      delaySeconds: delays.day1 ?? 86400,
+      dedupeKey: `activation:${dedupeBase}:day1`
+    }));
+
+    results.push(await scheduleEmailLater({
+      userId,
+      email,
+      template: 'activation_depth_day3',
+      data: {
+        ...context,
+        dedupeKey: `activation:${dedupeBase}:day3`
+      },
+      delaySeconds: delays.day3 ?? 259200,
+      dedupeKey: `activation:${dedupeBase}:day3`
+    }));
+
+    const scheduled = results.filter(result => !result.skipped).length;
+    return { success: true, scheduled, skipped: results.length - scheduled };
+  } catch (error) {
+    console.error('[EMAIL] Failed to schedule activation lifecycle sequence:', error);
     throw error;
   }
 }
@@ -1232,6 +1508,7 @@ export async function sendPersonalMapPdf({ to, name, sign, pdfBuffer }) {
 export default {
   sendEmail,
   sendOnboardingSequence,
+  sendActivationLifecycleSequence,
   sendPauseEmail,
   sendDiscountEmail,
   sendUpgradeReminders,

@@ -4,6 +4,7 @@
     const PENDING_CONTEXT_KEY = 'pending_checkout_context';
     const POST_AUTH_ACTIVATION_KEY = 'post_auth_activation';
     const POST_AUTH_REDIRECT_PENDING_KEY = 'post_auth_redirect_pending';
+    const SIGNUP_INTENT_KEY = 'mh_signup_intent';
 
     function setHidden(element, hidden) {
         if (element) element.hidden = hidden;
@@ -322,6 +323,9 @@
             }
             this.user = data.user;
             localStorage.setItem('auth_user', JSON.stringify(data.user));
+            if (options.mode === 'register' && standaloneContext) {
+                this.rememberSignupIntent(standaloneContext, postAuthRedirect || checkoutContext?.redirect || null);
+            }
             this.updateUI();
             this.closeModal();
 
@@ -574,6 +578,38 @@
             }));
         },
 
+        rememberSignupIntent(context = {}, destination = null) {
+            if (!context.source && !context.feature && !destination) return;
+
+            try {
+                localStorage.setItem(SIGNUP_INTENT_KEY, JSON.stringify({
+                    source: context.source || null,
+                    feature: context.feature || null,
+                    plan: context.plan || null,
+                    destination: destination || context.redirect || null,
+                    createdAt: Date.now()
+                }));
+            } catch (error) {
+                console.warn('Unable to remember signup intent:', error);
+            }
+        },
+
+        buildPostAuthActivationUrl(path, context = {}) {
+            const url = new URL(path || '/profil.html', window.location.origin);
+            url.searchParams.set('source', 'signup_activation');
+
+            if (context.feature) {
+                url.searchParams.set('feature', context.feature);
+                url.searchParams.set('entry_feature', context.feature);
+            }
+
+            if (context.source) {
+                url.searchParams.set('entry_source', context.source);
+            }
+
+            return `${url.pathname}${url.search}${url.hash}`;
+        },
+
         maybeShowPostAuthActivation() {
             try {
                 const raw = sessionStorage.getItem(POST_AUTH_ACTIVATION_KEY);
@@ -634,7 +670,7 @@
                         destination: activation.path
                     });
 
-                    return activation.path;
+                    return this.buildPostAuthActivationUrl(activation.path, context);
                 }
 
                 if (safeRedirect === '/profil.html') {

@@ -226,6 +226,30 @@ test.describe('Profil aktivace', () => {
         await expect(page.locator('[data-activation-step="first_reading"]')).toContainText('horoskopem pro Lev');
     });
 
+    test('prazdny profil navazuje prvni krok na puvodni registracni zamer', async ({ page }) => {
+        await mockLoggedInProfile(page);
+        await page.addInitScript(() => {
+            localStorage.setItem('mh_signup_intent', JSON.stringify({
+                source: 'life_number_result',
+                feature: 'numerologie_vyklad',
+                destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
+                createdAt: Date.now()
+            }));
+        });
+
+        await page.goto('/profil.html');
+        await waitForPageReady(page);
+
+        const firstReading = page.locator('[data-activation-step="first_reading"]');
+        const firstReadingHref = await firstReading.getAttribute('href');
+        expect(firstReadingHref).toContain('numerologie.html');
+        expect(firstReadingHref).toContain('source=profile_signup_intent');
+        expect(firstReadingHref).toContain('feature=numerologie_vyklad');
+        expect(firstReadingHref).toContain('entry_source=life_number_result');
+        expect(firstReadingHref).toContain('entry_feature=numerologie_vyklad');
+        await expect(firstReading).toContainText('numerologick');
+    });
+
     test('pamet ritualu navaze na zpetnou vazbu a nabidne konkretni dalsi krok', async ({ page }) => {
         await mockLoggedInProfile(page, {
             readings: [
@@ -492,6 +516,7 @@ test.describe('Onboarding', () => {
 
     test('dokonceni posila backend notifikaci s CSRF tokenem', async ({ page }) => {
         let completionCsrfHeader = null;
+        let completionPayload = null;
 
         await page.route('**/api/csrf-token', async (route) => {
             await route.fulfill({
@@ -502,6 +527,7 @@ test.describe('Onboarding', () => {
         });
         await page.route('**/api/auth/onboarding/complete', async (route) => {
             completionCsrfHeader = route.request().headers()['x-csrf-token'] || null;
+            completionPayload = route.request().postDataJSON();
             await route.fulfill({
                 status: 200,
                 contentType: 'application/json',
@@ -522,6 +548,13 @@ test.describe('Onboarding', () => {
         ]);
 
         expect(completionCsrfHeader).toBe('test-onboarding-csrf-token');
+        expect(completionPayload).toMatchObject({
+            source: null,
+            feature: null,
+            skipped: false
+        });
+        expect(completionPayload.destination).toContain('/horoskopy.html');
+        expect(completionPayload.destination).toContain('source=onboarding_complete');
     });
 
     test('dokonceni neceka na zaseknuty CSRF endpoint', async ({ page }) => {

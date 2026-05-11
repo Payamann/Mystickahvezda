@@ -6,6 +6,8 @@
 
 import request from 'supertest';
 import app from '../index.js';
+import jwt from 'jsonwebtoken';
+import { supabase } from '../db-supabase.js';
 
 async function getCsrfToken() {
     const res = await request(app).get('/api/csrf-token').expect(200);
@@ -221,6 +223,66 @@ describe('🔐 Auth Endpoint Tests', () => {
                 .set('x-csrf-token', csrfToken);
 
             expect(res.status).toBe(401);
+        });
+
+        test('POST /api/auth/onboarding/complete schedules activation lifecycle emails', async () => {
+            const csrfToken = await getCsrfToken();
+            const userId = `onboarding-email-${Date.now()}`;
+            const email = `${userId}@example.com`;
+            const token = jwt.sign({
+                id: userId,
+                email,
+                subscription_status: 'free',
+                isPremium: false
+            }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+            await supabase.from('users').insert({
+                id: userId,
+                email,
+                first_name: 'Jana',
+                is_onboarded: false
+            });
+
+            const res = await request(app)
+                .post('/api/auth/onboarding/complete')
+                .set('x-csrf-token', csrfToken)
+                .set('Cookie', `auth_token=${token}`)
+                .send({
+                    source: 'life_number_result',
+                    feature: 'numerologie_vyklad',
+                    destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
+                    skipped: false
+                });
+
+            expect(res.status).toBe(200);
+            expect(res.body).toMatchObject({
+                success: true,
+                activationLifecycleQueued: true,
+                onboardingSkipped: false
+            });
+
+            const { data: queued } = await supabase
+                .from('email_queue')
+                .select('*')
+                .eq('email_to', email)
+                .order('scheduled_for', { ascending: true });
+
+            expect(queued).toHaveLength(3);
+            expect(queued.map(emailRecord => emailRecord.template)).toEqual([
+                'activation_first_step_day0',
+                'activation_quick_win_day1',
+                'activation_depth_day3'
+            ]);
+
+            const firstPayload = typeof queued[0].data === 'string'
+                ? JSON.parse(queued[0].data)
+                : queued[0].data;
+            expect(firstPayload).toMatchObject({
+                source: 'life_number_result',
+                feature: 'numerologie_vyklad',
+                destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
+                dedupeKey: `activation:${userId}:day0`
+            });
         });
     });
 

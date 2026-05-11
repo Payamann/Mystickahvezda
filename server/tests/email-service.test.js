@@ -18,7 +18,8 @@ const {
     sendEmail,
     htmlToPlainText,
     sendPersonalMapLifecycleSequence,
-    sendAnnualHoroscopeLifecycleSequence
+    sendAnnualHoroscopeLifecycleSequence,
+    sendActivationLifecycleSequence
 } = await import('../email-service.js');
 const { supabase } = await import('../db-supabase.js');
 
@@ -144,6 +145,29 @@ describe('Email service deliverability payload', () => {
         expect(payload.text).toContain('Odemknout');
     });
 
+    test('renders activation email with same-origin tracked link only', async () => {
+        const unsafeDestination = ['java', 'script:alert(1)'].join('');
+
+        await sendEmail({
+            to: 'recipient@example.com',
+            template: 'activation_first_step_day0',
+            data: {
+                name: 'Jana <script>alert(1)</script>',
+                source: 'life_number_result',
+                feature: 'numerologie_vyklad',
+                destination: unsafeDestination
+            }
+        });
+
+        const payload = sendMock.mock.calls[0][0];
+        expect(payload.html).toContain('https://yourdomain.com/numerologie.html');
+        expect(payload.html).toContain('utm_campaign=activation_day0');
+        expect(payload.html).toContain('entry_source=life_number_result');
+        expect(payload.html).not.toContain(['java', 'script:'].join(''));
+        expect(payload.html).not.toContain('<script>');
+        expect(payload.html).not.toContain('alert(1)');
+    });
+
     test('schedules anonymous personal map lifecycle without sensitive form focus', async () => {
         await sendPersonalMapLifecycleSequence({
             orderId: 'order-email-sequence-test',
@@ -243,6 +267,63 @@ describe('Email service deliverability payload', () => {
         });
         expect(firstPayload.dedupeKey).toBe('annual_horoscope:order-annual-sequence-test:reflection_day1');
         expect(firstPayload.birthDate).toBeUndefined();
+    });
+
+    test('schedules activation lifecycle from signup intent with dedupe keys', async () => {
+        const email = `activation-user-${Date.now()}@example.com`;
+
+        const firstSchedule = await sendActivationLifecycleSequence({
+            userId: 'activation-user-1',
+            email,
+            name: 'Jana',
+            source: 'life_number_result',
+            feature: 'numerologie_vyklad',
+            destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
+            delays: {
+                day0: 0,
+                day1: 60,
+                day3: 120
+            }
+        });
+        const duplicateSchedule = await sendActivationLifecycleSequence({
+            userId: 'activation-user-1',
+            email,
+            name: 'Jana',
+            source: 'life_number_result',
+            feature: 'numerologie_vyklad',
+            destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
+            delays: {
+                day0: 0,
+                day1: 60,
+                day3: 120
+            }
+        });
+
+        const { data: queued } = await supabase
+            .from('email_queue')
+            .select('*')
+            .eq('email_to', email)
+            .order('scheduled_for', { ascending: true });
+
+        expect(firstSchedule).toMatchObject({ success: true, scheduled: 3, skipped: 0 });
+        expect(duplicateSchedule).toMatchObject({ success: true, scheduled: 0, skipped: 3 });
+        expect(queued).toHaveLength(3);
+        expect(queued.map(emailRecord => emailRecord.template)).toEqual([
+            'activation_first_step_day0',
+            'activation_quick_win_day1',
+            'activation_depth_day3'
+        ]);
+        expect(queued.every(emailRecord => emailRecord.user_id === 'activation-user-1')).toBe(true);
+
+        const firstPayload = typeof queued[0].data === 'string'
+            ? JSON.parse(queued[0].data)
+            : queued[0].data;
+        expect(firstPayload).toMatchObject({
+            source: 'life_number_result',
+            feature: 'numerologie_vyklad',
+            destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
+            dedupeKey: 'activation:activation-user-1:day0'
+        });
     });
 
     test('converts html links into readable plain text', () => {

@@ -21,6 +21,8 @@ import { toggleAvatarPicker, selectAvatar, loadSubscriptionStatus, initSettingsF
 import { viewReading, closeReadingModal, toggleFavoriteModal, toggleFavorite, deleteReading } from './modal.js';
 
 const PREMIUM_ACTIVATION_KEY = 'mh_premium_activation_seen';
+const SIGNUP_INTENT_KEY = 'mh_signup_intent';
+const SIGNUP_INTENT_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
 let ritualMemoryViewTracked = false;
 let dailyGuidanceViewTracked = false;
 let activationChecklistViewTracked = false;
@@ -169,6 +171,118 @@ const MEMORY_TYPE_THEMES = {
     'runes': ['timing'],
     'synastry': ['relationships'],
     'tarot': ['self', 'timing']
+};
+
+const SIGNUP_INTENT_DESTINATIONS = {
+    daily_guidance: {
+        feature: 'daily_guidance',
+        href: (sign) => buildDailyHoroscopeHref(sign, 'profile_signup_intent'),
+        description: (sign) => sign
+            ? `Navázat na registraci dnešním horoskopem pro ${sign.name}.`
+            : 'Navázat na registraci denním horoskopem jako nejrychlejší první hodnotou.'
+    },
+    horoskopy: {
+        feature: 'daily_guidance',
+        href: (sign) => buildDailyHoroscopeHref(sign, 'profile_signup_intent'),
+        description: (sign) => sign
+            ? `Navázat na registraci horoskopem pro ${sign.name}.`
+            : 'Navázat na registraci osobním horoskopem.'
+    },
+    tarot: {
+        feature: 'tarot',
+        href: () => 'tarot.html?source=profile_signup_intent&feature=tarot',
+        description: () => 'Navázat na registrační záměr tarotovým výkladem.'
+    },
+    tarot_multi_card: {
+        feature: 'tarot_multi_card',
+        href: () => 'tarot.html?source=profile_signup_intent&feature=tarot_multi_card',
+        description: () => 'Navázat hlubším tarotovým výkladem, kvůli kterému účet vznikl.'
+    },
+    tarot_celtic_cross: {
+        feature: 'tarot_celtic_cross',
+        href: () => 'tarot-keltsky-kriz.html?source=profile_signup_intent&feature=tarot_celtic_cross',
+        description: () => 'Navázat keltským křížem jako prvním hlubším výkladem.'
+    },
+    daily_angel_card: {
+        feature: 'daily_angel_card',
+        href: () => 'andelske-karty.html?source=profile_signup_intent&feature=daily_angel_card',
+        description: () => 'Vrátit se k andělské kartě, která spustila registraci.'
+    },
+    andelske_karty_hluboky_vhled: {
+        feature: 'andelske_karty_hluboky_vhled',
+        href: () => 'andelske-karty.html?source=profile_signup_intent&feature=andelske_karty_hluboky_vhled',
+        description: () => 'Navázat hlubším vhledem z andělských karet.'
+    },
+    numerologie_vyklad: {
+        feature: 'numerologie_vyklad',
+        href: () => 'numerologie.html?source=profile_signup_intent&feature=numerologie_vyklad',
+        description: () => 'Navázat numerologickým výkladem místo obecného prvního kroku.'
+    },
+    numerology: {
+        feature: 'numerologie_vyklad',
+        href: () => 'numerologie.html?source=profile_signup_intent&feature=numerologie_vyklad',
+        description: () => 'Navázat numerologickým výkladem místo obecného prvního kroku.'
+    },
+    partnerska_detail: {
+        feature: 'partnerska_detail',
+        href: () => 'partnerska-shoda.html?source=profile_signup_intent&feature=partnerska_detail',
+        description: () => 'Navázat partnerskou shodou, kvůli které účet vznikl.'
+    },
+    synastry: {
+        feature: 'partnerska_detail',
+        href: () => 'partnerska-shoda.html?source=profile_signup_intent&feature=partnerska_detail',
+        description: () => 'Navázat partnerskou shodou, kvůli které účet vznikl.'
+    },
+    natalni_interpretace: {
+        feature: 'natalni_interpretace',
+        href: () => 'natalni-karta.html?source=profile_signup_intent&feature=natalni_interpretace',
+        description: () => 'Navázat natální kartou jako prvním osobním vhledem.'
+    },
+    natal_chart: {
+        feature: 'natalni_interpretace',
+        href: () => 'natalni-karta.html?source=profile_signup_intent&feature=natalni_interpretace',
+        description: () => 'Navázat natální kartou jako prvním osobním vhledem.'
+    },
+    runy_hluboky_vyklad: {
+        feature: 'runy_hluboky_vyklad',
+        href: () => 'runy.html?source=profile_signup_intent&feature=runy_hluboky_vyklad',
+        description: () => 'Navázat runovým výkladem bez návratu do obecného menu.'
+    },
+    shamanske_kolo_plne_cteni: {
+        feature: 'shamanske_kolo_plne_cteni',
+        href: () => 'shamansko-kolo.html?source=profile_signup_intent&feature=shamanske_kolo_plne_cteni',
+        description: () => 'Navázat šamanským kolem jako hlubším prvním krokem.'
+    },
+    minuly_zivot: {
+        feature: 'minuly_zivot',
+        href: () => 'minuly-zivot.html?source=profile_signup_intent&feature=minuly_zivot',
+        description: () => 'Navázat výkladem minulého života, kvůli kterému účet vznikl.'
+    },
+    past_life: {
+        feature: 'minuly_zivot',
+        href: () => 'minuly-zivot.html?source=profile_signup_intent&feature=minuly_zivot',
+        description: () => 'Navázat výkladem minulého života, kvůli kterému účet vznikl.'
+    },
+    kristalova_koule: {
+        feature: 'kristalova_koule',
+        href: () => 'kristalova-koule.html?source=profile_signup_intent&feature=kristalova_koule',
+        description: () => 'Navázat otázkou do křišťálové koule.'
+    },
+    crystal_ball_unlimited: {
+        feature: 'kristalova_koule',
+        href: () => 'kristalova-koule.html?source=profile_signup_intent&feature=kristalova_koule',
+        description: () => 'Navázat otázkou do křišťálové koule.'
+    },
+    mentor: {
+        feature: 'mentor',
+        href: () => 'mentor.html?source=profile_signup_intent&feature=mentor',
+        description: () => 'Navázat první otázkou pro Hvězdného průvodce.'
+    },
+    hvezdny_mentor: {
+        feature: 'mentor',
+        href: () => 'mentor.html?source=profile_signup_intent&feature=mentor',
+        description: () => 'Navázat první otázkou pro Hvězdného průvodce.'
+    }
 };
 
 const MEMORY_JOURNAL_KEYWORDS = {
@@ -460,6 +574,53 @@ function buildDailyHoroscopeHref(sign, source = 'profile_daily') {
 
     const relativeUrl = `${url.pathname}${url.search}${url.hash}`;
     return relativeUrl.startsWith('/') ? relativeUrl.slice(1) : relativeUrl;
+}
+
+function readSignupIntent() {
+    try {
+        const intent = JSON.parse(localStorage.getItem(SIGNUP_INTENT_KEY) || 'null');
+        if (!intent || typeof intent !== 'object') return null;
+
+        const createdAt = Number(intent.createdAt || 0);
+        if (createdAt && Date.now() - createdAt > SIGNUP_INTENT_MAX_AGE_MS) {
+            localStorage.removeItem(SIGNUP_INTENT_KEY);
+            return null;
+        }
+
+        return intent;
+    } catch {
+        localStorage.removeItem(SIGNUP_INTENT_KEY);
+        return null;
+    }
+}
+
+function addSignupIntentAttribution(href, intent, fallbackFeature) {
+    const url = new URL(href, window.location.origin);
+    url.searchParams.set('source', 'profile_signup_intent');
+    url.searchParams.set('feature', fallbackFeature || intent?.feature || 'daily_guidance');
+
+    if (intent?.source) {
+        url.searchParams.set('entry_source', intent.source);
+    }
+
+    if (intent?.feature) {
+        url.searchParams.set('entry_feature', intent.feature);
+    }
+
+    const relativeUrl = `${url.pathname}${url.search}${url.hash}`;
+    return relativeUrl.startsWith('/') ? relativeUrl.slice(1) : relativeUrl;
+}
+
+function getSignupIntentDestination(sign) {
+    const intent = readSignupIntent();
+    const config = intent?.feature ? SIGNUP_INTENT_DESTINATIONS[intent.feature] : null;
+    if (!config) return null;
+
+    return {
+        href: addSignupIntentAttribution(config.href(sign), intent, config.feature),
+        description: config.description(sign),
+        feature: config.feature
+    };
 }
 
 function getLastReadingLabel(readings) {
@@ -803,14 +964,17 @@ function renderActivationChecklist(user, readings, subscription) {
     const sign = getProfileSign(user);
     const streak = calculateStreak(readings);
     const isPremium = isPremiumSubscription(subscription);
-    const firstReadingHref = sign
+    const signupIntentDestination = kinds.size ? null : getSignupIntentDestination(sign);
+    const firstReadingHref = signupIntentDestination?.href || (sign
         ? buildDailyHoroscopeHref(sign, 'profile_activation')
-        : 'tarot.html?source=profile_activation&feature=tarot';
+        : 'tarot.html?source=profile_activation&feature=tarot');
     const firstReadingDescription = kinds.size
         ? 'Už máte první stopu, ke které se dá vracet.'
         : sign
             ? `Začněte dnešním horoskopem pro ${sign.name}, ať první krok naváže na profil.`
             : 'Začněte tarotem, horoskopem nebo křišťálovou koulí.';
+
+    const effectiveFirstReadingDescription = signupIntentDestination?.description || firstReadingDescription;
 
     const items = [
         {
@@ -831,10 +995,10 @@ function renderActivationChecklist(user, readings, subscription) {
         {
             key: 'first_reading',
             title: 'První výklad je v historii',
-            description: firstReadingDescription,
+            description: effectiveFirstReadingDescription,
             done: kinds.size > 0,
             href: kinds.size > 0 ? '#tab-history' : firstReadingHref,
-            action: kinds.size > 0 ? 'open_history' : sign ? 'start_daily_horoscope' : 'start_tarot'
+            action: kinds.size > 0 ? 'open_history' : signupIntentDestination ? 'start_signup_intent' : sign ? 'start_daily_horoscope' : 'start_tarot'
         },
         {
             key: 'daily_reflection',

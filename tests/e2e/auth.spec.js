@@ -433,7 +433,12 @@ test.describe('Login stránka', () => {
         ]);
         await waitForPageReady(page);
 
-        expect(new URL(page.url()).pathname).toBe('/tarot.html');
+        const url = new URL(page.url());
+        expect(url.pathname).toBe('/tarot.html');
+        expect(url.searchParams.get('source')).toBe('signup_activation');
+        expect(url.searchParams.get('feature')).toBe('tarot');
+        expect(url.searchParams.get('entry_source')).toBe('inline_paywall');
+        expect(url.searchParams.get('entry_feature')).toBe('tarot');
         const activationFlag = await page.evaluate(() => sessionStorage.getItem('post_auth_activation'));
         expect(activationFlag).toBeNull();
     });
@@ -452,7 +457,11 @@ test.describe('Login stránka', () => {
         ]);
         await waitForPageReady(page);
 
-        expect(new URL(page.url()).pathname).toBe('/andelske-karty.html');
+        const url = new URL(page.url());
+        expect(url.pathname).toBe('/andelske-karty.html');
+        expect(url.searchParams.get('source')).toBe('signup_activation');
+        expect(url.searchParams.get('feature')).toBe('daily_angel_card');
+        expect(url.searchParams.get('entry_feature')).toBe('daily_angel_card');
         const activationFlag = await page.evaluate(() => sessionStorage.getItem('post_auth_activation'));
         expect(activationFlag).toBeNull();
     });
@@ -486,7 +495,12 @@ test.describe('Login stránka', () => {
         ]);
         await waitForPageReady(page);
 
-        expect(new URL(page.url()).pathname).toBe('/horoskopy.html');
+        const url = new URL(page.url());
+        expect(url.pathname).toBe('/horoskopy.html');
+        expect(url.searchParams.get('source')).toBe('signup_activation');
+        expect(url.searchParams.get('feature')).toBeNull();
+        expect(url.searchParams.get('entry_source')).toBe('newsletter_form');
+        expect(url.searchParams.get('entry_feature')).toBeNull();
         const activationFlag = await page.evaluate(() => sessionStorage.getItem('post_auth_activation'));
         expect(activationFlag).toBeNull();
     });
@@ -503,7 +517,12 @@ test.describe('Login stránka', () => {
         ]);
         await waitForPageReady(page);
 
-        expect(new URL(page.url()).pathname).toBe('/horoskopy.html');
+        const url = new URL(page.url());
+        expect(url.pathname).toBe('/horoskopy.html');
+        expect(url.searchParams.get('source')).toBe('signup_activation');
+        expect(url.searchParams.get('feature')).toBe('daily_guidance');
+        expect(url.searchParams.get('entry_source')).toBe('homepage_hero');
+        expect(url.searchParams.get('entry_feature')).toBe('daily_guidance');
         const activationFlag = await page.evaluate(() => sessionStorage.getItem('post_auth_activation'));
         expect(activationFlag).toBeNull();
     });
