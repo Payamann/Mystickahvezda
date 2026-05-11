@@ -332,6 +332,12 @@ test.describe('Profil aktivace', () => {
         await expect.poll(async () => page.evaluate(() => window.__profileEvents
             .filter(event => event.eventName === 'profile_ritual_memory_viewed')
             .length)).toBe(1);
+        await expect.poll(async () => page.evaluate(() => window.__profileEvents
+            .filter(event => event.eventName === 'profile_daily_guidance_viewed')
+            .length)).toBe(1);
+        await expect.poll(async () => page.evaluate(() => window.__profileEvents
+            .filter(event => event.eventName === 'profile_activation_checklist_viewed')
+            .length)).toBe(1);
     });
 
     test('vecerni reflexe ulozi journal a oznaci navratovy ritual', async ({ page }) => {

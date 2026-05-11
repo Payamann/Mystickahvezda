@@ -22,6 +22,8 @@ import { viewReading, closeReadingModal, toggleFavoriteModal, toggleFavorite, de
 
 const PREMIUM_ACTIVATION_KEY = 'mh_premium_activation_seen';
 let ritualMemoryViewTracked = false;
+let dailyGuidanceViewTracked = false;
+let activationChecklistViewTracked = false;
 
 function trackProfileEvent(eventName, payload = {}, attemptsLeft = 12) {
     if (window.MH_ANALYTICS?.trackEvent) {
@@ -345,7 +347,7 @@ function renderPremiumActivation(sub, user) {
             const activeSource = card.dataset.source || 'profile';
             markActivationSeen(activePlanType);
             setProfileBlockVisible(card, false);
-            window.MH_ANALYTICS?.trackEvent?.('premium_activation_dismissed', {
+            trackProfileEvent('premium_activation_dismissed', {
                 plan_type: activePlanType,
                 source: activeSource
             });
@@ -368,7 +370,7 @@ function renderPremiumActivation(sub, user) {
         card.dataset.bound = 'true';
     }
 
-    window.MH_ANALYTICS?.trackEvent?.('premium_activation_shown', {
+    trackProfileEvent('premium_activation_shown', {
         plan_type: planType,
         source: paymentState === 'success' ? 'payment_return' : 'profile'
     });
@@ -781,11 +783,14 @@ function renderDailyGuidance(user, readings, subscription) {
         </a>
     `).join('');
 
-    window.MH_ANALYTICS?.trackEvent?.('profile_daily_guidance_viewed', {
-        plan_type: planType,
-        has_sign: Boolean(sign),
-        reading_count: readings?.length || 0
-    });
+    if (!dailyGuidanceViewTracked) {
+        dailyGuidanceViewTracked = true;
+        trackProfileEvent('profile_daily_guidance_viewed', {
+            plan_type: planType,
+            has_sign: Boolean(sign),
+            reading_count: readings?.length || 0
+        });
+    }
 }
 
 function renderActivationChecklist(user, readings, subscription) {
@@ -863,11 +868,14 @@ function renderActivationChecklist(user, readings, subscription) {
         </a>
     `).join('');
 
-    window.MH_ANALYTICS?.trackEvent?.('profile_activation_checklist_viewed', {
-        completed_steps: completed,
-        total_steps: items.length,
-        activated: completed >= 3
-    });
+    if (!activationChecklistViewTracked) {
+        activationChecklistViewTracked = true;
+        trackProfileEvent('profile_activation_checklist_viewed', {
+            completed_steps: completed,
+            total_steps: items.length,
+            activated: completed >= 3
+        });
+    }
 }
 
 function focusJournalInput() {
@@ -1267,7 +1275,7 @@ async function initProfile() {
                         renderDailyGuidance(window.Auth?.user, refreshedReadings, subscription);
                         renderActivationChecklist(window.Auth?.user, refreshedReadings, subscription);
                         renderRitualMemory(window.Auth?.user, refreshedReadings, subscription);
-                        window.MH_ANALYTICS?.trackEvent?.('profile_journal_saved', {
+                        trackProfileEvent('profile_journal_saved', {
                             source: 'profile_dashboard'
                         });
                     } else {
