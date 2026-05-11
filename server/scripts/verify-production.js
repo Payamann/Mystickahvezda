@@ -113,6 +113,17 @@ const CONVERSION_LINK_CHECKS = [
         ]
     },
     {
+        path: '/kristalova-koule.html',
+        name: 'Crystal ball intent cluster',
+        snippets: [
+            'crystal-intent-section',
+            'data-analytics-cta="crystal_intent_open_question"',
+            'blog/tajemstvi-kristalove-koule-scrying.html?source=crystal_intent_cluster',
+            'tarot-ano-ne.html?source=crystal_intent_cluster',
+            'mentor.html?source=crystal_intent_cluster'
+        ]
+    },
+    {
         path: '/runy.html',
         name: 'Runes freemium CTA',
         snippets: [

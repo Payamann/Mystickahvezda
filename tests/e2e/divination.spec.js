@@ -144,6 +144,16 @@ test.describe('Křišťálová koule', () => {
         expect(value).toContain('Co mě čeká');
     });
 
+    test('stranka vede dotaz na spravny typ vykladu', async ({ page }) => {
+        const cluster = page.locator('.crystal-intent-section');
+        await expect(cluster).toBeVisible();
+        await expect(cluster.locator('.crystal-intent-card')).toHaveCount(6);
+        await expect(cluster.locator('[data-analytics-cta="crystal_intent_open_question"]')).toHaveAttribute('href', '#question-input');
+        await expect(cluster.locator('[data-analytics-cta="crystal_intent_scrying_guide"]')).toHaveAttribute('href', /tajemstvi-kristalove-koule-scrying\.html/);
+        await expect(cluster.locator('[data-analytics-cta="crystal_intent_yes_no"]')).toHaveAttribute('href', /tarot-ano-ne\.html/);
+        await expect(cluster.locator('[data-analytics-cta="crystal_intent_mentor"]')).toHaveAttribute('href', /mentor\.html/);
+    });
+
     test('JSON-LD strukturovaná data existují', async ({ page }) => {
         const ldJson = page.locator('script[type="application/ld+json"]');
         expect(await ldJson.count()).toBeGreaterThanOrEqual(1);

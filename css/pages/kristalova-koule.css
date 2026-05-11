@@ -299,6 +299,135 @@
 
         }
 
+        .crystal-intent-section {
+
+            padding-top: var(--space-xl);
+
+            scroll-margin-top: 5.5rem;
+
+        }
+
+        #question-input {
+
+            scroll-margin-top: 5.5rem;
+
+        }
+
+        .crystal-intent-section .section__header {
+
+            margin-bottom: var(--space-lg);
+
+        }
+
+        .crystal-intent-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+
+            gap: var(--space-md);
+
+        }
+
+        .crystal-intent-card {
+
+            display: flex;
+
+            min-height: 100%;
+
+            flex-direction: column;
+
+            gap: 0.55rem;
+
+            padding: var(--space-lg);
+
+            border: 1px solid rgba(255, 255, 255, 0.11);
+
+            border-radius: var(--radius-md);
+
+            background: rgba(255, 255, 255, 0.045);
+
+            color: inherit;
+
+            text-decoration: none;
+
+            transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+
+        }
+
+        .crystal-intent-card:hover,
+        .crystal-intent-card:focus-visible {
+
+            border-color: rgba(95, 216, 255, 0.5);
+
+            background: rgba(95, 216, 255, 0.08);
+
+            transform: translateY(-2px);
+
+            outline: none;
+
+        }
+
+        .crystal-intent-card--primary {
+
+            border-color: rgba(212, 175, 55, 0.54);
+
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.14), rgba(95, 216, 255, 0.1));
+
+        }
+
+        .crystal-intent-card span {
+
+            color: var(--color-mystic-gold);
+
+            font-size: 0.74rem;
+
+            font-weight: 800;
+
+            letter-spacing: 0.08em;
+
+            text-transform: uppercase;
+
+        }
+
+        .crystal-intent-card strong {
+
+            color: var(--color-starlight);
+
+            font-family: var(--font-heading);
+
+            font-size: 1.08rem;
+
+            line-height: 1.25;
+
+        }
+
+        .crystal-intent-card em {
+
+            color: var(--color-silver-mist);
+
+            font-style: normal;
+
+            line-height: 1.55;
+
+        }
+
+        @media (max-width: 640px) {
+
+            .crystal-intent-grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .crystal-intent-card {
+
+                padding: var(--space-md);
+
+            }
+
+        }
+
 /* Migrated from kristalova-koule.html static style attributes. */
 html body .mh-inline-59738f37b7 { display:none; background: linear-gradient(90deg, rgba(212,175,55,0.1), rgba(155,89,182,0.1)); border-bottom: 1px solid rgba(212,175,55,0.2); padding: 0.65rem 1rem; text-align: center; font-size: 0.88rem; color: rgba(255,255,255,0.8); }
 html body .mh-inline-417d5e8acf { color: #d4af37; font-weight: 600; }
