@@ -286,6 +286,49 @@ test.describe('Tarot', () => {
 
 // ── Význam tarotových karet ─────────────────────────────────────────────────
 
+test.describe('Tarot 3 karty landing', () => {
+    test('tarot-tri-karty.html je indexovatelny vstup do vicekartoveho tarotu', async ({ page }) => {
+        const res = await page.request.get('/tarot-tri-karty.html');
+        expect(res.status()).toBe(200);
+
+        await page.goto('/tarot-tri-karty.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('h1')).toContainText('Tarot 3 karty');
+        const canonical = await page.getAttribute('link[rel="canonical"]', 'href');
+        expect(canonical).toBe('https://www.mystickahvezda.cz/tarot-tri-karty.html');
+
+        const primary = page.locator('[data-analytics-cta="tarot_three_card_landing_primary"]');
+        await expect(primary).toBeVisible();
+        const href = await primary.getAttribute('href');
+        expect(href).toContain('tarot.html');
+        expect(href).toContain('source=tarot_three_card_landing');
+        expect(href).toContain('feature=tarot_multi_card');
+        expect(href).toContain('intent=three_cards');
+
+        const faqTypes = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((script) => {
+            try {
+                return JSON.parse(script.textContent || '{}')['@type'];
+            } catch {
+                return null;
+            }
+        }));
+        expect(faqTypes).toContain('FAQPage');
+    });
+
+    test('tarot 3 karty landing nema na mobilu horizontalni scroll', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.goto('/tarot-tri-karty.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('.tarot-three-intent-card')).toHaveCount(4);
+        const hasHorizontalScroll = await page.evaluate(() =>
+            document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+        );
+        expect(hasHorizontalScroll).toBe(false);
+    });
+});
+
 test.describe('Tarot význam karet', () => {
     test('hub načte 78 karet a umí filtrovat katalog', async ({ page }) => {
         await page.goto('/tarot-vyznam-karet.html');
