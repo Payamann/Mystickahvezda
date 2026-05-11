@@ -457,6 +457,135 @@
 
         }
 
+        .angel-intent-section {
+
+            padding-top: var(--space-xl);
+
+            scroll-margin-top: 5.5rem;
+
+        }
+
+        #draw-btn {
+
+            scroll-margin-top: 5.5rem;
+
+        }
+
+        .angel-intent-section .section__header {
+
+            margin-bottom: var(--space-lg);
+
+        }
+
+        .angel-intent-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+
+            gap: var(--space-md);
+
+        }
+
+        .angel-intent-card {
+
+            display: flex;
+
+            min-height: 100%;
+
+            flex-direction: column;
+
+            gap: 0.55rem;
+
+            padding: var(--space-lg);
+
+            border: 1px solid rgba(255, 255, 255, 0.12);
+
+            border-radius: var(--radius-md);
+
+            background: rgba(255, 255, 255, 0.045);
+
+            color: inherit;
+
+            text-decoration: none;
+
+            transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+
+        }
+
+        .angel-intent-card:hover,
+        .angel-intent-card:focus-visible {
+
+            border-color: rgba(235, 192, 102, 0.52);
+
+            background: rgba(235, 192, 102, 0.08);
+
+            transform: translateY(-2px);
+
+            outline: none;
+
+        }
+
+        .angel-intent-card--primary {
+
+            border-color: rgba(235, 192, 102, 0.6);
+
+            background: linear-gradient(135deg, rgba(235, 192, 102, 0.16), rgba(137, 214, 255, 0.1));
+
+        }
+
+        .angel-intent-card span {
+
+            color: var(--color-mystic-gold);
+
+            font-size: 0.74rem;
+
+            font-weight: 800;
+
+            letter-spacing: 0.08em;
+
+            text-transform: uppercase;
+
+        }
+
+        .angel-intent-card strong {
+
+            color: var(--color-starlight);
+
+            font-family: var(--font-heading);
+
+            font-size: 1.08rem;
+
+            line-height: 1.25;
+
+        }
+
+        .angel-intent-card em {
+
+            color: var(--color-silver-mist);
+
+            font-style: normal;
+
+            line-height: 1.55;
+
+        }
+
+        @media (max-width: 640px) {
+
+            .angel-intent-grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .angel-intent-card {
+
+                padding: var(--space-md);
+
+            }
+
+        }
+
 /* Migrated from andelske-karty.html static style attributes. */
 html body .mh-inline-32b8d12ec5 { display: none; margin-top: 3rem; position:relative; z-index: 10; }
 html body .mh-inline-2dc3de6fe5 { width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 3rem; }

@@ -43,6 +43,16 @@ test.describe('Andělské karty', () => {
         await expect(card).toBeAttached();
     });
 
+    test('stranka vede k vhodnemu typu andelske podpory', async ({ page }) => {
+        const cluster = page.locator('.angel-intent-section');
+        await expect(cluster).toBeVisible();
+        await expect(cluster.locator('.angel-intent-card')).toHaveCount(6);
+        await expect(cluster.locator('[data-analytics-cta="angel_intent_daily_card"]')).toHaveAttribute('href', '#draw-btn');
+        await expect(cluster.locator('[data-analytics-cta="angel_intent_how_it_works"]')).toHaveAttribute('href', /jak-funguji-andelske-karty\.html/);
+        await expect(cluster.locator('[data-analytics-cta="angel_intent_crystal_ball"]')).toHaveAttribute('href', /kristalova-koule\.html/);
+        await expect(cluster.locator('[data-analytics-cta="angel_intent_mentor"]')).toHaveAttribute('href', /mentor\.html/);
+    });
+
     test('canonical link je nastaven', async ({ page }) => {
         const canonical = await page.getAttribute('link[rel="canonical"]', 'href');
         expect(canonical).toBeTruthy();

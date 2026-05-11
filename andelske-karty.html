@@ -181,13 +181,13 @@
     <link rel="stylesheet" href="/fonts/local-fonts.css">
 
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
-    <link rel="stylesheet" href="css/pages/andelske-karty.css?v=2">
+    <link rel="stylesheet" href="css/pages/andelske-karty.css?v=3">
 <!-- DOMPurify for XSS protection (must load synchronously before other scripts use it) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/dist/analytics-init.js" defer></script>
 </head>
 
-<body>
+<body class="page-angel-cards">
 
     <!-- Skip to main content -->
 
@@ -315,6 +315,52 @@
 
             </div>
 
+        </section>
+
+        <section class="section angel-intent-section" aria-labelledby="angel-intent-title">
+            <div class="container">
+                <div class="section__header text-center">
+                    <span class="section__badge">Jakou podporu dnes hledáš?</span>
+                    <h2 class="section__title" id="angel-intent-title">Andělská karta má být začátek, ne náhodný los</h2>
+                    <p class="section__subtitle">
+                        Vyber si cestu podle toho, jestli potřebuješ uklidnit, pochopit symbol, otevřít otázku nebo jít
+                        hlouběji.
+                    </p>
+                </div>
+
+                <div class="angel-intent-grid" data-animate>
+                    <a href="#draw-btn" class="angel-intent-card angel-intent-card--primary" data-analytics-cta="angel_intent_daily_card" data-analytics-feature="daily_angel_card" data-analytics-intent="daily_guidance">
+                        <span>Potřebuji dnešní klid</span>
+                        <strong>Vytáhnout kartu dne</strong>
+                        <em>Jedna laskavá zpráva, ke které se můžeš během dne vracet.</em>
+                    </a>
+                    <a href="blog/jak-funguji-andelske-karty.html?source=angel_intent_cluster&amp;feature=andelske_karty_hluboky_vhled&amp;intent=how_it_works" class="angel-intent-card" data-analytics-cta="angel_intent_how_it_works" data-analytics-feature="andelske_karty_hluboky_vhled" data-analytics-intent="how_it_works">
+                        <span>Chci chápat symboly</span>
+                        <strong>Jak fungují andělské karty</strong>
+                        <em>Rozdíl mezi povzbuzením, intuicí a hlubším osobním vhledem.</em>
+                    </a>
+                    <a href="blog/pruvodce-energie-ochrana.html?source=angel_intent_cluster&amp;feature=daily_guidance&amp;intent=protection_energy" class="angel-intent-card" data-analytics-cta="angel_intent_protection" data-analytics-feature="daily_guidance" data-analytics-intent="protection_energy">
+                        <span>Potřebuji ochranu energie</span>
+                        <strong>Průvodce energií a ochranou</strong>
+                        <em>Pro dny, kdy tě okolí vyčerpává a potřebuješ jasnější hranice.</em>
+                    </a>
+                    <a href="kristalova-koule.html?source=angel_intent_cluster&amp;feature=kristalova_koule&amp;intent=open_question" class="angel-intent-card" data-analytics-cta="angel_intent_crystal_ball" data-analytics-feature="kristalova_koule" data-analytics-intent="open_question">
+                        <span>Mám vlastní otázku</span>
+                        <strong>Křišťálová koule</strong>
+                        <em>Když nechceš jen poselství dne, ale odpověď na konkrétní situaci.</em>
+                    </a>
+                    <a href="tarot.html?source=angel_intent_cluster&amp;feature=tarot&amp;intent=deeper_reading" class="angel-intent-card" data-analytics-cta="angel_intent_tarot" data-analytics-feature="tarot" data-analytics-intent="deeper_reading">
+                        <span>Chci jít hlouběji</span>
+                        <strong>Tarotový výklad</strong>
+                        <em>Tarot lépe ukáže napětí, volby a další krok, když jemné potvrzení nestačí.</em>
+                    </a>
+                    <a href="mentor.html?source=angel_intent_cluster&amp;feature=mentor&amp;intent=ongoing_guidance" class="angel-intent-card" data-analytics-cta="angel_intent_mentor" data-analytics-feature="mentor" data-analytics-intent="ongoing_guidance">
+                        <span>Téma se mi vrací</span>
+                        <strong>Hvězdný průvodce</strong>
+                        <em>Pro opakované otázky, které potřebují návaznost a osobnější kontext.</em>
+                    </a>
+                </div>
+            </div>
         </section>
 
         <!-- CROSS-LINKING SEKCE -->

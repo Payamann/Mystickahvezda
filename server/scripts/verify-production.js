@@ -62,6 +62,17 @@ const CONVERSION_LINK_CHECKS = [
         ]
     },
     {
+        path: '/andelske-karty.html',
+        name: 'Angel cards intent cluster',
+        snippets: [
+            'angel-intent-section',
+            'data-analytics-cta="angel_intent_daily_card"',
+            'blog/jak-funguji-andelske-karty.html?source=angel_intent_cluster',
+            'kristalova-koule.html?source=angel_intent_cluster',
+            'mentor.html?source=angel_intent_cluster'
+        ]
+    },
+    {
         path: '/',
         name: 'Homepage trust and pricing copy',
         snippets: [
