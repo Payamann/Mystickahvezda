@@ -100,6 +100,70 @@ const DAILY_FOCUS = [
     'Dnes si zapište jednu věc, která se opakuje. Právě tam začíná váš vzorec.'
 ];
 
+const MEMORY_THEME_META = {
+    relationships: {
+        label: 'Vztahy',
+        description: 'Blízkost, hranice a komunikace se vrací jako hlavní téma.',
+        actionLabel: 'Prověřit partnerskou shodu',
+        actionDescription: 'Navázat konkrétním vztahem místo obecného pocitu.',
+        href: '/partnerska-shoda.html'
+    },
+    work: {
+        label: 'Práce a směr',
+        description: 'Rozhodnutí, výkon nebo profesní energie se objevují opakovaně.',
+        actionLabel: 'Podívat se přes numerologii',
+        actionDescription: 'Najít praktický rytmus pro další pracovní krok.',
+        href: '/numerologie.html'
+    },
+    energy: {
+        label: 'Energie',
+        description: 'Tělo, únava, klid nebo přetížení potřebují jemnější vedení.',
+        actionLabel: 'Otevřít dnešní horoskop',
+        actionDescription: 'Začít krátkým denním kontextem pro dnešní režim.',
+        href: '/horoskopy.html'
+    },
+    self: {
+        label: 'Sebepoznání',
+        description: 'Opakují se otázky identity, intuice, hranic nebo vnitřní jistoty.',
+        actionLabel: 'Jít do natální karty',
+        actionDescription: 'Opřít opakující se téma o osobní mapu.',
+        href: '/natalni-karta.html'
+    },
+    timing: {
+        label: 'Načasování',
+        description: 'Vystupuje otázka, kdy udělat krok a kdy ještě počkat.',
+        actionLabel: 'Zkontrolovat lunární rytmus',
+        actionDescription: 'Dát rozhodnutí časový rámec místo tlačení na výsledek.',
+        href: '/lunace.html'
+    }
+};
+
+const MEMORY_TYPE_THEMES = {
+    'angel': ['self'],
+    'angel-card': ['self'],
+    'astrocartography': ['work', 'timing'],
+    'crystal': ['self'],
+    'crystal-ball': ['self'],
+    'daily-wisdom': ['timing'],
+    'horoscope': ['timing', 'energy'],
+    'medicine-wheel': ['self', 'timing'],
+    'natal': ['self'],
+    'natal-chart': ['self'],
+    'numerology': ['work', 'self'],
+    'past-life': ['self'],
+    'runes': ['timing'],
+    'synastry': ['relationships'],
+    'tarot': ['self', 'timing']
+};
+
+const MEMORY_JOURNAL_KEYWORDS = {
+    relationships: ['vztah', 'partner', 'laska', 'rodin', 'blizk', 'komunik'],
+    work: ['prace', 'projekt', 'karier', 'penize', 'tym', 'klient', 'ukol'],
+    energy: ['energie', 'unav', 'spanek', 'telo', 'klid', 'stres', 'vycerp'],
+    self: ['hranice', 'pocit', 'intuic', 'strach', 'duver', 'sebe', 'jistot'],
+    timing: ['cas', 'dnes', 'zitra', 'cek', 'rozhod', 'krok', 'termin']
+};
+
 function setProfileBlockVisible(element, visible) {
     if (!element) return;
     element.hidden = !visible;
@@ -144,6 +208,7 @@ function initTabs() {
 function openProfileTab(tabId) {
     const tab = document.querySelector(`.profile-tab[data-tab="${tabId}"]`);
     tab?.click();
+    document.getElementById(`tab-${tabId}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function sanitizeProfileUrl(url) {
@@ -390,6 +455,246 @@ function getLastReadingLabel(readings) {
     return `${date.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long' })} · ${getReadingTitle(latest.type)}`;
 }
 
+function getValidReadingDate(reading) {
+    const date = new Date(reading?.created_at);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function isSameLocalDay(a, b) {
+    if (!a || !b) return false;
+    return a.getFullYear() === b.getFullYear()
+        && a.getMonth() === b.getMonth()
+        && a.getDate() === b.getDate();
+}
+
+function normalizeMemoryText(value) {
+    return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+}
+
+function getReadingFeedback(reading) {
+    const feedback = reading?.data?.feedback;
+    if (!feedback || typeof feedback !== 'object' || Array.isArray(feedback)) return null;
+    return feedback;
+}
+
+function addThemeSignal(themeScores, themeKey, score = 1) {
+    if (!MEMORY_THEME_META[themeKey]) return;
+    themeScores.set(themeKey, (themeScores.get(themeKey) || 0) + score);
+}
+
+function collectRitualMemorySignals(readings, now = new Date()) {
+    const safeReadings = Array.isArray(readings) ? readings : [];
+    const themeScores = new Map();
+    const journals = [];
+    const structuredReadings = [];
+    const feedbackEntries = [];
+
+    safeReadings.forEach(reading => {
+        const type = reading?.type;
+
+        if (type === 'journal') {
+            journals.push(reading);
+            const journalText = normalizeMemoryText(reading.data);
+            Object.entries(MEMORY_JOURNAL_KEYWORDS).forEach(([themeKey, keywords]) => {
+                if (keywords.some(keyword => journalText.includes(keyword))) {
+                    addThemeSignal(themeScores, themeKey, 1.5);
+                }
+            });
+            return;
+        }
+
+        structuredReadings.push(reading);
+        (MEMORY_TYPE_THEMES[type] || []).forEach(themeKey => addThemeSignal(themeScores, themeKey, 1));
+
+        const feedback = getReadingFeedback(reading);
+        if (feedback) {
+            feedbackEntries.push({ reading, feedback });
+            if (feedback.focus) addThemeSignal(themeScores, feedback.focus, 3);
+        }
+    });
+
+    const sortByDateDesc = (a, b) => (getValidReadingDate(b)?.getTime() || 0) - (getValidReadingDate(a)?.getTime() || 0);
+    const themes = Array.from(themeScores.entries())
+        .map(([key, score]) => ({ key, score, ...MEMORY_THEME_META[key] }))
+        .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label, 'cs'));
+
+    const todayJournal = journals.some(reading => isSameLocalDay(getValidReadingDate(reading), now));
+    const totalSignals = structuredReadings.length + journals.length + feedbackEntries.length;
+    const strengthLabel = feedbackEntries.length >= 2 || totalSignals >= 6
+        ? 'Silná stopa'
+        : totalSignals >= 2 ? 'Roste' : 'Nové';
+
+    return {
+        totalReadings: safeReadings.length,
+        structuredCount: structuredReadings.length,
+        journalCount: journals.length,
+        feedbackCount: feedbackEntries.length,
+        todayJournal,
+        themes,
+        topTheme: themes[0] || null,
+        lastReading: [...structuredReadings].sort(sortByDateDesc)[0] || null,
+        lastJournal: [...journals].sort(sortByDateDesc)[0] || null,
+        lastFeedback: feedbackEntries.sort((a, b) => sortByDateDesc(a.reading, b.reading))[0] || null,
+        strengthLabel
+    };
+}
+
+function buildMemoryFeatureHref(themeKey) {
+    const theme = MEMORY_THEME_META[themeKey];
+    if (!theme?.href) return 'horoskopy.html?source=profile_memory&feature=ritual_memory';
+
+    const url = new URL(theme.href, window.location.origin);
+    url.searchParams.set('source', 'profile_memory');
+    url.searchParams.set('feature', themeKey);
+    const relativeUrl = `${url.pathname}${url.search}${url.hash}`;
+    return relativeUrl.startsWith('/') ? relativeUrl.slice(1) : relativeUrl;
+}
+
+function buildRitualMemoryCopy(memory) {
+    if (!memory.totalReadings) {
+        return 'Paměť začne fungovat po prvním uloženém výkladu nebo večerní reflexi. Cílem není další archiv, ale návrat k tomu, co se v čase opravdu opakuje.';
+    }
+
+    if (!memory.topTheme) {
+        return `Máte uložených ${memory.totalReadings} stop. Přidejte k výkladům zpětnou vazbu nebo večerní reflexi a paměť začne rozlišovat, které téma se vrací nejčastěji.`;
+    }
+
+    const signalSource = memory.feedbackCount
+        ? 'zpětné vazby, výkladů a reflexí'
+        : 'uložených výkladů a reflexí';
+
+    return `Z ${memory.totalReadings} uložených stop nejvíc vystupuje téma ${memory.topTheme.label.toLowerCase()}. Je to pracovní hypotéza z ${signalSource}, ne diagnóza ani osud. Další krok má téma zpřesnit.`;
+}
+
+function getMemoryMeterBucket(score, topScore) {
+    const ratio = topScore > 0 ? score / topScore : 0;
+    if (ratio >= 0.92) return 100;
+    if (ratio >= 0.78) return 85;
+    if (ratio >= 0.62) return 70;
+    if (ratio >= 0.48) return 55;
+    if (ratio >= 0.34) return 40;
+    if (ratio >= 0.2) return 25;
+    return 18;
+}
+
+function renderRitualMemory(user, readings, subscription) {
+    const titleEl = document.getElementById('ritual-memory-title');
+    const strengthEl = document.getElementById('ritual-memory-strength');
+    const copyEl = document.getElementById('ritual-memory-copy');
+    const themesEl = document.getElementById('ritual-memory-themes');
+    const actionsEl = document.getElementById('ritual-memory-actions');
+
+    if (!titleEl || !strengthEl || !copyEl || !themesEl || !actionsEl) return;
+
+    const memory = collectRitualMemorySignals(readings);
+    const planType = normalizePlanType(subscription?.planType || user?.subscription_status);
+    const isPremium = isPremiumSubscription(subscription) || ['premium_monthly', 'exclusive_monthly', 'vip_majestrat'].includes(planType);
+    const topScore = memory.topTheme?.score || 1;
+
+    titleEl.textContent = memory.topTheme
+        ? `Co se ti opakuje: ${memory.topTheme.label}`
+        : 'Co se ti opakuje';
+    strengthEl.textContent = memory.strengthLabel;
+    strengthEl.className = `badge ${memory.strengthLabel === 'Silná stopa' ? 'badge--premium' : 'badge--secondary'}`;
+    copyEl.textContent = buildRitualMemoryCopy(memory);
+
+    if (memory.themes.length) {
+        themesEl.innerHTML = memory.themes.slice(0, 3).map(theme => {
+            const meterBucket = getMemoryMeterBucket(theme.score, topScore);
+            return `
+                <div class="ritual-memory-theme" data-memory-theme="${theme.key}">
+                    <strong>${escapeHtml(theme.label)}</strong>
+                    <span>${escapeHtml(theme.description)}</span>
+                    <div class="ritual-memory-theme__meter" aria-hidden="true"><span class="ritual-memory-theme__meter-fill ritual-memory-theme__meter-fill--${meterBucket}"></span></div>
+                </div>
+            `;
+        }).join('');
+    } else {
+        themesEl.innerHTML = `
+            <div class="ritual-memory-theme">
+                <strong>Ještě sbíráme signály</strong>
+                <span>Stačí první výklad, jedna reflexe nebo zpětná vazba. Pak se tu začne ukazovat návratový vzorec.</span>
+                <div class="ritual-memory-theme__meter" aria-hidden="true"><span class="ritual-memory-theme__meter-fill ritual-memory-theme__meter-fill--18"></span></div>
+            </div>
+        `;
+    }
+
+    const actions = [];
+
+    if (!memory.totalReadings) {
+        actions.push({
+            href: 'tarot.html?source=profile_memory&feature=ritual_memory',
+            label: 'Uložit první výklad',
+            description: 'Paměť začne pracovat ve chvíli, kdy má první stopu.',
+            action: 'memory_first_reading',
+            primary: true
+        });
+        actions.push({
+            href: buildDailyHoroscopeHref(getProfileSign(user), 'profile_memory'),
+            label: 'Začít dnešním směrem',
+            description: 'Krátký denní kontext je nejrychlejší vstup do rituálu.',
+            action: 'memory_daily_guidance'
+        });
+    } else {
+        if (!memory.todayJournal) {
+            actions.push({
+                href: '#journal-input',
+                label: 'Dopsat dnešní reflexi',
+                description: 'Jedna věta večer stačí, aby se vzorec zítra neztratil.',
+                action: 'memory_journal',
+                primary: true
+            });
+        }
+
+        if (memory.topTheme) {
+            actions.push({
+                href: buildMemoryFeatureHref(memory.topTheme.key),
+                label: memory.topTheme.actionLabel,
+                description: memory.topTheme.actionDescription,
+                action: 'memory_theme',
+                theme: memory.topTheme.key,
+                primary: memory.todayJournal
+            });
+        }
+
+        actions.push({
+            href: '#tab-history',
+            label: 'Projít historii',
+            description: 'Zkontrolovat poslední výklady a zpětnou vazbu v jednom místě.',
+            action: 'memory_history'
+        });
+    }
+
+    if (!isPremium && memory.totalReadings >= 2) {
+        actions.push({
+            href: 'cenik.html?source=profile_memory&feature=ritual_memory',
+            label: 'Odemknout hlubší paměť',
+            description: 'Dává smysl ve chvíli, kdy už se k tématům pravidelně vracíte.',
+            action: 'memory_upgrade'
+        });
+    }
+
+    actionsEl.innerHTML = actions.map(action => `
+        <a href="${action.href}" class="ritual-memory-action ${action.primary ? 'ritual-memory-action--primary' : ''}" data-memory-action="${action.action}" data-memory-theme="${action.theme || ''}">
+            <strong>${escapeHtml(action.label)}</strong>
+            <span>${escapeHtml(action.description)}</span>
+        </a>
+    `).join('');
+
+    window.MH_ANALYTICS?.trackEvent?.('profile_ritual_memory_viewed', {
+        plan_type: planType,
+        reading_count: memory.totalReadings,
+        journal_count: memory.journalCount,
+        feedback_count: memory.feedbackCount,
+        top_theme: memory.topTheme?.key || null,
+        has_today_journal: memory.todayJournal,
+        strength: memory.strengthLabel
+    });
+}
+
 function renderDailyGuidance(user, readings, subscription) {
     const titleEl = document.getElementById('daily-guidance-title');
     const dateEl = document.getElementById('daily-guidance-date');
@@ -606,6 +911,37 @@ function handleActivationChecklistClick(event) {
     if (action === 'focus_journal') {
         event.preventDefault();
         focusJournalInput();
+        return;
+    }
+
+    if (action === 'daily_guidance') {
+        event.preventDefault();
+        document.getElementById('daily-guidance-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function handleRitualMemoryClick(event) {
+    const link = event.target.closest('[data-memory-action]');
+    if (!link) return;
+
+    const action = link.dataset.memoryAction;
+    const destination = link.getAttribute('href');
+
+    window.MH_ANALYTICS?.trackCTA?.('profile_ritual_memory', {
+        action,
+        theme: link.dataset.memoryTheme || null,
+        destination
+    });
+
+    if (action === 'memory_journal') {
+        event.preventDefault();
+        focusJournalInput();
+        return;
+    }
+
+    if (action === 'memory_history') {
+        event.preventDefault();
+        openProfileTab('history');
     }
 }
 
@@ -839,6 +1175,7 @@ async function initProfile() {
     renderPremiumActivation(subscription, user);
     renderDailyGuidance(user, readings, subscription);
     renderActivationChecklist(user, readings, subscription);
+    renderRitualMemory(user, readings, subscription);
     updateStats(readings);
     renderJournalEntries(readings);
 
@@ -850,6 +1187,7 @@ async function initProfile() {
         document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
         document.getElementById('daily-guidance-card')?.addEventListener('click', handleDailyGuidanceClick);
         document.getElementById('activation-checklist-card')?.addEventListener('click', handleActivationChecklistClick);
+        document.getElementById('ritual-memory-card')?.addEventListener('click', handleRitualMemoryClick);
         document.getElementById('readings-filter')?.addEventListener('change', handleFilterChange);
         document.getElementById('readings-load-more')?.addEventListener('click', showMoreReadings);
         document.getElementById('readings-list')?.addEventListener('click', handleReadingListInteraction);
@@ -912,6 +1250,7 @@ async function initProfile() {
                         renderJournalEntries(refreshedReadings);
                         renderDailyGuidance(window.Auth?.user, refreshedReadings, subscription);
                         renderActivationChecklist(window.Auth?.user, refreshedReadings, subscription);
+                        renderRitualMemory(window.Auth?.user, refreshedReadings, subscription);
                         window.MH_ANALYTICS?.trackEvent?.('profile_journal_saved', {
                             source: 'profile_dashboard'
                         });
@@ -934,6 +1273,7 @@ async function initProfile() {
                 updateStats(e.detail.readings);
                 renderDailyGuidance(window.Auth?.user, e.detail.readings, subscription);
                 renderActivationChecklist(window.Auth?.user, e.detail.readings, subscription);
+                renderRitualMemory(window.Auth?.user, e.detail.readings, subscription);
             }
         });
 

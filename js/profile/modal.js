@@ -13,6 +13,20 @@ let previousFocus = null;
 let activeModal = null;
 let focusTrapHandler = null;
 
+const FEEDBACK_RESONANCE_OPTIONS = [
+    { value: 'fits', label: 'Sedí' },
+    { value: 'neutral', label: 'Ještě nevím' },
+    { value: 'miss', label: 'Netrefilo se' }
+];
+
+const FEEDBACK_FOCUS_OPTIONS = [
+    { value: 'relationships', label: 'Vztahy' },
+    { value: 'work', label: 'Práce' },
+    { value: 'energy', label: 'Energie' },
+    { value: 'self', label: 'Sebepoznání' },
+    { value: 'timing', label: 'Načasování' }
+];
+
 export async function viewReading(id) {
     const modal = document.getElementById('reading-modal');
     const content = document.getElementById('reading-modal-content');
@@ -42,6 +56,7 @@ export async function viewReading(id) {
 
         content.innerHTML = renderReadingContent(reading);
         bindReadingImageFallbacks(content);
+        bindReadingFeedback(content, reading);
 
     } catch (error) {
         console.error('Error loading reading:', error);
@@ -214,6 +229,147 @@ function bindReadingImageFallbacks(root) {
             image.dataset.fallbackApplied = '1';
             image.src = '/img/tarot/tarot_placeholder.webp';
         });
+    });
+}
+
+function setReadingFeedbackStatus(panel, message, state = 'neutral') {
+    const status = panel?.querySelector?.('.reading-feedback__status');
+    if (!status) return;
+    status.textContent = message;
+    status.dataset.state = state;
+}
+
+async function saveProfileReadingFeedback(readingId, payload, panel, trigger) {
+    if (!readingId) return null;
+
+    if (trigger) trigger.disabled = true;
+    setReadingFeedbackStatus(panel, 'Ukládám zpětnou vazbu...', 'pending');
+
+    let result = null;
+    if (window.Auth?.saveReadingFeedback) {
+        result = await window.Auth.saveReadingFeedback(readingId, {
+            ...payload,
+            feature: 'profile_history',
+            source: 'profile_reading_modal'
+        });
+    } else {
+        const response = await fetch(`${apiUrl()}/user/readings/${encodeURIComponent(readingId)}/feedback`, {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: await authHeadersWithCsrf(true),
+            body: JSON.stringify({
+                ...payload,
+                feature: 'profile_history',
+                source: 'profile_reading_modal'
+            })
+        });
+        result = await response.json().catch(() => null);
+        if (!response.ok) result = null;
+    }
+
+    if (trigger) trigger.disabled = false;
+
+    if (!result?.success) {
+        setReadingFeedbackStatus(panel, 'Nepodařilo se uložit. Zkus to znovu.', 'error');
+        return null;
+    }
+
+    if (result.reading) {
+        updateReading(readingId, result.reading);
+    }
+
+    const refreshedReadings = await loadReadings();
+    document.dispatchEvent(new CustomEvent('reading:updated', { detail: { readings: refreshedReadings } }));
+    setReadingFeedbackStatus(panel, 'Uloženo. Paměť profilu má další signál pro návratový rituál.', 'success');
+    return result;
+}
+
+function renderReadingFeedbackPanel(reading) {
+    const data = reading?.data;
+    if (reading?.type === 'journal' || !data || typeof data !== 'object' || Array.isArray(data)) return '';
+
+    const feedback = data.feedback && typeof data.feedback === 'object' && !Array.isArray(data.feedback)
+        ? data.feedback
+        : {};
+    const resonanceChips = FEEDBACK_RESONANCE_OPTIONS.map(option => `
+        <button type="button" class="reading-feedback__chip ${feedback.resonance === option.value ? 'is-selected' : ''}" data-feedback-resonance="${option.value}">
+            ${escapeHtml(option.label)}
+        </button>
+    `).join('');
+    const focusChips = FEEDBACK_FOCUS_OPTIONS.map(option => `
+        <button type="button" class="reading-feedback__chip ${feedback.focus === option.value ? 'is-selected' : ''}" data-feedback-focus="${option.value}">
+            ${escapeHtml(option.label)}
+        </button>
+    `).join('');
+
+    return `
+        <section class="reading-feedback" data-reading-feedback="${escapeHtml(reading.id)}">
+            <div class="reading-feedback__header">
+                <span class="reading-feedback__eyebrow">Zpětná vazba</span>
+                <strong>Co má profil brát jako další signál?</strong>
+            </div>
+            <div class="reading-feedback__chips" aria-label="Zpětná vazba k výkladu">
+                ${resonanceChips}
+            </div>
+            <div class="reading-feedback__chips" aria-label="Téma pro paměť rituálu">
+                ${focusChips}
+            </div>
+            <div class="reading-feedback__actions">
+                <button type="button" class="btn btn--glass btn--sm" data-feedback-next-action="journal">Zapsat reflexi</button>
+                <a class="btn btn--glass btn--sm" href="tarot.html?source=profile_feedback&feature=another_reading" data-feedback-next-action="another_reading">Navázat výkladem</a>
+            </div>
+            <p class="reading-feedback__status" aria-live="polite"></p>
+        </section>
+    `;
+}
+
+function focusJournalFromModal() {
+    closeReadingModal();
+    const input = document.getElementById('journal-input');
+    if (!input) return;
+
+    window.history.replaceState(null, '', '#journal-input');
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => input.focus(), 250);
+}
+
+function bindReadingFeedback(root, reading) {
+    const panel = root.querySelector('[data-reading-feedback]');
+    if (!panel) return;
+
+    panel.addEventListener('click', async (event) => {
+        const resonanceBtn = event.target.closest('[data-feedback-resonance]');
+        const focusBtn = event.target.closest('[data-feedback-focus]');
+        const nextActionEl = event.target.closest('[data-feedback-next-action]');
+        const clickedEl = resonanceBtn || focusBtn || nextActionEl;
+        if (!clickedEl) return;
+
+        const payload = {};
+        if (resonanceBtn) payload.resonance = resonanceBtn.dataset.feedbackResonance;
+        if (focusBtn) payload.focus = focusBtn.dataset.feedbackFocus;
+        if (nextActionEl) payload.nextAction = nextActionEl.dataset.feedbackNextAction;
+
+        panel.querySelectorAll('.reading-feedback__chip').forEach((chip) => {
+            if ((payload.resonance && chip.dataset.feedbackResonance)
+                || (payload.focus && chip.dataset.feedbackFocus)) {
+                chip.classList.toggle('is-selected', chip === clickedEl);
+            }
+        });
+
+        if (nextActionEl?.tagName === 'A') {
+            event.preventDefault();
+            const result = await saveProfileReadingFeedback(reading.id, payload, panel, null);
+            if (result?.success) window.location.href = nextActionEl.getAttribute('href');
+            return;
+        }
+
+        if (payload.nextAction === 'journal') {
+            const result = await saveProfileReadingFeedback(reading.id, payload, panel, nextActionEl);
+            if (result?.success) focusJournalFromModal();
+            return;
+        }
+
+        await saveProfileReadingFeedback(reading.id, payload, panel, clickedEl);
     });
 }
 
@@ -456,5 +612,6 @@ function renderReadingContent(reading) {
     }
 
     contentHtml += `</div>`;
+    contentHtml += renderReadingFeedbackPanel(reading);
     return contentHtml;
 }

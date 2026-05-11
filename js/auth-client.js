@@ -459,6 +459,21 @@
                     title: 'Vítejte v Mystické Hvězdě',
                     message: 'Začněte osobním horoskopem a získejte rychlý první vhled.'
                 },
+                ritual_memory: {
+                    path: '/profil.html',
+                    title: 'Paměť rituálu je připravená',
+                    message: 'Profil bude držet výklady, reflexe a opakující se témata v jednom návratovém místě.'
+                },
+                profile_history: {
+                    path: '/profil.html',
+                    title: 'Historie výkladů je připravená',
+                    message: 'Ukládejte výklady a zpětnou vazbu, aby se další kroky mohly lépe zaměřit.'
+                },
+                another_reading: {
+                    path: '/tarot.html',
+                    title: 'Navážeme dalším výkladem',
+                    message: 'Pokračujte výkladem, který naváže na téma, které jste právě označili.'
+                },
                 mentor: {
                     path: '/mentor.html',
                     title: 'Vítejte v Mystické Hvězdě',

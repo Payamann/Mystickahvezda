@@ -9,12 +9,14 @@
 }
 
 .daily-guidance-card,
-.activation-checklist-card {
+.activation-checklist-card,
+.ritual-memory-card {
     padding: 1.5rem !important;
 }
 
 .daily-guidance-card__header,
-.activation-checklist-card__header {
+.activation-checklist-card__header,
+.ritual-memory-card__header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -33,12 +35,14 @@
 }
 
 .daily-guidance-card__title,
-.activation-checklist-card__title {
+.activation-checklist-card__title,
+.ritual-memory-card__title {
     margin: 0;
     font-size: 1.35rem;
 }
 
-.daily-guidance-card__copy {
+.daily-guidance-card__copy,
+.ritual-memory-card__copy {
     max-width: 760px;
     margin: 0 0 1rem;
     color: rgba(255, 255, 255, 0.72);
@@ -174,6 +178,102 @@
     line-height: 1.45;
 }
 
+.ritual-memory-card {
+    grid-column: 1 / -1;
+}
+
+.ritual-memory-themes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.ritual-memory-theme {
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.ritual-memory-theme strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--color-starlight);
+}
+
+.ritual-memory-theme span {
+    display: block;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.86rem;
+    line-height: 1.45;
+}
+
+.ritual-memory-theme__meter {
+    width: 100%;
+    height: 6px;
+    margin-top: 0.75rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.ritual-memory-theme__meter-fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(212, 175, 55, 0.95), rgba(112, 214, 255, 0.8));
+}
+
+.ritual-memory-theme__meter-fill--18 { width: 18%; }
+.ritual-memory-theme__meter-fill--25 { width: 25%; }
+.ritual-memory-theme__meter-fill--40 { width: 40%; }
+.ritual-memory-theme__meter-fill--55 { width: 55%; }
+.ritual-memory-theme__meter-fill--70 { width: 70%; }
+.ritual-memory-theme__meter-fill--85 { width: 85%; }
+.ritual-memory-theme__meter-fill--100 { width: 100%; }
+
+.ritual-memory-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 0.75rem;
+}
+
+.ritual-memory-action {
+    display: block;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+}
+
+.ritual-memory-action:hover {
+    transform: translateY(-2px);
+    border-color: rgba(112, 214, 255, 0.36);
+    background: rgba(112, 214, 255, 0.07);
+}
+
+.ritual-memory-action--primary {
+    border-color: rgba(212, 175, 55, 0.34);
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.ritual-memory-action strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--color-starlight);
+}
+
+.ritual-memory-action span {
+    display: block;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.86rem;
+    line-height: 1.45;
+}
+
 @media (max-width: 900px) {
     .profile-return-grid {
         grid-template-columns: 1fr;
@@ -182,7 +282,8 @@
 
 @media (max-width: 560px) {
     .daily-guidance-card__header,
-    .activation-checklist-card__header {
+    .activation-checklist-card__header,
+    .ritual-memory-card__header {
         flex-direction: column;
     }
 }
@@ -626,6 +727,69 @@
 .reading-json {
     white-space: pre-wrap;
     font-size: 0.85rem;
+}
+
+.reading-feedback {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(212, 175, 55, 0.18);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.045);
+}
+
+.reading-feedback__header {
+    display: grid;
+    gap: 0.2rem;
+    margin-bottom: 0.85rem;
+}
+
+.reading-feedback__eyebrow {
+    color: var(--color-mystic-gold);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.reading-feedback__chips,
+.reading-feedback__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.65rem;
+}
+
+.reading-feedback__chip {
+    min-height: 36px;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.78);
+    font: inherit;
+    font-size: 0.82rem;
+}
+
+.reading-feedback__chip:hover,
+.reading-feedback__chip.is-selected {
+    border-color: rgba(212, 175, 55, 0.42);
+    background: rgba(212, 175, 55, 0.12);
+    color: var(--color-starlight);
+}
+
+.reading-feedback__status {
+    min-height: 1.2rem;
+    margin: 0.75rem 0 0;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.82rem;
+}
+
+.reading-feedback__status[data-state="success"] {
+    color: #7bed9f;
+}
+
+.reading-feedback__status[data-state="error"] {
+    color: #ff8f8f;
 }
 
 /* Avatar Picker Improvements */

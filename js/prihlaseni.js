@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
         premium_membership: 'Premium členství',
         subscription_management: 'Správa předplatného',
         vip_membership: 'VIP členství',
+        ritual_memory: 'Paměť rituálu',
+        profile_history: 'Historie výkladů',
+        another_reading: 'Navazující výklad',
         tarot: 'Tarot',
         tarot_daily_card_profile_save: 'Tarot karta dne',
         tarot_multi_card: 'Vícekartový tarot',
@@ -109,6 +112,24 @@ document.addEventListener('DOMContentLoaded', () => {
             copy: 'Po vytvoření účtu budete pokračovat k horoskopům a můžete otevřít širší měsíční vedení.',
             stepTitle: 'Otevřeme horoskopy',
             stepCopy: 'Začnete denním vhledem a snadno přejdete na měsíční vedení.'
+        },
+        ritual_memory: {
+            title: 'Paměť rituálu po registraci',
+            copy: 'Po vytvoření účtu se budete vracet k výkladům, reflexím a tématům, která se opravdu opakují.',
+            stepTitle: 'Otevřeme osobní profil',
+            stepCopy: 'Profil nebude prázdný archiv. Povede vás k prvnímu výkladu, reflexi a návratovému vzorci.'
+        },
+        profile_history: {
+            title: 'Historie výkladů po registraci',
+            copy: 'Po vytvoření účtu budete mít místo, kam ukládat výklady, zpětnou vazbu a večerní reflexe.',
+            stepTitle: 'Otevřeme osobní historii',
+            stepCopy: 'Výklady nepůjdou do ztracena. Profil je propojí s dalším konkrétním krokem.'
+        },
+        another_reading: {
+            title: 'Navazující výklad po registraci',
+            copy: 'Po vytvoření účtu budete pokračovat k dalšímu výkladu bez ztráty tématu, které jste právě označili.',
+            stepTitle: 'Otevřeme další výklad',
+            stepCopy: 'Zpětná vazba se neztratí a další výklad naváže na předchozí signál.'
         },
         tarot: {
             title: 'Tarotový výklad po registraci',

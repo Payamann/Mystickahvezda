@@ -134,6 +134,41 @@ test.describe('Profil aktivace', () => {
                 body: JSON.stringify({ success: true, plans: [], featurePlanMap: {} })
             });
         });
+        await page.route(/\/api\/user\/readings\/([^/]+)\/feedback$/, async (route) => {
+            const readingId = route.request().url().match(/\/api\/user\/readings\/([^/]+)\/feedback$/)?.[1];
+            const payload = route.request().postDataJSON();
+            const reading = readings.find(item => item.id === decodeURIComponent(readingId || ''));
+            if (!reading || reading.type === 'journal' || !reading.data || typeof reading.data !== 'object') {
+                await route.fulfill({
+                    status: 400,
+                    contentType: 'application/json',
+                    body: JSON.stringify({ success: false, error: 'Invalid reading' })
+                });
+                return;
+            }
+
+            reading.data.feedback = {
+                ...(reading.data.feedback || {}),
+                resonance: payload.resonance || reading.data.feedback?.resonance || null,
+                focus: payload.focus || reading.data.feedback?.focus || null,
+                nextAction: payload.nextAction || reading.data.feedback?.nextAction || null
+            };
+
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true, reading, feedback: reading.data.feedback })
+            });
+        });
+        await page.route(/\/api\/user\/readings\/([^/]+)$/, async (route) => {
+            const readingId = route.request().url().match(/\/api\/user\/readings\/([^/]+)$/)?.[1];
+            const reading = readings.find(item => item.id === decodeURIComponent(readingId || ''));
+            await route.fulfill({
+                status: reading ? 200 : 404,
+                contentType: 'application/json',
+                body: JSON.stringify(reading ? { success: true, reading } : { success: false, error: 'Not found' })
+            });
+        });
         await page.route('**/api/user/readings', async (route) => {
             if (route.request().method() === 'POST') {
                 const payload = route.request().postDataJSON();
@@ -189,6 +224,90 @@ test.describe('Profil aktivace', () => {
         expect(firstReadingHref).toContain('feature=daily_guidance');
         expect(firstReadingHref).toContain('sign=lev');
         await expect(page.locator('[data-activation-step="first_reading"]')).toContainText('horoskopem pro Lev');
+    });
+
+    test('pamet ritualu navaze na zpetnou vazbu a nabidne konkretni dalsi krok', async ({ page }) => {
+        await mockLoggedInProfile(page, {
+            readings: [
+                {
+                    id: 'reading-horoscope-1',
+                    type: 'horoscope',
+                    created_at: '2026-05-10T10:00:00.000Z',
+                    data: {
+                        sign: 'Lev',
+                        period: 'daily',
+                        text: 'Dnes si vsimni vztahoveho napeti.',
+                        feedback: {
+                            resonance: 'fits',
+                            focus: 'relationships',
+                            nextAction: 'journal'
+                        }
+                    }
+                },
+                {
+                    id: 'reading-synastry-1',
+                    type: 'synastry',
+                    created_at: '2026-05-09T10:00:00.000Z',
+                    data: {
+                        result: 'Vztah potrebuje jasne hranice.',
+                        feedback: {
+                            resonance: 'neutral',
+                            focus: 'relationships'
+                        }
+                    }
+                },
+                {
+                    id: 'reading-journal-1',
+                    type: 'journal',
+                    created_at: '2026-05-09T20:00:00.000Z',
+                    data: 'Ve vztahu se mi vraci stejny pocit a hranice.'
+                }
+            ]
+        });
+
+        await page.goto('/profil.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#ritual-memory-card')).toBeVisible();
+        await expect(page.locator('#ritual-memory-title')).toContainText('Vztahy');
+        await expect(page.locator('#ritual-memory-strength')).toContainText('Silná stopa');
+        await expect(page.locator('[data-memory-theme="relationships"]').first()).toContainText('Vztahy');
+
+        const themeHref = await page.locator('[data-memory-action="memory_theme"]').getAttribute('href');
+        expect(themeHref).toContain('partnerska-shoda.html');
+        expect(themeHref).toContain('source=profile_memory');
+        expect(themeHref).toContain('feature=relationships');
+
+        await page.locator('[data-memory-action="memory_journal"]').click();
+        await expect.poll(async () => page.evaluate(() => document.activeElement?.id)).toBe('journal-input');
+    });
+
+    test('detail vykladu uklada zpetnou vazbu pro pamet profilu', async ({ page }) => {
+        await mockLoggedInProfile(page, {
+            readings: [
+                {
+                    id: 'reading-horoscope-1',
+                    type: 'horoscope',
+                    created_at: '2026-05-10T10:00:00.000Z',
+                    data: {
+                        sign: 'Lev',
+                        period: 'daily',
+                        text: 'Dnes si vsimni, kde opakujes stary vzorec.'
+                    }
+                }
+            ]
+        });
+
+        await page.goto('/profil.html');
+        await waitForPageReady(page);
+
+        await page.locator('[data-reading-action="view"][data-reading-id="reading-horoscope-1"]').click();
+        await expect(page.locator('#reading-modal')).toBeVisible();
+        await expect(page.locator('.reading-feedback')).toBeVisible();
+
+        await page.locator('[data-feedback-focus="relationships"]').click();
+        await expect(page.locator('.reading-feedback__status')).toContainText('Paměť profilu');
+        await expect(page.locator('#ritual-memory-title')).toContainText('Vztahy');
     });
 
     test('vecerni reflexe ulozi journal a oznaci navratovy ritual', async ({ page }) => {
@@ -270,7 +389,8 @@ test.describe('Onboarding', () => {
         await expect(valueStrip).toBeVisible();
         await expect(valueStrip.locator('div')).toHaveCount(3);
         await expect(valueStrip).toContainText('Bez karty');
-        await expect(valueStrip).toContainText('Hned výklad');
+        await expect(valueStrip).toContainText('První krok');
+        await expect(valueStrip).toContainText('Paměť');
     });
 
     test('onboarding netaha externi fonty ani nepouzity sanitizer z CDN', async ({ page }) => {
