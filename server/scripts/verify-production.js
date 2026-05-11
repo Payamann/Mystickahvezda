@@ -150,6 +150,17 @@ const CONVERSION_LINK_CHECKS = [
             'data-analytics-cta="tarot_intent_celtic_cross"',
             'tarot-keltsky-kriz.html?source=tarot_intent_cluster&amp;intent=celtic_cross'
         ]
+    },
+    {
+        path: '/cenik.html',
+        name: 'Pricing first week premium value',
+        snippets: [
+            'class="pricing-first-week"',
+            'data-analytics-cta="pricing_first_week_natal"',
+            'natalni-karta.html?source=pricing_first_week&amp;feature=natalni_interpretace',
+            'data-analytics-cta="pricing_first_week_profile"',
+            'profil.html?source=pricing_first_week&amp;feature=profile_history'
+        ]
     }
 ];
 
