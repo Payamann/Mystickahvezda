@@ -4,6 +4,25 @@
 
 import { escapeHtml, apiUrl, authHeaders, getReadingIcon, getReadingTitle } from './shared.js';
 
+function renderEmptyFavorites(readingCount = 0) {
+    const hasReadings = readingCount > 0;
+
+    return `
+        <div class="empty-state">
+            <div class="empty-state__icon">⭐</div>
+            <h4 class="empty-state__title">${hasReadings ? 'Vyber si první výklad pro návrat' : 'Oblíbené zatím čekají na první návrat'}</h4>
+            <p class="empty-state__text">${hasReadings
+        ? 'Najdi v historii výklad, ke kterému se chceš vrátit. Hvězda z něj udělá krátký seznam témat, která se opakují.'
+        : 'Začni jedním výkladem. Oblíbené pak nejsou sbírka hvězdiček, ale místo pro odpovědi, které mají zůstat po ruce.'}</p>
+            <div class="empty-state__actions">
+                ${hasReadings
+        ? '<button type="button" class="btn btn--primary btn--sm" data-profile-tab-target="history">Otevřít historii</button>'
+        : '<a href="tarot.html?source=profile_favorites_empty&feature=tarot" class="btn btn--primary btn--sm">🃏 Tarot</a><a href="horoskopy.html?source=profile_favorites_empty&feature=daily_guidance" class="btn btn--glass btn--sm">⭐ Denní horoskop</a>'}
+            </div>
+        </div>
+    `;
+}
+
 export async function loadFavorites() {
     const container = document.getElementById('favorites-list');
     if (!container) return;
@@ -19,16 +38,11 @@ export async function loadFavorites() {
         if (!response.ok) throw new Error('Failed to load readings');
 
         const data = await response.json();
-        const favorites = (data.readings || []).filter(r => r.is_favorite);
+        const readings = data.readings || [];
+        const favorites = readings.filter(r => r.is_favorite);
 
         if (favorites.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state__icon">⭐</div>
-                    <h4 class="empty-state__title">Žádné oblíbené výklady</h4>
-                    <p class="empty-state__text">Klikněte na ☆ u výkladu pro přidání do oblíbených</p>
-                </div>
-            `;
+            container.innerHTML = renderEmptyFavorites(readings.length);
             return;
         }
 

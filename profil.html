@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
     <link rel="stylesheet" href="css/pages/profil.css">
     <link rel="stylesheet" href="css/profile-refresh.css?v=3">
-    <script type="module" src="/js/dist/profile/dashboard.js?v=17" defer></script>
+    <script type="module" src="/js/dist/profile/dashboard.js?v=18" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body class="page-profile">
@@ -190,8 +190,12 @@
                             <div id="favorites-list">
                                 <div class="empty-state">
                                     <div class="empty-state__icon">*</div>
-                                    <h4 class="empty-state__title">Zatím žádné oblíbené</h4>
-                                    <p class="empty-state__text">Klikněte na hvězdu u výkladu a uložte si ho sem.</p>
+                                    <h4 class="empty-state__title">Oblíbené zatím čekají na první návrat</h4>
+                                    <p class="empty-state__text">Začněte jedním výkladem. Oblíbené pak nejsou sbírka hvězdiček, ale místo pro odpovědi, které mají zůstat po ruce.</p>
+                                    <div class="empty-state__actions">
+                                        <a href="tarot.html?source=profile_favorites_empty&feature=tarot" class="btn btn--primary btn--sm">Tarot</a>
+                                        <a href="horoskopy.html?source=profile_favorites_empty&feature=daily_guidance" class="btn btn--glass btn--sm">Denní horoskop</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

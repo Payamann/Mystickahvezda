@@ -316,6 +316,57 @@ test.describe('Profil aktivace', () => {
         expect(horoscopeHref).toContain('feature=daily_guidance');
     });
 
+    test('prazdne oblibene bez vykladu vedou k meritelne prvni akci', async ({ page }) => {
+        await mockLoggedInProfile(page);
+
+        await page.goto('/profil.html');
+        await waitForPageReady(page);
+        await page.locator('#tab-btn-favorites').click();
+
+        const favorites = page.locator('#favorites-list .empty-state');
+        await expect(favorites).toContainText('první návrat');
+        await expect(favorites).toContainText('nejsou sbírka hvězdiček');
+
+        const tarotHref = await favorites.locator('a[href*="tarot.html"]').getAttribute('href');
+        const horoscopeHref = await favorites.locator('a[href*="horoskopy.html"]').getAttribute('href');
+
+        expect(tarotHref).toContain('source=profile_favorites_empty');
+        expect(tarotHref).toContain('feature=tarot');
+        expect(horoscopeHref).toContain('source=profile_favorites_empty');
+        expect(horoscopeHref).toContain('feature=daily_guidance');
+    });
+
+    test('prazdne oblibene s historii vraci uzivatele k ulozenym vykladum', async ({ page }) => {
+        await mockLoggedInProfile(page, {
+            readings: [
+                {
+                    id: 'reading-tarot-1',
+                    type: 'tarot',
+                    created_at: '2026-05-10T10:00:00.000Z',
+                    is_favorite: false,
+                    data: {
+                        question: 'Co si mám dnes pohlídat?',
+                        cards: ['Hvězda'],
+                        interpretation: 'Vrať se k jedné konkrétní otázce.'
+                    }
+                }
+            ]
+        });
+
+        await page.goto('/profil.html');
+        await waitForPageReady(page);
+        await page.locator('#tab-btn-favorites').click();
+
+        const favorites = page.locator('#favorites-list .empty-state');
+        await expect(favorites).toContainText('Najdi v historii výklad');
+
+        await favorites.locator('[data-profile-tab-target="history"]').click();
+
+        await expect(page.locator('#tab-history')).toBeVisible();
+        await expect(page.locator('#tab-btn-history')).toHaveAttribute('aria-selected', 'true');
+        await expect(page.locator('#readings-list .reading-item[data-reading-id="reading-tarot-1"]')).toBeVisible();
+    });
+
     test('pamet ritualu navaze na zpetnou vazbu a nabidne konkretni dalsi krok', async ({ page }) => {
         await mockLoggedInProfile(page, {
             readings: [

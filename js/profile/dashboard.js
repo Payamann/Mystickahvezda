@@ -1246,6 +1246,14 @@ function renderJournalEntries(readings) {
 let listenersAttached = false;
 
 async function handleReadingListInteraction(event) {
+    const tabTarget = event.target.closest('[data-profile-tab-target]');
+    if (tabTarget) {
+        event.preventDefault();
+        event.stopPropagation();
+        openProfileTab(tabTarget.dataset.profileTabTarget);
+        return;
+    }
+
     const actionButton = event.target.closest('[data-reading-action]');
     if (actionButton) {
         event.preventDefault();
