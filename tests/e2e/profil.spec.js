@@ -50,6 +50,7 @@ test.describe('Profil stránka', () => {
         await expect(page.locator('#profile-greeting')).toContainText('výklady na jednom místě');
         await expect(gate).toContainText('historii, oblíbené výklady a návratové poznámky');
         await expect(gate).toContainText('Bez přihlášení nic neukládáme do osobního profilu');
+        await expect(page.locator('script[src*="/js/dist/profile/dashboard.js"]').first()).toHaveAttribute('src', /dashboard\.js\?v=19/);
 
         const loginHref = await page.locator('#profile-login-btn').getAttribute('href');
         const registerHref = await page.locator('#login-required a[href*="mode=register"]').getAttribute('href');
