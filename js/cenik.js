@@ -148,6 +148,12 @@ const SOURCE_RECOMMENDATION_COPY = {
         title: 'Pam\u011b\u0165 uk\u00e1zala opakuj\u00edc\u00ed se t\u00e9ma. Pr\u016fvodce z n\u011bj ud\u011bl\u00e1 pravideln\u00fd sm\u011br.',
         text: 'Profil u\u017e dr\u017e\u00ed v\u00fdklady, zp\u011btnou vazbu a reflexe pohromad\u011b. Hv\u011bzdn\u00fd Pr\u016fvodce p\u0159id\u00e1 hlub\u0161\u00ed v\u00fdklady a osobn\u00ed historii, aby se z opakovan\u00e9ho t\u00e9matu stal konkr\u00e9tn\u00ed dal\u0161\u00ed krok.',
         actionLabel: 'Odemknout hlub\u0161\u00ed pam\u011b\u0165'
+    },
+    tarot_love_landing: {
+        eyebrow: 'Navazuje na tarot na l\u00e1sku',
+        title: 'Vztahov\u00e1 ot\u00e1zka pot\u0159ebuje souvislosti, ne jen rychlou odpov\u011b\u010f.',
+        text: 'Hv\u011bzdn\u00fd Pr\u016fvodce odemkne v\u00edcekartov\u00fd vztahov\u00fd tarot, historii v\u00fdklad\u016f a osobn\u00ed kontext, aby se z nejistoty stal konkr\u00e9tn\u00ed dal\u0161\u00ed krok.',
+        actionLabel: 'Odemknout vztahov\u00fd v\u00fdklad'
     }
 };
 

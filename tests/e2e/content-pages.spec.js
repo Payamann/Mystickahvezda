@@ -356,7 +356,7 @@ test.describe('Tarot zdarma', () => {
         await expect(page.locator('a[href*="tarot-karta-dne.html?source=tarot_free_intent"]')).toBeVisible();
         await expect(page.locator('a[href*="tarot-laska.html?source=tarot_free_intent"]')).toBeVisible();
         await expect(page.locator('a[href*="tarot-vyznam-karet.html?source=tarot_free_intent"]')).toBeVisible();
-        await expect(page.locator('a[href*="tarot.html?source=tarot_free_intent"][href*="intent=three_cards"]')).toBeVisible();
+        await expect(page.locator('a[href*="tarot-tri-karty.html?source=tarot_free_intent"][href*="intent=three_cards"]')).toBeVisible();
     });
 });
 
@@ -628,7 +628,7 @@ test.describe('Tarot na lásku', () => {
         await page.goto('/tarot-laska.html');
         await waitForPageReady(page);
 
-        await expect(page.locator('main a[href*="tarot.html?source=tarot_love_landing"][href*="intent=love_tarot"]').first()).toBeVisible();
+        await expect(page.locator('main a[href*="tarot.html?source=tarot_love_landing"][href*="intent=love_tarot"][href*="spread=three_cards"]').first()).toBeVisible();
         await expect(page.locator('main a[href*="partnerska-shoda.html?source=tarot_love_landing"][href*="feature=partnerska_detail"]').first()).toBeVisible();
     });
 
@@ -637,6 +637,7 @@ test.describe('Tarot na lásku', () => {
         await waitForPageReady(page);
 
         await expect(page.locator('.love-tarot-intent-card')).toHaveCount(5);
+        await expect(page.locator('a[href*="tarot.html?source=tarot_love_intent"][href*="spread=three_cards"]')).toBeVisible();
         await expect(page.locator('a[href*="cenik.html?plan=pruvodce"][href*="source=tarot_love_landing"]')).toBeVisible();
 
         const ldTypes = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((script) => {
