@@ -22,7 +22,7 @@
     <meta property="og:locale" content="cs_CZ">
     <link rel="stylesheet" href="/fonts/local-fonts.css">
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
-    <link rel="stylesheet" href="css/pages/mentor.css">
+    <link rel="stylesheet" href="css/pages/mentor.css?v=2">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="canonical" href="https://www.mystickahvezda.cz/mentor.html">
     <script src="/js/dist/analytics-init.js" defer></script>
@@ -57,6 +57,36 @@
                     zrovna řešíte.
                 </p>
             </div>
+
+            <section class="mentor-starter-panel" aria-labelledby="mentor-starter-title">
+                <div>
+                    <span class="section__badge">Začni konkrétně</span>
+                    <h2 id="mentor-starter-title">Vyber otázku, kterou můžeš hned upravit</h2>
+                    <p>
+                        Průvodce funguje nejlépe, když navazuje na situaci, ne jen na obecné přání. Tohle jsou čtyři
+                        nejčastější vstupy do první odpovědi.
+                    </p>
+                </div>
+
+                <div class="mentor-starter-grid">
+                    <button type="button" class="mentor-starter-card" data-mentor-prompt-type="decision" data-mentor-prompt="Stojím před rozhodnutím a potřebuji rozlišit, co je strach a co intuice. Pomoz mi pojmenovat další rozumný krok.">
+                        <span>Rozhodnutí</span>
+                        <strong>Co je strach a co intuice?</strong>
+                    </button>
+                    <button type="button" class="mentor-starter-card" data-mentor-prompt-type="relationship" data-mentor-prompt="Ve vztahu se mi opakuje stejné téma. Pomoz mi pochopit, co se za tím může skrývat a jaký krok dnes udělat.">
+                        <span>Vztah</span>
+                        <strong>Proč se mi to vrací?</strong>
+                    </button>
+                    <button type="button" class="mentor-starter-card" data-mentor-prompt-type="work_direction" data-mentor-prompt="V práci nebo směru se cítím zaseknutě. Pomoz mi rozlišit, co držet, co pustit a na co se zaměřit tento týden.">
+                        <span>Práce a směr</span>
+                        <strong>Kde mám udělat další krok?</strong>
+                    </button>
+                    <button type="button" class="mentor-starter-card" data-mentor-prompt-type="pattern" data-mentor-prompt="Vidím ve svém životě opakující se vzorec. Pomoz mi ho pojmenovat a navrhni jednu praktickou změnu pro dnešek.">
+                        <span>Vzorec</span>
+                        <strong>Co se mi snaží ukázat?</strong>
+                    </button>
+                </div>
+            </section>
 
             <div class="chat-container box-shadow-glow" data-animate>
                 <div class="chat-header">

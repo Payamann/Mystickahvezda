@@ -17,6 +17,30 @@ function resetChatInput() {
     chatInput.rows = 1;
 }
 
+function fillMentorPrompt(prompt, promptType = 'unknown') {
+    if (!chatInput || !prompt) return;
+
+    chatInput.value = prompt;
+    resizeChatInput();
+    sendBtn?.removeAttribute('disabled');
+    chatInput.focus();
+    chatInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    window.MH_ANALYTICS?.trackCTA?.('mentor_prompt_starter', {
+        feature: 'mentor',
+        prompt_type: promptType
+    });
+}
+
+function setupMentorPromptStarters() {
+    document.querySelectorAll('[data-mentor-prompt]').forEach((button) => {
+        if (button.dataset.mentorPromptBound === 'true') return;
+        button.dataset.mentorPromptBound = 'true';
+        button.addEventListener('click', () => {
+            fillMentorPrompt(button.dataset.mentorPrompt || '', button.dataset.mentorPromptType || 'unknown');
+        });
+    });
+}
+
 function buildMentorUpgradeUrl(source = 'mentor_inline_upsell') {
     const pricingUrl = new URL('/cenik.html', window.location.origin);
     pricingUrl.searchParams.set('plan', 'pruvodce');
@@ -67,6 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     sendBtn = document.getElementById('send-btn');
     messagesContainer = document.getElementById('chat-messages');
     typingIndicator = document.getElementById('typing-indicator');
+    setupMentorPromptStarters();
 
     // Připoj event listenery až po inicializaci DOM
     if (chatInput) {

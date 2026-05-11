@@ -115,6 +115,17 @@ const CONVERSION_LINK_CHECKS = [
         ]
     },
     {
+        path: '/mentor.html',
+        name: 'Mentor prompt starters',
+        snippets: [
+            'mentor-starter-panel',
+            'data-mentor-prompt-type="decision"',
+            'data-mentor-prompt-type="relationship"',
+            'data-mentor-prompt-type="work_direction"',
+            'css/pages/mentor.css?v=2'
+        ]
+    },
+    {
         path: '/kristalova-koule.html',
         name: 'Crystal ball freemium CTA',
         snippets: [

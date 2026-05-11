@@ -75,6 +75,17 @@ test.describe('Mentor — Hvězdný průvodce', () => {
         }
     });
 
+    test('starter otazky vyplni chat a povoli odeslani', async ({ page }) => {
+        const starters = page.locator('.mentor-starter-card');
+        await expect(starters).toHaveCount(4);
+
+        await starters.filter({ hasText: 'Rozhodnutí' }).click();
+
+        const input = page.locator('#chat-input');
+        await expect(input).toHaveValue(/strach a co intuice/);
+        await expect(page.locator('#send-btn')).toBeEnabled();
+    });
+
     // API test
     test('POST /api/mentor/chat bez CSRF vrátí 403', async ({ page }) => {
         const res = await page.request.post('/api/mentor/chat', {

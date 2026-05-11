@@ -258,6 +258,88 @@
             color: var(--color-silver-mist);
         }
 
+        .mentor-starter-panel {
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+            gap: var(--space-lg);
+            align-items: center;
+            max-width: 980px;
+            margin: 0 auto var(--space-xl);
+            padding: var(--space-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.045);
+        }
+
+        .mentor-starter-panel h2 {
+            margin: 0.5rem 0 0.75rem;
+            color: var(--color-starlight);
+            font-family: var(--font-heading);
+            font-size: 1.35rem;
+            line-height: 1.25;
+        }
+
+        .mentor-starter-panel p {
+            margin: 0;
+            color: var(--color-silver-mist);
+            line-height: 1.6;
+        }
+
+        .mentor-starter-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: var(--space-sm);
+        }
+
+        .mentor-starter-card {
+            display: flex;
+            min-height: 100%;
+            flex-direction: column;
+            gap: 0.35rem;
+            padding: var(--space-md);
+            border: 1px solid rgba(212, 175, 55, 0.24);
+            border-radius: var(--radius-md);
+            background: rgba(10, 10, 26, 0.45);
+            color: inherit;
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+        }
+
+        .mentor-starter-card:hover,
+        .mentor-starter-card:focus-visible {
+            border-color: rgba(212, 175, 55, 0.62);
+            background: rgba(212, 175, 55, 0.08);
+            transform: translateY(-2px);
+            outline: none;
+        }
+
+        .mentor-starter-card span {
+            color: var(--color-mystic-gold);
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .mentor-starter-card strong {
+            color: var(--color-starlight);
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            line-height: 1.25;
+        }
+
+        @media (max-width: 768px) {
+            .mentor-starter-panel {
+                grid-template-columns: 1fr;
+                padding: var(--space-md);
+            }
+
+            .mentor-starter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
 /* Migrated from mentor.html static style attributes. */
 html body .mh-inline-58aab8fec6 { display:none; background: linear-gradient(90deg, rgba(212,175,55,0.1), rgba(155,89,182,0.1)); border-bottom: 1px solid rgba(212,175,55,0.2); padding: 0.65rem 1rem; text-align: center; font-size: 0.88rem; color: rgba(255,255,255,0.8); }
 html body .mh-inline-f2bbe2bdc8 { color: #d4af37; font-weight: 600; }
