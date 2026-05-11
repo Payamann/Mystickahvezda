@@ -105,12 +105,12 @@ const CONTEXT_COPY_BY_INTEREST = {
         subtitle: 'Vyberte znamení a téma. Potom otevřeme runy jako rychlý symbolický první krok.'
     },
     'shamanske-kolo': {
-        title: 'Začněte šamanským kolem',
-        subtitle: 'Vyberte znamení a téma. Potom otevřeme šamanské kolo pro hlubší osobní vhled.'
+        title: 'Navážeme šamanským kolem',
+        subtitle: 'Vyber znamení a téma. Potom otevřeme šamanské kolo jako symbolický směr k jednomu konkrétnímu kroku.'
     },
     'minuly-zivot': {
-        title: 'Začněte minulým životem',
-        subtitle: 'Vyberte znamení a téma. Potom otevřeme výklad minulého života bez ztráty kontextu.'
+        title: 'Navážeme symbolickým příběhem',
+        subtitle: 'Vyber znamení a téma. Potom otevřeme minulý život jako archetypální rámec pro sebereflexi, ne tvrdý slib.'
     },
     'kristalova-koule': {
         title: 'Začněte křišťálovou koulí',
@@ -226,12 +226,12 @@ const INTEREST_DESTINATIONS = {
     },
     'shamanske-kolo': {
         label: () => 'Otevřít šamanské kolo',
-        copy: () => 'Po dokončení otevřeme šamanské kolo pro hlubší osobní vhled.',
+        copy: () => 'Po dokončení otevřeme šamanské kolo jako symbolický směr pro další krok.',
         href: (source) => withSource('/shamansko-kolo.html', source)
     },
     'minuly-zivot': {
-        label: () => 'Otevřít minulý život',
-        copy: () => 'Po dokončení přejdete k výkladu minulého života.',
+        label: () => 'Otevřít symbolický minulý život',
+        copy: () => 'Po dokončení přejdete k symbolickému výkladu minulého života pro sebereflexi.',
         href: (source) => withSource('/minuly-zivot.html', source)
     },
     'kristalova-koule': {
@@ -284,6 +284,13 @@ function updateFinishCta() {
     if (finishCopy) {
         finishCopy.textContent = destination.copy();
     }
+}
+
+function getPendingDestinationText() {
+    const label = getPrimaryDestination().label();
+    return `${label
+        .replace(/^Otevřít\s+/i, 'Otevírám ')
+        .replace(/^Zobrazit\s+/i, 'Otevírám ')}...`;
 }
 
 function setNextButtonEnabled(enabled) {
@@ -397,6 +404,19 @@ function markOnboardingComplete() {
     }
 }
 
+function scrollOnboardingStepIntoView(stepNumber) {
+    const target = document.getElementById(`step-${stepNumber}`) || document.querySelector('.onboarding__card');
+    if (!target) return;
+
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    window.requestAnimationFrame(() => {
+        target.scrollIntoView({
+            behavior: prefersReducedMotion ? 'auto' : 'smooth',
+            block: 'start'
+        });
+    });
+}
+
 function goStep(n) {
     document.querySelectorAll('.step-view').forEach((step) => step.classList.remove('active'));
     document.getElementById(`step-${n}`)?.classList.add('active');
@@ -408,6 +428,7 @@ function goStep(n) {
     }
 
     if (n === 3) updateFinishCta();
+    scrollOnboardingStepIntoView(n);
 
     window.MH_ANALYTICS?.trackEvent?.('onboarding_step_viewed', {
         step_number: n,
@@ -453,7 +474,7 @@ function setCompletionPending(action, pending) {
         element.classList.add('onboarding-pending');
         if ('disabled' in element) element.disabled = true;
         if (element.tagName === 'A') element.setAttribute('aria-disabled', 'true');
-        element.textContent = action?.dataset.action === 'skipOnboarding' ? 'Otevírám horoskop...' : 'Otevírám výklad...';
+        element.textContent = getPendingDestinationText();
         return;
     }
 

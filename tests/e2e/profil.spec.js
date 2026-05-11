@@ -694,6 +694,8 @@ test.describe('Onboarding', () => {
         await waitForPageReady(page);
 
         await expect(page.locator('.interest-chip[data-interest="shamanske-kolo"]')).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.locator('#step-1 .step-title')).toContainText('šamanským kolem');
+        await expect(page.locator('#step-1 .step-subtitle')).toContainText('symbolický směr');
 
         const skipHref = await page.locator('[data-action="skipOnboarding"]').getAttribute('href');
         expect(skipHref).toContain('/shamansko-kolo.html');
@@ -702,6 +704,7 @@ test.describe('Onboarding', () => {
         await page.locator('#step-1 [data-action="goStep"][data-step="2"]').click();
         await page.locator('.zodiac-btn[data-sign="rak"]').click();
         await page.locator('#btn-step2').click();
+        await expect(page.locator('#finish-onboarding-copy')).toContainText('symbolický směr');
 
         await Promise.all([
             page.waitForURL(url => url.pathname === '/shamansko-kolo.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
@@ -712,6 +715,41 @@ test.describe('Onboarding', () => {
         expect(url.pathname).toBe('/shamansko-kolo.html');
         expect(url.searchParams.get('source')).toBe('onboarding_complete');
         expect(url.searchParams.get('entry_feature')).toBe('shamanske_kolo_plne_cteni');
+    });
+
+    test('minuly zivot v onboardingu drzi symbolicky ramec', async ({ page }) => {
+        await page.setViewportSize({ width: 393, height: 851 });
+        await mockOnboardingComplete(page);
+
+        await page.goto('/onboarding.html?source=past_life_register_gate&feature=minuly_zivot');
+        await waitForPageReady(page);
+
+        await expect(page.locator('.interest-chip[data-interest="minuly-zivot"]')).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.locator('#step-1 .step-title')).toContainText('symbolickým příběhem');
+        await expect(page.locator('#step-1 .step-subtitle')).toContainText('archetypální rámec pro sebereflexi');
+
+        const skipHref = await page.locator('[data-action="skipOnboarding"]').getAttribute('href');
+        expect(skipHref).toContain('/minuly-zivot.html');
+        expect(skipHref).toContain('entry_feature=minuly_zivot');
+
+        await page.locator('#step-1 [data-action="goStep"][data-step="2"]').click();
+        await page.locator('.zodiac-btn[data-sign="panna"]').click();
+        await page.locator('#btn-step2').click();
+        await expect(page.locator('#step-3 .step-title')).toBeInViewport({ ratio: 1 });
+        const stepTitleTop = await page.locator('#step-3 .step-title').evaluate((element) => Math.round(element.getBoundingClientRect().top));
+        expect(stepTitleTop).toBeGreaterThanOrEqual(0);
+        await expect(page.locator('#finish-onboarding-btn')).toContainText('symbolický minulý život');
+        await expect(page.locator('#finish-onboarding-copy')).toContainText('symbolickému výkladu minulého života');
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/minuly-zivot.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            page.locator('#finish-onboarding-btn').click(),
+        ]);
+
+        const url = new URL(page.url());
+        expect(url.pathname).toBe('/minuly-zivot.html');
+        expect(url.searchParams.get('source')).toBe('onboarding_complete');
+        expect(url.searchParams.get('entry_feature')).toBe('minuly_zivot');
     });
 
     test('navrat do onboardingu obnovi ulozene znameni a tema', async ({ page }) => {
