@@ -54,10 +54,10 @@ test.describe('Profil stránka', () => {
         const registerHref = await page.locator('#login-required a[href*="mode=register"]').getAttribute('href');
 
         expect(loginHref).toContain('source=profile_gate_login');
-        expect(loginHref).toContain('feature=account');
+        expect(loginHref).toContain('feature=profile_history');
         expect(loginHref).toContain('redirect=/profil.html');
         expect(registerHref).toContain('source=profile_gate_register');
-        expect(registerHref).toContain('feature=account');
+        expect(registerHref).toContain('feature=profile_history');
         expect(registerHref).toContain('redirect=/profil.html');
 
         await Promise.all([
@@ -67,7 +67,7 @@ test.describe('Profil stránka', () => {
 
         const clickedUrl = new URL(page.url());
         expect(clickedUrl.searchParams.get('source')).toBe('profile_gate_login');
-        expect(clickedUrl.searchParams.get('feature')).toBe('account');
+        expect(clickedUrl.searchParams.get('feature')).toBe('profile_history');
         expect(clickedUrl.searchParams.get('redirect')).toBe('/profil.html');
     });
 

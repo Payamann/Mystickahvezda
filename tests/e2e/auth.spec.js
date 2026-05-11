@@ -264,6 +264,18 @@ test.describe('Login stránka', () => {
         await expect(page.locator('#signup-next-step-title')).toContainText('první osobní krok');
     });
 
+    test('registrace z profiloveho gate navazuje na historii vykladu', async ({ page }) => {
+        await page.goto('/prihlaseni.html?mode=register&source=profile_gate_register&feature=profile_history&redirect=/profil.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect(page.locator('#checkout-context-label')).toContainText('Historie výkladů');
+        await expect(page.locator('#checkout-context-title')).toContainText('Historie výkladů po registraci');
+        await expect(page.locator('#checkout-context-copy')).toContainText('ukládat výklady');
+        await expect(page.locator('#checkout-context-banner')).not.toContainText('profile_history');
+        await expect(page.locator('#signup-next-step-title')).toContainText('osobní historii');
+    });
+
     test('registracni CTA je na desktopu viditelne nad foldem', async ({ page }) => {
         await page.setViewportSize({ width: 1365, height: 900 });
         await page.goto('/prihlaseni.html?mode=register&source=header_register&feature=account');
