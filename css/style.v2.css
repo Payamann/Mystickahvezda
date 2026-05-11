@@ -13637,7 +13637,7 @@ body.page-mentor .cookie-banner__actions .btn {
 
     display: grid;
 
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
     gap: 0.45rem;
 
@@ -13657,7 +13657,7 @@ body.page-mentor .cookie-banner__actions .btn {
 
   body.page-login #cookie-accept {
 
-    grid-column: 1 / -1;
+    grid-column: auto;
 
   }
 
