@@ -454,6 +454,47 @@
         .angel-hero {
 
             padding-top: calc(var(--header-height, 100px) + 3rem);
+            padding-bottom: var(--space-md);
+
+        }
+
+        .angel-draw-section {
+
+            padding-top: var(--space-sm);
+
+        }
+
+        #angel-intro {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: var(--space-md);
+
+        }
+
+        .angel-draw-copy {
+
+            margin-bottom: 0 !important;
+
+            max-width: 42rem;
+
+        }
+
+        .angel-card-hint {
+
+            margin-top: 0 !important;
+
+            color: rgba(235, 192, 102, 0.9) !important;
+
+            font-weight: 700;
+
+            letter-spacing: 0.08em;
+
+            text-transform: uppercase;
 
         }
 
@@ -468,6 +509,14 @@
         #draw-btn {
 
             scroll-margin-top: 5.5rem;
+
+        }
+
+        .angel-deep-action {
+
+            margin-top: var(--space-md) !important;
+
+            margin-bottom: var(--space-md);
 
         }
 
@@ -571,6 +620,38 @@
         }
 
         @media (max-width: 640px) {
+
+            .angel-hero {
+
+                padding-top: calc(var(--header-height, 72px) + 1.5rem);
+
+                padding-bottom: var(--space-xs);
+
+            }
+
+            .angel-draw-section {
+
+                padding-top: 0;
+
+            }
+
+            .angel-card-container {
+
+                width: min(72vw, 250px);
+
+                height: auto;
+
+                aspect-ratio: 7 / 12;
+
+            }
+
+            .angel-draw-copy {
+
+                font-size: 1rem;
+
+                line-height: 1.55;
+
+            }
 
             .angel-intent-grid {
 

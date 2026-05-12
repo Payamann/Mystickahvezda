@@ -270,8 +270,8 @@ class Templates {
                     <p class="author-box__bio">${author.bio}</p>
                     ${author.links ? `
                         <div class="author-box__links">
-                            ${author.links.instagram ? `<a class="author-box__link" href="${author.links.instagram}" target="_blank">Instagram ↗</a>` : ''}
-                            ${author.links.facebook ? `<a class="author-box__link" href="${author.links.facebook}" target="_blank">Facebook ↗</a>` : ''}
+                            ${author.links.instagram ? `<a class="author-box__link" href="${author.links.instagram}" target="_blank" rel="noopener">Instagram ↗</a>` : ''}
+                            ${author.links.facebook ? `<a class="author-box__link" href="${author.links.facebook}" target="_blank" rel="noopener">Facebook ↗</a>` : ''}
                         </div>
                     ` : ''}
                 </div>

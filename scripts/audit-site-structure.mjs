@@ -12,6 +12,7 @@ const skippedDirs = new Set([
     '.claude',
     '.claire',
     '.pytest_cache',
+    '.pytest-tmp',
     'components',
     'coverage',
     'docs',

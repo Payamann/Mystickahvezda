@@ -573,7 +573,7 @@ app.get('/horoskopy.html', (req, res, next) => {
         .replace('</head>', ogInject + '\n</head>');
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Cache-Control', getPublicHtmlCacheControl());
     setHtmlContentSecurityPolicy(res, replaced);
     res.send(replaced);
 });
@@ -595,6 +595,13 @@ const STATIC_PAGE_REDIRECTS = new Map([
     ['/horoskop/vodnár.html', '/horoskop/vodnar.html'],
     ['/blog/vidite-vsude-1111-poselstvi-andelu.html', '/blog/andelska-cisla-1111.html'],
 ]);
+
+const HTML_PRIVATE_CACHE_CONTROL = 'no-cache, no-store, must-revalidate';
+const HTML_PUBLIC_CACHE_CONTROL = 'public, max-age=0, s-maxage=600, stale-while-revalidate=86400';
+
+function getPublicHtmlCacheControl() {
+    return isProductionRuntime() ? HTML_PUBLIC_CACHE_CONTROL : HTML_PRIVATE_CACHE_CONTROL;
+}
 
 function getDecodedRequestPath(req) {
     try {
@@ -622,13 +629,14 @@ function setStaticHeaders(res, filePath) {
     // HTML pages and service worker must not be cached immutably
     // so deployments are reflected immediately
     if (filePath.endsWith('.html')) {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        if (shouldNoindexStaticHtml(filePath)) {
+        const shouldNoindex = shouldNoindexStaticHtml(filePath);
+        res.setHeader('Cache-Control', shouldNoindex ? HTML_PRIVATE_CACHE_CONTROL : getPublicHtmlCacheControl());
+        if (shouldNoindex) {
             res.setHeader('X-Robots-Tag', 'noindex, nofollow');
         }
         setHtmlFileContentSecurityPolicy(res, filePath);
     } else if (filePath.endsWith('service-worker.js')) {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Cache-Control', HTML_PRIVATE_CACHE_CONTROL);
     } else if (filePath.endsWith('manifest.json')) {
         res.setHeader('Cache-Control', 'public, max-age=86400');
     }

@@ -232,6 +232,11 @@
             }
         });
 
+        function openShareWindow(url) {
+            const opened = window.open(url, '_blank', 'noopener,noreferrer');
+            if (opened) opened.opener = null;
+        }
+
         function shareResult(platform) {
 
             if (!currentNumber) return;
@@ -246,11 +251,11 @@
 
             if (platform === 'twitter') {
 
-                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                openShareWindow(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`);
 
             } else if (platform === 'facebook') {
 
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, '_blank');
+                openShareWindow(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`);
 
             } else if (platform === 'copy') {
 

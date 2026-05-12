@@ -97,6 +97,14 @@
         return `${url.pathname}${url.search}`;
     }
 
+    function trackDailyCardDetail(source, card, destination) {
+        window.MH_ANALYTICS?.trackCTA?.(source, {
+            card_name: card.name,
+            feature: 'daily_angel_card',
+            destination
+        });
+    }
+
     function setTemporaryButtonLabel(button, label) {
         if (!button) return;
 
@@ -295,6 +303,9 @@
         const card = CARDS[cardIndex];
         let cardVisualRendered = false;
         rememberDailyCard(card);
+        cardContainer.setAttribute('role', 'button');
+        cardContainer.tabIndex = 0;
+        cardContainer.setAttribute('aria-label', 'Odhalit dnešní andělskou kartu');
 
         // Poplate content
         if (el('kdd-name')) el('kdd-name').textContent = card.name;
@@ -312,11 +323,7 @@
         if (detailLink) {
             detailLink.href = buildAngelCardsUrl('homepage_daily_card_detail', card);
             detailLink.addEventListener('click', () => {
-                window.MH_ANALYTICS?.trackCTA?.('homepage_daily_card_detail', {
-                    card_name: card.name,
-                    feature: 'daily_angel_card',
-                    destination: detailLink.href
-                });
+                trackDailyCardDetail('homepage_daily_card_detail', card, detailLink.href);
             });
         }
 
@@ -382,6 +389,8 @@
 
             // Always animate the flip (no immediate reveal on page load)
             inner.classList.add('kdd-inner--flipped');
+            cardContainer.title = 'Otevřít detail karty';
+            cardContainer.setAttribute('aria-label', `Otevřít detail karty ${card.name}`);
 
             setTimeout(() => {
                 if (el('kdd-hint')) el('kdd-hint').hidden = true;
@@ -396,6 +405,25 @@
         // We removed auto-reveal "if (cardWasAlreadyRevealedToday) { revealCard(true); }"
         // Card is always faced down on initial load.
 
-        cardContainer.addEventListener('click', () => revealCard());
+        const openCardDetail = () => {
+            const destination = buildAngelCardsUrl('homepage_daily_card_card_click', card);
+            trackDailyCardDetail('homepage_daily_card_card_click', card, destination);
+            window.location.href = destination;
+        };
+
+        const activateCard = () => {
+            if (inner.classList.contains('kdd-inner--flipped')) {
+                openCardDetail();
+                return;
+            }
+            revealCard();
+        };
+
+        cardContainer.addEventListener('click', activateCard);
+        cardContainer.addEventListener('keydown', event => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            activateCard();
+        });
     });
 })();

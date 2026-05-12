@@ -199,8 +199,8 @@
                     <p class="author-box__bio">${a.bio}</p>
                     ${a.links?`
                         <div class="author-box__links">
-                            ${a.links.instagram?`<a class="author-box__link" href="${a.links.instagram}" target="_blank">Instagram \u2197</a>`:""}
-                            ${a.links.facebook?`<a class="author-box__link" href="${a.links.facebook}" target="_blank">Facebook \u2197</a>`:""}
+                            ${a.links.instagram?`<a class="author-box__link" href="${a.links.instagram}" target="_blank" rel="noopener">Instagram \u2197</a>`:""}
+                            ${a.links.facebook?`<a class="author-box__link" href="${a.links.facebook}" target="_blank" rel="noopener">Facebook \u2197</a>`:""}
                         </div>
                     `:""}
                 </div>

@@ -76,6 +76,54 @@ describe('API Endpoint Tests', () => {
 
             expect(res.headers.location).toBe('/shamansko-kolo.html?source=social_post');
         });
+
+        test('production public HTML allows shared-cache revalidation', async () => {
+            await withTemporaryEnv({
+                RAILWAY_ENVIRONMENT_NAME: 'production',
+            }, async () => {
+                const res = await request(app)
+                    .get('/')
+                    .set('Host', 'www.mystickahvezda.cz')
+                    .set('x-forwarded-proto', 'https')
+                    .expect(200);
+
+                expect(res.headers['cache-control']).toContain('public');
+                expect(res.headers['cache-control']).toContain('s-maxage=600');
+                expect(res.headers['cache-control']).toContain('stale-while-revalidate=86400');
+                expect(res.headers['cache-control']).not.toContain('no-store');
+            });
+        });
+
+        test('production noindex static HTML remains private', async () => {
+            await withTemporaryEnv({
+                RAILWAY_ENVIRONMENT_NAME: 'production',
+            }, async () => {
+                const res = await request(app)
+                    .get('/admin.html')
+                    .set('Host', 'www.mystickahvezda.cz')
+                    .set('x-forwarded-proto', 'https')
+                    .expect(200);
+
+                expect(res.headers['cache-control']).toBe('no-cache, no-store, must-revalidate');
+                expect(res.headers['x-robots-tag']).toBe('noindex, nofollow');
+            });
+        });
+
+        test('production horoscope OG variant uses shared-cache revalidation', async () => {
+            await withTemporaryEnv({
+                RAILWAY_ENVIRONMENT_NAME: 'production',
+            }, async () => {
+                const res = await request(app)
+                    .get('/horoskopy.html?znak=beran')
+                    .set('Host', 'www.mystickahvezda.cz')
+                    .set('x-forwarded-proto', 'https')
+                    .expect(200);
+
+                expect(res.headers['cache-control']).toContain('public');
+                expect(res.headers['cache-control']).toContain('s-maxage=600');
+                expect(res.headers['cache-control']).not.toContain('no-store');
+            });
+        });
     });
 
     describe('Health Check', () => {

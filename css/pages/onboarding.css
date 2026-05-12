@@ -453,13 +453,20 @@ html body .mh-inline-7aedee2011 { text-align:center;margin-top:1.5rem;font-size:
 html body .mh-inline-9611bb8a90 { text-align:center;margin-top:1rem;font-size:0.82rem;color:rgba(212,175,55,0.6); }
 
 html body .mh-inline-1b85280107 {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.5rem;
     color: rgba(255,255,255,0.58);
     font-family: 'Inter', sans-serif;
 }
 
 html body .mh-inline-1b85280107:hover,
-html body .mh-inline-1b85280107:focus {
+html body .mh-inline-1b85280107:focus-visible {
     color: var(--color-mystic-gold);
+    outline: 2px solid var(--color-mystic-gold);
+    outline-offset: 3px;
 }
 
 @media (max-width: 560px) {

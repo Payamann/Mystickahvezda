@@ -167,6 +167,11 @@ html body .pricing-toggle--active {
     transform: translateY(-2px);
 }
 
+.pricing-decision__option:focus-visible {
+    outline: 2px solid var(--color-mystic-gold);
+    outline-offset: 3px;
+}
+
 .pricing-decision__option--featured {
     border-color: rgba(212,175,55,0.28);
     background: rgba(212,175,55,0.06);
@@ -281,6 +286,12 @@ html body .pricing-toggle--active {
     outline: none;
 }
 
+.pricing-plan-recommendation__action:focus-visible,
+.pricing-plan-recommendation__preview:focus-visible {
+    outline: 2px solid var(--color-mystic-gold);
+    outline-offset: 3px;
+}
+
 .pricing-cancel-recovery {
     max-width: 760px;
     margin: 1rem auto 0;
@@ -357,6 +368,12 @@ html body .pricing-toggle--active {
     border-color: rgba(255,255,255,0.28);
     background: rgba(255,255,255,0.06);
     outline: none;
+}
+
+.pricing-cancel-recovery__primary:focus-visible,
+.pricing-cancel-recovery__secondary:focus-visible {
+    outline: 2px solid var(--color-mystic-gold);
+    outline-offset: 3px;
 }
 
 .pricing-card--recommended {

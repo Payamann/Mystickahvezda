@@ -655,6 +655,8 @@ test.describe('Homepage', () => {
         await expect(page.locator('#kdd-name')).toHaveText('Hravost');
 
         const detailHref = await page.locator('#kdd-lexicon-link').getAttribute('href');
+        await expect(page.locator('#kdd-lexicon-link')).toHaveText(/Zobrazit kartu/);
+        await expect(card).toHaveAttribute('aria-label', /Otevřít detail karty Hravost/);
         expect(detailHref).toContain('andelske-karty.html');
         expect(detailHref).toContain('source=homepage_daily_card_detail');
         expect(detailHref).toContain('feature=daily_angel_card');
@@ -687,6 +689,10 @@ test.describe('Homepage', () => {
 
         await expect.poll(() => page.evaluate(() => window.__dailyCardShareText || '')).toContain('Hravost');
         await expect.poll(() => page.evaluate(() => window.__dailyCardShareText || '')).toContain('andelske-karty.html');
+
+        await card.click();
+        await expect(page).toHaveURL(/andelske-karty\.html\?source=homepage_daily_card_card_click/);
+        await expect(page).toHaveURL(/daily_card=hravost/);
     });
 
     test('sdileni karty dne ma textarea fallback pri nedostupne clipboard API', async ({ page }) => {

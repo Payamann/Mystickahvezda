@@ -9,7 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>*</text></svg>">
     <link rel="stylesheet" href="/fonts/local-fonts.css">
     <link rel="stylesheet" href="css/style.v2.min.css?v=11">
-    <link rel="stylesheet" href="css/pages/prihlaseni.css?v=4">
+    <link rel="stylesheet" href="css/pages/prihlaseni.css?v=5">
 <meta property="og:image" content="https://www.mystickahvezda.cz/img/hero-3d.webp">
     <link rel="canonical" href="https://www.mystickahvezda.cz/prihlaseni.html">
     <script src="/js/dist/analytics-init.js" defer></script>
@@ -63,7 +63,7 @@
                 <form id="login-form">
                     <div class="form-group">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="email" class="form-input" placeholder="vas@email.cz" required autocomplete="email">
+                        <input type="email" id="email" name="email" class="form-input" placeholder="vas@email.cz" required autocomplete="email" spellcheck="false">
                     </div>
 
                     <div class="form-group">
@@ -86,7 +86,7 @@
                     <div class="form-group mh-inline-716d8554e4" id="gdpr-consent-wrapper">
                         <label class="checkbox-label mh-inline-6dada34cf2">
                             <input type="checkbox" id="gdpr-consent" name="gdpr_consent" required class="mh-inline-111c8ad875">
-                            <span>Souhlasím se <a href="ochrana-soukromi.html" target="_blank" class="u-text-gold">zpracováním osobních údajů</a> a <a href="podminky.html" target="_blank" class="u-text-gold">obchodními podmínkami</a>.</span>
+                            <span>Souhlasím se <a href="ochrana-soukromi.html" target="_blank" rel="noopener" class="u-text-gold">zpracováním osobních údajů</a> a <a href="podminky.html" target="_blank" rel="noopener" class="u-text-gold">obchodními podmínkami</a>.</span>
                         </label>
                     </div>
 
@@ -101,7 +101,7 @@
                 <form id="forgot-password-form" class="mh-inline-59ce1fef8d">
                     <div class="form-group">
                         <label for="forgot-email" class="form-label">Email</label>
-                        <input type="email" id="forgot-email" class="form-input" placeholder="vas@email.cz" required>
+                        <input type="email" id="forgot-email" name="email" class="form-input" placeholder="vas@email.cz" required autocomplete="email" spellcheck="false">
                     </div>
                     <button type="submit" class="btn btn--primary btn--glow mh-inline-c0b8a97c16">Odeslat odkaz pro obnovu</button>
                     <button type="button" id="back-to-login" class="btn btn--text mh-inline-05ea2d974d">Zpět na přihlášení</button>
@@ -111,14 +111,14 @@
                     <div class="form-group">
                         <label for="new-password" class="form-label">Nové heslo</label>
                         <div class="password-input-wrap">
-                            <input type="password" id="new-password" class="form-input" placeholder="********" required minlength="8">
+                            <input type="password" id="new-password" name="password" class="form-input" placeholder="********" required minlength="8" autocomplete="new-password">
                             <button type="button" class="password-toggle" data-password-toggle="new-password" aria-label="Zobrazit nové heslo" aria-pressed="false">Zobrazit</button>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="confirm-password" class="form-label">Potvrďte heslo</label>
                         <div class="password-input-wrap">
-                            <input type="password" id="confirm-password" class="form-input" placeholder="********" required minlength="8">
+                            <input type="password" id="confirm-password" name="confirm_password" class="form-input" placeholder="********" required minlength="8" autocomplete="new-password">
                             <button type="button" class="password-toggle" data-password-toggle="confirm-password" aria-label="Zobrazit potvrzení nového hesla" aria-pressed="false">Zobrazit</button>
                         </div>
                     </div>
@@ -131,16 +131,16 @@
 
                 <div id="register-fields" class="mh-inline-225c671c73">
                     <div class="form-group">
-                        <label class="form-label">Jméno</label>
-                        <input type="text" name="first_name" class="form-input" placeholder="Vaše jméno">
+                        <label for="first-name" class="form-label">Jméno</label>
+                        <input type="text" id="first-name" name="first_name" class="form-input" placeholder="Vaše jméno" autocomplete="given-name">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Datum narození</label>
-                        <input type="date" name="birth_date" class="form-input">
+                        <label for="birth-date" class="form-label">Datum narození</label>
+                        <input type="date" id="birth-date" name="birth_date" class="form-input" autocomplete="bday">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Místo narození</label>
-                        <input type="text" name="birth_place" class="form-input" placeholder="Např. Praha">
+                        <label for="birth-place" class="form-label">Místo narození</label>
+                        <input type="text" id="birth-place" name="birth_place" class="form-input" placeholder="Např. Praha" autocomplete="address-level2">
                     </div>
                 </div>
 

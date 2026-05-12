@@ -312,7 +312,12 @@ function ensureDeepInsightElements() {
         button.addEventListener('click', requestDeepInsight);
 
         action.appendChild(button);
-        host.appendChild(action);
+        const shareAction = document.getElementById('btn-share-card')?.closest('div');
+        if (shareAction && shareAction.parentElement === host) {
+            host.insertBefore(action, shareAction);
+        } else {
+            host.appendChild(action);
+        }
     }
 
     let response = document.getElementById('angel-ai-response');
@@ -468,10 +473,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // 2. Homepage daily-card deep links preselect a card, but still let the user reveal it by click.
+    // 2. Homepage daily-card deep links are already a chosen card, so open them revealed.
     const linkedDailyCard = getDailyCardFromUrl();
     if (linkedDailyCard) {
         drawnCard = linkedDailyCard;
+        revealPreDrawnCard({
+            message: `Tvoje karta z dnešního poselství: ${linkedDailyCard.name}`
+        });
     } else {
         checkDailyLock();
     }
@@ -480,6 +488,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const drawBtn = document.getElementById('draw-btn');
     if (drawBtn) {
         drawBtn.addEventListener('click', drawCard);
+        drawBtn.addEventListener('keydown', event => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            drawCard();
+        });
 
         drawBtn.addEventListener('mousemove', handleMouseMove);
         drawBtn.addEventListener('mouseleave', () => {
@@ -695,6 +708,9 @@ function drawCard() {
             requestAnimationFrame(() => {
                 results.classList.add('animate-in');
                 ensureDeepInsightElements();
+                if (window.matchMedia('(max-width: 700px)').matches) {
+                    results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             });
         }
     }, 800);
