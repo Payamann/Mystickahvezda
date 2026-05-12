@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setMeta('meta[property="og:title"]', 'Andělská Karta Dne | Mystická Hvězda');
         setMeta('meta[property="og:description"]', 'Vytáhněte si svou andělskou kartu pro dnešní den. Jemná andělská podpora a poselství světla pro vaši duši.');
         setHtml('.hero__title', 'Andělská <span class="text-gradient">karta dne</span>');
-        setText('.hero__subtitle', 'Zastavte se, zhluboka se nadechněte a dovolte nebeským průvodcům, aby vám předali zprávu plnou naděje a lásky.');
+        setText('.hero__subtitle', 'Jedna jemná zpráva pro dnešek. Zdarma, bez registrace.');
     }
 
     if (path.endsWith('/runy.html') || path.endsWith('runy.html')) {
