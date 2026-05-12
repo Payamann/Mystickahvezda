@@ -32,6 +32,7 @@ test.describe('Andělské karty', () => {
 
     test('h1 je viditelný', async ({ page }) => {
         await expect(page.locator('h1').first()).toBeVisible();
+        await expect(page.locator('h1').first()).toContainText('Andělské karty');
     });
 
     test('#main-content existuje', async ({ page }) => {

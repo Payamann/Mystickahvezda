@@ -255,7 +255,7 @@ function getDailyCardFromUrl() {
     return {
         id: `daily_${slug}`,
         name: sourceCard.name,
-        theme: sourceCard.keyword || sourceCard.theme || 'Karta dne',
+        theme: sourceCard.keyword || sourceCard.theme || 'Denní symbol',
         short_message: sourceCard.text || sourceCard.short_message || '',
         archetype: sourceCard.archetype || 'guidance',
         dailyImageSlug: slug,
@@ -515,7 +515,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function shareCard() {
     if (!drawnCard) return;
 
-    const shareTitle = `Moje andělská karta dne: ${drawnCard.name} ✨`;
+    const shareTitle = `Moje andělská karta: ${drawnCard.name} ✨`;
     const shareText = `Dnes mě provází anděl ${drawnCard.name} s tématem: ${drawnCard.theme}. Zjistěte, jaká karta čeká na vás na Mystické Hvězdě! 🕊️`;
     const shareUrl = window.location.href;
 
@@ -604,7 +604,7 @@ function revealPreDrawnCard(options = {}) {
         intro.querySelector('.angel-return-message')?.remove();
         const returnMsg = document.createElement('p');
         returnMsg.className = 'mb-xl text-lg w-mx-md mx-auto angel-return-message';
-        const returnMessage = options.message || 'Pro tento den u\u017e k v\u00e1m and\u011bl\u00e9 promluvili...';
+        const returnMessage = options.message || 'Tvoje andělská karta pro dnešek už je otevřená...';
         const emphasis = document.createElement('em');
         emphasis.textContent = returnMessage;
         returnMsg.appendChild(emphasis);

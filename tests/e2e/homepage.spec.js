@@ -393,7 +393,7 @@ test.describe('Homepage', () => {
         expect(heroHref).toBe('#sluzby');
         expect(heroHref).not.toContain('tarot');
 
-        const previewDailyCard = page.locator('.hero__daily-preview a').filter({ hasText: 'Andělská karta dne' });
+        const previewDailyCard = page.locator('.hero__daily-preview a').filter({ hasText: 'Karta dne' });
         await expect(previewDailyCard).toBeVisible();
         const previewHref = await previewDailyCard.getAttribute('href');
         expect(previewHref).toBe('#sluzby');
@@ -655,8 +655,8 @@ test.describe('Homepage', () => {
         await expect(page.locator('#kdd-name')).toHaveText('Hravost');
 
         const detailHref = await page.locator('#kdd-lexicon-link').getAttribute('href');
-        await expect(page.locator('#kdd-lexicon-link')).toHaveText(/Zobrazit kartu/);
-        await expect(card).toHaveAttribute('aria-label', /Otevřít detail karty Hravost/);
+        await expect(page.locator('#kdd-lexicon-link')).toHaveText(/Otevřít v Andělských kartách/);
+        await expect(card).toHaveAttribute('aria-label', /Otevřít denní symbol Hravost v Andělských kartách/);
         expect(detailHref).toContain('andelske-karty.html');
         expect(detailHref).toContain('source=homepage_daily_card_detail');
         expect(detailHref).toContain('feature=daily_angel_card');

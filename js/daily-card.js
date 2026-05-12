@@ -305,7 +305,7 @@
         rememberDailyCard(card);
         cardContainer.setAttribute('role', 'button');
         cardContainer.tabIndex = 0;
-        cardContainer.setAttribute('aria-label', 'Odhalit dnešní andělskou kartu');
+        cardContainer.setAttribute('aria-label', 'Odhalit dnešní kartu dne');
 
         // Poplate content
         if (el('kdd-name')) el('kdd-name').textContent = card.name;
@@ -389,8 +389,8 @@
 
             // Always animate the flip (no immediate reveal on page load)
             inner.classList.add('kdd-inner--flipped');
-            cardContainer.title = 'Otevřít detail karty';
-            cardContainer.setAttribute('aria-label', `Otevřít detail karty ${card.name}`);
+            cardContainer.title = 'Otevřít v Andělských kartách';
+            cardContainer.setAttribute('aria-label', `Otevřít denní symbol ${card.name} v Andělských kartách`);
 
             setTimeout(() => {
                 if (el('kdd-hint')) el('kdd-hint').hidden = true;
