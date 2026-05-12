@@ -201,6 +201,42 @@ function setBlockVisible(element, visible) {
     element.classList.toggle('mh-block-visible', visible);
 }
 
+function getVisibleCookieBannerOffset() {
+    const banner = document.getElementById('cookie-banner');
+    if (!banner || banner.hidden || !banner.classList.contains('visible')) return 0;
+
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+    const rect = banner.getBoundingClientRect();
+    return Math.max(0, viewportHeight - rect.top + 16);
+}
+
+function scrollAngelResultsIntoView(behavior = 'smooth') {
+    const results = document.getElementById('angel-results');
+    if (!results?.classList.contains('mh-block-visible')) return;
+
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+    const reservedBottom = getVisibleCookieBannerOffset();
+    const availableHeight = Math.max(320, viewportHeight - reservedBottom);
+    const resultsRect = results.getBoundingClientRect();
+    let targetTop = window.scrollY + resultsRect.top - Math.max(86, (availableHeight - resultsRect.height) / 2);
+    const action = document.getElementById('angel-deep-action') || document.getElementById('btn-deep-angel');
+
+    if (reservedBottom && action) {
+        const bannerTop = viewportHeight - reservedBottom + 16;
+        const actionRect = action.getBoundingClientRect();
+        const predictedActionBottom = actionRect.bottom - (targetTop - window.scrollY);
+        const overlap = predictedActionBottom - (bannerTop - 8);
+        if (overlap > 0) {
+            targetTop += overlap;
+        }
+    }
+
+    window.scrollTo({
+        top: Math.max(0, targetTop),
+        behavior
+    });
+}
+
 function setCardBack(backEl, card) {
     if (!backEl || !card) return;
 
@@ -455,7 +491,7 @@ async function requestDeepInsight() {
             }
         }
 
-        response.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        scrollAngelResultsIntoView();
     } catch (error) {
         console.error('Angel deep insight failed:', error);
         response.textContent = 'Hluboký vhled se teď nepodařilo načíst. Zkuste to prosím znovu.';
@@ -512,6 +548,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (shareBtn) {
         shareBtn.addEventListener('click', shareCard);
     }
+
+    window.addEventListener('mh_cookie_banner_visible', () => {
+        if (window.matchMedia('(max-width: 700px)').matches) {
+            scrollAngelResultsIntoView();
+        }
+    });
 });
 
 /**
@@ -620,6 +662,9 @@ function revealPreDrawnCard(options = {}) {
     if (results) {
         setBlockVisible(results, true);
         results.classList.add('animate-in');
+        if (window.matchMedia('(max-width: 700px)').matches) {
+            requestAnimationFrame(() => scrollAngelResultsIntoView('auto'));
+        }
     }
 
     ensureDeepInsightElements();
@@ -714,7 +759,8 @@ function drawCard() {
                 results.classList.add('animate-in');
                 ensureDeepInsightElements();
                 if (window.matchMedia('(max-width: 700px)').matches) {
-                    results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    scrollAngelResultsIntoView();
+                    setTimeout(() => scrollAngelResultsIntoView(), 320);
                 }
             });
         }

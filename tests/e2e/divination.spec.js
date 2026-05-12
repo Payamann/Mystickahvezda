@@ -100,6 +100,46 @@ test.describe('Andělské karty', () => {
         await expect(page.locator('#btn-deep-angel')).toBeVisible({ timeout: 3_000 });
     });
 
+    test('mobilní výsledek po vytažení není překrytý cookie bannerem', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.evaluate(() => {
+            localStorage.removeItem('mh_cookie_prefs');
+            localStorage.removeItem('cookieConsent');
+            localStorage.removeItem('angelCardDaily');
+        });
+        await page.goto('/andelske-karty.html');
+        await waitForPageReady(page);
+        await expect(page.locator('#cookie-banner')).toHaveClass(/visible/, { timeout: 3_000 });
+
+        await page.locator('#draw-btn').click();
+        await expect(page.locator('#btn-deep-angel')).toBeVisible({ timeout: 3_000 });
+        await page.waitForTimeout(450);
+
+        const metrics = await page.evaluate(() => {
+            const cta = document.getElementById('btn-deep-angel')?.getBoundingClientRect();
+            const banner = document.getElementById('cookie-banner')?.getBoundingClientRect();
+            const overlapsCookie = !!(cta && banner && !(
+                banner.right < cta.left
+                || banner.left > cta.right
+                || banner.bottom < cta.top
+                || banner.top > cta.bottom
+            ));
+
+            return {
+                ctaTop: Math.round(cta?.top || -1),
+                ctaBottom: Math.round(cta?.bottom || 9999),
+                cookieTop: Math.round(banner?.top || window.innerHeight),
+                overlapsCookie,
+                overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
+            };
+        });
+
+        expect(metrics.overflow).toBe(false);
+        expect(metrics.ctaTop).toBeGreaterThanOrEqual(0);
+        expect(metrics.overlapsCookie).toBe(false);
+        expect(metrics.ctaBottom).toBeLessThanOrEqual(metrics.cookieTop);
+    });
+
     test('daily_card deep link opens the selected homepage card detail', async ({ page }) => {
         await page.evaluate(() => localStorage.clear());
         await page.goto('/andelske-karty.html?source=homepage_daily_card_detail&feature=daily_angel_card&daily_card=intuice');
