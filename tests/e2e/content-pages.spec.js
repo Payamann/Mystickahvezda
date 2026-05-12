@@ -224,6 +224,35 @@ test.describe('FAQ', () => {
         expect(count).toBeGreaterThanOrEqual(1);
     });
 
+    test('astrologické odpovědi drží symbolický rámec bez overclaimů', async ({ page }) => {
+        await page.goto('/faq.html');
+        await waitForPageReady(page);
+
+        const horoscopeQuestion = page.locator('details', { hasText: 'Jak fungují online horoskopy?' });
+        await horoscopeQuestion.locator('summary').click();
+        const horoscopeAnswer = horoscopeQuestion.locator('.faq-content');
+        await expect(horoscopeAnswer).toContainText('symbolickou interpretaci');
+        await expect(horoscopeAnswer).toContainText('ne nahradit odborné rozhodování');
+        await expect(horoscopeAnswer).toContainText('ani garantovat pevnou budoucnost');
+
+        const natalQuestion = page.locator('details', { hasText: 'Jak přesná je natální karta?' });
+        await natalQuestion.locator('summary').click();
+        await expect(natalQuestion.locator('.faq-content')).toContainText('bez něj držíme výklad u vrstev');
+
+        const structuredData = await page.locator('script[type="application/ld+json"]').first().textContent();
+        expect(structuredData).toContain('symbolickou interpretaci');
+        expect(structuredData).toContain('Zrušení zastaví další obnovení');
+        expect(structuredData).not.toContain('přesných astronomických dat');
+        await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /práci s daty/);
+        await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /hranice služby/);
+        await expect(page.locator('.hero__subtitle')).toContainText('kde jsou hranice služby');
+        await expect(page.locator('script[src*="secondary-pages-copy-fixes.js"]')).toHaveAttribute('src', /v=5/);
+
+        const fullText = await page.locator('body').textContent();
+        expect(fullText).not.toContain('přesných astronomických dat');
+        expect(fullText).not.toContain('velmi detailní a přesný rozbor');
+    });
+
     test('soukromí vysvětluje konkrétně bez absolutních slibů', async ({ page }) => {
         await page.goto('/faq.html');
         await waitForPageReady(page);

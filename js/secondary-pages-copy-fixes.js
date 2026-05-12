@@ -372,12 +372,12 @@
       document.title = '\u010casto kladen\u00e9 dotazy | Mystick\u00e1 Hv\u011bzda';
       setMetaByName(
         'description',
-        'Odpov\u011bdi na nej\u010dast\u011bj\u0161\u00ed ot\u00e1zky o astrologick\u00fdch slu\u017eb\u00e1ch, p\u0159edplatn\u00e9m, nat\u00e1ln\u00ed kart\u011b i ochran\u011b osobn\u00edch \u00fadaj\u016f.'
+        'Odpov\u011bdi na ot\u00e1zky o v\u00fdkladech, pr\u00e1ci s daty, soukrom\u00ed, platb\u00e1ch a hranic\u00edch slu\u017eby Mystick\u00e1 Hv\u011bzda.'
       );
       setMetaByProperty('og:title', '\u010casto kladen\u00e9 dotazy | Mystick\u00e1 Hv\u011bzda');
       setMetaByProperty(
         'og:description',
-        'Najd\u011bte rychl\u00e9 odpov\u011bdi na nej\u010dast\u011bj\u0161\u00ed ot\u00e1zky o Mystick\u00e9 Hv\u011bzd\u011b.'
+        'Odpov\u011bdi k v\u00fdklad\u016fm, soukrom\u00ed, platb\u00e1m a tomu, kde jsou hranice slu\u017eby Mystick\u00e1 Hv\u011bzda.'
       );
       updateJsonLd(
         (data) => data?.['@type'] === 'FAQPage',
@@ -386,7 +386,7 @@
 
       setText('.skip-link', 'P\u0159esko\u010dit na obsah');
       setHtml('.hero__title .text-gradient', '\u010casto kladen\u00e9 ot\u00e1zky');
-      setText('.hero__subtitle', 'Odpov\u011bdi na to, co v\u00e1s o Mystick\u00e9 Hv\u011bzd\u011b zaj\u00edm\u00e1 nej\u010dast\u011bji.');
+      setText('.hero__subtitle', 'Jasn\u00e9 odpov\u011bdi k v\u00fdklad\u016fm, soukrom\u00ed, platb\u00e1m a tomu, kde jsou hranice slu\u017eby.');
 
       const categoryTitles = [
         'Astrologick\u00e9 slu\u017eby',
