@@ -35,6 +35,15 @@ test.describe('Andělské karty', () => {
         await expect(page.locator('h1').first()).toContainText('Andělské karty');
     });
 
+    test('rozlišuje Andělské karty od homepage Karty dne', async ({ page }) => {
+        const main = page.locator('main');
+        await expect(page).toHaveTitle(/Andělské karty/);
+        await expect(page.locator('.hero__subtitle')).toContainText('Karta dne je rychlý symbol');
+        await expect(main).toContainText('44 karet');
+        await expect(main).not.toContainText('41 karet');
+        await expect(page.locator('h1').first()).not.toContainText('Karta dne');
+    });
+
     test('#main-content existuje', async ({ page }) => {
         await expect(page.locator('#main-content')).toBeAttached();
     });
