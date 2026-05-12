@@ -596,7 +596,7 @@ async function calculateCompatibility() {
 
         // Fallback to static verdict
         let verdict = "";
-        if (displayedScores.totalScore > 85) verdict = "Osudové spojení! Hvězdy vám přejí.";
+        if (displayedScores.totalScore > 85) verdict = "Velmi silná shoda s výraznou vzájemnou podporou.";
         else if (displayedScores.totalScore > 70) verdict = "Velmi silný pár s harmonickými aspekty.";
         else verdict = "Vztah s potenciálem, který vyžaduje práci.";
         document.getElementById('verdict-text').textContent = verdict;

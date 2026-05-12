@@ -835,8 +835,8 @@ async function generateNatalChart(planetsGroup) {
                 teaserMsg.className = 'teaser-overlay';
                 teaserMsg.innerHTML = `
                     <div class="teaser-content">
-                        <p>✨ Chcete odemknout svůj úplný osud?</p>
-                        <a href="${buildNatalUpgradeUrl('natal_teaser_gate')}" class="btn btn--premium natal-teaser-upgrade-btn">Získat Premium</a>
+                        <p>✨ Chcete odemknout celý výklad své natální mapy?</p>
+                        <a href="${buildNatalUpgradeUrl('natal_teaser_gate')}" class="btn btn--premium natal-teaser-upgrade-btn">Pokračovat s Premium</a>
                     </div>
                 `;
                 contentDiv.appendChild(teaserMsg);
@@ -886,7 +886,7 @@ async function generateNatalChart(planetsGroup) {
         console.error('Natal Chart Error:', error);
         setBlockVisible(aiResultsDiv, true);
         aiResultsDiv.querySelector('.ai-content').textContent =
-            'Hvězdy momentálně odmítají odhalit svá tajemství. Zkuste to prosím později.';
+            'Výklad teď nejde načíst. Zkuste to prosím později.';
     }
 
     btn.innerHTML = originalHTML; // Restore full HTML

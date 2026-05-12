@@ -18,9 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (path.endsWith('/mentor.html') || path.endsWith('mentor.html')) {
         document.title = 'Hvězdný Průvodce | Mystická Hvězda';
-        setMeta('meta[name="description"]', 'Váš osobní duchovní průvodce. Ptejte se na osud, vztahy a životní směr.');
+        setMeta('meta[name="description"]', 'Hvězdný průvodce jako navazující AI chat pro vztahy, rozhodování a osobní témata. Pomůže pojmenovat otázky a další kroky bez slibů pevného osudu.');
         setMeta('meta[property="og:title"]', 'Hvězdný Průvodce | Mystická Hvězda');
-        setMeta('meta[property="og:description"]', 'Váš osobní duchovní průvodce. Ptejte se na osud, vztahy a životní směr.');
+        setMeta('meta[property="og:description"]', 'Navazující AI chat pro vztahy, rozhodování a osobní témata. Praktický rámec pro další krok, ne pevná předpověď.');
         setText('.hero__title', 'Hvězdný Průvodce');
         setText('.hero__subtitle', 'Zeptejte se na to, co právě řešíte. Hvězdný Průvodce vám pomůže najít klid, směr a souvislosti.');
         setText('.chat-header h2, .chat-header h3', 'Hvězdný Průvodce');
@@ -37,11 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (path.endsWith('/numerologie.html') || path.endsWith('numerologie.html')) {
         document.title = 'Numerologie Online | Mystická Hvězda';
-        setMeta('meta[name="description"]', 'Objevte skrytý význam čísel ve vašem životě. Výpočet čísla životní cesty, osudu a duše.');
+        setMeta('meta[name="description"]', 'Numerologie jako symbolický rámec pro silné stránky, vztahy a opakující se vzorce. Výpočet čísla životní cesty, osobního tématu a duše.');
         setMeta('meta[property="og:title"]', 'Numerologie Online | Mystická Hvězda');
-        setMeta('meta[property="og:description"]', 'Objevte skrytý význam čísel ve vašem životě. Výpočet čísla životní cesty, osudu a duše.');
+        setMeta('meta[property="og:description"]', 'Výpočet čísel pro sebereflexi a další krok, ne pevné určení osudu.');
         setHtml('.hero__title', '<span class="text-gradient">Numerologie</span>');
-        setText('.hero__subtitle', 'Každé číslo nese svůj jedinečný význam. Odhalte, co říkají čísla o vašem životě, osudu a skrytých touhách.');
+        setText('.hero__subtitle', 'Každé číslo berte jako symbolický rámec pro silné stránky, vztahy a opakující se vzorce. Výklad pomáhá pojmenovat další krok, ne určit váš osud.');
         setText('.card__title', 'Vypočítejte svá čísla');
         const profileToggle = document.querySelector('label[title]');
         if (profileToggle) profileToggle.setAttribute('title', 'Použít údaje z mého profilu');

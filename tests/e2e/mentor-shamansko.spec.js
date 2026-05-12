@@ -86,6 +86,19 @@ test.describe('Mentor — Hvězdný průvodce', () => {
         await expect(page.locator('#send-btn')).toBeEnabled();
     });
 
+    test('premium gate copy v bundle komunikuje konkrétní hodnotu bez vágní moudrosti hvězd', async ({ page }) => {
+        const response = await page.request.get('/js/dist/mentor.js');
+        expect(response.status()).toBe(200);
+        const source = await response.text();
+
+        expect(source).toContain('del\\u0161\\xED rozhovor');
+        expect(source).toContain('historii souvislost');
+        expect(source).toContain('konkr\\xE9tn\\u011Bj\\u0161\\xED dal\\u0161\\xED kroky');
+        expect(source).toContain('Pokra\\u010Dovat s Premium');
+        expect(source).not.toContain('moudrosti hv');
+        expect(source).not.toContain('neomezen\\xFD p');
+    });
+
     // API test
     test('POST /api/mentor/chat bez CSRF vrátí 403', async ({ page }) => {
         const res = await page.request.post('/api/mentor/chat', {

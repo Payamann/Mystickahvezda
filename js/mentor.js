@@ -424,10 +424,10 @@ function showPaywall() {
             <div class="mentor-paywall__icon">🔒</div>
             <h2 class="mentor-paywall__title">Pouze pro Premium</h2>
             <p class="mentor-paywall__copy">
-                Hvězdný Mentor je exkluzivní průvodce pro naše předplatitele.<br>
-                Získejte neomezený přístup k moudrosti hvězd.
+                Hvězdný průvodce navazuje na vaše otázky, profil a předchozí témata.<br>
+                Premium odemyká delší rozhovor, historii souvislostí a konkrétnější další kroky.
             </p>
-            <a href="${buildMentorUpgradeUrl('mentor_paywall_overlay')}" class="btn btn--primary mentor-paywall-upgrade-btn">Získat Premium</a>
+            <a href="${buildMentorUpgradeUrl('mentor_paywall_overlay')}" class="btn btn--primary mentor-paywall-upgrade-btn">Pokračovat s Premium</a>
         </div>
     `;
 

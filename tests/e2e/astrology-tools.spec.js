@@ -119,6 +119,32 @@ test.describe('Natální karta', () => {
         await expect(page.locator('#transit-message')).not.toContainText('Načítám');
     });
 
+    test('premium teaser slibuje konkrétní výklad, ne úplný osud', async ({ page }) => {
+        await page.evaluate(() => {
+            window.Auth = {
+                isLoggedIn: () => true,
+                isPremium: () => true,
+                saveReading: async () => ({ id: 'e2e-natal-reading' })
+            };
+            window.callAPI = async () => ({
+                success: true,
+                isTeaser: true,
+                response: 'DATA: Slunce=Kozoroh, Měsíc=Rak, Ascendent=Lev\n\nUkázkový výklad.'
+            });
+        });
+
+        await page.fill('#name', 'Test');
+        await page.fill('#birth-date', '1990-01-01');
+        await page.fill('#birth-time', '12:00');
+        await page.fill('#birth-place', 'Praha');
+        await page.locator('#natal-form button[type="submit"]').click();
+
+        const teaser = page.locator('.teaser-overlay');
+        await expect(teaser).toContainText('celý výklad své natální mapy');
+        await expect(teaser).toContainText('Pokračovat s Premium');
+        await expect(teaser).not.toContainText('úplný osud');
+    });
+
     test('žádný horizontální scroll na mobilu', async ({ page }) => {
         await page.setViewportSize(MOBILE_VIEWPORT);
         await page.goto('/natalni-karta.html');
@@ -218,6 +244,16 @@ test.describe('Partnerská shoda', () => {
         const premiumBridge = page.locator('[data-synastry-upgrade]');
         await expect(premiumBridge).toHaveAttribute('href', /source=partner_match_result/);
         await expect(premiumBridge).toHaveAttribute('href', /feature=partnerska_detail/);
+    });
+
+    test('fallback verdikt nepoužívá osudové sliby', async ({ page }) => {
+        const synastryBundle = await page.request.get('/js/dist/synastry.js');
+        expect(synastryBundle.status()).toBe(200);
+        const source = await synastryBundle.text();
+
+        expect(source).toContain('Velmi siln\\xE1 shoda');
+        expect(source).not.toContain('Osudov\\xE9 spojen');
+        expect(source).not.toContain('Hv\\u011Bzdy v\\xE1m p');
     });
 
     test('trust a FAQ bloky jsou dostupne pro SEO i rozhodovani', async ({ page }) => {
