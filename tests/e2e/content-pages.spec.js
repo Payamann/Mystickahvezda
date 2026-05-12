@@ -988,6 +988,14 @@ test.describe('Osobní mapa', () => {
 
         await page.waitForTimeout(1200);
         await page.locator('#submitBtn').scrollIntoViewIfNeeded();
+        const trustBlock = page.locator('.pm-form__trust');
+        await expect(trustBlock).toBeVisible();
+        await expect(trustBlock).toContainText('PDF obvykle dorazí do 10 až 20 minut');
+        await expect(trustBlock).toContainText('bez předplatného');
+        await expect(trustBlock.locator('a[href="podminky.html"]')).toBeVisible();
+        await expect(trustBlock.locator('a[href="soukromi.html"]')).toBeVisible();
+        await expect(trustBlock.locator('a[href="kontakt.html"]')).toBeVisible();
+
         const cookieMetrics = await page.evaluate(() => {
             const submit = document.getElementById('submitBtn')?.getBoundingClientRect();
             const banner = document.getElementById('cookie-banner')?.getBoundingClientRect();

@@ -902,6 +902,43 @@ body.page-personal-map::before {
     text-align: center;
 }
 
+.pm-form__trust {
+    display: grid;
+    gap: 10px;
+    margin-top: -2px;
+    padding: 14px;
+    border: 1px solid rgba(98, 213, 199, 0.18);
+    border-radius: var(--pm-radius);
+    background:
+        linear-gradient(180deg, rgba(98, 213, 199, 0.06), rgba(12, 20, 33, 0.36)),
+        rgba(5, 5, 16, 0.42);
+}
+
+.pm-form__trust div {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    color: rgba(229, 251, 247, 0.78);
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
+.pm-form__trust svg {
+    width: 17px;
+    height: 17px;
+    margin-top: 2px;
+    color: var(--pm-teal);
+}
+
+.pm-form__trust a {
+    color: var(--pm-gold-bright);
+    font-weight: 800;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
 .pm-form__error {
     border: 1px solid rgba(255, 143, 143, 0.32);
     border-radius: var(--pm-radius);

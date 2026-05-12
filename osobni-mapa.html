@@ -22,7 +22,7 @@
     <link rel="apple-touch-icon" href="img/icon-192.webp">
 
     <link rel="stylesheet" href="css/site.min.css?v=1">
-    <link rel="stylesheet" href="css/pages/osobni-mapa.css?v=5">
+    <link rel="stylesheet" href="css/pages/osobni-mapa.css?v=6">
     <script defer src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@1.13.0/dist/umd/lucide.min.js" integrity="sha384-EHKCF1r0kkLgXLXtUe79iQzyUeZou+h3FZLoZWdcIAyctVNKMHqqy5wqYWQFUq6k" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/dist/analytics-init.js" defer></script>
@@ -538,6 +538,21 @@
                 </button>
 
                 <p class="pm-form__note">Platba probíhá přes Stripe. Údaje o kartě se na webu neukládají. Výklad je určený pro sebereflexi, ne jako odborná rada ani rozhodnutí za tebe.</p>
+
+                <div class="pm-form__trust" aria-label="Jistoty před platbou">
+                    <div>
+                        <i data-lucide="mail-check" aria-hidden="true"></i>
+                        <span>PDF obvykle dorazí do 10 až 20 minut. Když ne, dohledáme objednávku přes e-mail.</span>
+                    </div>
+                    <div>
+                        <i data-lucide="shield-check" aria-hidden="true"></i>
+                        <span>Platba je jednorázová přes Stripe, bez předplatného a bez ukládání karty na webu.</span>
+                    </div>
+                    <div>
+                        <i data-lucide="file-text" aria-hidden="true"></i>
+                        <span><a href="podminky.html">Podmínky</a>, <a href="soukromi.html">soukromí</a> a <a href="kontakt.html">kontakt</a> jsou dostupné před zaplacením.</span>
+                    </div>
+                </div>
             </form>
         </section>
 
