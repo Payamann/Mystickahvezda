@@ -535,17 +535,17 @@
       document.title = 'Tarot v\u00fdklad zdarma online | Mystick\u00e1 Hv\u011bzda';
       setMetaByName(
         'description',
-        'Zkuste tarot v\u00fdklad zdarma online. And\u011blsk\u00fd tarot, Celtic Cross i jednoduch\u00fd t\u0159\u00edkaretn\u00ed v\u00fdklad bez registrace a okam\u017eit\u011b.'
+        'Bezplatn\u00fd tarotov\u00fd v\u00fdklad jako symbolick\u00fd r\u00e1mec pro reflexi, jasn\u011bj\u0161\u00ed ot\u00e1zku a jeden dal\u0161\u00ed krok. Bez registrace a bez platebn\u00ed karty.'
       );
       setMetaByProperty('og:title', 'Tarot v\u00fdklad zdarma online | Mystick\u00e1 Hv\u011bzda');
       setMetaByProperty(
         'og:description',
-        'V\u00fdklad tarotu zdarma. Vyberte si kartu a nechte hv\u011bzdy promluvit bez registrace.'
+        'Vyberte si kartu nebo metodu a z\u00edskejte symbolick\u00fd vhled bez slibu pevn\u00e9 budoucnosti.'
       );
       setText('.section__title', 'Tarot v\u00fdklad zdarma online');
       setText(
         '.section__text',
-        'Vyberte si kartu a z\u00edskejte okam\u017eit\u00fd vhled. Tarot zdarma je ide\u00e1ln\u00ed pro prvn\u00ed ot\u00e1zku i rychl\u00e9 nasm\u011brov\u00e1n\u00ed.'
+        'Vyberte si kartu nebo metodu a odneste si jeden konkr\u00e9tn\u00ed dal\u0161\u00ed krok. Tarot je reflexn\u00ed r\u00e1mec, ne slib pevn\u00e9 budoucnosti.'
       );
     },
 

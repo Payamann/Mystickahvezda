@@ -448,6 +448,31 @@ test.describe('Tarot zdarma', () => {
         await expect(page.locator('a[href*="tarot-vyznam-karet.html?source=tarot_free_intent"]')).toBeVisible();
         await expect(page.locator('a[href*="tarot-tri-karty.html?source=tarot_free_intent"][href*="intent=three_cards"]')).toBeVisible();
     });
+
+    test('důvěryhodnost nepoužívá falešný social proof ani přesnostní sliby', async ({ page }) => {
+        await page.goto('/tarot-zdarma.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /symbolick.*rámec/);
+        await expect(page.locator('script[src*="secondary-pages-copy-fixes.js"]')).toHaveAttribute('src', /v=5/);
+        await expect(page.locator('.section__text').first()).toContainText('ne slib pevné budoucnosti');
+        await expect(page.locator('main')).toContainText('Bez registrace, bez platební karty, s jasným dalším krokem');
+        await expect(page.locator('main')).toContainText('Jak z výkladu získat víc');
+        await expect(page.locator('main')).toContainText('Bez osudových jistot');
+
+        const structuredData = await page.locator('script[type="application/ld+json"]').first().textContent();
+        expect(structuredData).toContain('symbolický rámec');
+        expect(structuredData).not.toContain('Zkuste tarot výklad zdarma online. Vyberte si kartu a získejte okamžitý výklad.');
+
+        const bodyText = await page.locator('body').textContent();
+        expect(bodyText).not.toContain('Přes 3 000 spokojených');
+        expect(bodyText).not.toContain('Co říkají uživatelé');
+        expect(bodyText).not.toContain('překvapivě přesný');
+        expect(bodyText).not.toContain('Monika K.');
+        expect(bodyText).not.toContain('Tereza B.');
+        expect(bodyText).not.toContain('Jakub M.');
+        expect(bodyText).not.toContain('Je tarot výklad zdarma přesný?');
+    });
 });
 
 // ═══════════════════════════════════════════════════════════
