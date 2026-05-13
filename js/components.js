@@ -21,7 +21,7 @@
     // Cookie handler — loads after analytics so consent update event is always caught
     if (!window.MH_COOKIE_HANDLER_INIT && !document.querySelector('script[src*="cookie-handler.js"]')) {
         const ch = document.createElement('script');
-        ch.src = basePath + 'js/dist/cookie-handler.js?v=4';
+        ch.src = basePath + 'js/dist/cookie-handler.js?v=20260513-cookie-compact';
         ch.defer = true;
         document.head.appendChild(ch);
     }
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Use high priority for header as it affects LCP/CLS
     await Promise.all([
         loadComponent('header-placeholder', `${basePath}components/header.html?v=6`, basePath, true),
-        loadComponent('footer-placeholder', `${basePath}components/footer.html?v=15`, basePath, false)
+        loadComponent('footer-placeholder', `${basePath}components/footer.html?v=20260513-cookie-compact`, basePath, false)
     ]);
 
     // STANDALONE: Init hamburger menu + header scroll (no module dependency)
