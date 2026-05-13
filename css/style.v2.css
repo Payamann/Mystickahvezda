@@ -8530,7 +8530,7 @@ html.cookie-banner-active {
 
 }
 
-.cookie-banner__content > div:not(.cookie-banner__actions) {
+.cookie-banner__preferences {
 
   display: flex;
 
@@ -8541,6 +8541,12 @@ html.cookie-banner-active {
   font-size: 0.75rem;
 
   line-height: 1.25;
+
+}
+
+.cookie-banner__preferences[hidden] {
+
+  display: none !important;
 
 }
 
@@ -8658,7 +8664,7 @@ body.cookie-banner-active {
 
   }
 
-  .cookie-banner__content > div:not(.cookie-banner__actions) {
+  .cookie-banner__preferences {
 
     gap: 0.25rem 0.55rem;
 
@@ -13619,7 +13625,7 @@ body.page-mentor .cookie-banner__actions .btn {
 
   }
 
-  body.page-login .cookie-banner__content > div:not(.cookie-banner__actions) {
+  body.page-login .cookie-banner__preferences {
 
     display: flex;
 
@@ -14947,6 +14953,54 @@ body.page-mentor .cookie-banner__actions .btn {
     justify-content: center;
 
     touch-action: manipulation;
+
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .cookie-banner:not(.cookie-banner--expanded) {
+
+    padding: 0.58rem 0.64rem;
+
+  }
+
+  .cookie-banner:not(.cookie-banner--expanded) .cookie-banner__content {
+
+    gap: 0.38rem;
+
+  }
+
+  .cookie-banner:not(.cookie-banner--expanded) .cookie-banner__text {
+
+    font-size: 0.72rem;
+
+    line-height: 1.22;
+
+  }
+
+  .cookie-banner:not(.cookie-banner--expanded) .cookie-banner__actions {
+
+    grid-template-columns: 0.95fr 0.9fr 1.15fr;
+
+    gap: 0.34rem;
+
+  }
+
+  .cookie-banner:not(.cookie-banner--expanded) .cookie-banner__actions .btn {
+
+    min-height: 40px;
+
+    padding: 0.42rem 0.36rem;
+
+    font-size: 0.62rem;
+
+  }
+
+  .cookie-banner:not(.cookie-banner--expanded) #cookie-save {
+
+    padding-inline: 0.3rem;
 
   }
 

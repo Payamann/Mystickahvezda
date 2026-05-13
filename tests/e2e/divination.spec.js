@@ -301,6 +301,44 @@ test.describe('Křišťálová koule', () => {
         );
         expect(overflow).toBe(false);
     });
+
+    test('mobilní cookie lišta začíná kompaktně a nastavení se rozbalí až na vyžádání', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.addInitScript(() => {
+            localStorage.removeItem('mh_cookie_prefs');
+            localStorage.removeItem('cookieConsent');
+        });
+        await page.goto('/kristalova-koule.html?source=e2e_cookie_compact');
+        await waitForPageReady(page);
+
+        const banner = page.locator('#cookie-banner');
+        await expect(banner).toHaveClass(/visible/, { timeout: 4_000 });
+        await expect(page.locator('#cookie-save')).toHaveText('Nastavení');
+
+        const collapsed = await page.evaluate(() => {
+            const bannerRect = document.getElementById('cookie-banner')?.getBoundingClientRect();
+            const prefs = document.querySelector('#cookie-banner .cookie-banner__preferences');
+            return {
+                height: Math.round(bannerRect?.height || 999),
+                preferencesHidden: prefs?.hidden === true,
+                overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
+            };
+        });
+
+        expect(collapsed.overflow).toBe(false);
+        expect(collapsed.preferencesHidden).toBe(true);
+        expect(collapsed.height).toBeLessThanOrEqual(100);
+
+        await page.locator('#cookie-save').click();
+        await expect(page.locator('#cookie-banner .cookie-banner__preferences')).toBeVisible();
+        await expect(page.locator('#cookie-save')).toHaveText('Uložit nastavení');
+
+        await page.locator('#cookie-save').click();
+        await expect(banner).toBeHidden();
+        const prefs = await page.evaluate(() => JSON.parse(localStorage.getItem('mh_cookie_prefs') || '{}'));
+        expect(prefs.analytics).toBe(true);
+        expect(prefs.marketing).toBe(false);
+    });
 });
 
 // ═══════════════════════════════════════════════════════════

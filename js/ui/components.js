@@ -200,6 +200,32 @@ export function initCookieBanner() {
     if (!banner || !acceptBtn || !rejectBtn) return;
 
     const K = 'mh_cookie_prefs';
+    let preferencesOpen = false;
+
+    function getPreferences() {
+        return banner.querySelector('.cookie-banner__preferences')
+            || banner.querySelector('.cookie-banner__content > div:not(.cookie-banner__actions)');
+    }
+
+    function isCompactViewport() {
+        return window.matchMedia('(max-width: 768px)').matches;
+    }
+
+    function syncPreferencesVisibility() {
+        const prefs = getPreferences();
+        const saveBtn = document.getElementById('cookie-save');
+        const expanded = preferencesOpen || !isCompactViewport();
+
+        banner.classList.toggle('cookie-banner--expanded', expanded);
+        if (prefs) {
+            prefs.hidden = !expanded;
+            prefs.setAttribute('aria-hidden', String(!expanded));
+        }
+        if (saveBtn) {
+            saveBtn.textContent = expanded ? 'Uložit nastavení' : 'Nastavení';
+            saveBtn.setAttribute('aria-expanded', String(expanded));
+        }
+    }
 
     function setCookieBannerActive(isActive) {
         document.body?.classList.toggle('cookie-banner-active', isActive);
@@ -214,6 +240,8 @@ export function initCookieBanner() {
         }));
         banner.classList.remove('visible');
         banner.hidden = true;
+        preferencesOpen = false;
+        syncPreferencesVisibility();
         setCookieBannerActive(false);
         window.dispatchEvent(new CustomEvent('mh_cookie_banner_hidden'));
     }
@@ -226,6 +254,8 @@ export function initCookieBanner() {
     if (!alreadyDone) {
         setTimeout(() => {
             banner.hidden = false;
+            preferencesOpen = false;
+            syncPreferencesVisibility();
             setCookieBannerActive(true);
             requestAnimationFrame(() => {
                 banner.classList.add('visible');
@@ -243,9 +273,18 @@ export function initCookieBanner() {
     const saveBtn = document.getElementById('cookie-save');
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
+            if (isCompactViewport() && !preferencesOpen) {
+                preferencesOpen = true;
+                syncPreferencesVisibility();
+                document.getElementById('cookie-analytics')?.focus();
+                return;
+            }
+
             const a = document.getElementById('cookie-analytics');
             const m = document.getElementById('cookie-marketing');
             saveCookieConsent(!!(a && a.checked), !!(m && m.checked));
         });
     }
+
+    window.addEventListener('resize', syncPreferencesVisibility);
 }
