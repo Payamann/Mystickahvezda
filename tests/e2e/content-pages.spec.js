@@ -781,6 +781,29 @@ test.describe('Tarot na lásku', () => {
 // SKUPINOVÝ SMOKE TEST — ostatní stránky
 // ═══════════════════════════════════════════════════════════
 
+test.describe('Jak to funguje', () => {
+
+    test('vysvětluje proces bez přesnostních overclaimů', async ({ page }) => {
+        await page.goto('/jak-to-funguje.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('.hero__subtitle')).toContainText('co počítáme');
+        await expect(page.locator('.process-grid')).toContainText('Nejde o pevný osud');
+        await expect(page.locator('.tech-section .section__text')).toContainText('co zůstává na vás');
+        await expect(page.locator('.tech-section')).toContainText('Nenahrazují terapii');
+        await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /symbolick.*výklad/);
+        await expect(page.locator('script[src*="secondary-pages-copy-fixes.js"]')).toHaveAttribute('src', /v=7/);
+
+        const structuredData = await page.locator('script[type="application/ld+json"]').first().textContent();
+        expect(structuredData).toContain('symbolický výklad');
+
+        const bodyText = await page.locator('body').textContent();
+        expect(bodyText).not.toContain('Proč jsou naše výklady tak přesné?');
+        expect(bodyText).not.toContain('archetypální moudrostí našich expertů');
+        expect(bodyText).not.toContain('vědeckými institucemi po celém světě');
+    });
+});
+
 test.describe('Ostatní stránky — smoke testy (200 + h1)', () => {
 
     const PAGES = [

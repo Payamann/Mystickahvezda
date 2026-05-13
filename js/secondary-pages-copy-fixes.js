@@ -631,21 +631,50 @@
       setMetaByProperty('og:title', 'Jak to funguje | Mystick\u00e1 Hv\u011bzda');
       setMetaByProperty(
         'og:description',
-        'Zjist\u011bte, jak funguje Mystick\u00e1 Hv\u011bzda: astrologie, tarot, numerologie a duchovn\u00ed n\u00e1stroje pro osobn\u00ed rozvoj.'
+        'Jak z dat vznik\u00e1 symbolick\u00fd v\u00fdklad: v\u00fdpo\u010det r\u00e1mce, interpretace a jasn\u00e9 hranice slu\u017eby.'
       );
       updateJsonLd(
         (data) => data?.url === 'https://www.mystickahvezda.cz/jak-to-funguje.html',
         {
           name: 'Jak to funguje | Mystick\u00e1 Hv\u011bzda',
-          description: 'Zjist\u011bte, jak funguje Mystick\u00e1 Hv\u011bzda: horoskopy, tarot, nat\u00e1ln\u00ed karta a dal\u0161\u00ed duchovn\u00ed n\u00e1stroje.'
+          description: 'Jak z dat vznik\u00e1 symbolick\u00fd v\u00fdklad: v\u00fdpo\u010det r\u00e1mce, interpretace a jasn\u00e9 hranice slu\u017eby.'
         }
       );
       setText('.hero__badge', 'Transparentn\u00ed cesta');
       setHtml('.hero__title .text-gradient', 'Jak to funguje');
       setText(
         '.hero__subtitle',
-        'Objevte, jak propojujeme prastarou astrologickou moudrost s hloubkovou anal\u00fdzou symbol\u016f pro v\u00e1\u0161 osobn\u00ed vhled.'
+        'Ukazujeme, jak se ze zadan\u00fdch dat stane symbolick\u00fd v\u00fdklad: co po\u010d\u00edt\u00e1me, co interpretujeme a kde nech\u00e1v\u00e1me rozhodnut\u00ed na v\u00e1s.'
       );
+
+      const processTitles = ['Zad\u00e1n\u00ed kontextu', 'V\u00fdpo\u010det r\u00e1mce', 'Srozumiteln\u00fd v\u00fdklad'];
+      const processTexts = [
+        'Zad\u00e1te datum, \u010das a m\u00edsto narozen\u00ed nebo ot\u00e1zku, se kterou p\u0159ich\u00e1z\u00edte. \u010c\u00edm konkr\u00e9tn\u011bj\u0161\u00ed kontext, t\u00edm l\u00e9pe se d\u00e1 v\u00fdklad ukotvit.',
+        'Syst\u00e9m spo\u010d\u00edt\u00e1 astrologick\u00fd nebo karetn\u00ed r\u00e1mec a p\u0159iprav\u00ed symboly, se kter\u00fdmi se d\u00e1 poctiv\u011b pracovat. Nejde o pevn\u00fd osud ani garanci v\u00fdsledku.',
+        'Dostanete \u010diteln\u00fd v\u00fdklad, kter\u00fd pojmenuje t\u00e9ma, nap\u011bt\u00ed a jeden dal\u0161\u00ed krok. Rozhodnut\u00ed z\u016fst\u00e1v\u00e1 na v\u00e1s.'
+      ];
+      document.querySelectorAll('.process-grid .process-card__title').forEach((title, index) => {
+        if (processTitles[index]) title.textContent = processTitles[index];
+      });
+      document.querySelectorAll('.process-grid .process-card__text').forEach((text, index) => {
+        if (processTexts[index]) text.textContent = processTexts[index];
+      });
+
+      setText('.tech-section .section__title', 'N\u00e1\u0161 p\u0159\u00edstup');
+      setText('.tech-section .section__text', 'Co je v\u00fdpo\u010det, co je interpretace a co z\u016fst\u00e1v\u00e1 na v\u00e1s?');
+      const techTitles = ['V\u00fdpo\u010det jako mapa', 'Interpretace se z\u00e1m\u011brem', 'Ochrana soukrom\u00ed', 'Etick\u00e9 hranice'];
+      const techTexts = [
+        'Datum, \u010das a m\u00edsto pom\u00e1haj\u00ed sestavit astrologick\u00fd r\u00e1mec. Neznamen\u00e1 to, \u017ee v\u00fdklad garantuje pevn\u00fd v\u00fdsledek.',
+        'Symboly propojujeme s ot\u00e1zkou a kontextem tak, aby vznikl pou\u017eiteln\u00fd dal\u0161\u00ed krok, ne osudov\u00fd verdikt.',
+        '\u00dadaje pou\u017e\u00edv\u00e1me pro fungov\u00e1n\u00ed \u00fa\u010dtu a vytvo\u0159en\u00ed v\u00fdklad\u016f. Platebn\u00ed \u00fadaje zpracov\u00e1v\u00e1 Stripe.',
+        'V\u00fdklady maj\u00ed povzbudit a zp\u0159esnit ot\u00e1zku. Nenahrazuj\u00ed terapii, l\u00e9ka\u0159sk\u00e9, pr\u00e1vn\u00ed ani finan\u010dn\u00ed rozhodov\u00e1n\u00ed.'
+      ];
+      document.querySelectorAll('.tech-item').forEach((item, index) => {
+        const title = item.querySelector('h4');
+        const text = item.querySelector('.process-card__text');
+        if (title && techTitles[index]) title.textContent = techTitles[index];
+        if (text && techTexts[index]) text.textContent = techTexts[index];
+      });
     },
 
     'rocni-horoskop.html': () => {
