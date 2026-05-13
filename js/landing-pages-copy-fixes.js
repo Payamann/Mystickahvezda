@@ -63,9 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (path.endsWith('/kristalova-koule.html') || path.endsWith('kristalova-koule.html')) {
         document.title = 'Křišťálová Koule | Mystická Hvězda';
-        setMeta('meta[name="description"]', 'Zeptejte se křišťálové koule na cokoliv. Intuitivní věštba pro váš osobní dotaz a aktuální situaci.');
+        setMeta('meta[name="description"]', 'Křišťálová koule jako symbolický průvodce pro osobní otázku. Pojmenujte situaci, získejte vhled a jeden další krok bez slibu pevné budoucnosti.');
         setMeta('meta[property="og:title"]', 'Křišťálová Koule | Mystická Hvězda');
-        setMeta('meta[property="og:description"]', 'Zeptejte se křišťálové koule na cokoliv. Intuitivní věštba pro váš osobní dotaz a aktuální situaci.');
+        setMeta('meta[property="og:description"]', 'Symbolický vhled pro osobní otázku: pojmenujte situaci a odneste si jeden další krok bez slibu pevné budoucnosti.');
         setHtml('.hero__title', 'Křišťálová koule a <span class="text-gradient">hlas intuice</span>');
         const existingSubtitle = document.querySelector('.hero__subtitle');
         if (existingSubtitle) {

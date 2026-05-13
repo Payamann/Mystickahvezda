@@ -254,6 +254,18 @@ test.describe('Křišťálová koule', () => {
         expect(await ldJson.count()).toBeGreaterThanOrEqual(1);
     });
 
+    test('meta popis drží symbolický rámec bez AI věštby', async ({ page }) => {
+        await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /symbolick.*průvodce/);
+        await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /bez slibu pevné budoucnosti/);
+
+        const structuredData = await page.locator('script[type="application/ld+json"]').first().textContent();
+        expect(structuredData).toContain('Symbolický vhled');
+
+        const headText = await page.locator('head').textContent();
+        expect(headText).not.toContain('AI věštba');
+        expect(headText).not.toContain('předpověď');
+    });
+
     // API test — bez AI klíče vrátí chybu, ale CSRF musí být vyžadováno
     test('POST /api/crystal-ball bez CSRF vrátí 403', async ({ page }) => {
         const res = await page.request.post('/api/crystal-ball', {
