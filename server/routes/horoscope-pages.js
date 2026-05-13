@@ -351,7 +351,7 @@ router.get('/:sign/:date', async (req, res, next) => {
   <script src="/js/dist/api-config.js?v=5" defer></script>
   <script src="/js/dist/templates.js?v=11" defer></script>
   <script src="/js/dist/auth-client.js?v=5" defer></script>
-  <script src="/js/dist/components.js?v=11" defer></script>
+  <script src="/js/dist/components.js?v=12" defer></script>
   <script type="module" src="/js/dist/main.js?v=11"></script>
 </body>
 </html>`;
