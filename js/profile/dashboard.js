@@ -345,6 +345,15 @@ function sanitizeProfileUrl(url) {
     parsed.searchParams.delete('payment');
     parsed.searchParams.delete('plan');
     parsed.searchParams.delete('session_id');
+    parsed.searchParams.delete('source');
+    parsed.searchParams.delete('feature');
+    parsed.searchParams.delete('entry_source');
+    parsed.searchParams.delete('entry_feature');
+    parsed.searchParams.delete('utm_source');
+    parsed.searchParams.delete('utm_medium');
+    parsed.searchParams.delete('utm_campaign');
+    parsed.searchParams.delete('utm_content');
+    parsed.searchParams.delete('card');
     return `${parsed.pathname}${parsed.search}${parsed.hash}`;
 }
 
@@ -353,21 +362,54 @@ function handlePaymentReturnState() {
     const paymentState = params.get('payment');
 
     if (!paymentState) {
-        return;
+        return null;
     }
 
+    const paymentContext = {
+        state: paymentState,
+        planId: params.get('plan') || null,
+        sessionId: params.get('session_id') || null,
+        source: params.get('source') || null,
+        feature: params.get('feature') || null,
+        entrySource: params.get('entry_source') || null,
+        entryFeature: params.get('entry_feature') || null,
+        utmSource: params.get('utm_source') || null,
+        utmMedium: params.get('utm_medium') || null,
+        utmCampaign: params.get('utm_campaign') || null,
+        utmContent: params.get('utm_content') || null,
+        card: params.get('card') || null
+    };
+
     if (paymentState === 'success') {
-        const planId = params.get('plan') || null;
-        const sessionId = params.get('session_id') || null;
+        const planId = paymentContext.planId;
+        const sessionId = paymentContext.sessionId;
+        const source = paymentContext.source || 'profile_return';
+        const feature = paymentContext.feature || paymentContext.entryFeature || null;
         window.MH_ANALYTICS?.trackPaymentResult?.('success', {
-            source: 'profile_return',
+            source,
+            feature,
             plan_id: planId,
-            session_id: sessionId
+            session_id: sessionId,
+            entry_source: paymentContext.entrySource,
+            entry_feature: paymentContext.entryFeature,
+            utm_source: paymentContext.utmSource,
+            utm_medium: paymentContext.utmMedium,
+            utm_campaign: paymentContext.utmCampaign,
+            utm_content: paymentContext.utmContent,
+            card: paymentContext.card
         });
         window.MH_ANALYTICS?.trackPurchaseCompleted?.(planId || 'subscription', getPlanPriceCzk(planId) || null, 'CZK', {
             product_type: 'subscription',
             transaction_id: sessionId,
-            source: 'profile_return'
+            source,
+            feature,
+            entry_source: paymentContext.entrySource,
+            entry_feature: paymentContext.entryFeature,
+            utm_source: paymentContext.utmSource,
+            utm_medium: paymentContext.utmMedium,
+            utm_campaign: paymentContext.utmCampaign,
+            utm_content: paymentContext.utmContent,
+            card: paymentContext.card
         });
         openProfileTab('settings');
         setTimeout(() => {
@@ -381,6 +423,7 @@ function handlePaymentReturnState() {
     }
 
     history.replaceState({}, document.title, sanitizeProfileUrl(window.location.href));
+    return paymentContext;
 }
 
 function getActivationStorageKey(planType) {
@@ -395,7 +438,7 @@ function markActivationSeen(planType) {
     localStorage.setItem(getActivationStorageKey(planType), '1');
 }
 
-function renderPremiumActivation(sub, user) {
+function renderPremiumActivation(sub, user, paymentContext = null) {
     const card = document.getElementById('premium-activation-card');
     const titleEl = document.getElementById('premium-activation-title');
     const copyEl = document.getElementById('premium-activation-copy');
@@ -409,7 +452,7 @@ function renderPremiumActivation(sub, user) {
 
     const planType = normalizePlanType(sub.planType);
     const isPremium = planType !== 'free';
-    const paymentState = new URLSearchParams(window.location.search).get('payment');
+    const paymentState = paymentContext?.state || new URLSearchParams(window.location.search).get('payment');
     const shouldForceShow = paymentState === 'success';
 
     if (!isPremium) {
@@ -443,7 +486,18 @@ function renderPremiumActivation(sub, user) {
     copyEl.textContent = copyMap[planType] || 'Právě jste odemkli plné výklady a osobní vedení.';
     badgeEl.textContent = badgeMap[planType] || 'Premium aktivní';
 
-    const actions = PREMIUM_ACTIONS[planType] || PREMIUM_ACTIONS.premium_monthly;
+    const paymentReturnAction = shouldForceShow
+        ? getPaymentReturnDestination(getProfileSign(user), paymentContext)
+        : null;
+    const baseActions = PREMIUM_ACTIONS[planType] || PREMIUM_ACTIONS.premium_monthly;
+    const actions = paymentReturnAction
+        ? [
+            paymentReturnAction,
+            ...baseActions
+                .filter(action => action.href !== paymentReturnAction.href)
+                .slice(0, 2)
+        ]
+        : baseActions;
     actionsEl.innerHTML = actions.map((action) => `
         <a href="${action.href}" class="card glass-card premium-activation-action" data-activation-target="${action.href}">
             <strong class="premium-activation-action__title">${action.title}</strong>
@@ -452,8 +506,19 @@ function renderPremiumActivation(sub, user) {
     `).join('');
 
     setProfileBlockVisible(card, true);
+    if (shouldForceShow) {
+        setTimeout(() => {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 200);
+    }
+
     card.dataset.planType = planType;
-    card.dataset.source = paymentState === 'success' ? 'payment_return' : 'profile';
+    card.dataset.source = paymentState === 'success' ? (paymentContext?.source || 'payment_return') : 'profile';
+    if (paymentReturnAction?.feature) {
+        card.dataset.feature = paymentReturnAction.feature;
+    } else {
+        delete card.dataset.feature;
+    }
 
     if (!card.dataset.bound) {
         dismissBtn.addEventListener('click', () => {
@@ -477,7 +542,8 @@ function renderPremiumActivation(sub, user) {
             window.MH_ANALYTICS?.trackCTA?.('premium_activation_action', {
                 destination: link.getAttribute('href'),
                 plan_id: activePlanType,
-                source: activeSource
+                source: activeSource,
+                feature: card.dataset.feature || null
             });
         });
 
@@ -486,7 +552,8 @@ function renderPremiumActivation(sub, user) {
 
     trackProfileEvent('premium_activation_shown', {
         plan_type: planType,
-        source: paymentState === 'success' ? 'payment_return' : 'profile'
+        source: paymentState === 'success' ? (paymentContext?.source || 'payment_return') : 'profile',
+        feature: card.dataset.feature || null
     });
 
     if (shouldForceShow) {
@@ -618,6 +685,35 @@ function getSignupIntentDestination(sign) {
 
     return {
         href: addSignupIntentAttribution(config.href(sign), intent, config.feature),
+        description: config.description(sign),
+        feature: config.feature
+    };
+}
+
+function buildAttributedRelativeHref(href, params = {}) {
+    const url = new URL(href, window.location.origin);
+    Object.entries(params).forEach(([key, value]) => {
+        if (value) url.searchParams.set(key, value);
+    });
+
+    const relativeUrl = `${url.pathname}${url.search}${url.hash}`;
+    return relativeUrl.startsWith('/') ? relativeUrl.slice(1) : relativeUrl;
+}
+
+function getPaymentReturnDestination(sign, paymentContext) {
+    const feature = paymentContext?.feature || paymentContext?.entryFeature || null;
+    const config = feature ? SIGNUP_INTENT_DESTINATIONS[feature] : null;
+    if (!config) return null;
+
+    return {
+        href: buildAttributedRelativeHref(config.href(sign), {
+            source: 'profile_payment_return',
+            feature: config.feature,
+            entry_source: paymentContext.source || paymentContext.entrySource,
+            entry_feature: feature,
+            plan: paymentContext.planId
+        }),
+        title: 'Pokračovat tam, kde platba začala',
         description: config.description(sign),
         feature: config.feature
     };
@@ -1359,8 +1455,8 @@ async function initProfile() {
         loadSubscriptionStatus()
     ]);
 
-    handlePaymentReturnState();
-    renderPremiumActivation(subscription, user);
+    const paymentReturnContext = handlePaymentReturnState();
+    renderPremiumActivation(subscription, user, paymentReturnContext);
     renderDailyGuidance(user, readings, subscription);
     renderActivationChecklist(user, readings, subscription);
     renderRitualMemory(user, readings, subscription);

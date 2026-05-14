@@ -50,7 +50,7 @@ test.describe('Profil stránka', () => {
         await expect(page.locator('#profile-greeting')).toContainText('výklady na jednom místě');
         await expect(gate).toContainText('historii, oblíbené výklady a návratové poznámky');
         await expect(gate).toContainText('Bez přihlášení nic neukládáme do osobního profilu');
-        await expect(page.locator('script[src*="/js/dist/profile/dashboard.js"]').first()).toHaveAttribute('src', /dashboard\.js\?v=19/);
+        await expect(page.locator('script[src*="/js/dist/profile/dashboard.js"]').first()).toHaveAttribute('src', /dashboard\.js\?v=20/);
 
         const loginHref = await page.locator('#profile-login-btn').getAttribute('href');
         const registerHref = await page.locator('#login-required a[href*="mode=register"]').getAttribute('href');
@@ -133,9 +133,11 @@ test.describe('Profil aktivace', () => {
             email: 'profil-activation@example.com',
             first_name: 'Pavel',
             birth_date: '1990-08-10',
-            subscription_status: 'free'
+            subscription_status: 'free',
+            ...(options.user || {})
         };
         const readings = [...(options.readings || [])];
+        const subscription = options.subscription || { planType: 'free', status: 'active', canCancel: false };
 
         await page.context().addCookies([{
             name: 'logged_in',
@@ -225,7 +227,7 @@ test.describe('Profil aktivace', () => {
             await route.fulfill({
                 status: 200,
                 contentType: 'application/json',
-                body: JSON.stringify({ planType: 'free', status: 'active', canCancel: false })
+                body: JSON.stringify(subscription)
             });
         });
     }
@@ -276,6 +278,32 @@ test.describe('Profil aktivace', () => {
         expect(firstReadingHref).toContain('entry_source=life_number_result');
         expect(firstReadingHref).toContain('entry_feature=numerologie_vyklad');
         await expect(firstReading).toContainText('numerologick');
+    });
+
+    test('uspesna platba navaze premium aktivaci na puvodni placeny zamer', async ({ page }) => {
+        await mockLoggedInProfile(page, {
+            user: { subscription_status: 'premium_monthly' },
+            subscription: { planType: 'premium_monthly', status: 'active', canCancel: true }
+        });
+
+        await page.goto('/profil.html?payment=success&plan=pruvodce&session_id=cs_test_return&source=inline_paywall&feature=numerologie_vyklad&entry_source=inline_paywall&entry_feature=numerologie_vyklad');
+        await waitForPageReady(page);
+
+        const activation = page.locator('#premium-activation-card');
+        await expect(activation).toBeVisible();
+        await expect(activation).toHaveAttribute('data-source', 'inline_paywall');
+        await expect(activation).toHaveAttribute('data-feature', 'numerologie_vyklad');
+
+        const firstAction = activation.locator('[data-activation-target]').first();
+        const href = await firstAction.getAttribute('href');
+        expect(href).toContain('numerologie.html');
+        expect(href).toContain('source=profile_payment_return');
+        expect(href).toContain('feature=numerologie_vyklad');
+        expect(href).toContain('entry_source=inline_paywall');
+        expect(href).toContain('entry_feature=numerologie_vyklad');
+        expect(href).toContain('plan=pruvodce');
+        await expect(firstAction).toContainText('kde platba');
+        expect(new URL(page.url()).searchParams.has('payment')).toBe(false);
     });
 
     test('prazdny profil drzi symbolicky zamer minuleho zivota', async ({ page }) => {

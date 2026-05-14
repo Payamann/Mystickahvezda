@@ -224,6 +224,8 @@ const CHECKOUT_METADATA_PARAM_KEYS = [
     'utm_content',
     'requested_card'
 ];
+const PRICING_RECOVERY_CONTEXT_KEY = 'pricing_recovery_context_v1';
+const PRICING_RECOVERY_CONTEXT_TTL_MS = 20 * 60 * 1000;
 
 function setFeatureText(item, text) {
     if (!item) return;
@@ -404,6 +406,56 @@ function sanitizeRedirectUrl(url) {
     return `${parsed.pathname}${parsed.search}${parsed.hash}`;
 }
 
+function readRecoveryContext() {
+    try {
+        const raw = sessionStorage.getItem(PRICING_RECOVERY_CONTEXT_KEY);
+        if (!raw) return null;
+
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') {
+            sessionStorage.removeItem(PRICING_RECOVERY_CONTEXT_KEY);
+            return null;
+        }
+
+        const expiresAt = Number(parsed.expiresAt || 0);
+        if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
+            sessionStorage.removeItem(PRICING_RECOVERY_CONTEXT_KEY);
+            return null;
+        }
+
+        return parsed;
+    } catch {
+        sessionStorage.removeItem(PRICING_RECOVERY_CONTEXT_KEY);
+        return null;
+    }
+}
+
+function writeRecoveryContext(context = {}) {
+    try {
+        const metadata = context.metadata && typeof context.metadata === 'object' && !Array.isArray(context.metadata)
+            ? context.metadata
+            : {};
+
+        sessionStorage.setItem(PRICING_RECOVERY_CONTEXT_KEY, JSON.stringify({
+            source: context.source || null,
+            feature: context.feature || null,
+            recommendedPlan: context.recommendedPlan || null,
+            metadata,
+            expiresAt: Date.now() + PRICING_RECOVERY_CONTEXT_TTL_MS
+        }));
+    } catch {
+        // Ignore storage failures to avoid blocking checkout recovery UI.
+    }
+}
+
+function clearRecoveryContext() {
+    try {
+        sessionStorage.removeItem(PRICING_RECOVERY_CONTEXT_KEY);
+    } catch {
+        // Ignore storage failures.
+    }
+}
+
 function sanitizeCheckoutMetadataValue(value, maxLength = 120) {
     if (typeof value !== 'string') return null;
 
@@ -418,27 +470,40 @@ function setCheckoutMetadataValue(metadata, key, value) {
     if (sanitized) metadata[key] = sanitized;
 }
 
-function resolveCheckoutMetadata(params, pendingContext = {}) {
+function resolveCheckoutMetadata(params, pendingContext = {}, recoveryContext = null) {
     const metadata = {};
     const pendingMetadata = pendingContext.metadata && typeof pendingContext.metadata === 'object' && !Array.isArray(pendingContext.metadata)
         ? pendingContext.metadata
+        : {};
+    const recoveryMetadata = recoveryContext?.metadata && typeof recoveryContext.metadata === 'object' && !Array.isArray(recoveryContext.metadata)
+        ? recoveryContext.metadata
         : {};
 
     setCheckoutMetadataValue(
         metadata,
         'entry_source',
-        params.get('entry_source') || pendingMetadata.entry_source || params.get('source') || pendingContext.source
+        params.get('entry_source')
+        || pendingMetadata.entry_source
+        || params.get('source')
+        || pendingContext.source
+        || recoveryMetadata.entry_source
+        || recoveryContext?.source
     );
     setCheckoutMetadataValue(
         metadata,
         'entry_feature',
-        params.get('entry_feature') || pendingMetadata.entry_feature || params.get('feature') || pendingContext.feature
+        params.get('entry_feature')
+        || pendingMetadata.entry_feature
+        || params.get('feature')
+        || pendingContext.feature
+        || recoveryMetadata.entry_feature
+        || recoveryContext?.feature
     );
 
     CHECKOUT_METADATA_PARAM_KEYS.forEach((key) => {
-        setCheckoutMetadataValue(metadata, key, params.get(key) || pendingMetadata[key]);
+        setCheckoutMetadataValue(metadata, key, params.get(key) || pendingMetadata[key] || recoveryMetadata[key]);
     });
-    setCheckoutMetadataValue(metadata, 'card_param', params.get('card') || pendingMetadata.card_param);
+    setCheckoutMetadataValue(metadata, 'card_param', params.get('card') || pendingMetadata.card_param || recoveryMetadata.card_param);
 
     return metadata;
 }
@@ -446,11 +511,12 @@ function resolveCheckoutMetadata(params, pendingContext = {}) {
 function resolveCheckoutContext() {
     const params = new URLSearchParams(window.location.search);
     const pendingContext = window.Auth?.getPendingCheckoutContext?.() || {};
-    const feature = params.get('feature') || pendingContext.feature || null;
-    const explicitPlan = params.get('plan') || pendingContext.planId || null;
-    const source = params.get('source') || pendingContext.source || 'pricing_page';
+    const recoveryContext = readRecoveryContext();
+    const feature = params.get('feature') || pendingContext.feature || recoveryContext?.feature || null;
+    const explicitPlan = params.get('plan') || pendingContext.planId || recoveryContext?.recommendedPlan || null;
+    const source = params.get('source') || pendingContext.source || recoveryContext?.source || 'pricing_page';
     const recommendedPlan = explicitPlan || featurePlanMap[feature] || 'pruvodce';
-    const metadata = resolveCheckoutMetadata(params, pendingContext);
+    const metadata = resolveCheckoutMetadata(params, pendingContext, recoveryContext);
 
     return {
         feature,
@@ -701,6 +767,7 @@ function showPaymentReturnState(context) {
             'Platbu jste nedokončili. Ceník zůstává otevřený, takže můžete pokračovat kdykoliv.',
             'info'
         );
+        writeRecoveryContext(context);
         renderCheckoutCancelRecovery(context, paymentState);
     }
 
@@ -819,6 +886,7 @@ function highlightOneTimeProducts() {
 }
 
 function startRecommendedCheckout(planId, context) {
+    clearRecoveryContext();
     const resolvedBillingInterval = resolveBillingIntervalFromPlan(planId) || currentBilling;
     const checkoutContext = {
         source: context.source || 'pricing_recommendation',
@@ -844,11 +912,33 @@ function startRecommendedCheckout(planId, context) {
 }
 
 function bindCheckoutButtons(context) {
+    function setCheckoutPendingState(button, pending) {
+        if (!(button instanceof HTMLElement)) return;
+
+        if (pending) {
+            if (!button.dataset.originalLabel) {
+                button.dataset.originalLabel = button.textContent?.trim() || 'Pokračovat';
+            }
+            button.dataset.checkoutPending = '1';
+            button.disabled = true;
+            button.setAttribute('aria-busy', 'true');
+            button.textContent = 'Přesměrování na platbu...';
+            return;
+        }
+
+        const fallbackLabel = button.dataset.originalLabel || 'Pokračovat';
+        button.dataset.checkoutPending = '0';
+        button.disabled = false;
+        button.removeAttribute('aria-busy');
+        button.textContent = fallbackLabel;
+    }
+
     document.querySelectorAll('.plan-checkout-btn').forEach((button) => {
         button.addEventListener('click', async (event) => {
             event.preventDefault();
             const planId = button.dataset.plan;
             if (!planId) return;
+            if (button.dataset.checkoutPending === '1') return;
 
             const isLoggedIn = !!window.Auth?.isLoggedIn?.();
             const checkoutContext = {
@@ -881,12 +971,24 @@ function bindCheckoutButtons(context) {
                 billing_interval: currentBilling
             }));
 
-            if (window.Auth?.startPlanCheckout) {
-                window.Auth.startPlanCheckout(planId, checkoutContext);
-                return;
-            }
+            setCheckoutPendingState(button, true);
+            const pendingResetTimer = window.setTimeout(() => {
+                setCheckoutPendingState(button, false);
+            }, 10000);
 
-            startRecommendedCheckout(planId, checkoutContext);
+            try {
+                if (window.Auth?.startPlanCheckout) {
+                    clearRecoveryContext();
+                    window.Auth.startPlanCheckout(planId, checkoutContext);
+                    return;
+                }
+
+                startRecommendedCheckout(planId, checkoutContext);
+            } catch (error) {
+                window.clearTimeout(pendingResetTimer);
+                setCheckoutPendingState(button, false);
+                throw error;
+            }
         });
     });
 }

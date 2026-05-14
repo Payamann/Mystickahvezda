@@ -736,6 +736,64 @@ test.describe('Ceník — platební tlačítka', () => {
         expect(page.url()).not.toContain('payment=failure');
     });
 
+    test('recovery kontext po sanitize URL prezije reload bez navratu na default', async ({ page }) => {
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.goto('/cenik.html?payment=failure&reason=session_failed&plan=pruvodce&source=inline_paywall&feature=tarot_multi_card&entry_source=inline_paywall&entry_feature=tarot_multi_card', { waitUntil: 'domcontentloaded' });
+        await waitForPageReady(page);
+
+        const recovery = page.locator('#pricing-cancel-recovery');
+        await expect(recovery).toBeVisible();
+        await expect(page.locator('#pricing-plan-recommendation [data-recommended-plan="pruvodce"]')).toBeVisible();
+
+        const previewHrefBeforeReload = await recovery.locator('[data-cancel-preview]').getAttribute('href');
+        expect(previewHrefBeforeReload).toContain('entry_source=inline_paywall');
+        expect(previewHrefBeforeReload).toContain('entry_feature=tarot_multi_card');
+
+        await expect.poll(() => page.url()).not.toContain('payment=failure');
+
+        await page.reload({ waitUntil: 'domcontentloaded' });
+        await waitForPageReady(page);
+
+        await expect.poll(async () => {
+            return await page.evaluate(() => {
+                const recommendation = document.querySelector('#pricing-plan-recommendation');
+                const recommendationPlan = recommendation?.querySelector('[data-recommended-plan]')?.getAttribute('data-recommended-plan') || null;
+                const recommendationPreview = recommendation?.querySelector('[data-preview-destination]')?.getAttribute('href') || null;
+
+                const recoveryPanel = document.querySelector('#pricing-cancel-recovery');
+                const recoveryPreview = recoveryPanel?.querySelector('[data-cancel-preview]')?.getAttribute('href') || null;
+
+                return {
+                    recommendationPlan,
+                    recommendationPreview,
+                    recoveryPreview
+                };
+            });
+        }, { timeout: 8000 }).toEqual(expect.objectContaining({
+            recommendationPlan: 'pruvodce'
+        }));
+
+        const recoveryContextAfterReload = await page.evaluate(() => {
+            const recommendation = document.querySelector('#pricing-plan-recommendation');
+            const recommendationPreview = recommendation?.querySelector('[data-preview-destination]')?.getAttribute('href') || null;
+            const recoveryPanel = document.querySelector('#pricing-cancel-recovery');
+            const recoveryPreview = recoveryPanel?.querySelector('[data-cancel-preview]')?.getAttribute('href') || null;
+            return { recommendationPreview, recoveryPreview };
+        });
+
+        const previewHrefAfterReload = recoveryContextAfterReload.recoveryPreview || recoveryContextAfterReload.recommendationPreview;
+        expect(previewHrefAfterReload).toBeTruthy();
+        expect(previewHrefAfterReload).toContain('entry_source=inline_paywall');
+        expect(previewHrefAfterReload).toContain('entry_feature=tarot_multi_card');
+    });
+
     test('retry po selhani checkoutu spusti novou checkout session se stejnym kontextem', async ({ page }) => {
         let checkoutPayload = null;
 
