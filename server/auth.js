@@ -10,6 +10,7 @@ import { blacklistToken } from './utils/token-blacklist.js';
 import { recordFailedAttempt, checkAccountLockout, recordSuccessfulLogin } from './utils/account-lockout.js';
 import { isProductionRuntime } from './config/runtime.js';
 import { sendActivationLifecycleSequence } from './email-service.js';
+import { recordFunnelEvent } from './payment.js';
 
 const router = express.Router();
 const LOCKOUT_DURATION_MINUTES = 15;
@@ -699,6 +700,17 @@ router.post('/onboarding/complete', authenticateToken, async (req, res) => {
                 console.warn('[AUTH] Activation lifecycle scheduling failed:', emailError.message);
             }
         }
+
+        const onboardingEventName = skipped ? 'onboarding_skipped' : 'onboarding_completed';
+        await recordFunnelEvent(onboardingEventName, {
+            userId,
+            source,
+            feature,
+            metadata: {
+                destination: typeof destination === 'string' ? destination.slice(0, 240) : null,
+                onboarding_state: skipped ? 'skipped' : 'completed'
+            }
+        });
 
         res.json({
             success: true,

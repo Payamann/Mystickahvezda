@@ -14,6 +14,16 @@ async function getCsrfToken() {
     return res.body.csrfToken;
 }
 
+async function getFunnelEvents(userId, eventName) {
+    const { data } = await supabase
+        .from('funnel_events')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('event_name', eventName);
+
+    return data || [];
+}
+
 describe('🔐 Auth Endpoint Tests', () => {
 
     // ============================================
@@ -293,6 +303,65 @@ describe('🔐 Auth Endpoint Tests', () => {
                 feature: 'numerologie_vyklad',
                 skipIfPremium: true,
                 dedupeKey: `activation:${userId}:day6`
+            });
+
+            const funnelEvents = await getFunnelEvents(userId, 'onboarding_completed');
+            expect(funnelEvents).toHaveLength(1);
+            expect(funnelEvents[0]).toMatchObject({
+                source: 'life_number_result',
+                feature: 'numerologie_vyklad'
+            });
+            expect(funnelEvents[0].metadata).toMatchObject({
+                destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
+                onboarding_state: 'completed'
+            });
+        });
+
+        test('POST /api/auth/onboarding/complete persists onboarding_skipped funnel event', async () => {
+            const csrfToken = await getCsrfToken();
+            const userId = `onboarding-skipped-${Date.now()}`;
+            const email = `${userId}@example.com`;
+            const token = jwt.sign({
+                id: userId,
+                email,
+                subscription_status: 'free',
+                isPremium: false
+            }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+            await supabase.from('users').insert({
+                id: userId,
+                email,
+                first_name: 'Eva',
+                is_onboarded: false
+            });
+
+            const destination = '/profil.html?source=onboarding_skip&feature=daily_guidance';
+            const res = await request(app)
+                .post('/api/auth/onboarding/complete')
+                .set('x-csrf-token', csrfToken)
+                .set('Cookie', `auth_token=${token}`)
+                .send({
+                    source: 'onboarding_modal',
+                    feature: 'daily_guidance',
+                    destination,
+                    skipped: true
+                });
+
+            expect(res.status).toBe(200);
+            expect(res.body).toMatchObject({
+                success: true,
+                onboardingSkipped: true
+            });
+
+            const funnelEvents = await getFunnelEvents(userId, 'onboarding_skipped');
+            expect(funnelEvents).toHaveLength(1);
+            expect(funnelEvents[0]).toMatchObject({
+                source: 'onboarding_modal',
+                feature: 'daily_guidance'
+            });
+            expect(funnelEvents[0].metadata).toMatchObject({
+                destination,
+                onboarding_state: 'skipped'
             });
         });
     });

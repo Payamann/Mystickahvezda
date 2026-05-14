@@ -452,6 +452,15 @@ html body .onboarding-pending {
 html body .mh-inline-7aedee2011 { text-align:center;margin-top:1.5rem;font-size:0.78rem; }
 html body .mh-inline-9611bb8a90 { text-align:center;margin-top:1rem;font-size:0.82rem;color:rgba(212,175,55,0.6); }
 
+.onboarding-next-note {
+    max-width: 420px;
+    margin: 0.55rem auto 0;
+    color: rgba(255,255,255,0.55);
+    font-size: 0.78rem;
+    line-height: 1.45;
+    text-align: center;
+}
+
 html body .mh-inline-1b85280107 {
     min-height: 44px;
     display: inline-flex;

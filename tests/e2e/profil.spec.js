@@ -590,6 +590,8 @@ test.describe('Onboarding', () => {
         await expect(valueStrip).toContainText('Bez karty');
         await expect(valueStrip).toContainText('První krok');
         await expect(valueStrip).toContainText('Paměť');
+        await expect(page.locator('#finish-onboarding-next-note')).toContainText('Placené možnosti');
+        await expect(page.locator('#finish-onboarding-next-note')).toContainText('až po první hodnotě');
     });
 
     test('onboarding netaha externi fonty ani nepouzity sanitizer z CDN', async ({ page }) => {

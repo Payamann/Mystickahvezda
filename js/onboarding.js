@@ -4,6 +4,7 @@ let hasInteractedWithInterests = false;
 let primaryInterestOverride = null;
 
 const ONBOARDING_NOTIFY_TIMEOUT_MS = 1400;
+const ONBOARDING_NOTIFY_HEADSTART_MS = 250;
 
 const SIGN_LABELS = {
     beran: 'Berana',
@@ -489,8 +490,8 @@ function setCompletionPending(action, pending) {
 }
 
 async function notifyBackendOnboardingComplete(context = {}) {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), ONBOARDING_NOTIFY_TIMEOUT_MS);
+    const tokenController = new AbortController();
+    const timeout = window.setTimeout(() => tokenController.abort(), ONBOARDING_NOTIFY_TIMEOUT_MS);
     const entryContext = getOnboardingContext();
 
     try {
@@ -499,17 +500,17 @@ async function notifyBackendOnboardingComplete(context = {}) {
             ? await Promise.race([
                 window.getCSRFToken(),
                 new Promise((resolve) => {
-                    controller.signal.addEventListener('abort', () => resolve(null), { once: true });
+                    tokenController.signal.addEventListener('abort', () => resolve(null), { once: true });
                 })
             ])
             : null;
 
-        if (controller.signal.aborted) return;
+        if (tokenController.signal.aborted) return;
 
-        const res = await fetch(`${API_URL}/auth/onboarding/complete`, {
+        const completionRequest = fetch(`${API_URL}/auth/onboarding/complete`, {
             method: 'POST',
             credentials: 'include',
-            signal: controller.signal,
+            keepalive: true,
             headers: {
                 'Content-Type': 'application/json',
                 ...(csrfToken && { 'X-CSRF-Token': csrfToken })
@@ -520,11 +521,22 @@ async function notifyBackendOnboardingComplete(context = {}) {
                 destination: context.destination || null,
                 skipped: context.skipped === true
             })
-        });
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    console.warn('Failed to notify backend of onboarding completion:', res.status);
+                }
+            })
+            .catch((error) => {
+                if (error.name !== 'AbortError') {
+                    console.warn('Error notifying backend of onboarding:', error);
+                }
+            });
 
-        if (!res.ok) {
-            console.warn('Failed to notify backend of onboarding completion:', res.status);
-        }
+        await Promise.race([
+            completionRequest,
+            new Promise((resolve) => window.setTimeout(resolve, ONBOARDING_NOTIFY_HEADSTART_MS))
+        ]);
     } catch (error) {
         if (error.name !== 'AbortError') {
             console.warn('Error notifying backend of onboarding:', error);
