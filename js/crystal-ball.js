@@ -5,6 +5,7 @@
 
 let questionHistory = [];
 const COOLDOWN_SECONDS = 10;
+const CRYSTAL_DAILY_LIMIT = 3;
 
 document.addEventListener('DOMContentLoaded', () => {
     initCrystalBall();
@@ -31,6 +32,28 @@ function initCrystalBall() {
         pricingUrl.searchParams.set('source', source);
         pricingUrl.searchParams.set('feature', 'kristalova_koule');
         return `${pricingUrl.pathname}${pricingUrl.search}`;
+    }
+
+    function getDailyUsageKey() {
+        return `mh_daily_crystal_${new Date().toDateString()}`;
+    }
+
+    function getLocalDailyUsage() {
+        const parsed = Number.parseInt(localStorage.getItem(getDailyUsageKey()) || '0', 10);
+        return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
+    }
+
+    function updateFreemiumCounter() {
+        const countEl = document.getElementById('freemium-count');
+        if (!countEl) return;
+
+        const remaining = Math.max(0, CRYSTAL_DAILY_LIMIT - getLocalDailyUsage());
+        countEl.textContent = `${remaining} / ${CRYSTAL_DAILY_LIMIT}`;
+    }
+
+    function incrementLocalDailyUsage() {
+        localStorage.setItem(getDailyUsageKey(), String(getLocalDailyUsage() + 1));
+        updateFreemiumCounter();
     }
 
     function startCrystalCheckout(source, authMode = 'register') {
@@ -99,13 +122,15 @@ function initCrystalBall() {
 
     // Initial check
     updateCooldownUI();
+    updateFreemiumCounter();
 
     // Function to ask the oracle
     async function askOracle(question) {
-        // Restriction: Must be logged in
-        if (!window.Auth || !window.Auth.isLoggedIn()) {
-            window.Auth?.showToast?.('Přihlášení vyžadováno', 'Pro radu od křišťálové koule se prosím přihlaste.', 'info');
-            startCrystalCheckout('crystal_ball_auth_gate', 'login');
+        const isLoggedIn = Boolean(window.Auth?.isLoggedIn?.());
+
+        if (!isLoggedIn && getLocalDailyUsage() >= CRYSTAL_DAILY_LIMIT) {
+            window.Auth?.showToast?.('Limit dosažen', 'Dnešní ukázky zdarma jsou vyčerpané. Pro neomezené odpovědi pokračuj na Premium.', 'info');
+            startCrystalCheckout('crystal_ball_limit_gate', 'register');
             return;
         }
 
@@ -155,11 +180,22 @@ function initCrystalBall() {
 
             if (data.success) {
                 questionHistory.push(question.trim());
+                if (!isLoggedIn) {
+                    incrementLocalDailyUsage();
+                } else {
+                    updateFreemiumCounter();
+                }
                 if (answerContainer) answerContainer.classList.add('visible');
                 if (answerText) await typewriterEffect(answerText, data.response);
+                window.MH_ANALYTICS?.trackAction?.('crystal_ball_answer_viewed', {
+                    feature: 'kristalova_koule',
+                    source: new URLSearchParams(window.location.search).get('source') || 'crystal_ball_question',
+                    auth_state: isLoggedIn ? 'logged_in' : 'anonymous',
+                    question_length: question.trim().length
+                });
 
                 // Save to history if logged in
-                if (window.Auth && window.Auth.saveReading) {
+                if (isLoggedIn && window.Auth?.saveReading) {
                     const saveResult = await window.Auth.saveReading('crystal-ball', {
                         question: question.trim(),
                         answer: data.response

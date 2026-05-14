@@ -270,6 +270,76 @@ test.describe('Křišťálová koule', () => {
         expect(headText).not.toContain('předpověď');
     });
 
+    test('odhlaseny navstevnik dostane odpoved pred signupem', async ({ page }) => {
+        await page.route('**/api/crystal-ball', async route => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true, response: 'Symbolická odpověď pro první hodnotu.' })
+            });
+        });
+
+        await page.addInitScript(() => {
+            Object.keys(localStorage)
+                .filter(key => key.startsWith('mh_daily_crystal_') || key === 'crystalBall_lastUsage')
+                .forEach(key => localStorage.removeItem(key));
+        });
+
+        await page.goto('/kristalova-koule.html?source=e2e_crystal_value_first&feature=kristalova_koule');
+        await waitForPageReady(page);
+        await page.locator('#question-input').fill('Co mám dnes udělat jako první krok?');
+        await page.locator('#ask-btn').click();
+
+        await expect(page.locator('#answer-container')).toHaveClass(/visible/, { timeout: 5000 });
+        await expect(page.locator('#answer-text')).toContainText('Symbolická odpověď');
+        await expect(page.locator('#freemium-count')).toContainText('2 / 3');
+        expect(page.url()).toContain('/kristalova-koule.html');
+        expect(page.url()).not.toContain('/prihlaseni.html');
+        expect(page.url()).not.toContain('/cenik.html');
+    });
+
+    test('odhlaseny limit po trech odpovedich smeruje do upgrade flow bez API volani', async ({ page }) => {
+        let apiCalled = false;
+        await page.route('**/api/crystal-ball', async route => {
+            apiCalled = true;
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true, response: 'Nemelo by se volat.' })
+            });
+        });
+
+        await page.addInitScript(() => {
+            localStorage.setItem(`mh_daily_crystal_${new Date().toDateString()}`, '3');
+            localStorage.removeItem('crystalBall_lastUsage');
+        });
+
+        await page.goto('/kristalova-koule.html?source=e2e_crystal_limit&feature=kristalova_koule');
+        await waitForPageReady(page);
+        await page.evaluate(() => {
+            window.__crystalCheckoutPayloads = [];
+            window.Auth = {
+                isLoggedIn: () => false,
+                isPremium: () => false,
+                showToast: () => {},
+                startPlanCheckout: (planId, context) => window.__crystalCheckoutPayloads.push({ planId, context })
+            };
+        });
+        await page.locator('#question-input').fill('Můžu se zeptat počtvrté?');
+        await page.locator('#ask-btn').click();
+
+        await expect.poll(() => page.evaluate(() => window.__crystalCheckoutPayloads.length)).toBe(1);
+        expect(apiCalled).toBe(false);
+        const payload = await page.evaluate(() => window.__crystalCheckoutPayloads[0]);
+        expect(payload).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            context: expect.objectContaining({
+                source: 'crystal_ball_limit_gate',
+                feature: 'kristalova_koule'
+            })
+        }));
+    });
+
     // API test — bez AI klíče vrátí chybu, ale CSRF musí být vyžadováno
     test('POST /api/crystal-ball bez CSRF vrátí 403', async ({ page }) => {
         const res = await page.request.post('/api/crystal-ball', {
