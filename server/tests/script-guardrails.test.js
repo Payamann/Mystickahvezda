@@ -236,7 +236,11 @@ describe('manual script guardrails', () => {
         expect(serverSource).toContain("child.on('error'");
         expect(serverSource).toContain("child.stdout?.on('data'");
         expect(serverSource).toContain("alertBackgroundJobFailure('social_agent_failed'");
+        expect(serverSource).toContain('function runBackgroundTask(label, task, metadata = {})');
+        expect(serverSource).toContain("runBackgroundTask('horoscope_prefill'");
+        expect(serverSource).toContain("runBackgroundTask('daily_horoscope_startup_catchup'");
         expect(serverSource).toContain("process.platform === 'win32' ? 'python' : 'python3'");
+        expect(serverSource).not.toMatch(/schedule\.scheduleJob\([^;\n]*async/);
 
         expect(emailQueueSource).toContain("processEmailQueue().catch(err =>");
         expect(emailQueueSource).toContain('[JOB] Error on scheduled email queue run:');

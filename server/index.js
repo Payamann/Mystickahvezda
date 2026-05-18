@@ -147,6 +147,18 @@ function alertBackgroundJobFailure(type, summary, error, metadata = {}) {
     }).catch(() => {});
 }
 
+function runBackgroundTask(label, task, metadata = {}) {
+    Promise.resolve()
+        .then(task)
+        .catch((error) => {
+            console.error(`[JOBS] ${label} failed:`, error);
+            alertBackgroundJobFailure('background_job_failed', `${label} failed`, error, {
+                job: label,
+                ...metadata
+            });
+        });
+}
+
 async function runDailyHoroscopeJob(reason = 'scheduled') {
     if (dailyHoroscopeJobRunning) {
         console.warn(`[CRON] Daily horoscope skipped (${reason}) because a run is already active.`);
@@ -161,6 +173,28 @@ async function runDailyHoroscopeJob(reason = 'scheduled') {
         console.error(`[CRON] Daily horoscope failed (${reason}):`, e.message);
     } finally {
         dailyHoroscopeJobRunning = false;
+    }
+}
+
+async function prefillHoroscopeCache() {
+    const signs = ['beran', 'byk', 'blizenci', 'rak', 'lev', 'panna', 'vahy', 'stir', 'strelec', 'kozoroh', 'vodnar', 'ryby'];
+    const dates = [0, 1, 2].map(offset => {
+        const d = new Date();
+        d.setUTCDate(d.getUTCDate() + offset);
+        return d.toISOString().split('T')[0];
+    });
+
+    console.log(`[CRON] Prefilling horoscope cache for: ${dates.join(', ')}...`);
+    for (const date of dates) {
+        for (const sign of signs) {
+            try {
+                await fetch(`https://www.mystickahvezda.cz/horoskop/${sign}/${date}`);
+            } catch (e) {
+                console.error(`[CRON] Prefill failed for ${sign}/${date}: ${e.message}`);
+            }
+            await new Promise(r => setTimeout(r, 1000));
+        }
+        console.log(`[CRON] Prefill done for ${date}.`);
     }
 }
 
@@ -964,12 +998,12 @@ if (isMain || isProductionRuntime()) {
             // 1. Generate new content daily (08:00 UTC)
             if (shouldRunSocialAgentScheduler() && process.env.ANTHROPIC_API_KEY) {
                 schedule.scheduleJob('0 8 * * *', () => {
-                    runSocialAgent('auto');
+                    runBackgroundTask('social_agent_auto', () => runSocialAgent('auto'), { action: 'auto' });
                 });
 
                 // 2. Sync comments and auto-reply every 6 hours
                 schedule.scheduleJob('0 */6 * * *', () => {
-                    runSocialAgent('sync');
+                    runBackgroundTask('social_agent_sync', () => runSocialAgent('sync'), { action: 'sync' });
                 });
 
                 console.warn('📅 Social Media Agent schedules initialized.');
@@ -981,25 +1015,8 @@ if (isMain || isProductionRuntime()) {
 
             // Prefill horoscope cache — every day at 05:00 UTC (6:00 CET)
             // Hits all 12 sign URLs; Claude generates and saves to the production cache.
-            schedule.scheduleJob('0 5 * * *', async () => {
-                const signs = ['beran','byk','blizenci','rak','lev','panna','vahy','stir','strelec','kozoroh','vodnar','ryby'];
-                const dates = [0, 1, 2].map(offset => {
-                    const d = new Date();
-                    d.setUTCDate(d.getUTCDate() + offset);
-                    return d.toISOString().split('T')[0];
-                });
-                console.log(`[CRON] Prefilling horoscope cache for: ${dates.join(', ')}...`);
-                for (const date of dates) {
-                    for (const sign of signs) {
-                        try {
-                            await fetch(`https://www.mystickahvezda.cz/horoskop/${sign}/${date}`);
-                        } catch (e) {
-                            console.error(`[CRON] Prefill failed for ${sign}/${date}: ${e.message}`);
-                        }
-                        await new Promise(r => setTimeout(r, 1000));
-                    }
-                    console.log(`[CRON] Prefill done for ${date}.`);
-                }
+            schedule.scheduleJob('0 5 * * *', () => {
+                runBackgroundTask('horoscope_prefill', prefillHoroscopeCache);
             });
             console.warn('📅 Horoscope prefill cron scheduled (05:00 UTC).');
         } else {
@@ -1008,15 +1025,23 @@ if (isMain || isProductionRuntime()) {
 
         if (shouldRunDailyHoroscopeEmails()) {
             // Daily horoscope emails — every day at 07:00 UTC, with catch-up after restarts.
-            schedule.scheduleJob('0 7 * * *', () => runDailyHoroscopeJob('scheduled_07_utc'));
+            schedule.scheduleJob('0 7 * * *', () => {
+                runBackgroundTask('daily_horoscope_scheduled_07_utc', () => runDailyHoroscopeJob('scheduled_07_utc'), {
+                    reason: 'scheduled_07_utc'
+                });
+            });
             schedule.scheduleJob('20 * * * *', () => {
                 if (isAfterDailyHoroscopeSendWindow()) {
-                    runDailyHoroscopeJob('hourly_catchup');
+                    runBackgroundTask('daily_horoscope_hourly_catchup', () => runDailyHoroscopeJob('hourly_catchup'), {
+                        reason: 'hourly_catchup'
+                    });
                 }
             });
             setTimeout(() => {
                 if (isAfterDailyHoroscopeSendWindow()) {
-                    runDailyHoroscopeJob('startup_catchup');
+                    runBackgroundTask('daily_horoscope_startup_catchup', () => runDailyHoroscopeJob('startup_catchup'), {
+                        reason: 'startup_catchup'
+                    });
                 }
             }, 5000);
             console.warn('📅 Daily horoscope cron scheduled (07:00 UTC + startup/hourly catch-up).');
