@@ -148,6 +148,26 @@ describe('💳 Stripe Webhook Tests', () => {
 
             expect(res.status).toBe(400);
         });
+
+        test('Webhook request on apex host bypasses canonical redirect middleware', async () => {
+            const payload = JSON.stringify({
+                id: `evt_apex_webhook_${Date.now()}`,
+                type: 'unknown.test.event',
+                data: { object: {} },
+                livemode: false
+            });
+            const sigHeader = computeStripeSignature(payload, TEST_WEBHOOK_SECRET);
+
+            const res = await request(app)
+                .post(WEBHOOK_URL)
+                .set('Host', 'mystickahvezda.cz')
+                .set('Content-Type', 'application/json')
+                .set('stripe-signature', sigHeader)
+                .send(payload);
+
+            expect(res.status).not.toBe(308);
+            expect([200, 400]).toContain(res.status);
+        });
     });
 
     // ============================================

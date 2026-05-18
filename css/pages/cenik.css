@@ -561,3 +561,140 @@ body.page-pricing #cookie-accept {
         margin-top: 12.5rem;
     }
 }
+
+/* UI audit refinements: show plans before helper questions and reduce mobile depth. */
+body.page-pricing #main-content {
+    display: flex;
+    flex-direction: column;
+}
+
+body.page-pricing #main-content > section {
+    order: 10;
+}
+
+body.page-pricing #main-content > .section--hero {
+    order: 1;
+}
+
+body.page-pricing #main-content > .mh-inline-cc8b54ce84 {
+    order: 2;
+}
+
+body.page-pricing #main-content > .mh-inline-bbf01b1a87 {
+    order: 3;
+}
+
+body.page-pricing #main-content > .pricing-decision {
+    order: 4;
+}
+
+body.page-pricing .card--pricing,
+body.page-pricing .pricing-decision__option,
+body.page-pricing .pricing-checkout-assurance > div,
+body.page-pricing .pricing-first-week,
+body.page-pricing .pricing-addon,
+body.page-pricing .comparison-mobile__card {
+    background-color: rgba(8, 8, 24, 0.72);
+}
+
+body.page-pricing .pricing-decision {
+    padding-top: 1.25rem;
+}
+
+body.page-pricing .pricing-decision__grid {
+    gap: 0.7rem;
+}
+
+body.page-pricing .pricing-decision__option {
+    min-height: 112px;
+    padding: 0.9rem;
+}
+
+body.page-pricing .cookie-banner {
+    left: 50% !important;
+    right: auto !important;
+    bottom: 14px;
+    width: min(640px, calc(100vw - 32px));
+    max-width: 640px !important;
+}
+
+@media (max-width: 680px) {
+    html body .mh-inline-fd21170680 {
+        padding-top: 5.6rem;
+        padding-bottom: 1.15rem;
+    }
+
+    html body .mh-inline-44e3a01151 {
+        max-width: 10.5ch;
+        margin: 0.4rem auto 0.75rem;
+        font-size: clamp(2.05rem, 11vw, 2.75rem);
+        line-height: 1.05;
+        letter-spacing: 0;
+    }
+
+    html body .mh-inline-9536a1e4b5 {
+        max-width: 22rem;
+        font-size: 1rem;
+        line-height: 1.45;
+    }
+
+    .hero__trust-badge {
+        margin-top: 0.9rem;
+        padding: 0.45rem 0.72rem;
+        font-size: 0.72rem;
+    }
+
+    body.page-pricing .mh-inline-cc8b54ce84 {
+        padding-bottom: 1rem;
+    }
+
+    body.page-pricing .pricing-grid {
+        gap: 0.9rem;
+    }
+
+    body.page-pricing .card--pricing {
+        padding: 1.15rem !important;
+        border-radius: 16px;
+    }
+
+    body.page-pricing .price-amount {
+        font-size: 2.55rem !important;
+    }
+
+    body.page-pricing .card--pricing .card__features li {
+        font-size: 0.92rem;
+        line-height: 1.45;
+    }
+
+    body.page-pricing .pricing-decision {
+        margin-top: 0 !important;
+        padding: 1.5rem 0 1rem;
+    }
+
+    body.page-pricing .pricing-decision__header h2 {
+        font-size: 1.5rem;
+    }
+
+    body.page-pricing .pricing-decision__header p {
+        font-size: 0.92rem;
+        line-height: 1.45;
+    }
+
+    body.page-pricing .pricing-decision__option {
+        min-height: 0;
+        padding: 0.85rem 0.95rem;
+    }
+
+    body.page-pricing .pricing-decision__option span:last-child {
+        font-size: 0.82rem;
+        line-height: 1.4;
+    }
+
+    body.page-pricing .cookie-banner {
+        left: 12px !important;
+        right: 12px !important;
+        bottom: 8px;
+        width: auto;
+        max-width: none !important;
+    }
+}

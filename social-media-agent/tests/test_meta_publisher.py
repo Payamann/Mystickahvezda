@@ -79,6 +79,24 @@ class TestFacebookPublish:
         result = publisher.publish_to_facebook("Caption", image_path=test_image)
         assert result["success"] is True
 
+    @patch("meta_publisher.requests.post")
+    def test_comment_success(self, mock_post, publisher):
+        mock_post.return_value = MagicMock(
+            json=lambda: {"id": "comment_123"}
+        )
+        result = publisher.comment_on_facebook_object("post_123", "Link")
+        assert result["success"] is True
+        assert result["comment_id"] == "comment_123"
+
+    @patch("meta_publisher.requests.post")
+    def test_comment_error(self, mock_post, publisher):
+        mock_post.return_value = MagicMock(
+            json=lambda: {"error": {"message": "Permission denied"}}
+        )
+        result = publisher.comment_on_facebook_object("post_123", "Link")
+        assert result["success"] is False
+        assert "Permission denied" in result["error"]
+
 
 class TestInstagramPublish:
     """Testy Instagram publishing flow"""

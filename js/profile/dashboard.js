@@ -26,6 +26,7 @@ const SIGNUP_INTENT_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
 let ritualMemoryViewTracked = false;
 let dailyGuidanceViewTracked = false;
 let activationChecklistViewTracked = false;
+let activePaymentReturnContext = null;
 
 function trackProfileEvent(eventName, payload = {}, attemptsLeft = 12) {
     if (window.MH_ANALYTICS?.trackEvent) {
@@ -422,6 +423,7 @@ function handlePaymentReturnState() {
         );
     }
 
+    activePaymentReturnContext = paymentContext;
     history.replaceState({}, document.title, sanitizeProfileUrl(window.location.href));
     return paymentContext;
 }
@@ -1455,7 +1457,7 @@ async function initProfile() {
         loadSubscriptionStatus()
     ]);
 
-    const paymentReturnContext = handlePaymentReturnState();
+    const paymentReturnContext = handlePaymentReturnState() || activePaymentReturnContext;
     renderPremiumActivation(subscription, user, paymentReturnContext);
     renderDailyGuidance(user, readings, subscription);
     renderActivationChecklist(user, readings, subscription);

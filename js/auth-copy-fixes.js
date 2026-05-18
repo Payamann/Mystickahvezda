@@ -106,12 +106,20 @@
             if (!original) return;
             window.Auth[methodName] = (...args) => {
                 const result = original(...args);
-                after();
+                after(...args);
                 return result;
             };
         };
 
-        wrap('openModal', patchModalTexts);
+        wrap('openModal', (mode) => {
+            patchModalTexts();
+
+            if (mode === 'register') {
+                setText('#auth-title', 'Registrace');
+                setText('#auth-submit', 'Zaregistrovat');
+                setText('#auth-mode-toggle', 'Již máte účet? Přihlaste se');
+            }
+        });
         wrap('openForgotPassword', () => {
             setText('#auth-title', 'Obnovení hesla');
             setText('#auth-submit', 'Odeslat odkaz');

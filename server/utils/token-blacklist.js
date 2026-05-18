@@ -87,7 +87,7 @@ export async function isTokenBlacklisted(token) {
                 .select('*', { count: 'exact', head: true })
                 .eq('user_id', decoded.id)
                 .eq('reason', 'password_change')
-                .gt('created_at', tokenIssuedAt.toISOString());
+                .gte('created_at', tokenIssuedAt.toISOString());
 
             if (userWideError) {
                 console.error('[BLACKLIST] User-wide query error:', userWideError);
@@ -110,8 +110,6 @@ export async function isTokenBlacklisted(token) {
 export async function blacklistAllUserTokens(userId) {
     try {
         if (!userId) return;
-
-        const now = new Date();
 
         // Insert a record that invalidates all previous tokens for this user
         const { error } = await supabase

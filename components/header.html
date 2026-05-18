@@ -8,14 +8,14 @@
             </a>
 
             <!-- Hamburger OUTSIDE of nav so it's visible on mobile -->
-            <button class="nav__toggle" aria-label="Menu" aria-expanded="false">
+            <button class="nav__toggle" type="button" aria-label="Otevřít hlavní menu" aria-expanded="false" aria-controls="primary-navigation">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
 
-            <nav class="nav">
-                <ul class="nav__list">
+            <nav class="nav" aria-label="Hlavní navigace">
+                <ul class="nav__list" id="primary-navigation">
                     <li class="nav__item"><a href="/index.html" class="nav__link">Domů</a></li>
 
                     <li class="nav__item nav__item--has-dropdown">

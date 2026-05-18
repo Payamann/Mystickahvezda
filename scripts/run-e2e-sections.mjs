@@ -4,6 +4,16 @@ import path from 'node:path';
 
 const sections = [
     {
+        name: 'smoke',
+        label: 'Conversion smoke',
+        defaultWorkers: 1,
+        defaultTimeout: 60_000,
+        defaultGlobalTimeout: 420_000,
+        files: [
+            'tests/e2e/conversion-smoke.spec.js',
+        ],
+    },
+    {
         name: 'api',
         label: 'API endpoints',
         defaultWorkers: 2,
@@ -242,6 +252,10 @@ function getExplicitWorkerCount(args) {
     return null;
 }
 
+function hasExplicitOption(args, optionName) {
+    return args.some((arg) => arg === optionName || arg.startsWith(`${optionName}=`));
+}
+
 const results = [];
 
 for (const section of requestedSections) {
@@ -251,6 +265,12 @@ for (const section of requestedSections) {
     const defaultWorkerArgs = explicitWorkerCount === null && section.defaultWorkers
         ? [`--workers=${section.defaultWorkers}`]
         : [];
+    const defaultTimeoutArgs = section.defaultTimeout && !hasExplicitOption(passthroughArgs, '--timeout')
+        ? [`--timeout=${section.defaultTimeout}`]
+        : [];
+    const defaultGlobalTimeoutArgs = section.defaultGlobalTimeout && !hasExplicitOption(passthroughArgs, '--global-timeout')
+        ? [`--global-timeout=${section.defaultGlobalTimeout}`]
+        : [];
 
     console.log('');
     console.log(`=== E2E section: ${section.name} (${section.label}) | ${projectLabel} ===`);
@@ -258,6 +278,9 @@ for (const section of requestedSections) {
         console.log(`[e2e] Using stable default for ${section.name}: ${defaultWorkerArgs[0]}`);
     } else if (section.defaultWorkers && explicitWorkerCount > section.defaultWorkers) {
         console.warn(`[e2e] ${section.name} is auth-heavy and is most stable with --workers=${section.defaultWorkers}.`);
+    }
+    for (const timeoutArg of [...defaultTimeoutArgs, ...defaultGlobalTimeoutArgs]) {
+        console.log(`[e2e] Using stable default for ${section.name}: ${timeoutArg}`);
     }
 
     const commandArgs = [
@@ -267,6 +290,8 @@ for (const section of requestedSections) {
         ...(project ? [`--project=${project}`] : []),
         ...reporterArgs,
         ...defaultWorkerArgs,
+        ...defaultTimeoutArgs,
+        ...defaultGlobalTimeoutArgs,
         ...passthroughArgs,
     ];
 

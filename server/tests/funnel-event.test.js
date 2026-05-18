@@ -59,6 +59,25 @@ describe('Public funnel event endpoint', () => {
 
     test('accepts pricing recovery events with original funnel context', async () => {
         const csrfToken = await getCsrfToken();
+        const returnRes = await request(app)
+            .post('/api/payment/funnel-event')
+            .set('x-csrf-token', csrfToken)
+            .send({
+                eventName: 'checkout_returned_failure',
+                source: 'inline_paywall',
+                feature: 'numerologie_vyklad',
+                planId: 'pruvodce',
+                metadata: {
+                    path: '/cenik.html',
+                    payment_state: 'failure',
+                    reason: 'session_failed',
+                    recovery: true
+                }
+            });
+
+        expect(returnRes.status).toBe(200);
+        expect(returnRes.body.success).toBe(true);
+
         const res = await request(app)
             .post('/api/payment/funnel-event')
             .set('x-csrf-token', csrfToken)
@@ -110,6 +129,28 @@ describe('Public funnel event endpoint', () => {
                     requires_auth: true,
                     billing_interval: 'monthly',
                     destination: '/prihlaseni.html'
+                }
+            });
+
+        expect(res.status).toBe(200);
+        expect(res.body.success).toBe(true);
+    });
+
+    test('accepts checkout auth requirement events before registration', async () => {
+        const csrfToken = await getCsrfToken();
+        const res = await request(app)
+            .post('/api/payment/funnel-event')
+            .set('x-csrf-token', csrfToken)
+            .send({
+                eventName: 'checkout_auth_required',
+                source: 'trial_paywall',
+                feature: 'numerologie_vyklad',
+                planId: 'pruvodce',
+                metadata: {
+                    path: '/numerologie.html',
+                    redirect: '/cenik.html',
+                    auth_mode: 'register',
+                    billing_interval: 'monthly'
                 }
             });
 

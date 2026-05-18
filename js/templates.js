@@ -239,11 +239,12 @@ class Templates {
                 <p class="auth-modal__help-text">Zadejte svůj email a pošleme vám odkaz pro obnovení hesla.</p>
             </div>
 
-            <!-- Optional Register Fields (Moved to onboarding) -->
+            <!-- Optional profile fields. Keep birth data clearly explained and non-blocking. -->
             <div id="register-fields" class="auth-modal__field" hidden>
                 <div class="auth-modal__field">
                     <label class="auth-modal__label">Datum narození</label>
-                    <input class="auth-modal__input" type="date" name="birth_date">
+                    <input class="auth-modal__input" type="date" name="birth_date" autocomplete="bday" aria-describedby="birth-date-privacy-note">
+                    <p id="birth-date-privacy-note" class="auth-modal__help-text">Nepovinné. Datum použijeme jen pro osobní výklady a nastavení profilu; můžeš ho doplnit později u nástroje, který ho opravdu potřebuje.</p>
                 </div>
             </div>
 

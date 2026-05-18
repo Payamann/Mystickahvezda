@@ -456,6 +456,9 @@ test.describe('Login stránka', () => {
 
         await page.goto('/prihlaseni.html?mode=register&redirect=/cenik.html&plan=pruvodce&source=pricing_email&feature=premium_membership');
         await waitForPageReady(page);
+        await expect(page.locator('#login-page-title')).toContainText('pokračujte k odemčení');
+        await expect(page.locator('#login-page-subtitle')).toContainText('Stripe checkoutu');
+        await expect(page.locator('#auth-submit')).toContainText('Vytvořit účet a pokračovat');
 
         await Promise.all([
             page.waitForRequest((request) => request.url().includes('/profil.html?payment=success'), { timeout: 10000 }),

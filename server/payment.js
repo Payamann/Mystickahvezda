@@ -175,6 +175,7 @@ const PUBLIC_FUNNEL_EVENTS = new Set([
     'pricing_plan_cta_clicked',
     'pricing_product_cta_clicked',
     'pricing_recommendation_clicked',
+    'checkout_auth_required',
     'first_value_completed',
     'reading_feedback_submitted',
     'daily_ritual_completed',
@@ -567,7 +568,7 @@ router.get('/subscription/status', authenticateToken, async (req, res) => {
             (subscription.status === 'active' || subscription.status === 'trialing');
 
         res.json({
-            planType: subscription.plan_type || 'free',
+            planType: normalizePlanType(subscription.plan_type, subscription.plan_type || PLAN_TYPES.FREE),
             status: subscription.status || 'active',
             currentPeriodEnd: subscription.current_period_end,
             canCancel
@@ -616,6 +617,14 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
         const source = cleanFunnelValue(req.body?.source, 'direct');
         const feature = cleanFunnelValue(req.body?.feature);
         checkoutContextMetadata = buildCheckoutContextMetadata(req.body?.metadata);
+
+        await recordFunnelEvent('checkout_session_requested', {
+            userId: user.id,
+            source,
+            feature,
+            planId: cleanFunnelValue(planId),
+            metadata: checkoutContextMetadata
+        });
 
         // Validate planId - must be one of the defined plans
         const validPlanIds = Object.keys(PLANS);

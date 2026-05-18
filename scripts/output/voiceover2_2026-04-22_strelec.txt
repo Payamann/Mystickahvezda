@@ -1,51 +1,62 @@
-VOICEOVER SCRIPT
-============================================================
+# daily_reel2.py - 2026-04-22
+
+- **Znamení:** Střelec
+- **Kvalita:** standard
+- **QA:** ok
+- **API calls:** 0
+- **API účely:** -
+- **Modely:** -
+
+## QA
+
+- Voiceover words: 84
+- Hook words: 8
+- Hook: Střelče, únava dnes není slabost. Je to odpověď.
+
+Bez nalezených deterministických problémů.
+
+## Voiceover
+
+```text
 🗓️ 22. dubna 2026
 
-[intense] Střelče, pořád makáš. <break time="0.5s" /> [warm] A zapomínáš, proč jsi začínal. <break time="1.0s" />
+[confident] Střelče, únava dnes není slabost. <break time="0.5s" /> [warm] Je to odpověď. <break time="1.0s" />
 
-[confident] Tento týden zastavíš něco, do čeho jsi dal měsíce. <break time="0.3s" /> [upbeat] Saturn ti ukáže, co opravdu stojí za tvůj čas — a zbytek pustíš.
+[upbeat] Jdeš do další věci, protože nadšení umí otevřít dveře. <break time="0.3s" /> [serious] Jenže tělo už stojí ve dveřích a nepouští tě dál. <break time="0.3s" /> [warm] Slunce v Býku zpomaluje tempo a Saturn v Beranu připomíná, že expanze bez hranic přestane být svoboda. <break time="0.3s" /> [confident] Dnes nejde o to mít méně ohně. Jde o to neplýtvat jím tam, kde už není směr. <break time="1.0s" />
 
-[intense] Únava, kterou cítíš, není slabost — je to odpověď. <break time="1.0s" />
+[inviting] Střelče — co dnes potřebuje hranici: plán, vztah, nebo tvoje energie? Napiš A, B nebo C. <break time="0.3s" /> [clearly] Ulož si to, než zaměníš únavu za selhání.
+```
 
-[inviting] Co dnes chceš opustit? Napiš to ⬇️ <break time="0.3s" /> [clearly] Příště: které znamení tohle nezvládá vůbec.
+## TikTok / Instagram Description
 
-TIKTOK / INSTAGRAM DESCRIPTION
-============================================================
-22. dubna 2026 platí pro Střelce jedno tvrdé pravidlo Jupitera: expanze bez hranic přestane být darem a stane se zátěží 🎯
-Saturn jako aktuální lektor tvého vládnoucího Jupitera tě nebrzdí ze msty — testuje, které projekty mají skutečnou strukturu a které stojí jen na nadšení.
-Sleduj profil — příště odhalím, které znamení tento tlak nezvládá vůbec 🔥
+```text
+Střelče, 22. dubna 2026 není únava slabost. Slunce v Býku zpomaluje tempo a Saturn v Beranu připomíná, že expanze bez hranic přestane být svoboda. Dnes nejde o méně ohně. Jde o lepší směr.
 
-#mystickaHvezda #Střelec #horoskop #fyp
+#mystickaHvezda #Střelec #dennihoroskop #astrologie #horoskop
+```
 
-FACEBOOK REELS DESCRIPTION
-============================================================
-22. dubna 2026 je den, kdy přestat není vzdát se. 🎯 Saturn teď prosévá tvůj Jupiter a hledá, které projekty mají skutečnou strukturu a které drží pohromadě jen nadšení. Únava, kterou teď cítíš, je odpověď tvého těla na otázku, do čeho stojí za to dál investovat čas a energii. ✨ Co dnes chceš pustit? Napiš to do komentářů a celý výklad najdeš na mystickahvezda.cz/horoskopy.html 🔥
+## Facebook Reels Description
+
+```text
+Střelče, 22. dubna 2026 si všimni, kde už nejde o odvahu, ale o únik do další věci. Slunce v Býku zpomaluje tempo a Saturn v Beranu připomíná, že i svoboda potřebuje hranici, jinak začne pálit energii bez směru. Vlastní výklad pro svoje znamení najdeš na mystickahvezda.cz/horoskopy.html ✨
 
 #mystickaHvezda #Střelec #horoskop #astrologie #dennihoroskop #mystika
+```
 
-SUNO PROMPT
-============================================================
-Warm orchestral background with adventurous strings weaving gentle forward momentum and an open horn melody carrying bright, hopeful phrases across a golden major key landscape. Soft rhythmic pulse drives the energy like a sunrise in motion, evoking light spreading across a wide horizon with a nebula glow of optimism and freedom. Supportive texture designed to breathe naturally under a voiceover, present and uplifting without overpowering. Short instrumental, 60-90 seconds, loop-ready.
+## Suno Prompt
 
-THUMBNAIL PROMPT (Nano Banana)
-============================================================
+```text
+Warm adventurous cinematic ambient under a spoken Czech voiceover, open piano chords, soft hand percussion, subtle brass shimmer, golden horizon mood, Sagittarius freedom with grounded restraint and room for narration. Short instrumental, 60-90 seconds, loop-ready, no vocals.
+```
+
+## Thumbnail Prompt
+
+```text
 A mystical video thumbnail for zodiac sign Sagittarius.
 
-BACKGROUND: deep dark space with soft subtle expansive turquoise and royal purple nebula with golden arrow-light streaks, deep violet cosmic horizon with teal aurora and warm gold bursts, wide open cosmic vista — adventurous, expansive, philosophical — gentle and atmospheric, NOT aggressive. Rich dense star field with thousands of tiny stars. Dark and deep — moody and calm, serving as a backdrop without competing with the foreground. Deep navy and dark indigo tones dominate. NO harsh lightning, NO aggressive neon.
+BACKGROUND: deep dark cosmic space with turquoise, royal purple, gold, and velvet navy nebula, premium mystical atmosphere, dense star field, wide horizon glow.
 
-COMPOSITION: Three elements stacked as one tight unified group, vertically centered in the image. The group fills roughly 80% of the image height. Minimal gap between elements — they feel like one connected unit.
+COMPOSITION: ornate golden Sagittarius glyph centered at the top, a dark stone plaque below with elegant gold text: "22. dubna" and "STŘELEC". Under it, compact parchment scroll with bold readable serif text: "Únava není slabost." and "Je to odpověď."
 
-ELEMENT 1 — glyph: large ornate Sagittarius symbol (♐) in solid gold — rich champagne gold with deep amber shadows — surface of each stroke covered in intricate engraved filigree scrollwork and decorative patterns. Beveled polished 3D edges catching light. Small ornamental flourishes where strokes meet. Clear 3D depth and volume. Premium, ancient — NOT plain, NOT flat, NOT simple geometry.
-
-ELEMENT 2 — immediately below, small gap: dark stone plaque with ornate gold border frame. '22. dubna' in elegant gold lettering on the first line, 'STŘELEC' in bold engraved gold capitals on the second line.
-
-ELEMENT 3 — immediately below, small gap: compact parchment scroll, aged honey color. Bold serif text in dark brown (#2a1500), NOT cursive, NOT italic: 'Makáš dál, ale zapomínáš proč.' on the first line, 'Únava ti říká, co pustit.' on the second line.
-
-NO zodiac wheel. NO star icons. NO logos. NO borders. NO corner decorations. NO animals. NO human figures. Bottom corners completely clean.
-
-Portrait 9:16.
-
-CAPTIONS PŘÍKAZ
-============================================================
-python "C:/Users/pavel/OneDrive/Desktop/captions-tool/captions.py" "VIDEO.mp4" --model small --text "Střelče, pořád makáš. A zapomínáš, proč jsi začínal. Tento týden zastavíš něco, do čeho jsi dal měsíce. Saturn ti ukáže, co opravdu stojí za tvůj čas — a zbytek pustíš. Únava, kterou cítíš, není slabost — je to odpověď. Co dnes chceš opustit? Napiš to ⬇️ Příště: které znamení tohle nezvládá vůbec."
+STYLE: premium 3D CGI, engraved gold, soft rim light, high contrast, clean bottom corners, no people, no logos, no extra icons, portrait 9:16.
+```

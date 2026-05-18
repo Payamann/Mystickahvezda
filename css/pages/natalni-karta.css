@@ -524,3 +524,67 @@ html body .mh-inline-e8965e1cb8 { margin: 0; color: var(--color-mystic-gold); }
 .content-fade-enter-active {
     opacity: 1;
 }
+
+/* UI audit refinements: shorter mobile path to the form and stronger readability. */
+body.page-natal .card {
+    background-color: rgba(8, 8, 24, 0.76);
+}
+
+body.page-natal .natal-chart-container {
+    max-width: 520px;
+}
+
+@media (max-width: 760px) {
+    body.page-natal .mh-inline-8318922717 {
+        gap: 1.35rem;
+    }
+}
+
+@media (max-width: 520px) {
+    body.page-natal .hero--compact {
+        padding-top: 5.4rem;
+        padding-bottom: 0.8rem;
+    }
+
+    body.page-natal .hero__title {
+        max-width: 11ch;
+        font-size: 2.2rem;
+        line-height: 1.05;
+        letter-spacing: 0;
+    }
+
+    body.page-natal .hero__subtitle {
+        max-width: 22rem;
+        font-size: 1.02rem;
+        line-height: 1.42;
+    }
+
+    body.page-natal .card {
+        padding: 1.05rem 0.9rem 1.1rem;
+        background-color: rgba(8, 8, 24, 0.82);
+    }
+
+    body.page-natal .card__title {
+        font-size: 1.4rem;
+    }
+
+    body.page-natal .email-form__input {
+        font-size: 0.96rem;
+    }
+
+    body.page-natal .natal-chart-container {
+        width: 100%;
+        max-width: 380px;
+        margin-left: auto;
+        margin-right: auto;
+        transform: none;
+    }
+
+    body.page-natal .cookie-banner {
+        left: 12px !important;
+        right: 12px !important;
+        bottom: 8px;
+        width: auto;
+        max-width: none !important;
+    }
+}

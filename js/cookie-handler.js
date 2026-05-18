@@ -27,7 +27,7 @@
 
         var prefs = getPreferences();
         var saveBtn = document.getElementById('cookie-save');
-        var expanded = preferencesOpen || !isCompactViewport();
+        var expanded = preferencesOpen;
 
         b.classList.toggle('cookie-banner--expanded', expanded);
         if (prefs) {
@@ -143,7 +143,7 @@
         if (sv && !sv.dataset.mhBound) {
             sv.dataset.mhBound = '1';
             sv.addEventListener('click', function () {
-                if (isCompactViewport() && !preferencesOpen) {
+                if (!preferencesOpen) {
                     preferencesOpen = true;
                     syncPreferencesVisibility();
                     document.getElementById('cookie-analytics')?.focus();

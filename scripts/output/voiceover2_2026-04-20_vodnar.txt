@@ -1,48 +1,62 @@
-VOICEOVER SCRIPT
-============================================================
+# daily_reel2.py - 2026-04-20
+
+- **Znamení:** Vodnář
+- **Kvalita:** standard
+- **QA:** ok
+- **API calls:** 0
+- **API účely:** -
+- **Modely:** -
+
+## QA
+
+- Voiceover words: 65
+- Hook words: 8
+- Hook: Vodnáři, víš přesně, co chceš. A přesto čekáš.
+
+Bez nalezených deterministických problémů.
+
+## Voiceover
+
+```text
 🗓️ 20. dubna 2026
 
-[mysterious] Vodnáři, víš přesně, co chceš udělat. <break time="0.5s" /> [quiet] A přesto čekáš. <break time="1.0s" />
+[mysterious] Vodnáři, víš přesně, co chceš. <break time="0.5s" /> [soft] A přesto čekáš. <break time="1.0s" />
 
-[upbeat] Otevřeš dokument. <break time="0.3s" /> [focused] Napíšeš první větu. <break time="0.3s" /> [wry] Přečteš ji. Smažeš. Uložíš jako "draft_final_v2". <break time="0.3s" /> [warm] Uran, tvůj vládce, nečeká na perfektní plán — tlačí tě do pohybu. <break time="1.0s" />
+[confident] Otevřeš dokument. <break time="0.3s" /> [warm] Napíšeš první větu. <break time="0.3s" /> [serious] Pak ji smažeš a soubor uložíš jako další pracovní verzi. <break time="0.3s" /> [confident] Slunce vstupuje do Býka a zvedá odpor k chaosu, jenže Uran tě nevede k dokonalému plánu. Vede tě k prvnímu pohybu. <break time="1.0s" />
 
-[inviting] Jaký nápad teď odkládáš? Napiš ho dolů ⬇️ <break time="0.3s" />
-[clearly] Sleduj profil — každý den jiné znamení.
+[inviting] Vodnáři — jaký nápad dnes přestane čekat na ideální podmínky? Napiš jedno slovo. <break time="0.3s" /> [clearly] Sleduj profil, každý den jde do světla jiné znamení.
+```
 
-TIKTOK / INSTAGRAM DESCRIPTION
-============================================================
-20. dubna 2026 vstupuje Slunce do Býka — a ty jako Vodnář cítíš napětí mezi svojí vizí a touhou mít vše dokonale nachystané 🛸 Uran, tvůj vládce, nepracuje na principu dokonalého plánu — pracuje na principu odvážného prvního kroku. Jaký nápad teď odkládáš? Napiš ho ⬇️ 🔮
+## TikTok / Instagram Description
 
-#mystickaHvezda #Vodnář #horoskop #fyp
+```text
+Vodnáři, 20. dubna 2026 vstupuje Slunce do Býka a ty cítíš napětí mezi vizí a potřebou mít všechno pevné. Jenže první pohyb je dnes důležitější než další pracovní verze.
 
-FACEBOOK REELS DESCRIPTION
-============================================================
-Máš nápad, který nosíš možná týdny. Čekáš na správný čas, jasnější plán, lepší podmínky. 20. dubna vstupuje Slunce do Býka a napětí mezi tvou vodnářskou vizí a potřebou jistoty je dnes ostřejší než jindy 🛸 Uran, tvůj vládce, ale funguje jinak — jeho energie přichází skrze pohyb, ne přes dokonalé načasování. Celý výklad najdeš na mystickahvezda.cz/horoskopy.html ✨
+#mystickaHvezda #Vodnář #dennihoroskop #astrologie #horoskop
+```
+
+## Facebook Reels Description
+
+```text
+Vodnáři, 20. dubna 2026 nemusíš čekat na ideální podmínky. Slunce vstupuje do Býka a chce pevnou půdu, ale tvoje vodnářská část ví, že některé nápady ožijí až pohybem. Vlastní výklad pro svoje znamení najdeš na mystickahvezda.cz/horoskopy.html ✨
 
 #mystickaHvezda #Vodnář #horoskop #astrologie #dennihoroskop #mystika
+```
 
-SUNO PROMPT
-============================================================
-Warm energizing instrumental with gentle forward momentum, featuring electric synth pads and futuristic arpeggio creating golden sunrise textures as light spreads across distant galaxies, soft rhythmic pulse in major key with melodic phrases that breathe and uplift, present and hopeful like cosmic dawn breaking, designed to support voiceover with positive morning energy without overpowering speech. Short instrumental, 60-90 seconds, loop-ready.
+## Suno Prompt
 
-THUMBNAIL PROMPT (Nano Banana)
-============================================================
+```text
+Futuristic warm ambient under a spoken Czech voiceover, soft electric piano, subtle arpeggio, low pulse, cyan and violet synth shimmer, visionary but calm Aquarius mood, clear space for narration. Short instrumental, 60-90 seconds, loop-ready, no vocals.
+```
+
+## Thumbnail Prompt
+
+```text
 A mystical video thumbnail for zodiac sign Aquarius.
 
-BACKGROUND: deep dark space with soft subtle electric cyan and ultraviolet nebula with futuristic plasma currents, neon aqua and deep violet cosmic energy fields, electric blue lightning traces in a dark space — visionary, electric, revolutionary — gentle and atmospheric, NOT aggressive. Rich dense star field with thousands of tiny stars. Dark and deep — moody and calm, serving as a backdrop without competing with the foreground. Deep navy and dark indigo tones dominate. NO harsh lightning, NO aggressive neon.
+BACKGROUND: deep dark cosmic space with electric cyan, ultraviolet, indigo, and velvet navy nebula, premium mystical atmosphere, dense star field, quiet futuristic glow.
 
-COMPOSITION: Three elements stacked as one tight unified group, vertically centered in the image. The group fills roughly 80% of the image height. Minimal gap between elements — they feel like one connected unit.
+COMPOSITION: ornate golden Aquarius glyph centered at the top, a dark stone plaque below with elegant gold text: "20. dubna" and "VODNÁŘ". Under it, compact parchment scroll with bold readable serif text: "Víš, co chceš." and "Přesto čekáš."
 
-ELEMENT 1 — glyph: large ornate Aquarius symbol (♒) in solid gold — rich champagne gold with deep amber shadows — surface of each stroke covered in intricate engraved filigree scrollwork and decorative patterns. Beveled polished 3D edges catching light. Small ornamental flourishes where strokes meet. Clear 3D depth and volume. Premium, ancient — NOT plain, NOT flat, NOT simple geometry.
-
-ELEMENT 2 — immediately below, small gap: dark stone plaque with ornate gold border frame. '20. dubna' in elegant gold lettering on the first line, 'VODNÁŘ' in bold engraved gold capitals on the second line.
-
-ELEMENT 3 — immediately below, small gap: compact parchment scroll, aged honey color. Bold serif text in dark brown (#2a1500), NOT cursive, NOT italic: 'Víš přesně, co chceš udělat.' on the first line, 'A přesto čekáš na správný čas.' on the second line.
-
-NO zodiac wheel. NO star icons. NO logos. NO borders. NO corner decorations. NO animals. NO human figures. Bottom corners completely clean.
-
-Portrait 9:16.
-
-CAPTIONS PŘÍKAZ (nahraď VIDEO.mp4)
-============================================================
-python "C:/Users/pavel/OneDrive/Desktop/captions-tool/captions.py" "VIDEO.mp4" --model small --text "Vodnáři, víš přesně, co chceš udělat. A přesto čekáš. Otevřeš dokument. Napíšeš první větu. Přečteš ji. Smažeš. Uložíš jako draft_final_v2. Uran, tvůj vládce, nečeká na perfektní plán — tlačí tě do pohybu. Jaký nápad teď odkládáš? Napiš ho dolů ⬇️ Sleduj profil — každý den jiné znamení."
+STYLE: premium 3D CGI, engraved gold, soft rim light, high contrast, clean bottom corners, no people, no logos, no extra icons, portrait 9:16.
+```

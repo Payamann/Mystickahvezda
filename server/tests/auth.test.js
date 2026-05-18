@@ -8,6 +8,7 @@ import request from 'supertest';
 import app from '../index.js';
 import jwt from 'jsonwebtoken';
 import { supabase } from '../db-supabase.js';
+import { getAuthSubscriptionState } from '../auth.js';
 
 async function getCsrfToken() {
     const res = await request(app).get('/api/csrf-token').expect(200);
@@ -25,6 +26,33 @@ async function getFunnelEvents(userId, eventName) {
 }
 
 describe('🔐 Auth Endpoint Tests', () => {
+
+    describe('Subscription auth state', () => {
+        test('normalizes legacy vip plan type for premium access tokens', () => {
+            const state = getAuthSubscriptionState({
+                plan_type: 'vip',
+                status: 'active',
+                current_period_end: '2099-12-31T23:59:59+00:00'
+            });
+
+            expect(state).toMatchObject({
+                status: 'vip_majestrat',
+                isPremium: true,
+                premiumExpires: '2099-12-31T23:59:59+00:00'
+            });
+        });
+
+        test('does not grant premium for expired legacy subscriptions', () => {
+            const state = getAuthSubscriptionState({
+                plan_type: 'vip',
+                status: 'active',
+                current_period_end: '2020-01-01T00:00:00+00:00'
+            });
+
+            expect(state.status).toBe('vip_majestrat');
+            expect(state.isPremium).toBe(false);
+        });
+    });
 
     // ============================================
     // CSRF PROTECTION

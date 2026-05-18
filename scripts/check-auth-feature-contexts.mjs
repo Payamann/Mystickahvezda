@@ -184,7 +184,7 @@ for (const file of scannedFiles) {
         usedFeatures.add(match[1]);
     }
 
-    for (const match of source.matchAll(/feature\s*[:=]\s*['"]([a-z0-9_-]+)['"]/g)) {
+    for (const match of source.matchAll(/(?:^|[^a-zA-Z0-9_])feature\s*[:=]\s*['"]([a-z0-9_-]+)['"]/g)) {
         usedFeatures.add(match[1]);
     }
 

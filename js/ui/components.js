@@ -214,7 +214,7 @@ export function initCookieBanner() {
     function syncPreferencesVisibility() {
         const prefs = getPreferences();
         const saveBtn = document.getElementById('cookie-save');
-        const expanded = preferencesOpen || !isCompactViewport();
+        const expanded = preferencesOpen;
 
         banner.classList.toggle('cookie-banner--expanded', expanded);
         if (prefs) {
@@ -273,7 +273,7 @@ export function initCookieBanner() {
     const saveBtn = document.getElementById('cookie-save');
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
-            if (isCompactViewport() && !preferencesOpen) {
+            if (!preferencesOpen) {
                 preferencesOpen = true;
                 syncPreferencesVisibility();
                 document.getElementById('cookie-analytics')?.focus();

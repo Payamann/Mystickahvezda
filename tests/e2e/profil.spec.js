@@ -795,10 +795,8 @@ test.describe('Onboarding', () => {
         await expect(page.locator('.interest-chip[data-interest="andelske-karty"]')).toHaveAttribute('aria-pressed', 'true');
         await expect(page.locator('#finish-onboarding-btn')).toContainText('andělské karty');
 
-        await Promise.all([
-            page.waitForURL(url => url.pathname === '/andelske-karty.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
-            page.locator('#finish-onboarding-btn').click(),
-        ]);
+        await page.locator('#finish-onboarding-btn').click();
+        await expect.poll(() => new URL(page.url()).pathname, { timeout: 10000 }).toBe('/andelske-karty.html');
 
         const url = new URL(page.url());
         expect(url.pathname).toBe('/andelske-karty.html');

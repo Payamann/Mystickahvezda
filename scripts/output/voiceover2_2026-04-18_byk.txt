@@ -1,49 +1,62 @@
-VOICEOVER SCRIPT
-============================================================
+# daily_reel2.py - 2026-04-18
+
+- **Znamení:** Býk
+- **Kvalita:** standard
+- **QA:** ok
+- **API calls:** 0
+- **API účely:** -
+- **Modely:** -
+
+## QA
+
+- Voiceover words: 68
+- Hook words: 11
+- Hook: Býku, nejde o lenost. Jen čekáš, až hodnota začne být skutečná.
+
+Bez nalezených deterministických problémů.
+
+## Voiceover
+
+```text
 🗓️ 18. dubna 2026
 
-[warm] Býku, nejsi líný. <break time="0.5s" />
-[soft] Jsi jediný, kdo čeká, až to bude stát za to. <break time="1.0s" />
+[soft] Býku, nejde o lenost. <break time="0.5s" /> [warm] Jen čekáš, až hodnota začne být skutečná. <break time="1.0s" />
 
-[gentle] Díváš se na tabulku. <break time="0.3s" /> Všechna ta čísla, termíny, cíle. <break time="0.3s" /> [serious] Ostatní už zase mění plán. <break time="0.3s" /> [warm] Ty ne. <break time="0.3s" /> [soft] To, co se pěstuje dlouho, vydrží. <break time="1.0s" />
+[gentle] Díváš se na tabulku. <break time="0.3s" /> [serious] Čísla, termíny, cizí tempo. <break time="0.3s" /> [warm] Venuše po retrográdě ti vrací jednoduchou otázku: co má cenu i bez okamžitého potlesku? <break time="0.3s" /> [soft] Dnes není potřeba tlačit víc. Potřebuješ chránit půdu, ze které něco opravdu roste. <break time="1.0s" />
 
-[inviting] Napiš, co ti tohle připomíná. <break time="0.3s" />
-[clearly] Označ někoho, kdo tohle zná zpaměti.
+[inviting] Býku — kde dnes přestaneš spěchat jen proto, že ostatní mění plán? <break time="0.3s" /> [clearly] Ulož si to, až si někdo splete tvoji trpělivost s nečinností.
+```
 
-TIKTOK / INSTAGRAM DESCRIPTION
-============================================================
-18. dubna 2026 Venuše vstupuje do tvého znamení — a ty víš, že pravá hodnota nevzniká přes noc 🌱 Býk je fixní zemní znamení ovládané Venuší, což znamená: stavíš na půdě, která vydrží dekády. Sleduj profil — příště odhalím, proč Býci v roce 2026 vstupují do nejsilnější finanční fáze za 12 let 🪙
+## TikTok / Instagram Description
 
-#mystickaHvezda #Býk #horoskop #fyp
+```text
+Býku, 18. dubna 2026 nejde o lenost. Venuše po retrográdě ti vrací otázku hodnoty: co má smysl i bez rychlého výsledku? Dnes si všimni, kde chráníš půdu pro něco, co má růst pomalu.
 
-FACEBOOK REELS DESCRIPTION
-============================================================
-18. dubna 2026 vstupuje Venuše do tvého znamení — a ty víš, že pravá hodnota nespěchá 🌱 Zatímco ostatní mění plány každý týden, ty stavíš na půdě, která vydrží dekády. Venuše v Býku ti dává strategii: čekat, až to bude stát za to 🪙 Celý výklad najdeš na mystickahvezda.cz/horoskopy.html ✨
+#mystickaHvezda #Býk #dennihoroskop #astrologie #horoskop
+```
+
+## Facebook Reels Description
+
+```text
+Býku, 18. dubna 2026 si nenech namluvit, že pomalejší tempo znamená slabší tah. Venuše po retrográdě ti vrací otázku hodnoty a ukazuje, kde máš chránit půdu místo dalšího spěchu. Vlastní výklad pro svoje znamení najdeš na mystickahvezda.cz/horoskopy.html ✨
 
 #mystickaHvezda #Býk #horoskop #astrologie #dennihoroskop #mystika
+```
 
-SUNO PROMPT
-============================================================
-Warm instrumental bed with soft vibraphone melodies and shimmering synth layers over a gentle rhythmic pulse, evoking golden sunrise light spreading across distant galaxies with forward momentum and hopeful energy, designed to support voiceover with presence but staying subtle enough not to compete. Short instrumental, 60-90 seconds, loop-ready.
+## Suno Prompt
 
-THUMBNAIL PROMPT (Nano Banana)
-============================================================
+```text
+Warm grounded cinematic ambient under a spoken Czech voiceover, soft felt piano, low earthy percussion, subtle emerald synth shimmer, calm forward pulse, intimate Taurus mood, spacious enough for narration. Short instrumental, 60-90 seconds, loop-ready, no vocals.
+```
+
+## Thumbnail Prompt
+
+```text
 A mystical video thumbnail for zodiac sign Taurus.
 
-BACKGROUND: deep dark space with soft subtle deep emerald and forest-green nebula with warm golden stardust, rich earthen cosmic clouds in amber and jade tones, grounded cosmic terrain of green and brown stellar dust — lush, fertile, timeless — gentle and atmospheric, NOT aggressive. Rich dense star field with thousands of tiny stars. Dark and deep — moody and calm, serving as a backdrop without competing with the foreground. Deep navy and dark indigo tones dominate. NO harsh lightning, NO aggressive neon.
+BACKGROUND: deep dark cosmic space with emerald, forest green, amber, and velvet navy nebula, premium mystical atmosphere, dense star field, calm grounded glow.
 
-COMPOSITION: Three elements stacked as one tight unified group, vertically centered in the image. The group fills roughly 80% of the image height. Minimal gap between elements — they feel like one connected unit.
+COMPOSITION: ornate golden Taurus glyph centered at the top, a dark stone plaque below with elegant gold text: "18. dubna" and "BÝK". Under it, compact parchment scroll with bold readable serif text: "Nejde o lenost." and "Hodnota nespěchá."
 
-ELEMENT 1 — glyph: large ornate Taurus symbol (♉) in solid gold — rich champagne gold with deep amber shadows — surface of each stroke covered in intricate engraved filigree scrollwork and decorative patterns. Beveled polished 3D edges catching light. Small ornamental flourishes where strokes meet. Clear 3D depth and volume. Premium, ancient — NOT plain, NOT flat, NOT simple geometry.
-
-ELEMENT 2 — immediately below, small gap: dark stone plaque with ornate gold border frame. '18. dubna' in elegant gold lettering on the first line, 'BÝK' in bold engraved gold capitals on the second line.
-
-ELEMENT 3 — immediately below, small gap: compact parchment scroll, aged honey color. Bold serif text in dark brown (#2a1500), NOT cursive, NOT italic: 'Nejsi líný.' on the first line, 'Čekáš, až to bude stát za to.' on the second line.
-
-NO zodiac wheel. NO star icons. NO logos. NO borders. NO corner decorations. NO animals. NO human figures. Bottom corners completely clean.
-
-Portrait 9:16.
-
-CAPTIONS PŘÍKAZ
-============================================================
-python "C:/Users/pavel/OneDrive/Desktop/captions-tool/captions.py" "VIDEO.mp4" --model small --text "Býku, nejsi líný. Jsi jediný, kdo čeká, až to bude stát za to. Díváš se na tabulku. Všechna ta čísla, termíny, cíle. Ostatní už zase mění plán. Ty ne. To, co se pěstuje dlouho, vydrží. Napiš, co ti tohle připomíná. Označ někoho, kdo tohle zná zpaměti."
+STYLE: premium 3D CGI, engraved gold, soft rim light, high contrast, clean bottom corners, no people, no logos, no extra icons, portrait 9:16.
+```

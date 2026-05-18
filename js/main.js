@@ -8,7 +8,7 @@ import { initHeader, initMobileNav } from './ui/header.js';
 import { initScrollAnimations, initCustomCursor } from './ui/animations.js';
 import { initFAQ, initTabs, initCarousel, initCookieBanner } from './ui/components.js';
 import { initSmoothScroll } from './utils/helpers.js';
-import { initEmailForms, initDateValidation } from './ui/forms.js';
+import { initEmailForms, initDateValidation, initFormUX } from './ui/forms.js';
 
 function safeInit(name, fn) {
     try { fn(); } catch (e) { console.error(`[Init] ${name} failed:`, e); }
@@ -56,6 +56,7 @@ function initApp() {
     // Critical for first interaction
     safeInit('Header', initHeader);
     safeInit('MobileNav', initMobileNav);
+    safeInit('FormUX', initFormUX);
     safeInit('EmailForms', initEmailForms);
     safeInit('InteractiveCards', initInteractiveCards);
 
@@ -74,6 +75,7 @@ if (document.readyState === 'loading') {
 document.addEventListener('components:loaded', () => {
     safeInit('Header', initHeader);
     safeInit('MobileNav', initMobileNav);
+    safeInit('FormUX', initFormUX);
     safeInit('InteractiveCards', initInteractiveCards);
 });
 

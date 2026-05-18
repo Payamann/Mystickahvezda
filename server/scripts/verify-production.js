@@ -135,7 +135,7 @@ const CONVERSION_LINK_CHECKS = [
             'data-mentor-prompt-type="decision"',
             'data-mentor-prompt-type="relationship"',
             'data-mentor-prompt-type="work_direction"',
-            'css/pages/mentor.css?v=2'
+            'css/pages/mentor.css?v=4'
         ]
     },
     {

@@ -39,14 +39,59 @@ export function initMobileNav() {
     if (toggle.dataset.navInitialized === 'true') return;
     toggle.dataset.navInitialized = 'true';
 
+    const isMobileNav = () => window.matchMedia('(max-width: 992px)').matches;
+    const dropdownItems = Array.from(navList.querySelectorAll('.nav__item--has-dropdown'));
+    const closeDropdowns = (except = null) => {
+        dropdownItems.forEach((item) => {
+            if (item === except) return;
+            item.classList.remove('is-active');
+            item.querySelector('.nav__link--dropdown-toggle')?.setAttribute('aria-expanded', 'false');
+        });
+    };
+    const setMenuOpen = (open, focusFirstLink = false) => {
+        navList.classList.toggle('open', open);
+        toggle.classList.toggle('active', open);
+        toggle.setAttribute('aria-expanded', String(open));
+        document.body.classList.toggle('nav-open', open);
+
+        if (isMobileNav()) {
+            navList.setAttribute('aria-hidden', String(!open));
+        } else {
+            navList.removeAttribute('aria-hidden');
+        }
+
+        if (!open) closeDropdowns();
+        if (open && focusFirstLink) {
+            navList.querySelector('a, button')?.focus({ preventScroll: true });
+        }
+    };
+    const syncNavA11y = () => {
+        if (isMobileNav() && !navList.classList.contains('open')) {
+            navList.setAttribute('aria-hidden', 'true');
+            return;
+        }
+        navList.removeAttribute('aria-hidden');
+    };
+
+    if (!navList.id) navList.id = 'primary-navigation';
+    toggle.setAttribute('aria-controls', navList.id);
+    syncNavA11y();
+
+    dropdownItems.forEach((item, index) => {
+        const toggleLink = item.querySelector('.nav__link--dropdown-toggle');
+        const dropdown = item.querySelector('.nav__dropdown');
+        if (!toggleLink || !dropdown) return;
+
+        if (!dropdown.id) dropdown.id = `nav-dropdown-${index + 1}`;
+        toggleLink.setAttribute('role', 'button');
+        toggleLink.setAttribute('aria-haspopup', 'true');
+        toggleLink.setAttribute('aria-expanded', 'false');
+        toggleLink.setAttribute('aria-controls', dropdown.id);
+    });
+
     // Toggle menu
     toggle.addEventListener('click', () => {
-        const isOpen = navList.classList.toggle('open');
-        toggle.classList.toggle('active');
-
-        // Accessibility: update ARIA attributes
-        toggle.setAttribute('aria-expanded', isOpen);
-        navList.setAttribute('aria-hidden', !isOpen);
+        setMenuOpen(!navList.classList.contains('open'), true);
     });
 
     // Dropdown toggles (accordion effect)
@@ -60,37 +105,31 @@ export function initMobileNav() {
             if (window.innerWidth <= 992) {
                 const parentItem = toggleBtn.closest('.nav__item--has-dropdown');
 
-                // Close other open dropdowns for a clean accordion effect
-                navList.querySelectorAll('.nav__item--has-dropdown.is-active').forEach(item => {
-                    if (item !== parentItem) item.classList.remove('is-active');
-                });
-
-                parentItem.classList.toggle('is-active');
+                const isOpen = parentItem.classList.contains('is-active');
+                closeDropdowns(parentItem);
+                parentItem.classList.toggle('is-active', !isOpen);
+                toggleBtn.setAttribute('aria-expanded', String(!isOpen));
             }
+        });
+
+        toggleBtn.addEventListener('keydown', (e) => {
+            if (e.key !== ' ') return;
+            e.preventDefault();
+            toggleBtn.click();
         });
     });
 
     // Close menu on normal link click (ignore dropdown toggles)
     navList.querySelectorAll('a:not(.nav__link--dropdown-toggle)').forEach(link => {
         link.addEventListener('click', () => {
-            navList.classList.remove('open');
-            toggle.classList.remove('active');
-            toggle.setAttribute('aria-expanded', 'false');
-            navList.setAttribute('aria-hidden', 'true');
-            // Reset dropdowns
-            navList.querySelectorAll('.nav__item--has-dropdown.is-active').forEach(item => item.classList.remove('is-active'));
+            setMenuOpen(false);
         });
     });
 
     // Close menu on Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navList.classList.contains('open')) {
-            navList.classList.remove('open');
-            toggle.classList.remove('active');
-            toggle.setAttribute('aria-expanded', 'false');
-            navList.setAttribute('aria-hidden', 'true');
-            // Reset dropdowns
-            navList.querySelectorAll('.nav__item--has-dropdown.is-active').forEach(item => item.classList.remove('is-active'));
+            setMenuOpen(false);
             toggle.focus();
         }
     });
@@ -98,12 +137,9 @@ export function initMobileNav() {
     // Close menu on click outside
     document.addEventListener('click', (e) => {
         if (!toggle.contains(e.target) && !navList.contains(e.target) && navList.classList.contains('open')) {
-            navList.classList.remove('open');
-            toggle.classList.remove('active');
-            toggle.setAttribute('aria-expanded', 'false');
-            navList.setAttribute('aria-hidden', 'true');
-            // Reset dropdowns
-            navList.querySelectorAll('.nav__item--has-dropdown.is-active').forEach(item => item.classList.remove('is-active'));
+            setMenuOpen(false);
         }
     });
+
+    window.addEventListener('resize', syncNavA11y);
 }

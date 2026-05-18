@@ -2,13 +2,8 @@
 
 ## KROK 1 — Přečti paměť (povinné před generováním)
 
-```bash
-cd "C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/social-media-agent" && python -c "
-import json
-m = json.load(open('output/content_memory.json', encoding='utf-8'))
-for p in m.get('approved_posts', [])[-15:]: print(f\"[{p.get('date','?')}] {p.get('type','?')} | {p.get('hook_formula','?')} | {p.get('topic','?')}\")
-for h,s in sorted(m.get('hook_performance',{}).items(), key=lambda x: -x[1].get('avg_score',0))[:5]: print(f\"{h}: {s.get('avg_score',0):.1f}\")
-"
+```powershell
+cd "C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/social-media-agent"; $env:PYTHONIOENCODING='utf-8'; python codex_social_workflow.py brief
 ```
 
 Z výsledku: vyhni se tématům posledních 7 dní, preferuj top hooky, netlač promo 2× za sebou.
@@ -27,7 +22,7 @@ Z výsledku: vyhni se tématům posledních 7 dní, preferuj top hooky, netlač 
 | Lunární kalendář | /lunace.html |
 | Runy | /runy.html |
 | Andělské karty | /andelske-karty.html |
-| Šamanské kolo | /shamanske-kolo.html |
+| Šamanské kolo | /shamansko-kolo.html |
 | Hvězdný průvodce | /mentor.html |
 | Křišťálová koule | /kristalova-koule.html |
 | Minulý život | /minuly-zivot.html |
@@ -79,11 +74,31 @@ no decorations in border. Object floats centered inside.
 
 ## KROK 5 — Zaloguj po generování
 
-```bash
-cd "C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/social-media-agent" && set PYTHONIOENCODING=utf-8 && python log_post.py --topic "TÉMA" --type TYP --hook HOOK --intent INTENT --score SKORE --caption "PRVNÍ VĚTA"
+Preferuj batch logování z markdown draftu:
+
+```powershell
+cd "C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/social-media-agent"; $env:PYTHONIOENCODING='utf-8'; python codex_social_workflow.py qa --file "output/codex/daily_posts_YYYY-MM-DD.md"
+cd "C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/social-media-agent"; $env:PYTHONIOENCODING='utf-8'; python codex_social_workflow.py traffic-pack --file "output/codex/daily_posts_YYYY-MM-DD.md" --write
+cd "C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/social-media-agent"; $env:PYTHONIOENCODING='utf-8'; python codex_social_workflow.py visual-pack --file "output/codex/daily_posts_YYYY-MM-DD.md" --write
+cd "C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/social-media-agent"; $env:PYTHONIOENCODING='utf-8'; python codex_social_workflow.py codex-image-brief --file "output/codex/daily_posts_YYYY-MM-DD.md" --write
+cd "C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/social-media-agent"; $env:PYTHONIOENCODING='utf-8'; python codex_social_workflow.py log-draft --file "output/codex/daily_posts_YYYY-MM-DD.md" --score 8.0
 ```
 
-`--type`: educational / question / tip / story / quote / blog_promo / myth_bust / carousel_plan
+Traffic pack je povinný u každé série se soft_promo: vytvoří UTM URL, Story CTA a Facebook link post. Reel pořád primárně buduje dosah; web CTA formuluj jako „vlastní odpověď / vlastní výklad“, ne jako tvrdou reklamu.
+
+Visual pack standardně připraví jen 1 grafiku pro traffic cíl. Pokud má obrázek generovat přímo Codex, použij `codex-image-brief` a jeden vybraný traffic prompt. Lokální generování PNG spouštěj jen když je draft schválený:
+
+```powershell
+cd "C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/social-media-agent"; $env:PYTHONIOENCODING='utf-8'; python codex_social_workflow.py visual-pack --file "output/codex/daily_posts_YYYY-MM-DD.md" --generate --write
+```
+
+Fallback pro ruční log jednoho postu:
+
+```powershell
+cd "C:/Users/pavel/OneDrive/Desktop/MystickaHvezda/social-media-agent"; $env:PYTHONIOENCODING='utf-8'; python log_post.py --topic "TÉMA" --type TYP --hook HOOK --intent INTENT --score SKORE --caption "PRVNÍ VĚTA"
+```
+
+`--type`: educational / question / tip / story / quote / blog_promo / myth_bust / carousel_plan / daily_energy / challenge
 `--hook`: curiosity_gap / contrarian / question / myth_bust / vulnerability / pattern_interrupt / micro_story / milestone / fear_reversal / celebration
 `--intent`: pure_value / soft_promo / direct_promo
 

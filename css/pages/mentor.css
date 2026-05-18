@@ -383,3 +383,130 @@ html body .mh-inline-0e8bf611e5 { padding-top: 1.25rem; padding-bottom: 4rem; }
 html body .mh-inline-a450e7ad51 { text-align: center; margin-bottom: 2rem; position: relative; z-index: 2; opacity: 1 !important; }
 html body .mh-inline-66d312eee8 { margin: 0; color: var(--color-mystic-gold); }
 html body .mh-inline-b7957b2551 { font-size: 0.8rem; color: var(--color-silver-mist); }
+
+/* UI audit refinements: keep the mentor useful above the fold on mobile. */
+body.page-mentor .mentor-starter-panel,
+body.page-mentor .chat-container,
+body.page-mentor .message--mentor,
+body.page-mentor .message--user {
+    background-color: rgba(8, 8, 24, 0.76);
+}
+
+body.page-mentor .mentor-starter-panel {
+    margin-bottom: 1.35rem;
+}
+
+body.page-mentor .chat-container {
+    height: min(640px, 66vh);
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    html body .mh-inline-526306ef21 {
+        padding-top: 5.35rem;
+        padding-bottom: 1.5rem;
+    }
+
+    html body .mh-inline-a450e7ad51 {
+        margin-bottom: 1rem;
+    }
+
+    body.page-mentor .hero__title {
+        max-width: 11ch;
+        margin-right: auto;
+        margin-left: auto;
+        font-size: clamp(2.05rem, 10vw, 2.75rem);
+        line-height: 1.05;
+        letter-spacing: 0;
+    }
+
+    body.page-mentor .hero__subtitle {
+        max-width: 24rem;
+        font-size: 1rem;
+        line-height: 1.42;
+    }
+
+    body.page-mentor .mentor-starter-panel {
+        gap: 0.85rem;
+        margin-bottom: 1rem;
+        padding: 0.95rem;
+        background-color: rgba(8, 8, 24, 0.78);
+    }
+
+    body.page-mentor .mentor-starter-panel h2 {
+        margin: 0.35rem 0 0.45rem;
+        font-size: 1.08rem;
+    }
+
+    body.page-mentor .mentor-starter-panel p {
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }
+
+    body.page-mentor .mentor-starter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.45rem;
+    }
+
+    body.page-mentor .mentor-starter-card {
+        min-height: 82px;
+        padding: 0.72rem;
+    }
+
+    body.page-mentor .mentor-starter-card span {
+        font-size: 0.62rem;
+        letter-spacing: 0.05em;
+    }
+
+    body.page-mentor .mentor-starter-card strong {
+        font-size: 0.85rem;
+        line-height: 1.2;
+    }
+
+    body.page-mentor .chat-container {
+        height: 54vh;
+        min-height: 390px;
+        margin: 0.85rem 0 0;
+        border-radius: 14px;
+    }
+
+    body.page-mentor .chat-header,
+    body.page-mentor .chat-input-area {
+        padding: 0.85rem;
+    }
+
+    body.page-mentor .chat-messages {
+        gap: 0.85rem;
+        padding: 1rem;
+    }
+
+    body.page-mentor .message {
+        max-width: 94%;
+        padding: 0.72rem 0.85rem;
+        font-size: 0.88rem;
+        line-height: 1.45;
+    }
+}
+
+@media (max-width: 430px) {
+    body.page-mentor .mentor-starter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    body.page-mentor .chat-container {
+        height: 50vh;
+        min-height: 360px;
+    }
+
+    body.page-mentor .chat-input {
+        min-height: 42px;
+        padding: 0.7rem 0.8rem;
+        font-size: 0.92rem;
+    }
+
+    body.page-mentor .send-btn {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+    }
+}

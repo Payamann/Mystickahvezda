@@ -175,6 +175,48 @@ def infer_feature_from_path(path: str) -> str:
     return ""
 
 
+def infer_feature_from_blog(post: dict, slug: str) -> str:
+    category = (post.get("category") or "").lower()
+    slug_text = slug.lower()
+
+    if "tarot" in category or "tarot" in slug_text or "karta" in slug_text:
+        return "tarot_multi_card"
+    if "numerolog" in category or "numerolog" in slug_text or "zivotni-cislo" in slug_text:
+        return "numerologie_vyklad"
+    if "vztah" in category or "kompatibil" in category or "kompatibilita" in slug_text:
+        return "partnerska_detail"
+    if "runy" in slug_text:
+        return "runy_hluboky_vyklad"
+    if "saman" in category or "saman" in slug_text:
+        return "shamanske_kolo_plne_cteni"
+    if "lun" in category or "mesic" in slug_text or "ritual" in slug_text or "cakr" in slug_text:
+        return "rituals"
+    if "astrolog" in category or "chiron" in slug_text or "venus" in slug_text or "merkur" in slug_text:
+        return "natalni_interpretace"
+    return "mentor"
+
+
+def build_blog_tracking_params(post: dict, slug: str, variant_idx: int = 0) -> dict:
+    campaign = f"blog_{slug.replace('-', '_')}"
+    return {
+        "utm_source": "pinterest",
+        "utm_medium": "organic",
+        "utm_campaign": campaign,
+        "utm_content": f"{slug}_v{variant_idx + 1}",
+        "source": "pinterest",
+        "feature": infer_feature_from_blog(post, slug),
+    }
+
+
+def ensure_blog_tracking_params(url: str, post: dict, slug: str, variant_idx: int = 0) -> str:
+    parsed = urlparse(url)
+    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
+    for key, value in build_blog_tracking_params(post, slug, variant_idx).items():
+        if value and not query.get(key):
+            query[key] = value
+    return urlunparse(parsed._replace(query=urlencode(query)))
+
+
 def build_tool_tracking_params(campaign: dict, variant_idx: int = 0) -> dict:
     params = {
         "utm_source": "pinterest",
@@ -433,6 +475,8 @@ def cmd_csv():
         url = override.get("link", url)
         if tool_campaign:
             url = ensure_tool_tracking_params(url, tool_campaign, var_idx)
+        elif post:
+            url = ensure_blog_tracking_params(url, post, slug, var_idx)
         description = override.get(
             "description",
             post.get("short_description", "") if post else tool_campaign.get("description", "")

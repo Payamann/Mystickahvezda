@@ -346,3 +346,63 @@ html body .mh-block-visible {
 html body .mh-flex-visible {
     display: flex !important;
 }
+
+/* UI audit refinements: reduce mobile form height while preserving touch targets. */
+.login-card {
+    background-color: rgba(8, 8, 24, 0.76);
+}
+
+@media (max-width: 480px) {
+    .login-section {
+        align-items: flex-start;
+        min-height: auto;
+        padding: 5.25rem 0.75rem 7.25rem;
+    }
+
+    .login-card {
+        padding: 1.45rem 1rem 1.25rem;
+        border-radius: 16px;
+        background-color: rgba(8, 8, 24, 0.82);
+    }
+
+    .login-header {
+        margin-bottom: 1.35rem;
+    }
+
+    .login-icon {
+        margin-bottom: 0.4rem;
+        font-size: 2rem;
+    }
+
+    .login-card__title {
+        font-size: 1.8rem;
+        line-height: 1.08;
+    }
+
+    .login-card .hero__subtitle {
+        margin-bottom: 0;
+        font-size: 0.98rem;
+        line-height: 1.42;
+    }
+
+    .login-card .form-group {
+        margin-bottom: 0.82rem;
+    }
+
+    .login-card .form-input {
+        min-height: 46px;
+        padding: 0.68rem 0.85rem;
+        font-size: 0.98rem;
+    }
+
+    .login-card .btn--primary {
+        min-height: 48px;
+        padding: 0.72rem 0.9rem;
+    }
+
+    #auth-mode-toggle {
+        margin-top: 1rem;
+        padding: 0.62rem 1rem;
+        font-size: 0.82rem;
+    }
+}

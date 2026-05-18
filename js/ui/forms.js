@@ -101,6 +101,159 @@ export function initEmailForms() {
     });
 }
 
+const FIELD_ERROR_CLASS = 'form-field-error';
+const FORM_SUMMARY_CLASS = 'form-error-summary';
+
+function getFieldContainer(field) {
+    const passwordWrap = field.closest('.password-input-wrap');
+    if (passwordWrap?.parentElement) return passwordWrap.parentElement;
+
+    return field.closest('.form-group, .settings-row > div, label') || field.parentElement;
+}
+
+function getFriendlyValidationMessage(field) {
+    if (field.validity.valueMissing) return 'Vyplňte prosím toto pole.';
+    if (field.validity.typeMismatch && field.type === 'email') return 'Zadejte prosím platný e-mail.';
+    if (field.validity.tooShort) return `Zadejte alespoň ${field.minLength} znaků.`;
+    if (field.validity.patternMismatch) return 'Hodnota nemá očekávaný formát.';
+    if (field.validity.customError) return field.validationMessage;
+    return field.validationMessage || 'Zkontrolujte prosím toto pole.';
+}
+
+function ensureFieldError(field) {
+    const container = getFieldContainer(field);
+    if (!container) return null;
+
+    let error = container.querySelector(`:scope > .${FIELD_ERROR_CLASS}`);
+    if (!error) {
+        error = document.createElement('p');
+        error.className = FIELD_ERROR_CLASS;
+        error.id = `${field.id || field.name || 'field'}-error`;
+        error.setAttribute('role', 'alert');
+        container.appendChild(error);
+    }
+
+    const describedBy = new Set((field.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean));
+    describedBy.add(error.id);
+    field.setAttribute('aria-describedby', Array.from(describedBy).join(' '));
+
+    return error;
+}
+
+export function setFieldError(field, message) {
+    if (!field) return;
+    const error = ensureFieldError(field);
+    field.setAttribute('aria-invalid', 'true');
+    field.classList.add('form-input--invalid');
+    if (error) {
+        error.textContent = message || getFriendlyValidationMessage(field);
+        error.hidden = false;
+    }
+}
+
+export function clearFieldError(field) {
+    if (!field) return;
+    const container = getFieldContainer(field);
+    const error = container?.querySelector(`:scope > .${FIELD_ERROR_CLASS}`);
+    field.removeAttribute('aria-invalid');
+    field.classList.remove('form-input--invalid');
+    if (error) {
+        error.textContent = '';
+        error.hidden = true;
+    }
+}
+
+function ensureFormSummary(form) {
+    let summary = form.querySelector(`:scope > .${FORM_SUMMARY_CLASS}`);
+    if (!summary) {
+        summary = document.createElement('div');
+        summary.className = FORM_SUMMARY_CLASS;
+        summary.setAttribute('role', 'alert');
+        summary.setAttribute('aria-live', 'assertive');
+        summary.hidden = true;
+        form.prepend(summary);
+    }
+    return summary;
+}
+
+export function setFormSummary(form, message) {
+    if (!form) return;
+    const summary = ensureFormSummary(form);
+    summary.textContent = message;
+    summary.hidden = false;
+}
+
+export function clearFormSummary(form) {
+    const summary = form?.querySelector(`:scope > .${FORM_SUMMARY_CLASS}`);
+    if (summary) {
+        summary.textContent = '';
+        summary.hidden = true;
+    }
+}
+
+export function setSubmitPending(button, pending, pendingText = 'Pracuji...') {
+    if (!button) return;
+
+    if (pending) {
+        if (!button.dataset.originalLabel) {
+            button.dataset.originalLabel = button.textContent?.trim() || '';
+        }
+        button.disabled = true;
+        button.setAttribute('aria-busy', 'true');
+        button.classList.add('is-submitting');
+        button.textContent = pendingText;
+        return;
+    }
+
+    button.disabled = false;
+    button.removeAttribute('aria-busy');
+    button.classList.remove('is-submitting');
+    if (button.dataset.originalLabel) {
+        button.textContent = button.dataset.originalLabel;
+        delete button.dataset.originalLabel;
+    }
+}
+
+export function initFormUX() {
+    const forms = document.querySelectorAll('form:not([data-form-ux="off"])');
+
+    forms.forEach(form => {
+        if (form.dataset.formUxInit === 'true') return;
+        form.dataset.formUxInit = 'true';
+
+        form.addEventListener('invalid', (event) => {
+            const field = event.target;
+            if (!(field instanceof HTMLElement)) return;
+            setFieldError(field, getFriendlyValidationMessage(field));
+            setFormSummary(form, 'Zkontrolujte prosím zvýrazněná pole.');
+        }, true);
+
+        form.addEventListener('submit', () => {
+            clearFormSummary(form);
+            form.querySelectorAll('[aria-invalid="true"]').forEach(clearFieldError);
+        }, true);
+
+        form.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('input', () => {
+                field.setCustomValidity('');
+                clearFieldError(field);
+                if (form.checkValidity()) clearFormSummary(form);
+            });
+            field.addEventListener('change', () => {
+                if (field.checkValidity()) clearFieldError(field);
+            });
+        });
+    });
+}
+
+window.MH_FORM_UX = {
+    setFieldError,
+    clearFieldError,
+    setFormSummary,
+    clearFormSummary,
+    setSubmitPending
+};
+
 function validateDateInput(input) {
     if (!input.value) return;
 

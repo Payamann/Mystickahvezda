@@ -912,6 +912,16 @@ function startRecommendedCheckout(planId, context) {
 }
 
 function bindCheckoutButtons(context) {
+    let checkoutStatus = document.getElementById('pricing-checkout-status');
+    if (!checkoutStatus) {
+        checkoutStatus = document.createElement('p');
+        checkoutStatus.id = 'pricing-checkout-status';
+        checkoutStatus.className = 'sr-only';
+        checkoutStatus.setAttribute('role', 'status');
+        checkoutStatus.setAttribute('aria-live', 'polite');
+        document.querySelector('.pricing-grid')?.insertAdjacentElement('beforebegin', checkoutStatus);
+    }
+
     function setCheckoutPendingState(button, pending) {
         if (!(button instanceof HTMLElement)) return;
 
@@ -922,6 +932,7 @@ function bindCheckoutButtons(context) {
             button.dataset.checkoutPending = '1';
             button.disabled = true;
             button.setAttribute('aria-busy', 'true');
+            if (checkoutStatus) checkoutStatus.textContent = 'Připravuji bezpečný Stripe checkout. Cena a plán se znovu zobrazí před potvrzením platby.';
             button.textContent = 'Přesměrování na platbu...';
             return;
         }
@@ -931,9 +942,16 @@ function bindCheckoutButtons(context) {
         button.disabled = false;
         button.removeAttribute('aria-busy');
         button.textContent = fallbackLabel;
+        if (checkoutStatus) checkoutStatus.textContent = '';
     }
 
     document.querySelectorAll('.plan-checkout-btn').forEach((button) => {
+        if (checkoutStatus) {
+            const describedBy = new Set((button.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean));
+            describedBy.add(checkoutStatus.id);
+            button.setAttribute('aria-describedby', Array.from(describedBy).join(' '));
+        }
+
         button.addEventListener('click', async (event) => {
             event.preventDefault();
             const planId = button.dataset.plan;
@@ -961,7 +979,7 @@ function bindCheckoutButtons(context) {
                 ...(context.metadata || {})
             });
 
-            void waitForFunnelEventBeforeNavigation(trackPricingFunnelEvent('pricing_plan_cta_clicked', {
+            const pricingIntentPromise = waitForFunnelEventBeforeNavigation(trackPricingFunnelEvent('pricing_plan_cta_clicked', {
                 ...context,
                 recommendedPlan: planId
             }, {
@@ -977,6 +995,8 @@ function bindCheckoutButtons(context) {
             }, 10000);
 
             try {
+                await pricingIntentPromise;
+
                 if (window.Auth?.startPlanCheckout) {
                     clearRecoveryContext();
                     window.Auth.startPlanCheckout(planId, checkoutContext);

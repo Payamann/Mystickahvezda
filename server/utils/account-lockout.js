@@ -132,13 +132,12 @@ export async function recordSuccessfulLogin(email, ip, userAgent) {
             console.error('[LOCKOUT] Error recording success:', error);
         }
 
-        // Delete old failed attempts for this email
+        // A successful login resets the failed-attempt window for this email.
         await supabase
             .from('login_attempts')
             .delete()
             .eq('user_email', email.toLowerCase())
-            .eq('attempt_type', 'failed')
-            .lt('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+            .eq('attempt_type', 'failed');
     } catch (e) {
         console.error('[LOCKOUT] Error in recordSuccessfulLogin:', e);
     }

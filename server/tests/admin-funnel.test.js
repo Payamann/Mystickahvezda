@@ -218,6 +218,38 @@ describe('Admin funnel report helpers', () => {
         }));
     });
 
+    test('separates checkout requests from created Stripe sessions', () => {
+        const report = buildFunnelReport([
+            { event_name: 'paywall_viewed', source: 'trial_paywall', feature: 'numerologie_vyklad', created_at: '2026-04-20T10:00:00.000Z' },
+            { event_name: 'pricing_plan_cta_clicked', source: 'trial_paywall', feature: 'numerologie_vyklad', plan_id: 'pruvodce', created_at: '2026-04-20T10:01:00.000Z' },
+            { event_name: 'pricing_plan_cta_clicked', source: 'trial_paywall', feature: 'numerologie_vyklad', plan_id: 'pruvodce', created_at: '2026-04-20T10:02:00.000Z' },
+            { event_name: 'checkout_session_requested', source: 'trial_paywall', feature: 'numerologie_vyklad', plan_id: 'pruvodce', created_at: '2026-04-20T10:03:00.000Z' },
+            { event_name: 'checkout_session_requested', source: 'trial_paywall', feature: 'numerologie_vyklad', plan_id: 'pruvodce', created_at: '2026-04-20T10:04:00.000Z' },
+            { event_name: 'checkout_session_created', source: 'trial_paywall', feature: 'numerologie_vyklad', plan_id: 'pruvodce', created_at: '2026-04-20T10:04:02.000Z' },
+            { event_name: 'checkout_session_failed', source: 'trial_paywall', feature: 'numerologie_vyklad', plan_id: 'pruvodce', created_at: '2026-04-20T10:05:00.000Z' },
+        ]);
+
+        expect(report.metrics.pricingIntent).toBe(2);
+        expect(report.metrics.checkoutRequested).toBe(2);
+        expect(report.metrics.checkoutStarted).toBe(1);
+        expect(report.metrics.pricingIntentToCheckoutRequestRate).toBe(100);
+        expect(report.metrics.checkoutRequestToSessionRate).toBe(50);
+        expect(report.metrics.pricingIntentToCheckoutRate).toBe(50);
+        expect(report.metrics.paywallToCheckoutRequestRate).toBe(200);
+        expect(report.daily[0]).toEqual(expect.objectContaining({
+            checkoutRequested: 2,
+            checkoutStarted: 1,
+            failures: 1
+        }));
+        expect(report.sourceFeatureSegments[0]).toEqual(expect.objectContaining({
+            source: 'trial_paywall',
+            feature: 'numerologie_vyklad',
+            checkoutRequested: 2,
+            checkoutStarted: 1,
+            checkoutRequestToSessionRate: 50
+        }));
+    });
+
     test('aggregates activation and ritual funnel events', () => {
         const report = buildFunnelReport([
             { event_name: 'first_value_completed', source: 'reading_save', feature: 'horoscope', created_at: '2026-04-20T10:00:00.000Z' },
@@ -407,9 +439,9 @@ describe('Admin funnel report helpers', () => {
         ]);
 
         expect(buildFunnelDailyCsv(report)).toBe([
-            '"date","first_value_completed","activation_completed","daily_ritual_completed","reading_feedback_submitted","paywall_viewed","pricing_intent","checkout_started","subscription_completed","one_time_completed","one_time_pdf_delivered","one_time_lifecycle_scheduled","failures","refunds"',
-            '"2026-04-20","1","1","0","1","1","1","1","0","0","0","0","0","0"',
-            '"2026-04-21","0","0","1","0","0","0","0","1","0","0","0","0","0"'
+            '"date","first_value_completed","activation_completed","daily_ritual_completed","reading_feedback_submitted","paywall_viewed","pricing_intent","checkout_requested","checkout_started","subscription_completed","one_time_completed","one_time_pdf_delivered","one_time_lifecycle_scheduled","failures","refunds"',
+            '"2026-04-20","1","1","0","1","1","1","0","1","0","0","0","0","0","0"',
+            '"2026-04-21","0","0","1","0","0","0","0","0","1","0","0","0","0","0"'
         ].join('\n'));
     });
 
@@ -422,8 +454,8 @@ describe('Admin funnel report helpers', () => {
         ]);
 
         expect(buildFunnelSegmentsCsv(report)).toBe([
-            '"source","feature","total_events","first_value_completed","activation_completed","daily_ritual_completed","reading_feedback_submitted","paywall_viewed","pricing_intent","checkout_started","purchase_completed","one_time_pdf_delivered","one_time_lifecycle_scheduled","failures","paywall_to_pricing_intent_rate","pricing_intent_to_checkout_rate","first_value_to_checkout_rate","activation_to_checkout_rate","paywall_to_checkout_rate","checkout_to_purchase_rate","previous_paywall_to_pricing_intent_rate","previous_pricing_intent_to_checkout_rate","previous_first_value_to_checkout_rate","previous_activation_to_checkout_rate","previous_paywall_to_checkout_rate","previous_checkout_to_purchase_rate","paywall_to_pricing_intent_rate_delta","pricing_intent_to_checkout_rate_delta","first_value_to_checkout_rate_delta","activation_to_checkout_rate_delta","paywall_to_checkout_rate_delta","checkout_to_purchase_rate_delta"',
-            '"pricing","tarot","4","0","0","0","0","1","1","1","1","0","0","0","100","100","0","0","100","100","0","0","0","0","0","0","","","","","",""'
+            '"source","feature","total_events","first_value_completed","activation_completed","daily_ritual_completed","reading_feedback_submitted","paywall_viewed","pricing_intent","checkout_requested","checkout_started","purchase_completed","one_time_pdf_delivered","one_time_lifecycle_scheduled","failures","paywall_to_pricing_intent_rate","pricing_intent_to_checkout_request_rate","checkout_request_to_session_rate","pricing_intent_to_checkout_rate","first_value_to_checkout_rate","activation_to_checkout_rate","paywall_to_checkout_request_rate","paywall_to_checkout_rate","checkout_to_purchase_rate","previous_paywall_to_pricing_intent_rate","previous_pricing_intent_to_checkout_request_rate","previous_checkout_request_to_session_rate","previous_pricing_intent_to_checkout_rate","previous_first_value_to_checkout_rate","previous_activation_to_checkout_rate","previous_paywall_to_checkout_request_rate","previous_paywall_to_checkout_rate","previous_checkout_to_purchase_rate","paywall_to_pricing_intent_rate_delta","pricing_intent_to_checkout_request_rate_delta","checkout_request_to_session_rate_delta","pricing_intent_to_checkout_rate_delta","first_value_to_checkout_rate_delta","activation_to_checkout_rate_delta","paywall_to_checkout_request_rate_delta","paywall_to_checkout_rate_delta","checkout_to_purchase_rate_delta"',
+            '"pricing","tarot","4","0","0","0","0","1","1","0","1","1","0","0","0","100","0","0","100","0","0","0","100","100","0","0","0","0","0","0","0","0","0","","","","","","","","",""'
         ].join('\n'));
     });
 
@@ -968,7 +1000,7 @@ describe('Admin funnel API access control', () => {
         expect(res.headers['content-type']).toContain('text/csv');
         expect(res.headers['content-disposition']).toContain('funnel-segments-1d.csv');
         expect(res.text).toContain('"source","feature","total_events"');
-        expect(res.text).toContain(`"${source}","tarot","4","0","0","0","0","1","1","1","1","0","0","0","100","100","0","0","100","100"`);
+        expect(res.text).toContain(`"${source}","tarot","4","0","0","0","0","1","1","0","1","1","0","0","0","100","0","0","100","0","0","0","100","100"`);
 
         const tarotCardsRes = await request(app)
             .get('/api/admin/funnel?days=1&format=csv&view=tarot-cards')

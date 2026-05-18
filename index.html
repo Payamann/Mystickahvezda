@@ -73,6 +73,7 @@
 
   <!-- Homepage CSS bundle: local fonts + global CSS + homepage-only rules -->
   <link rel="preload" href="/css/home.min.css?v=4" as="style">
+  <link rel="preload" href="/img/hero-3d-mobile.webp" as="image" type="image/webp" imagesrcset="/img/hero-3d-mobile.webp 400w, /img/hero-3d-mobile-640.webp 640w, /img/hero-3d-mobile-720.webp 720w, /img/hero-3d.webp 800w" imagesizes="(max-width: 500px) 50vw, (max-width: 768px) 55vw, 50vw" fetchpriority="high">
   <link rel="stylesheet" href="/css/home.min.css?v=4">
 
   <!-- SEO Schema -->
@@ -171,14 +172,14 @@
           <span class="logo__text">Mystická<span class="text-gradient">Hvězda</span></span>
         </a>
 
-        <button class="nav__toggle" aria-label="Menu" aria-expanded="false">
+        <button class="nav__toggle" type="button" aria-label="Otevřít hlavní menu" aria-expanded="false" aria-controls="primary-navigation">
           <span></span>
           <span></span>
           <span></span>
         </button>
 
-        <nav class="nav">
-          <ul class="nav__list">
+        <nav class="nav" aria-label="Hlavní navigace">
+          <ul class="nav__list" id="primary-navigation">
             <li class="nav__item"><a href="index.html" class="nav__link">Domů</a></li>
 
             <li class="nav__item nav__item--has-dropdown">
@@ -458,7 +459,7 @@
           </div>
 
           <a href="osobni-mapa.html?source=homepage_spotlight_preview" class="personal-map-spotlight__preview" data-analytics-cta="homepage_personal_map_preview" data-analytics-feature="osobni_mapa_2026" data-analytics-product="osobni_mapa_2026" data-analytics-intent="one_time_purchase">
-            <img src="img/personal-map/preview-cover.webp" alt="Osobní mapa zbytku roku 2026 - náhled prémiového PDF" width="760" height="1075" loading="lazy">
+            <img src="img/personal-map/preview-cover.webp" alt="Osobní mapa zbytku roku 2026 - náhled prémiového PDF" width="760" height="1075" loading="lazy" decoding="async" fetchpriority="low">
             <div class="personal-map-spotlight__preview-note">Náhled prémiového PDF</div>
           </a>
 
@@ -1817,9 +1818,9 @@
   <script src="js/dist/analytics.js" defer></script>
   <script src="js/dist/api-config.js" defer></script>
   <script src="js/dist/sentry-init.js" defer></script>
-  <script src="js/dist/templates.js?v=13" defer></script>
+  <script src="js/dist/templates.js?v=14" defer></script>
   <script type="module" src="js/dist/personalization.js?v=6" async></script>
-<script src="js/dist/auth-client.js?v=9" defer></script>
+<script src="js/dist/auth-client.js?v=10" defer></script>
 <script src="js/dist/auth-copy-fixes.js" defer></script>
 <script src="js/dist/premium-gates.js?v=4" defer></script>
   <script src="js/dist/feedback-widget.js" defer></script>

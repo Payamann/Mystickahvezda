@@ -5,7 +5,7 @@ import { supabase } from './db-supabase.js';
 import { JWT_SECRET, JWT_EXPIRY, COOKIE_OPTIONS, INDICATOR_COOKIE_OPTIONS, CLEAR_COOKIE_OPTIONS, CLEAR_INDICATOR_COOKIE_OPTIONS } from './config/jwt.js';
 import { authenticateToken } from './middleware.js';
 import { validateEmail, validatePassword, validateName, validateBirthDate } from './utils/validation.js';
-import { PREMIUM_PLAN_TYPES } from './config/constants.js';
+import { isPremiumPlanType, normalizePlanType } from './config/constants.js';
 import { blacklistToken } from './utils/token-blacklist.js';
 import { recordFailedAttempt, checkAccountLockout, recordSuccessfulLogin } from './utils/account-lockout.js';
 import { isProductionRuntime } from './config/runtime.js';
@@ -14,6 +14,22 @@ import { recordFunnelEvent } from './payment.js';
 
 const router = express.Router();
 const LOCKOUT_DURATION_MINUTES = 15;
+const ACTIVE_PREMIUM_STATUSES = new Set(['active', 'trialing', 'cancel_pending']);
+
+export function getAuthSubscriptionState(subscription = {}) {
+    const status = normalizePlanType(subscription?.plan_type, subscription?.plan_type || 'free');
+    const periodEnd = subscription?.current_period_end || null;
+    const periodIsCurrent = periodEnd ? new Date(periodEnd) > new Date() : false;
+    const isPremium = isPremiumPlanType(status)
+        && ACTIVE_PREMIUM_STATUSES.has(subscription?.status)
+        && periodIsCurrent;
+
+    return {
+        status,
+        isPremium,
+        premiumExpires: periodEnd
+    };
+}
 
 // ============================================
 // Helper: Generate JWT Token
@@ -31,10 +47,7 @@ export async function generateToken(userId) {
             throw subError;
         }
 
-        const status = sub?.plan_type;
-        const isPremium = status && PREMIUM_PLAN_TYPES.includes(status) &&
-                         ['active', 'trialing', 'cancel_pending'].includes(sub.status) &&
-                         new Date(sub.current_period_end) > new Date();
+        const subscriptionState = getAuthSubscriptionState(sub);
 
         // Fetch user email
         const { data: userData } = await supabase.auth.admin.getUserById(userId);
@@ -43,9 +56,9 @@ export async function generateToken(userId) {
         const token = jwt.sign({
             id: userId,
             email: userEmail,
-            subscription_status: status,
-            isPremium: isPremium,
-            premiumExpires: sub?.current_period_end || null
+            subscription_status: subscriptionState.status,
+            isPremium: subscriptionState.isPremium,
+            premiumExpires: subscriptionState.premiumExpires
         }, JWT_SECRET, { expiresIn: JWT_EXPIRY });
 
         return token;
@@ -223,7 +236,7 @@ router.post('/register', authLimiter, async (req, res) => {
         if (DEV_AUTO_LOGIN_AFTER_REGISTER && data?.user?.id) {
             const user = await ensureUserRecordFromAuth(data.user);
             const token = await generateToken(user.id);
-            const status = user.subscriptions?.plan_type || 'free';
+            const subscriptionState = getAuthSubscriptionState(user.subscriptions);
 
             res.cookie('auth_token', token, COOKIE_OPTIONS);
             res.cookie('logged_in', '1', INDICATOR_COOKIE_OPTIONS);
@@ -237,7 +250,7 @@ router.post('/register', authLimiter, async (req, res) => {
                 user: {
                     id: user.id,
                     email: user.email,
-                    subscription_status: status,
+                    subscription_status: subscriptionState.status,
                     first_name: user.first_name,
                     birth_date: user.birth_date,
                     birth_time: user.birth_time,
@@ -382,19 +395,14 @@ router.post('/login', authLimiter, async (req, res) => {
 
         // 3. Issue our JWT (Bridge) with cached premium status
         const sub = (Array.isArray(user.subscriptions) ? user.subscriptions[0] : user.subscriptions) || {};
-        const status = sub.plan_type || 'free';
-
-        // Check if premium (and not expired)
-        const isPremium = status && PREMIUM_PLAN_TYPES.includes(status) &&
-                         ['active', 'trialing', 'cancel_pending'].includes(sub.status) &&
-                         new Date(sub.current_period_end) > new Date();
+        const subscriptionState = getAuthSubscriptionState(sub);
 
         const token = jwt.sign({
             id: user.id,
             email: user.email,
-            subscription_status: status,
-            isPremium: isPremium,
-            premiumExpires: sub.current_period_end || null
+            subscription_status: subscriptionState.status,
+            isPremium: subscriptionState.isPremium,
+            premiumExpires: subscriptionState.premiumExpires
         }, JWT_SECRET, { expiresIn: JWT_EXPIRY });
 
         // Set HttpOnly cookies with JWT
@@ -408,7 +416,7 @@ router.post('/login', authLimiter, async (req, res) => {
             user: {
                 id: user.id,
                 email: user.email,
-                subscription_status: status,
+                subscription_status: subscriptionState.status,
                 first_name: user.first_name,
                 birth_date: user.birth_date,
                 birth_time: user.birth_time,
@@ -587,10 +595,11 @@ router.get('/profile', authenticateToken, async (req, res) => {
 
         // Flatten subscription status for frontend consistency
         const sub = (data.subscriptions && data.subscriptions.length > 0) ? data.subscriptions[0] : (data.subscriptions || {});
+        const subscriptionState = getAuthSubscriptionState(sub);
         const userProfile = {
             ...data,
-            subscription_status: sub.plan_type || 'free',
-            current_period_end: sub.current_period_end
+            subscription_status: subscriptionState.status,
+            current_period_end: subscriptionState.premiumExpires
         };
 
         res.json({ success: true, user: userProfile });

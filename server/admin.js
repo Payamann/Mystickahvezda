@@ -48,6 +48,10 @@ const FUNNEL_PRICING_INTENT_EVENTS = new Set([
     'one_time_form_started',
 ]);
 
+const FUNNEL_CHECKOUT_REQUEST_EVENTS = new Set([
+    'checkout_session_requested',
+]);
+
 const FUNNEL_RITUAL_COMPLETION_EVENTS = new Set([
     'daily_ritual_completed',
     'return_ritual_completed',
@@ -108,6 +112,7 @@ function createDailyBucket(date) {
         readingFeedbackSubmitted: 0,
         paywallViewed: 0,
         pricingIntent: 0,
+        checkoutRequested: 0,
         checkoutStarted: 0,
         subscriptionCompleted: 0,
         oneTimeCompleted: 0,
@@ -218,13 +223,17 @@ function createSourceFeatureSegment(source, feature) {
         readingFeedbackSubmitted: 0,
         paywallViewed: 0,
         pricingIntent: 0,
+        checkoutRequested: 0,
         checkoutStarted: 0,
         purchaseCompleted: 0,
         oneTimePdfDelivered: 0,
         oneTimeLifecycleScheduled: 0,
         failures: 0,
         paywallToPricingIntentRate: 0,
+        pricingIntentToCheckoutRequestRate: 0,
+        checkoutRequestToSessionRate: 0,
         pricingIntentToCheckoutRate: 0,
+        paywallToCheckoutRequestRate: 0,
         paywallToCheckoutRate: 0,
         checkoutToPurchaseRate: 0
     };
@@ -243,6 +252,7 @@ function addFunnelConversionCounts(segment, eventName) {
     if (FUNNEL_RITUAL_COMPLETION_EVENTS.has(eventName)) segment.dailyRitualCompleted += 1;
     if (eventName === 'reading_feedback_submitted') segment.readingFeedbackSubmitted += 1;
     if (FUNNEL_PRICING_INTENT_EVENTS.has(eventName)) segment.pricingIntent += 1;
+    if (FUNNEL_CHECKOUT_REQUEST_EVENTS.has(eventName)) segment.checkoutRequested += 1;
     if (eventName === 'checkout_session_created') segment.checkoutStarted += 1;
     if (eventName === 'subscription_checkout_completed' || eventName === 'one_time_purchase_completed') segment.purchaseCompleted += 1;
     if (eventName === 'one_time_pdf_delivered') segment.oneTimePdfDelivered += 1;
@@ -286,8 +296,17 @@ function applySourceFeatureRates(segment) {
         paywallToPricingIntentRate: segment.paywallViewed > 0
             ? Math.round((segment.pricingIntent / segment.paywallViewed) * 1000) / 10
             : 0,
+        pricingIntentToCheckoutRequestRate: segment.pricingIntent > 0
+            ? Math.round((segment.checkoutRequested / segment.pricingIntent) * 1000) / 10
+            : 0,
+        checkoutRequestToSessionRate: segment.checkoutRequested > 0
+            ? Math.round((segment.checkoutStarted / segment.checkoutRequested) * 1000) / 10
+            : 0,
         pricingIntentToCheckoutRate: segment.pricingIntent > 0
             ? Math.round((segment.checkoutStarted / segment.pricingIntent) * 1000) / 10
+            : 0,
+        paywallToCheckoutRequestRate: segment.paywallViewed > 0
+            ? Math.round((segment.checkoutRequested / segment.paywallViewed) * 1000) / 10
             : 0,
         paywallToCheckoutRate: segment.paywallViewed > 0
             ? Math.round((segment.checkoutStarted / segment.paywallViewed) * 1000) / 10
@@ -316,8 +335,17 @@ function buildSourceFeatureSegments(events, previousEvents = [], limit = 10) {
             paywallToPricingIntentRateDelta: segment.previous.paywallViewed > 0
                 ? Math.round((segment.paywallToPricingIntentRate - segment.previous.paywallToPricingIntentRate) * 10) / 10
                 : null,
+            pricingIntentToCheckoutRequestRateDelta: segment.previous.pricingIntent > 0
+                ? Math.round((segment.pricingIntentToCheckoutRequestRate - segment.previous.pricingIntentToCheckoutRequestRate) * 10) / 10
+                : null,
+            checkoutRequestToSessionRateDelta: segment.previous.checkoutRequested > 0
+                ? Math.round((segment.checkoutRequestToSessionRate - segment.previous.checkoutRequestToSessionRate) * 10) / 10
+                : null,
             pricingIntentToCheckoutRateDelta: segment.previous.pricingIntent > 0
                 ? Math.round((segment.pricingIntentToCheckoutRate - segment.previous.pricingIntentToCheckoutRate) * 10) / 10
+                : null,
+            paywallToCheckoutRequestRateDelta: segment.previous.paywallViewed > 0
+                ? Math.round((segment.paywallToCheckoutRequestRate - segment.previous.paywallToCheckoutRequestRate) * 10) / 10
                 : null,
             paywallToCheckoutRateDelta: segment.previous.paywallViewed > 0
                 ? Math.round((segment.paywallToCheckoutRate - segment.previous.paywallToCheckoutRate) * 10) / 10
@@ -362,11 +390,15 @@ function createTarotCardSegment(card, entrySource, utmSource, campaign) {
         totalEvents: 0,
         paywallViewed: 0,
         pricingIntent: 0,
+        checkoutRequested: 0,
         checkoutStarted: 0,
         purchaseCompleted: 0,
         failures: 0,
         paywallToPricingIntentRate: 0,
+        pricingIntentToCheckoutRequestRate: 0,
+        checkoutRequestToSessionRate: 0,
         pricingIntentToCheckoutRate: 0,
+        paywallToCheckoutRequestRate: 0,
         paywallToCheckoutRate: 0,
         checkoutToPurchaseRate: 0
     };
@@ -861,6 +893,7 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
             if (eventName === 'reading_feedback_submitted') byDay[date].readingFeedbackSubmitted += 1;
             if (FUNNEL_PAYWALL_VIEW_EVENTS.has(eventName)) byDay[date].paywallViewed += 1;
             if (FUNNEL_PRICING_INTENT_EVENTS.has(eventName)) byDay[date].pricingIntent += 1;
+            if (FUNNEL_CHECKOUT_REQUEST_EVENTS.has(eventName)) byDay[date].checkoutRequested += 1;
             if (eventName === 'checkout_session_created') byDay[date].checkoutStarted += 1;
             if (eventName === 'subscription_checkout_completed') byDay[date].subscriptionCompleted += 1;
             if (eventName === 'one_time_purchase_completed') byDay[date].oneTimeCompleted += 1;
@@ -873,6 +906,7 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
 
     const paywallViewed = [...FUNNEL_PAYWALL_VIEW_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
     const pricingIntent = [...FUNNEL_PRICING_INTENT_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
+    const checkoutRequested = [...FUNNEL_CHECKOUT_REQUEST_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
     const firstValueCompleted = byEvent.first_value_completed || 0;
     const activationCompleted = byEvent.activation_completed || 0;
     const dailyRitualCompleted = [...FUNNEL_RITUAL_COMPLETION_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
@@ -895,8 +929,17 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
     const paywallToPricingIntentRate = paywallViewed > 0
         ? Math.round((pricingIntent / paywallViewed) * 1000) / 10
         : 0;
+    const pricingIntentToCheckoutRequestRate = pricingIntent > 0
+        ? Math.round((checkoutRequested / pricingIntent) * 1000) / 10
+        : 0;
+    const checkoutRequestToSessionRate = checkoutRequested > 0
+        ? Math.round((checkoutStarted / checkoutRequested) * 1000) / 10
+        : 0;
     const pricingIntentToCheckoutRate = pricingIntent > 0
         ? Math.round((checkoutStarted / pricingIntent) * 1000) / 10
+        : 0;
+    const paywallToCheckoutRequestRate = paywallViewed > 0
+        ? Math.round((checkoutRequested / paywallViewed) * 1000) / 10
         : 0;
     const firstValueToCheckoutRate = firstValueCompleted > 0
         ? Math.round((checkoutStarted / firstValueCompleted) * 1000) / 10
@@ -926,6 +969,7 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
             readingFeedbackSubmitted,
             paywallViewed,
             pricingIntent,
+            checkoutRequested,
             checkoutStarted,
             subscriptionCompleted,
             oneTimeCompleted,
@@ -938,7 +982,10 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
             conversionRate,
             paywallToCheckoutRate,
             paywallToPricingIntentRate,
+            pricingIntentToCheckoutRequestRate,
+            checkoutRequestToSessionRate,
             pricingIntentToCheckoutRate,
+            paywallToCheckoutRequestRate,
             firstValueToCheckoutRate,
             activationToCheckoutRate,
             oneTimeDeliveryRate,
@@ -981,6 +1028,7 @@ export function buildFunnelDailyCsv(report) {
         'reading_feedback_submitted',
         'paywall_viewed',
         'pricing_intent',
+        'checkout_requested',
         'checkout_started',
         'subscription_completed',
         'one_time_completed',
@@ -998,6 +1046,7 @@ export function buildFunnelDailyCsv(report) {
         row.readingFeedbackSubmitted,
         row.paywallViewed,
         row.pricingIntent,
+        row.checkoutRequested,
         row.checkoutStarted,
         row.subscriptionCompleted,
         row.oneTimeCompleted,
@@ -1023,27 +1072,37 @@ export function buildFunnelSegmentsCsv(report) {
         'reading_feedback_submitted',
         'paywall_viewed',
         'pricing_intent',
+        'checkout_requested',
         'checkout_started',
         'purchase_completed',
         'one_time_pdf_delivered',
         'one_time_lifecycle_scheduled',
         'failures',
         'paywall_to_pricing_intent_rate',
+        'pricing_intent_to_checkout_request_rate',
+        'checkout_request_to_session_rate',
         'pricing_intent_to_checkout_rate',
         'first_value_to_checkout_rate',
         'activation_to_checkout_rate',
+        'paywall_to_checkout_request_rate',
         'paywall_to_checkout_rate',
         'checkout_to_purchase_rate',
         'previous_paywall_to_pricing_intent_rate',
+        'previous_pricing_intent_to_checkout_request_rate',
+        'previous_checkout_request_to_session_rate',
         'previous_pricing_intent_to_checkout_rate',
         'previous_first_value_to_checkout_rate',
         'previous_activation_to_checkout_rate',
+        'previous_paywall_to_checkout_request_rate',
         'previous_paywall_to_checkout_rate',
         'previous_checkout_to_purchase_rate',
         'paywall_to_pricing_intent_rate_delta',
+        'pricing_intent_to_checkout_request_rate_delta',
+        'checkout_request_to_session_rate_delta',
         'pricing_intent_to_checkout_rate_delta',
         'first_value_to_checkout_rate_delta',
         'activation_to_checkout_rate_delta',
+        'paywall_to_checkout_request_rate_delta',
         'paywall_to_checkout_rate_delta',
         'checkout_to_purchase_rate_delta'
     ];
@@ -1058,27 +1117,37 @@ export function buildFunnelSegmentsCsv(report) {
         row.readingFeedbackSubmitted,
         row.paywallViewed,
         row.pricingIntent,
+        row.checkoutRequested,
         row.checkoutStarted,
         row.purchaseCompleted,
         row.oneTimePdfDelivered,
         row.oneTimeLifecycleScheduled,
         row.failures,
         row.paywallToPricingIntentRate,
+        row.pricingIntentToCheckoutRequestRate,
+        row.checkoutRequestToSessionRate,
         row.pricingIntentToCheckoutRate,
         row.firstValueToCheckoutRate,
         row.activationToCheckoutRate,
+        row.paywallToCheckoutRequestRate,
         row.paywallToCheckoutRate,
         row.checkoutToPurchaseRate,
         row.previous?.paywallToPricingIntentRate ?? 0,
+        row.previous?.pricingIntentToCheckoutRequestRate ?? 0,
+        row.previous?.checkoutRequestToSessionRate ?? 0,
         row.previous?.pricingIntentToCheckoutRate ?? 0,
         row.previous?.firstValueToCheckoutRate ?? 0,
         row.previous?.activationToCheckoutRate ?? 0,
+        row.previous?.paywallToCheckoutRequestRate ?? 0,
         row.previous?.paywallToCheckoutRate ?? 0,
         row.previous?.checkoutToPurchaseRate ?? 0,
         row.paywallToPricingIntentRateDelta,
+        row.pricingIntentToCheckoutRequestRateDelta,
+        row.checkoutRequestToSessionRateDelta,
         row.pricingIntentToCheckoutRateDelta,
         row.firstValueToCheckoutRateDelta,
         row.activationToCheckoutRateDelta,
+        row.paywallToCheckoutRequestRateDelta,
         row.paywallToCheckoutRateDelta,
         row.checkoutToPurchaseRateDelta
     ]);

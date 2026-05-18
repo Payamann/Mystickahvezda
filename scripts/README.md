@@ -7,11 +7,30 @@ This directory contains active project helper scripts.
 - `audit-site-structure.mjs` - static sitemap/canonical/JSON-LD/local-link audit.
 - `build-js.mjs` - esbuild bundling for frontend JavaScript.
 - `check-hooks.mjs` - smoke test for Claude hook validators.
+- `analyze-funnel-segments.mjs` - offline analysis for admin funnel segment CSV exports.
 - `generate-sitemap-from-canonicals.mjs` - safe sitemap helper that derives URLs from indexable canonical HTML pages, preserves existing metadata, writes a review file by default, and only overwrites `sitemap.xml` with `--write`.
 - `generate-ga-snippet.js` - manual GA4 snippet/config helper.
 - `update-service-worker-cache.mjs` - validates precache assets and updates the service worker cache version.
 - `validate-html.js` and `validate-sw-assets.js` - Claude hook helpers for local validation; they run as ESM because the project uses `"type": "module"`.
 - `run-e2e-sections.mjs` - runs Playwright tests by named sections.
+
+### Funnel Segment Analysis
+
+Export the admin funnel segments CSV from the admin UI (`view=segments`), then
+rank the highest-loss source + feature paths without live credentials:
+
+```powershell
+npm run analyze:funnel -- path\to\funnel-segmenty-30d.csv
+```
+
+Useful filters:
+
+```powershell
+npm run analyze:funnel -- path\to\funnel-segmenty-30d.csv --top 12 --min-events 5 --min-step 3
+```
+
+The report groups leaks by funnel step and prints concrete next actions for the
+worst source + feature combinations.
 
 ## Content Helpers
 

@@ -1,5 +1,5 @@
-(()=>{(()=>{class l{static animationDelayClass(a){return`anim-delay-step-${Math.max(0,Math.min(10,Number.parseInt(a,10)||0))}`}static renderTarotResult(a,e,i=!0,s=""){const t=i?"Velk\xE1 ark\xE1na":"Mal\xE1 ark\xE1na";return`
-            <div class="tarot-result-card fade-in-up ${this.animationDelayClass(e)}">
+(()=>{(()=>{class l{static animationDelayClass(a){return`anim-delay-step-${Math.max(0,Math.min(10,Number.parseInt(a,10)||0))}`}static renderTarotResult(a,s,i=!0,e=""){const t=i?"Velk\xE1 ark\xE1na":"Mal\xE1 ark\xE1na";return`
+            <div class="tarot-result-card fade-in-up ${this.animationDelayClass(s)}">
                 <!-- Header Section -->
                 <div class="tarot-result-header">
                     <div class="flex-between tarot-result-header__top">
@@ -7,7 +7,7 @@
                             <h3 class="tarot-result-title">${a.name.toUpperCase()}</h3>
                             <div class="tarot-result-meta">
                                 <span>${t.toUpperCase()}</span>
-                                ${s?`<span class="text-gold tarot-result-meta__separator">\u2022</span> <span class="text-gold">POZICE: ${s.toUpperCase()}</span>`:""}
+                                ${e?`<span class="text-gold tarot-result-meta__separator">\u2022</span> <span class="text-gold">POZICE: ${e.toUpperCase()}</span>`:""}
                             </div>
                         </div>
                         <div class="tarot-result-star">\u2B50</div>
@@ -138,16 +138,16 @@
                     <small>P\u0159ipravuji hlubokou anal\xFDzu va\u0161ich 10 karet</small>
                 </div>
             </div>
-        `}static renderEtherealProgress(a=[],e="ethereal-progress"){const i=a.map((s,t)=>`
+        `}static renderEtherealProgress(a=[],s="ethereal-progress"){const i=a.map((e,t)=>`
             <div class="ethereal-progress-step${t===0?" active":""}" data-step="${t}">
                 <div class="ethereal-progress-step__dot"></div>
-                <span class="ethereal-progress-step__label">${this.escapeHtml(s)}</span>
+                <span class="ethereal-progress-step__label">${this.escapeHtml(e)}</span>
             </div>
         `).join('<div class="ethereal-progress-connector"></div>');return`
-            <div class="ethereal-progress" id="${e}">
+            <div class="ethereal-progress" id="${s}">
                 ${i}
             </div>
-        `}static updateEtherealProgress(a,e){const i=document.getElementById(a);i&&i.querySelectorAll(".ethereal-progress-step").forEach((s,t)=>{s.classList.remove("active","done"),t<e?s.classList.add("done"):t===e&&s.classList.add("active")})}static renderAuthModal(){return`
+        `}static updateEtherealProgress(a,s){const i=document.getElementById(a);i&&i.querySelectorAll(".ethereal-progress-step").forEach((e,t)=>{e.classList.remove("active","done"),t<s?e.classList.add("done"):t===s&&e.classList.add("active")})}static renderAuthModal(){return`
   <div id="auth-modal" class="modal modal--auth" hidden>
     <div class="modal__content auth-modal__content">
         <span class="modal__close auth-modal__close">\u2715</span>
@@ -174,11 +174,12 @@
                 <p class="auth-modal__help-text">Zadejte sv\u016Fj email a po\u0161leme v\xE1m odkaz pro obnoven\xED hesla.</p>
             </div>
 
-            <!-- Optional Register Fields (Moved to onboarding) -->
+            <!-- Optional profile fields. Keep birth data clearly explained and non-blocking. -->
             <div id="register-fields" class="auth-modal__field" hidden>
                 <div class="auth-modal__field">
                     <label class="auth-modal__label">Datum narozen\xED</label>
-                    <input class="auth-modal__input" type="date" name="birth_date">
+                    <input class="auth-modal__input" type="date" name="birth_date" autocomplete="bday" aria-describedby="birth-date-privacy-note">
+                    <p id="birth-date-privacy-note" class="auth-modal__help-text">Nepovinn\xE9. Datum pou\u017Eijeme jen pro osobn\xED v\xFDklady a nastaven\xED profilu; m\u016F\u017Ee\u0161 ho doplnit pozd\u011Bji u n\xE1stroje, kter\xFD ho opravdu pot\u0159ebuje.</p>
                 </div>
             </div>
 

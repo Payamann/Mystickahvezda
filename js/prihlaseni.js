@@ -352,6 +352,63 @@ document.addEventListener('DOMContentLoaded', () => {
         element.classList.toggle('mh-block-visible', visible);
     };
 
+    const getFormUx = () => window.MH_FORM_UX || {};
+
+    const setFieldError = (field, message) => {
+        if (!field) return;
+        field.setCustomValidity(message || '');
+        getFormUx().setFieldError?.(field, message);
+    };
+
+    const clearFieldError = (field) => {
+        if (!field) return;
+        field.setCustomValidity('');
+        getFormUx().clearFieldError?.(field);
+    };
+
+    const showAuthError = (message, field = null) => {
+        getFormUx().setFormSummary?.(loginForm, message);
+        if (field) {
+            getFormUx().setFieldError?.(field, message);
+            field.focus({ preventScroll: true });
+            field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        window.Auth?.showToast?.('Chyba', message, 'error');
+    };
+
+    const clearAuthErrors = () => {
+        getFormUx().clearFormSummary?.(loginForm);
+        [passwordInput, confirmPwInput, gdprConsent].forEach(clearFieldError);
+    };
+
+    const validateRegisterFields = () => {
+        if (!isRegisterMode) return true;
+
+        if (passwordInput && passwordInput.value.length < 8) {
+            const message = 'Heslo musí mít alespoň 8 znaků.';
+            setFieldError(passwordInput, message);
+            showAuthError(message, passwordInput);
+            return false;
+        }
+
+        if (confirmPwInput && passwordInput && passwordInput.value !== confirmPwInput.value) {
+            const message = 'Hesla se neshodují.';
+            setFieldError(confirmPwInput, message);
+            showAuthError(message, confirmPwInput);
+            return false;
+        }
+
+        if (gdprConsent && !gdprConsent.checked) {
+            const message = 'Pro vytvoření účtu potvrďte souhlas se zpracováním údajů a obchodními podmínkami.';
+            setFieldError(gdprConsent, message);
+            showAuthError(message, gdprConsent);
+            return false;
+        }
+
+        clearAuthErrors();
+        return true;
+    };
+
     const getSafeRedirectTarget = () => (
         redirectTarget.startsWith('/') && !redirectTarget.startsWith('//')
             ? redirectTarget
@@ -450,8 +507,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isRegisterMode) {
             renderSignupValuePanel();
-            if (loginHeader) loginHeader.textContent = 'Vytvořte si účet zdarma';
-            if (loginSubtitle) loginSubtitle.textContent = 'Stačí e-mail a heslo. Platební kartu nevyžadujeme a osobní údaje doplníte až u výkladu, který je opravdu potřebuje.';
+            if (requestedPlan) {
+                if (loginHeader) loginHeader.textContent = 'Vytvořte účet a pokračujte k odemčení';
+                if (loginSubtitle) loginSubtitle.textContent = 'Nejdřív bezpečně založíte účet. Placený plán potvrdíte až v dalším kroku ve Stripe checkoutu.';
+            } else {
+                if (loginHeader) loginHeader.textContent = 'Vytvořte si účet zdarma';
+                if (loginSubtitle) loginSubtitle.textContent = 'Stačí e-mail a heslo. Platební kartu nevyžadujeme a osobní údaje doplníte až u výkladu, který je opravdu potřebuje.';
+            }
             setBlockVisible(socialProofEl, true);
             setBlockVisible(signupValuePanel, true);
             setBlockVisible(passwordHelp, true);
@@ -466,7 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (confirmPwInput) confirmPwInput.required = true;
             if (confirmPwInput) confirmPwInput.minLength = 8;
             if (gdprConsent) gdprConsent.required = true;
-            authSubmitBtn.textContent = 'Vytvořit účet zdarma';
+            authSubmitBtn.textContent = requestedPlan ? 'Vytvořit účet a pokračovat' : 'Vytvořit účet zdarma';
             if (toggleBtn) toggleBtn.textContent = 'Máte účet? Přihlaste se';
         } else {
             if (loginHeader) loginHeader.textContent = 'Vítejte zpět';
@@ -505,6 +567,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     bindPasswordToggles();
 
+    [passwordInput, confirmPwInput].forEach((input) => {
+        input?.addEventListener('input', () => {
+            clearFieldError(input);
+            if (confirmPwInput) clearFieldError(confirmPwInput);
+            getFormUx().clearFormSummary?.(loginForm);
+        });
+    });
+
+    gdprConsent?.addEventListener('change', () => {
+        clearFieldError(gdprConsent);
+        getFormUx().clearFormSummary?.(loginForm);
+    });
+
     if (isResetMode && hash) {
         setBlockVisible(loginForm, false);
         setBlockVisible(forgotPasswordForm, false);
@@ -525,6 +600,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('password')?.value || '';
 
         if (!window.Auth || !authSubmitBtn) {
+            return;
+        }
+
+        clearAuthErrors();
+        if (!loginForm.checkValidity()) {
+            loginForm.reportValidity();
+            return;
+        }
+
+        if (!validateRegisterFields()) {
             return;
         }
 
@@ -576,6 +661,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.Auth.showToast?.('Vítejte zpět', 'Byli jste úspěšně přihlášeni.', 'success');
             }
         } catch (error) {
+            getFormUx().setFormSummary?.(loginForm, error.message);
             window.Auth.showToast?.('Chyba', error.message, 'error');
         } finally {
             authSubmitBtn.disabled = false;
@@ -648,6 +734,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const confirmPassword = document.getElementById('confirm-password')?.value;
 
         if (newPassword !== confirmPassword) {
+            const confirmField = document.getElementById('confirm-password');
+            getFormUx().setFieldError?.(confirmField, 'Hesla se neshodují.');
+            getFormUx().setFormSummary?.(resetPasswordForm, 'Hesla se neshodují.');
+            confirmField?.focus({ preventScroll: true });
             window.Auth?.showToast?.('Chyba', 'Hesla se neshodují.', 'error');
             return;
         }

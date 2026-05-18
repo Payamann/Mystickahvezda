@@ -44,6 +44,14 @@ export function initSettingsForm() {
 
 export async function saveSettings() {
     const btn = document.getElementById('save-settings-btn');
+    const settingsForm = document.querySelector('.settings-form');
+    const formUx = window.MH_FORM_UX || {};
+
+    formUx.clearFormSummary?.(settingsForm);
+    ['settings-current-password', 'settings-password', 'settings-password-confirm'].forEach(id => {
+        formUx.clearFieldError?.(document.getElementById(id));
+    });
+
     if (btn) {
         btn.disabled = true;
         btn.textContent = 'Ukládám...';
@@ -93,9 +101,15 @@ export async function saveSettings() {
 
         if (newPassword) {
             if (!currentPassword) {
+                const currentPasswordField = document.getElementById('settings-current-password');
+                formUx.setFieldError?.(currentPasswordField, 'Zadejte prosím aktuální heslo.');
+                currentPasswordField?.focus({ preventScroll: true });
                 throw new Error('Zadejte prosím aktuální heslo.');
             }
             if (newPassword !== confirmPassword) {
+                const confirmPasswordField = document.getElementById('settings-password-confirm');
+                formUx.setFieldError?.(confirmPasswordField, 'Nová hesla se neshodují.');
+                confirmPasswordField?.focus({ preventScroll: true });
                 throw new Error('Nová hesla se neshodují.');
             }
 
@@ -131,6 +145,7 @@ export async function saveSettings() {
         window.Auth?.showToast?.('Uloženo', 'Nastavení bylo úspěšně uloženo.', 'success');
     } catch (e) {
         console.error('Settings save error:', e);
+        formUx.setFormSummary?.(settingsForm, e.message || 'Nepodařilo se uložit nastavení.');
         window.Auth?.showToast?.('Chyba', e.message || 'Nepodařilo se uložit nastavení.', 'error');
     } finally {
         if (btn) {

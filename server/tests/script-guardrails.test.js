@@ -162,7 +162,7 @@ describe('manual script guardrails', () => {
             'data-analytics-feature="andelske_karty_hluboky_vhled"',
             'kristalova-koule.html?source=angel_intent_cluster',
             'data-mentor-prompt-type="decision"',
-            'css/pages/mentor.css?v=2',
+            'css/pages/mentor.css?v=4',
             'data-analytics-cta="shaman_wheel_intent_birth"',
             'runy.html?source=shaman_wheel_intent_cluster',
             'data-analytics-cta="past_life_intent_symbolic"',
@@ -184,6 +184,17 @@ describe('manual script guardrails', () => {
         ].forEach((snippet) => {
             expect(source).toContain(snippet);
         });
+    });
+
+    test('chakra article keeps energy practice outside medical claims', () => {
+        const html = readScript('blog/cakrove-leceni-navod.html');
+
+        expect(html).toContain('nenahrazuje lékařskou ani psychologickou péči');
+        expect(html).toContain('bez zdravotních slibů');
+        expect(html).not.toContain('Blokovaná čakra se vždy projeví');
+        expect(html).not.toContain('diabetes jako energetický korelát');
+        expect(html).not.toContain('pro lepší zdraví, vztahy a hojnost');
+        expect(html).not.toContain('skutečně ovlivňuje nervový systém a endokrinní žlázy');
     });
 
     test('local server does not run scheduled jobs by default', () => {

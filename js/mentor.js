@@ -160,6 +160,21 @@ function trackMentorPaywallDismissed(source) {
     });
 }
 
+function runAfterComponentsLoaded(callback) {
+    let hasRun = false;
+    const run = () => {
+        if (hasRun) return;
+        hasRun = true;
+        callback();
+    };
+    if (document.readyState === 'complete' && document.getElementById('auth-btn')) {
+        run();
+        return;
+    }
+    document.addEventListener('components:loaded', run, { once: true });
+    window.setTimeout(run, 1200);
+}
+
 function keepMentorFree(source, overlay = null) {
     trackMentorPaywallDismissed(source);
     overlay?.classList.remove('limit-reached-overlay--visible');
@@ -204,6 +219,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Auth token je HttpOnly cookie — JS k němu nemá přístup.
     // Používáme window.Auth.isLoggedIn() které čte user data z localStorage.
     if (!window.Auth?.isLoggedIn()) {
+        window.Auth?.showToast?.('Přihlášení vyžadováno', 'Pro vstup do Hvězdného Průvodce se prosím přihlaste.', 'info');
+        runAfterComponentsLoaded(() => startMentorUpgradeFlow('mentor_entry_auth_gate'));
+
         document.addEventListener('auth:changed', () => {
             if (window.Auth?.isLoggedIn()) window.location.reload();
         }, { once: true });

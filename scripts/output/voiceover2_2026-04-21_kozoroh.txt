@@ -1,47 +1,62 @@
-VOICEOVER SCRIPT
-============================================================
+# daily_reel2.py - 2026-04-21
+
+- **Znamení:** Kozoroh
+- **Kvalita:** standard
+- **QA:** ok
+- **API calls:** 0
+- **API účely:** -
+- **Modely:** -
+
+## QA
+
+- Voiceover words: 62
+- Hook words: 7
+- Hook: Kozorohu, ostatní to vzdali. Ty ještě počítáš.
+
+Bez nalezených deterministických problémů.
+
+## Voiceover
+
+```text
 🗓️ 21. dubna 2026
 
-[commanding] Kozorohu, ostatní to dávno vzdali. <break time="0.5s" /> [serious] Ty ještě počítáš. <break time="1.0s" />
+[commanding] Kozorohu, ostatní to vzdali. <break time="0.5s" /> [serious] Ty ještě počítáš. <break time="1.0s" />
 
-[confident] Dneska sedíš nad rozpočtem. <break time="0.3s" /> [intense] Čísla nesedí — ale nevypneš to. <break time="0.3s" /> [serious] Každý den, co nevzdáš, se počítá. <break time="0.3s" /> [commanding] Výsledky přijdou — ty jen musíš být ještě tady. <break time="1.0s" />
+[confident] Sedíš nad rozpočtem. <break time="0.3s" /> [intense] Čísla nesedí. <break time="0.3s" /> [serious] Přesto neodcházíš od stolu, protože víš, že stabilita nevzniká z nálady. <break time="0.3s" /> [commanding] Slunce v Býku ti dnes drží půdu a Saturn v Beranu se ptá, která zkratka by tě stála příliš mnoho. <break time="1.0s" />
 
-[inviting] Kozorohu — napiš, co by ostatní vzdali, ale ty ne. <break time="0.3s" /> [clearly] Označ kohokoliv, kdo tohle zná zpaměti.
+[inviting] Kozorohu — co by ostatní vzdali, ale ty tomu ještě dáváš tvar? <break time="0.3s" /> [clearly] Označ někoho, kdo přesně ví, kolik stojí klid.
+```
 
-TIKTOK / INSTAGRAM DESCRIPTION
-============================================================
-21. dubna 2026: Saturn, tvůj vládce, odměňuje ty, kdo pracují i v momentech, kdy výsledky nepřicházejí 🪐 Zatímco ostatní čekají na inspiraci, ty sedíš nad čísly, která nesedí — kardinální zemský živel odměňuje systematičnost, ne náhlé nápady. Sleduj profil — příště odhalím, proč právě Kozorozi dokončují projekty, které jiní ani nezačnou ⛰️
+## TikTok / Instagram Description
 
-#mystickaHvezda #Kozoroh #horoskop #fyp
+```text
+Kozorohu, 21. dubna 2026 není tvoje síla v tom, že necítíš tlak. Je v tom, že pod tlakem pořád vidíš další pevný krok. Slunce v Býku dnes podporuje stabilitu, Saturn v Beranu testuje zkratky.
 
-FACEBOOK REELS DESCRIPTION
-============================================================
-21. dubna 2026 ti Saturn připomíná, že stavíš i tam, kde jiní vidí jen trosky 🪐 Zatímco ostatní čekají na motivaci, ty počítáš další krok — kardinální zemský živel tě vede přes čísla, která nesedí, přes návrhy, které padly, přes projekty, co vypadají mrtvě. Saturn odměňuje systematičnost: úspěch vzniká jako součet toho, co uděláš dnes a zítra zas. Celý výklad najdeš na mystickahvezda.cz/horoskopy.html ✨
+#mystickaHvezda #Kozoroh #dennihoroskop #astrologie #horoskop
+```
+
+## Facebook Reels Description
+
+```text
+Kozorohu, 21. dubna 2026 se nepočítá jen výsledek. Počítá se i každý den, kdy neutečeš od stolu jen proto, že čísla zatím nesedí. Slunce v Býku drží půdu a Saturn v Beranu ukazuje cenu zkratek. Vlastní výklad pro svoje znamení najdeš na mystickahvezda.cz/horoskopy.html ✨
 
 #mystickaHvezda #Kozoroh #horoskop #astrologie #dennihoroskop #mystika
+```
 
-SUNO PROMPT
-============================================================
-Warm Rhodes piano melodies with gentle rhythmic pulse and luminous ambient layers, creating golden sunrise energy that moves forward with quiet confidence. Shimmering textures evoke cosmic light trails spreading across morning sky, supporting voiceover with present but unobtrusive optimism. Short instrumental, 60-90 seconds, loop-ready.
+## Suno Prompt
 
-THUMBNAIL PROMPT (Nano Banana)
-============================================================
+```text
+Steady cinematic ambient under a spoken Czech voiceover, muted piano, low restrained percussion, charcoal blue synth bed, disciplined Capricorn mood, calm pressure and quiet confidence with room for narration. Short instrumental, 60-90 seconds, loop-ready, no vocals.
+```
+
+## Thumbnail Prompt
+
+```text
 A mystical video thumbnail for zodiac sign Capricorn.
 
-BACKGROUND: deep dark space with soft subtle dark glacial blue and granite grey nebula with icy silver stellar clouds, cold deep navy void with frost-white star clusters, stoic cosmic terrain of dark blue and charcoal — disciplined, ancient, enduring — gentle and atmospheric, NOT aggressive. Rich dense star field with thousands of tiny stars. Dark and deep — moody and calm, serving as a backdrop without competing with the foreground. Deep navy and dark indigo tones dominate. NO harsh lightning, NO aggressive neon.
+BACKGROUND: deep dark cosmic space with glacial blue, granite grey, silver, and velvet navy nebula, premium mystical atmosphere, dense star field, stoic grounded glow.
 
-COMPOSITION: Three elements stacked as one tight unified group, vertically centered in the image. The group fills roughly 80% of the image height. Minimal gap between elements — they feel like one connected unit.
+COMPOSITION: ornate golden Capricorn glyph centered at the top, a dark stone plaque below with elegant gold text: "21. dubna" and "KOZOROH". Under it, compact parchment scroll with bold readable serif text: "Ostatní vzdali." and "Ty počítáš dál."
 
-ELEMENT 1 — glyph: large ornate Capricorn symbol (♑) in solid gold — rich champagne gold with deep amber shadows — surface of each stroke covered in intricate engraved filigree scrollwork and decorative patterns. Beveled polished 3D edges catching light. Small ornamental flourishes where strokes meet. Clear 3D depth and volume. Premium, ancient — NOT plain, NOT flat, NOT simple geometry.
-
-ELEMENT 2 — immediately below, small gap: dark stone plaque with ornate gold border frame. '21. dubna' in elegant gold lettering on the first line, 'KOZOROH' in bold engraved gold capitals on the second line.
-
-ELEMENT 3 — immediately below, small gap: compact parchment scroll, aged honey color. Bold serif text in dark brown (#2a1500), NOT cursive, NOT italic: 'Ostatní vzdávají.' on the first line, 'Ty počítáš další krok.' on the second line.
-
-NO zodiac wheel. NO star icons. NO logos. NO borders. NO corner decorations. NO animals. NO human figures. Bottom corners completely clean.
-
-Portrait 9:16.
-
-CAPTIONS PŘÍKAZ
-============================================================
-python "C:/Users/pavel/OneDrive/Desktop/captions-tool/captions.py" "VIDEO.mp4" --model small --text "Kozorohu, ostatní to dávno vzdali. Ty ještě počítáš. Dneska sedíš nad rozpočtem. Čísla nesedí — ale nevypneš to. Každý den, co nevzdáš, se počítá. Výsledky přijdou — ty jen musíš být ještě tady. Kozorohu — napiš, co by ostatní vzdali, ale ty ne. Označ kohokoliv, kdo tohle zná zpaměti."
+STYLE: premium 3D CGI, engraved gold, soft rim light, high contrast, clean bottom corners, no people, no logos, no extra icons, portrait 9:16.
+```

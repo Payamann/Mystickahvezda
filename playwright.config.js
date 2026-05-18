@@ -38,6 +38,7 @@ export default defineConfig({
         timezoneId: 'Europe/Prague',
         viewport: { width: 1280, height: 720 },
         ignoreHTTPSErrors: true,
+        serviceWorkers: 'block',
         // Zachytit screenshot při selhání
         screenshot: 'only-on-failure',
         // Trace pro debugování v CI
@@ -68,6 +69,7 @@ export default defineConfig({
             NODE_ENV: 'test',
             PORT: String(E2E_PORT),
             DISABLE_SCHEDULED_JOBS: 'true',
+            DISABLE_DAILY_HOROSCOPE_EMAILS: 'true',
             MOCK_AI: 'true',
             MOCK_SUPABASE: 'true',
             // Testovací secrets — žádné reálné klíče

@@ -64,6 +64,7 @@ import { spawn } from 'child_process';
 import { getPublicPlanManifest } from './config/constants.js';
 import { getKnownBirthLocationSuggestions } from './services/astrology.js';
 import { recordServerEvent } from './services/telemetry.js';
+import { createServer5xxAlertMonitor } from './services/alerts.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -71,6 +72,7 @@ const rootDir = path.resolve(__dirname, '../');
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
+const server5xxAlertMonitor = createServer5xxAlertMonitor();
 // Enable trust proxy for Railway/Heroku/Vercel to correctly identify user IPs
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
@@ -80,7 +82,7 @@ const CANONICAL_HOST = 'www.mystickahvezda.cz';
 const APEX_HOST = 'mystickahvezda.cz';
 
 app.use((req, res, next) => {
-    if (isProductionRuntime() && req.hostname === APEX_HOST) {
+    if (isProductionRuntime() && req.hostname === APEX_HOST && req.path !== '/webhook/stripe') {
         return res.redirect(308, `https://${CANONICAL_HOST}${req.originalUrl}`);
     }
     return next();
@@ -196,6 +198,21 @@ app.use((req, res, next) => {
     res.on('finish', () => {
         const duration = Date.now() - start;
         // console.warn(`[PERF] ${req.method} ${req.originalUrl} took ${duration}ms [${res.statusCode}]`);
+    });
+    next();
+});
+
+app.use((req, res, next) => {
+    res.on('finish', () => {
+        if (res.statusCode < 500) return;
+
+        server5xxAlertMonitor.recordResponse({
+            method: req.method,
+            path: req.originalUrl || req.path,
+            statusCode: res.statusCode,
+            userId: req.user?.id || null,
+            userAgent: req.headers['user-agent'] || null,
+        }).catch(() => {});
     });
     next();
 });

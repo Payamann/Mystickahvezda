@@ -29,10 +29,30 @@ if sys.platform == "win32":
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 
-DEFAULT_PINTEREST_CSV = Path("output/pinterest/pinterest_pins.csv")
-DEFAULT_MEMORY = Path("output/content_memory.json")
+BASE_DIR = Path(__file__).resolve().parent
+OUTPUT_DIR = BASE_DIR / "output"
+DEFAULT_FUNNEL_CSV = OUTPUT_DIR / "revenue" / "funnel-segments-90d.csv"
+DEFAULT_FUNNEL_SUMMARY_JSON = OUTPUT_DIR / "revenue" / "funnel-live-summary.json"
+DEFAULT_GOOGLE_GROWTH_JSON = OUTPUT_DIR / "google" / "google-growth-latest.json"
+DEFAULT_PINTEREST_CSV = OUTPUT_DIR / "pinterest" / "pinterest_pins.csv"
+DEFAULT_MEMORY = OUTPUT_DIR / "content_memory.json"
+DEFAULT_REPORT_DIR = OUTPUT_DIR / "codex"
 
 REQUIRED_UTM_PARAMS = ("utm_source", "utm_medium", "utm_campaign", "utm_content")
+
+CORE_FUNNEL_COLUMNS = ("source", "feature", "total_events")
+ENHANCED_FUNNEL_COLUMNS = (
+    "first_value_completed",
+    "activation_completed",
+    "pricing_intent",
+    "checkout_requested",
+    "paywall_to_pricing_intent_rate",
+    "pricing_intent_to_checkout_request_rate",
+    "checkout_request_to_session_rate",
+    "pricing_intent_to_checkout_rate",
+    "first_value_to_checkout_rate",
+    "activation_to_checkout_rate",
+)
 
 PILLAR_BY_TYPE = {
     "educational": "education",
@@ -81,13 +101,20 @@ class FunnelSegment:
     feature: str
     total_events: int = 0
     paywall_viewed: int = 0
+    checkout_requested: int = 0
     checkout_started: int = 0
     purchase_completed: int = 0
     failures: int = 0
+    pricing_intent_to_checkout_request_rate: float = 0.0
+    checkout_request_to_session_rate: float = 0.0
     paywall_to_checkout_rate: float = 0.0
     checkout_to_purchase_rate: float = 0.0
+    previous_pricing_intent_to_checkout_request_rate: float = 0.0
+    previous_checkout_request_to_session_rate: float = 0.0
     previous_paywall_to_checkout_rate: float = 0.0
     previous_checkout_to_purchase_rate: float = 0.0
+    pricing_intent_to_checkout_request_rate_delta: float = 0.0
+    checkout_request_to_session_rate_delta: float = 0.0
     paywall_to_checkout_rate_delta: float = 0.0
     checkout_to_purchase_rate_delta: float = 0.0
 
@@ -96,6 +123,7 @@ class FunnelSegment:
         return (
             self.purchase_completed * 100
             + self.checkout_started * 20
+            + self.checkout_requested * 6
             + self.paywall_viewed * 3
             - self.failures * 10
             + self.paywall_to_checkout_rate
@@ -158,6 +186,10 @@ def parse_number(value: object) -> float:
         return 0.0
     if isinstance(value, (int, float)):
         return float(value)
+    if isinstance(value, (list, tuple)):
+        values = [parse_number(item) for item in value]
+        values = [item for item in values if item > 0]
+        return sum(values) / len(values) if values else 0.0
 
     text = str(value).strip().replace("%", "")
     if not text:
@@ -198,6 +230,29 @@ def normalized_row(row: dict[str, str]) -> dict[str, str]:
     return {normalize_header(key): value for key, value in row.items()}
 
 
+def resolve_input_path(path: Path | str | None, base_dir: Path = BASE_DIR) -> Path | None:
+    if path is None:
+        return None
+
+    candidate = Path(path)
+    if candidate.is_absolute():
+        return candidate
+
+    cwd_candidate = Path.cwd() / candidate
+    if cwd_candidate.exists():
+        return cwd_candidate
+
+    return base_dir / candidate
+
+
+def load_csv_headers(path: Path | None) -> list[str]:
+    if not path or not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        return [normalize_header(header) for header in reader.fieldnames or []]
+
+
 def load_csv_rows(path: Path) -> list[dict[str, str]]:
     if not path or not path.exists():
         return []
@@ -217,13 +272,20 @@ def load_funnel_segments(path: Path | None) -> list[FunnelSegment]:
                 feature=(row.get("feature") or "").strip(),
                 total_events=parse_int(row.get("total_events")),
                 paywall_viewed=parse_int(row.get("paywall_viewed")),
+                checkout_requested=parse_int(row.get("checkout_requested")),
                 checkout_started=parse_int(row.get("checkout_started")),
                 purchase_completed=parse_int(row.get("purchase_completed")),
                 failures=parse_int(row.get("failures")),
+                pricing_intent_to_checkout_request_rate=parse_number(row.get("pricing_intent_to_checkout_request_rate")),
+                checkout_request_to_session_rate=parse_number(row.get("checkout_request_to_session_rate")),
                 paywall_to_checkout_rate=parse_number(row.get("paywall_to_checkout_rate")),
                 checkout_to_purchase_rate=parse_number(row.get("checkout_to_purchase_rate")),
+                previous_pricing_intent_to_checkout_request_rate=parse_number(row.get("previous_pricing_intent_to_checkout_request_rate")),
+                previous_checkout_request_to_session_rate=parse_number(row.get("previous_checkout_request_to_session_rate")),
                 previous_paywall_to_checkout_rate=parse_number(row.get("previous_paywall_to_checkout_rate")),
                 previous_checkout_to_purchase_rate=parse_number(row.get("previous_checkout_to_purchase_rate")),
+                pricing_intent_to_checkout_request_rate_delta=parse_number(row.get("pricing_intent_to_checkout_request_rate_delta")),
+                checkout_request_to_session_rate_delta=parse_number(row.get("checkout_request_to_session_rate_delta")),
                 paywall_to_checkout_rate_delta=parse_number(row.get("paywall_to_checkout_rate_delta")),
                 checkout_to_purchase_rate_delta=parse_number(row.get("checkout_to_purchase_rate_delta")),
             )
@@ -347,6 +409,15 @@ def load_content_memory_summary(path: Path | None, days: int = 14, today: date |
         if isinstance(stats, dict):
             score = parse_number(stats.get("avg_score") or stats.get("score") or stats.get("quality_score"))
             count = parse_int(stats.get("count") or stats.get("uses") or stats.get("total"))
+            raw_scores = stats.get("scores") or stats.get("values")
+            if not score and isinstance(raw_scores, list):
+                score = parse_number(raw_scores)
+                count = len([item for item in raw_scores if parse_number(item) > 0])
+        elif isinstance(stats, list):
+            values = [parse_number(item) for item in stats]
+            values = [value for value in values if value > 0]
+            score = sum(values) / len(values) if values else 0.0
+            count = len(values)
         else:
             score = parse_number(stats)
             count = 0
@@ -434,6 +505,7 @@ def summarize_funnel(segments: list[FunnelSegment]) -> dict:
         "segments": len(segments),
         "total_events": sum(segment.total_events for segment in segments),
         "paywall_viewed": sum(segment.paywall_viewed for segment in segments),
+        "checkout_requested": sum(segment.checkout_requested for segment in segments),
         "checkout_started": sum(segment.checkout_started for segment in segments),
         "purchase_completed": sum(segment.purchase_completed for segment in segments),
         "failures": sum(segment.failures for segment in segments),
@@ -441,42 +513,277 @@ def summarize_funnel(segments: list[FunnelSegment]) -> dict:
     }
 
 
+def load_live_funnel_summary(path: Path | str | None) -> dict | None:
+    if path is None:
+        return None
+    summary_path = resolve_input_path(path)
+    if not summary_path.exists():
+        return None
+    try:
+        data = json.loads(summary_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def load_google_growth_summary(path: Path | str | None) -> dict | None:
+    if path is None:
+        return None
+    google_path = resolve_input_path(path)
+    if not google_path.exists():
+        return None
+    try:
+        data = json.loads(google_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def summarize_entitlements(live_summary: dict | None) -> dict:
+    audit = (live_summary or {}).get("entitlementAudit")
+    if not isinstance(audit, dict):
+        return {
+            "available": False,
+            "active_subscriptions": 0,
+            "active_premium_subscriptions": 0,
+            "premium_flag_mismatches": 0,
+            "premium_rows_missing_user": 0,
+            "unknown_active_plan_types": [],
+            "mismatch_samples": [],
+        }
+
+    return {
+        "available": True,
+        "active_subscriptions": int(parse_number(audit.get("activeSubscriptions"))),
+        "active_premium_subscriptions": int(parse_number(audit.get("activePremiumSubscriptions"))),
+        "premium_flag_mismatches": int(parse_number(audit.get("premiumFlagMismatches"))),
+        "premium_rows_missing_user": int(parse_number(audit.get("premiumRowsMissingUser"))),
+        "unknown_active_plan_types": list(audit.get("unknownActivePlanTypes") or []),
+        "mismatch_samples": list(audit.get("mismatchSamples") or []),
+    }
+
+
+def summarize_google(google_summary: dict | None) -> dict:
+    if not isinstance(google_summary, dict):
+        return {
+            "available": False,
+            "gsc_clicks": 0,
+            "gsc_impressions": 0,
+            "ga4_sessions": 0,
+            "ga4_conversions": 0,
+            "ctr_opportunities": [],
+            "query_opportunities": [],
+            "traffic_no_conversion": [],
+            "top_sources": [],
+        }
+
+    gsc = google_summary.get("gsc") if isinstance(google_summary.get("gsc"), dict) else {}
+    ga4 = google_summary.get("ga4") if isinstance(google_summary.get("ga4"), dict) else {}
+    return {
+        "available": True,
+        "gsc_clicks": int(parse_number(gsc.get("totalClicks"))),
+        "gsc_impressions": int(parse_number(gsc.get("totalImpressions"))),
+        "ga4_sessions": int(parse_number(ga4.get("sessions"))),
+        "ga4_conversions": int(parse_number(ga4.get("conversions"))),
+        "ctr_opportunities": list(gsc.get("ctrOpportunities") or [])[:10],
+        "query_opportunities": list(gsc.get("queryOpportunities") or [])[:10],
+        "traffic_no_conversion": list(ga4.get("landingPagesWithTrafficNoConversion") or [])[:10],
+        "top_sources": list(ga4.get("topSources") or [])[:10],
+    }
+
+
 def build_growth_review(
     funnel_segments: list[FunnelSegment] | None = None,
     pinterest_items: list[PinterestItem] | None = None,
     memory_summary: ContentMemorySummary | None = None,
+    data_readiness: list[str] | None = None,
+    live_summary: dict | None = None,
+    google_summary: dict | None = None,
 ) -> dict:
     funnel_segments = funnel_segments or []
     pinterest_items = pinterest_items or []
     memory_summary = memory_summary or ContentMemorySummary(0, 0, 0.0, {}, {}, list(TARGET_PILLARS), [], 0)
+    data_readiness = data_readiness or []
 
     funnel = summarize_funnel(funnel_segments)
     pinterest = summarize_pinterest(pinterest_items, funnel_segments)
-    actions = recommend_actions(funnel, pinterest, memory_summary)
+    entitlements = summarize_entitlements(live_summary)
+    google = summarize_google(google_summary)
+    actions = recommend_actions(funnel, pinterest, memory_summary, entitlements, google)
 
     return {
+        "data_readiness": data_readiness,
         "funnel": funnel,
+        "entitlements": entitlements,
+        "google": google,
         "pinterest": pinterest,
         "content_memory": memory_summary.to_dict(),
         "recommended_actions": actions,
     }
 
 
-def recommend_actions(funnel: dict, pinterest: dict, memory: ContentMemorySummary) -> list[str]:
+def input_readiness_notes(
+    *,
+    funnel_csv: Path | None,
+    live_summary_path: Path | None,
+    google_json_path: Path | None,
+    pinterest_csv: Path | None,
+    memory_path: Path | None,
+    funnel_segments: list[FunnelSegment],
+    pinterest_items: list[PinterestItem],
+    memory_summary: ContentMemorySummary,
+) -> list[str]:
+    notes: list[str] = []
+
+    if funnel_csv is None:
+        notes.append(
+            "Funnel CSV was not provided. Using local defaults only; export /api/admin/funnel?format=csv&view=segments for revenue decisions."
+        )
+    elif not funnel_csv.exists():
+        notes.append(f"Funnel CSV not found: {funnel_csv}")
+    else:
+        headers = load_csv_headers(funnel_csv)
+        missing_core = [column for column in CORE_FUNNEL_COLUMNS if column not in headers]
+        missing_enhanced = [column for column in ENHANCED_FUNNEL_COLUMNS if column not in headers]
+        if missing_core:
+            notes.append(f"Funnel CSV is missing core columns: {', '.join(missing_core)}.")
+        if missing_enhanced:
+            columns = ", ".join(missing_enhanced[:5])
+            if len(missing_enhanced) > 5:
+                columns += f", and {len(missing_enhanced) - 5} more"
+            notes.append(
+                "Funnel CSV uses a legacy schema; advanced leak analysis will improve after adding: "
+                + columns
+                + "."
+            )
+        if not funnel_segments:
+            notes.append(f"Funnel CSV has no data rows: {funnel_csv}")
+
+    if live_summary_path is not None and not live_summary_path.exists():
+        notes.append(f"Live funnel summary not found: {live_summary_path}")
+
+    if google_json_path is not None and not google_json_path.exists():
+        notes.append(f"Google growth data not found: {google_json_path}")
+
+    if pinterest_csv is not None and not pinterest_csv.exists():
+        notes.append(f"Pinterest inventory not found: {pinterest_csv}")
+    elif pinterest_csv is not None and pinterest_csv.exists() and not pinterest_items:
+        notes.append(f"Pinterest inventory has no data rows: {pinterest_csv}")
+
+    if memory_path is None or not memory_path.exists():
+        notes.append(f"Content memory not found: {memory_path}")
+    elif memory_summary.total_approved == 0:
+        notes.append("Content memory exists, but has no approved posts yet.")
+
+    return notes
+
+
+def run_growth_review(
+    *,
+    funnel_csv: Path | str | None = DEFAULT_FUNNEL_CSV,
+    live_summary: Path | str | None = None,
+    google_json: Path | str | None = None,
+    pinterest_csv: Path | str | None = DEFAULT_PINTEREST_CSV,
+    memory: Path | str | None = DEFAULT_MEMORY,
+    days: int = 14,
+    today: date | None = None,
+) -> tuple[dict, dict[str, Path | None]]:
+    today = today or date.today()
+    funnel_path = resolve_input_path(funnel_csv or DEFAULT_FUNNEL_CSV)
+    live_summary_path = resolve_input_path(live_summary) if live_summary else None
+    google_json_path = resolve_input_path(google_json) if google_json else None
+    pinterest_path = resolve_input_path(pinterest_csv or DEFAULT_PINTEREST_CSV)
+    memory_path = resolve_input_path(memory or DEFAULT_MEMORY)
+
+    funnel_segments = load_funnel_segments(funnel_path)
+    live_summary_data = load_live_funnel_summary(live_summary_path)
+    google_summary_data = load_google_growth_summary(google_json_path)
+    pinterest_items = load_pinterest_inventory(pinterest_path, today=today)
+    memory_summary = load_content_memory_summary(memory_path, days=days, today=today)
+    readiness = input_readiness_notes(
+        funnel_csv=funnel_path,
+        live_summary_path=live_summary_path,
+        google_json_path=google_json_path,
+        pinterest_csv=pinterest_path,
+        memory_path=memory_path,
+        funnel_segments=funnel_segments,
+        pinterest_items=pinterest_items,
+        memory_summary=memory_summary,
+    )
+
+    report = build_growth_review(
+        funnel_segments,
+        pinterest_items,
+        memory_summary,
+        data_readiness=readiness,
+        live_summary=live_summary_data,
+        google_summary=google_summary_data,
+    )
+    return report, {
+        "funnel_csv": funnel_path,
+        "live_summary": live_summary_path,
+        "google_json": google_json_path,
+        "pinterest_csv": pinterest_path,
+        "memory": memory_path,
+    }
+
+
+def recommend_actions(
+    funnel: dict,
+    pinterest: dict,
+    memory: ContentMemorySummary,
+    entitlements: dict | None = None,
+    google: dict | None = None,
+) -> list[str]:
     actions = []
+    entitlements = entitlements or {}
+    google = google or {}
+
+    if entitlements.get("premium_flag_mismatches", 0) > 0:
+        actions.append(
+            "Fix premium entitlement drift before scaling acquisition: "
+            f"{entitlements['premium_flag_mismatches']} active premium subscription(s) do not have users.is_premium synced."
+        )
 
     if funnel["segments"] == 0:
         actions.append(
             "Export admin funnel CSV: /api/admin/funnel?format=csv&view=segments, then rerun this review with --funnel-csv."
         )
     elif funnel["checkout_started"] == 0:
+        if funnel.get("checkout_requested", 0) > 0:
+            actions.append(
+                "Checkout requests exist but no Stripe sessions are created. Audit Stripe price config, duplicate-subscription blocks and checkout_session_failed events before scaling traffic."
+            )
+        else:
+            actions.append(
+                "Funnel export has paywall/pricing intent but no checkout requests. Prioritize paid-plan auth handoff copy and direct CTA instrumentation before scaling traffic."
+            )
+
+    if google.get("ctr_opportunities"):
+        top = google["ctr_opportunities"][0]
         actions.append(
-            "Funnel export has paywall data but no checkout starts. Prioritize paywall CTA/cancel recovery copy before scaling traffic."
+            "Capture existing Google demand: optimize title/meta and intro for "
+            f"{top.get('path') or top.get('page')} "
+            f"({int(parse_number(top.get('impressions')))} impressions, "
+            f"{parse_number(top.get('position')):.1f} avg position)."
+        )
+
+    if google.get("traffic_no_conversion"):
+        top = google["traffic_no_conversion"][0]
+        actions.append(
+            "Run CRO on Google traffic that does not convert: "
+            f"{top.get('path') or top.get('landingPage')} has "
+            f"{int(parse_number(top.get('sessions')))} GA4 sessions and no conversions."
         )
 
     if pinterest["stale_pins"] > 0:
         actions.append(
             f"Refresh Pinterest schedule: {pinterest['stale_pins']} pins have scheduled dates before today."
+        )
+
+    if pinterest["missing_utm_pins"] > 0:
+        actions.append(
+            f"Repair tracking on Pinterest inventory: {pinterest['missing_utm_pins']} pins are missing required UTM params."
         )
 
     if pinterest["ambiguous_pins"] > 0:
@@ -495,6 +802,10 @@ def recommend_actions(funnel: dict, pinterest: dict, memory: ContentMemorySummar
         actions.append(
             "Start logging engagement outcomes. Without engagement_log, hook winners are based on quality estimates only."
         )
+
+    if memory.top_hooks:
+        hooks = ", ".join(row["hook"] for row in memory.top_hooks[:3])
+        actions.append(f"Use the current top hook patterns in the next batch: {hooks}.")
 
     winning = [
         row
@@ -518,7 +829,10 @@ def format_percent(value: float) -> str:
 
 def format_report(report: dict) -> str:
     lines = []
+    readiness = report.get("data_readiness") or []
     funnel = report["funnel"]
+    entitlements = report.get("entitlements") or {}
+    google = report.get("google") or {}
     pinterest = report["pinterest"]
     memory = report["content_memory"]
 
@@ -529,8 +843,21 @@ def format_report(report: dict) -> str:
     lines.append("-" * 80)
     lines.append(
         f"Funnel segments: {funnel['segments']} | paywall: {funnel['paywall_viewed']} | "
-        f"checkout: {funnel['checkout_started']} | purchases: {funnel['purchase_completed']}"
+        f"checkout requests: {funnel.get('checkout_requested', 0)} | "
+        f"checkout sessions: {funnel['checkout_started']} | purchases: {funnel['purchase_completed']}"
     )
+    if entitlements.get("available"):
+        lines.append(
+            "Entitlements: "
+            f"active premium: {entitlements['active_premium_subscriptions']} | "
+            f"premium flag mismatches: {entitlements['premium_flag_mismatches']}"
+        )
+    if google.get("available"):
+        lines.append(
+            "Google: "
+            f"GSC clicks: {google['gsc_clicks']} | impressions: {google['gsc_impressions']} | "
+            f"GA4 sessions: {google['ga4_sessions']} | conversions: {google['ga4_conversions']}"
+        )
     lines.append(
         f"Pinterest pins: {pinterest['total_pins']} | stale: {pinterest['stale_pins']} | "
         f"missing UTMs: {pinterest['missing_utm_pins']} | source+feature ready: {pinterest['source_feature_ready_pins']}"
@@ -539,6 +866,11 @@ def format_report(report: dict) -> str:
         f"Recent content posts: {memory['recent_count']} | avg quality: {memory['avg_quality']} | "
         f"missing pillars: {', '.join(memory['missing_pillars']) or 'none'}"
     )
+    if readiness:
+        lines.append("")
+        lines.append("Readiness notes")
+        for note in readiness:
+            lines.append(f"- {note}")
 
     lines.append("")
     lines.append("Top funnel segments")
@@ -549,9 +881,30 @@ def format_report(report: dict) -> str:
         for idx, segment in enumerate(funnel["top_segments"][:8], 1):
             lines.append(
                 f"{idx:>2}. {segment['source'] or '-'} / {segment['feature'] or '-'} | "
-                f"paywall={segment['paywall_viewed']} checkout={segment['checkout_started']} "
+                f"paywall={segment['paywall_viewed']} request={segment.get('checkout_requested', 0)} "
+                f"checkout={segment['checkout_started']} "
                 f"purchase={segment['purchase_completed']} "
                 f"p2c={format_percent(segment['paywall_to_checkout_rate'])} score={segment['score']}"
+            )
+
+    if google.get("available"):
+        lines.append("")
+        lines.append("Top Google opportunities")
+        lines.append("-" * 80)
+        if not google.get("ctr_opportunities") and not google.get("traffic_no_conversion"):
+            lines.append("No Google growth opportunities above current thresholds.")
+        for idx, row in enumerate(google.get("ctr_opportunities", [])[:5], 1):
+            ctr = parse_number(row.get("ctr")) * 100
+            lines.append(
+                f"{idx:>2}. SEO CTR: {row.get('path') or row.get('page') or '-'} | "
+                f"impressions={int(parse_number(row.get('impressions')))} clicks={int(parse_number(row.get('clicks')))} "
+                f"ctr={ctr:.1f}% pos={parse_number(row.get('position')):.1f}"
+            )
+        for idx, row in enumerate(google.get("traffic_no_conversion", [])[:5], 1):
+            lines.append(
+                f"{idx:>2}. CRO: {row.get('path') or row.get('landingPage') or '-'} | "
+                f"sessions={int(parse_number(row.get('sessions')))} "
+                f"engagement={parse_number(row.get('engagementRate')):.1f}% conversions={int(parse_number(row.get('conversions')))}"
             )
 
     lines.append("")
@@ -563,7 +916,7 @@ def format_report(report: dict) -> str:
         for idx, campaign in enumerate(pinterest["top_campaigns"][:10], 1):
             segment = campaign.get("best_segment") or {}
             measured = (
-                f"checkout={segment.get('checkout_started', 0)} purchase={segment.get('purchase_completed', 0)}"
+                f"request={segment.get('checkout_requested', 0)} checkout={segment.get('checkout_started', 0)} purchase={segment.get('purchase_completed', 0)}"
                 if segment
                 else "no funnel match"
             )
@@ -581,20 +934,69 @@ def format_report(report: dict) -> str:
     return "\n".join(lines)
 
 
+def write_growth_review(
+    report: dict,
+    *,
+    output_dir: Path | str = DEFAULT_REPORT_DIR,
+    target_date: date | None = None,
+) -> tuple[Path, Path]:
+    target_date = target_date or date.today()
+    output_path = Path(output_dir)
+    if not output_path.is_absolute():
+        output_path = BASE_DIR / output_path
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    markdown_path = output_path / f"growth_operator_{target_date.isoformat()}.md"
+    json_path = output_path / f"growth_operator_{target_date.isoformat()}.json"
+    markdown_path.write_text(format_report(report) + "\n", encoding="utf-8")
+    json_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return markdown_path, json_path
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run revenue content review for social/Pinterest growth loops.")
-    parser.add_argument("--funnel-csv", type=Path, help="Admin export: /api/admin/funnel?format=csv&view=segments")
+    parser.add_argument(
+        "--funnel-csv",
+        type=Path,
+        default=DEFAULT_FUNNEL_CSV,
+        help="Admin export: /api/admin/funnel?format=csv&view=segments",
+    )
+    parser.add_argument(
+        "--live-summary-json",
+        type=Path,
+        default=None,
+        help="Optional JSON summary from scripts/export-live-funnel.mjs, used for entitlement drift checks.",
+    )
+    parser.add_argument(
+        "--google-json",
+        type=Path,
+        default=None,
+        help="Optional JSON summary from scripts/export-google-growth-data.mjs.",
+    )
     parser.add_argument("--pinterest-csv", type=Path, default=DEFAULT_PINTEREST_CSV)
     parser.add_argument("--memory", type=Path, default=DEFAULT_MEMORY)
     parser.add_argument("--days", type=int, default=14)
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")
+    parser.add_argument("--write", action="store_true", help="Write Markdown and JSON report to output/codex.")
     args = parser.parse_args()
 
     today = date.today()
-    funnel_segments = load_funnel_segments(args.funnel_csv)
-    pinterest_items = load_pinterest_inventory(args.pinterest_csv, today=today)
-    memory_summary = load_content_memory_summary(args.memory, days=args.days, today=today)
-    report = build_growth_review(funnel_segments, pinterest_items, memory_summary)
+    report, _ = run_growth_review(
+        funnel_csv=args.funnel_csv,
+        live_summary=args.live_summary_json,
+        google_json=args.google_json,
+        pinterest_csv=args.pinterest_csv,
+        memory=args.memory,
+        days=args.days,
+        today=today,
+    )
+    if args.write:
+        markdown_path, json_path = write_growth_review(report, target_date=today)
+        stream = sys.stderr if args.json else sys.stdout
+        print(f"Growth operator report written: {markdown_path}", file=stream)
+        print(f"Growth operator JSON written: {json_path}", file=stream)
+        if not args.json:
+            print()
 
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))

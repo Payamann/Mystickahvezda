@@ -9,11 +9,17 @@ Instagram flow:
 Stav: PŘIPRAVENO — čeká na META_ACCESS_TOKEN a META_PAGE_ID
 """
 import requests
+import io
 import json
 import time
 from pathlib import Path
 from datetime import datetime
 import sys
+
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+
 sys.path.insert(0, str(Path(__file__).parent))
 import config
 from logger import get_logger
@@ -107,6 +113,24 @@ class MetaPublisher:
             error = result.get("error", {}).get("message", str(result))
             log.error("Facebook foto publikace selhala: %s", error)
             return {"success": False, "error": error}
+
+    def comment_on_facebook_object(self, object_id: str, message: str) -> dict:
+        """Přidá komentář k Facebook postu nebo fotce."""
+        url = f"{self.GRAPH_API_URL}/{object_id}/comments"
+        data = {
+            "message": message,
+            "access_token": self.access_token,
+        }
+        response = requests.post(url, data=data, timeout=config.HTTP_TIMEOUT)
+        result = response.json()
+
+        if "id" in result:
+            log.info("Facebook komentář přidán: %s", result["id"])
+            return {"success": True, "comment_id": result["id"]}
+
+        error = result.get("error", {}).get("message", str(result))
+        log.error("Facebook komentář selhal: %s", error)
+        return {"success": False, "error": error}
 
     # ══════════════════════════════════════════════════
     # INSTAGRAM

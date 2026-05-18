@@ -880,3 +880,138 @@
     color: #1e3a8a;
     box-shadow: 0 0 20px rgba(224, 231, 255, 0.6);
 }
+
+/* UI audit refinements: tighter guest profile and denser mobile dashboard. */
+body.page-profile .hero--mini {
+    padding-bottom: 1.25rem;
+}
+
+body.page-profile .section:not(.hero--mini) {
+    padding-top: 1.25rem;
+}
+
+body.page-profile .profile-guest-card,
+body.page-profile .profile-user-card,
+body.page-profile .daily-guidance-card,
+body.page-profile .activation-checklist-card,
+body.page-profile .ritual-memory-card,
+body.page-profile .stat-card,
+body.page-profile .profile-grid .glass-card,
+body.page-profile .tab-content .glass-card {
+    background-color: rgba(8, 8, 24, 0.76);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+body.page-profile .profile-guest-card {
+    max-width: 660px;
+    padding: 1.65rem 1.85rem !important;
+}
+
+body.page-profile .profile-guest-card__icon {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 0.8rem;
+}
+
+body.page-profile .profile-guest-card h2 {
+    font-size: 1.65rem;
+    line-height: 1.18;
+}
+
+body.page-profile .profile-guest-card__lead,
+body.page-profile .profile-guest-card__text {
+    margin-top: 0.7rem;
+    line-height: 1.58;
+}
+
+@media (max-width: 680px) {
+    body.page-profile .hero--mini {
+        padding-top: 5.35rem;
+        padding-bottom: 0.85rem;
+    }
+
+    body.page-profile .hero__title {
+        max-width: 9ch;
+        font-size: 2.2rem;
+        line-height: 1.05;
+    }
+
+    body.page-profile .hero__subtitle {
+        font-size: 0.98rem;
+        line-height: 1.35;
+    }
+
+    body.page-profile .section:not(.hero--mini) {
+        padding-top: 0.65rem;
+        padding-bottom: 1.5rem;
+    }
+
+    body.page-profile .profile-guest-card {
+        padding: 1.05rem 1rem !important;
+        margin-bottom: 1rem;
+    }
+
+    body.page-profile .profile-guest-card__icon {
+        width: 44px;
+        height: 44px;
+        margin-bottom: 0.65rem;
+        font-size: 1.15rem;
+    }
+
+    body.page-profile .profile-guest-card h2 {
+        font-size: 1.32rem;
+        line-height: 1.18;
+    }
+
+    body.page-profile .profile-guest-card__lead,
+    body.page-profile .profile-guest-card__text {
+        margin-top: 0.55rem;
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }
+
+    body.page-profile .profile-guest-card__actions {
+        gap: 0.55rem;
+        margin-top: 0.95rem;
+    }
+
+    body.page-profile .profile-guest-card__actions .btn {
+        min-height: 42px;
+        padding: 0.62rem 0.9rem;
+        font-size: 0.82rem;
+    }
+
+    body.page-profile .profile-return-grid,
+    body.page-profile .stats-grid,
+    body.page-profile .profile-grid {
+        gap: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    body.page-profile .daily-guidance-card,
+    body.page-profile .activation-checklist-card,
+    body.page-profile .ritual-memory-card,
+    body.page-profile .stat-card,
+    body.page-profile .profile-grid .glass-card,
+    body.page-profile .tab-content .glass-card {
+        padding: 1rem !important;
+    }
+
+    body.page-profile .daily-guidance-card__title,
+    body.page-profile .activation-checklist-card__title,
+    body.page-profile .ritual-memory-card__title {
+        font-size: 1.12rem;
+        line-height: 1.25;
+    }
+
+    body.page-profile .profile-tabs {
+        gap: 0.35rem;
+        padding: 0.35rem;
+    }
+
+    body.page-profile .profile-tab {
+        min-height: 42px;
+        padding: 0.5rem 0.45rem;
+        font-size: 0.72rem;
+    }
+}

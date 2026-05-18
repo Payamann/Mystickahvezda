@@ -4,7 +4,7 @@ from urllib.parse import parse_qs, urlparse
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from pinterest_batch import build_tool_link, ensure_tool_tracking_params
+from pinterest_batch import build_tool_link, ensure_blog_tracking_params, ensure_tool_tracking_params
 
 
 def query(url):
@@ -45,3 +45,19 @@ def test_ensure_tool_tracking_params_preserves_override_utms_and_adds_source_fea
     assert params["utm_content"] == ["custom"]
     assert params["source"] == ["pinterest"]
     assert params["feature"] == ["partnerska_detail"]
+
+
+def test_ensure_blog_tracking_params_adds_utm_source_and_feature():
+    post = {
+        "category": "Numerologie",
+    }
+    old_link = "https://www.mystickahvezda.cz/blog/zivotni-cislo-odhaleni-kodu-vasi-duse.html"
+
+    params = query(ensure_blog_tracking_params(old_link, post, "zivotni-cislo-odhaleni-kodu-vasi-duse", 2))
+
+    assert params["utm_source"] == ["pinterest"]
+    assert params["utm_medium"] == ["organic"]
+    assert params["utm_campaign"] == ["blog_zivotni_cislo_odhaleni_kodu_vasi_duse"]
+    assert params["utm_content"] == ["zivotni-cislo-odhaleni-kodu-vasi-duse_v3"]
+    assert params["source"] == ["pinterest"]
+    assert params["feature"] == ["numerologie_vyklad"]

@@ -763,6 +763,57 @@
             sessionStorage.removeItem(PENDING_CONTEXT_KEY);
         },
 
+        async trackCheckoutAuthRequired(planId, context = {}) {
+            try {
+                const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+                if (!csrfToken) return;
+
+                const rawMetadata = context.metadata && typeof context.metadata === 'object' && !Array.isArray(context.metadata)
+                    ? context.metadata
+                    : {};
+                const allowedMetadata = {};
+                [
+                    'entry_source',
+                    'entry_feature',
+                    'utm_source',
+                    'utm_medium',
+                    'utm_campaign',
+                    'utm_content',
+                    'requested_card',
+                    'card_param'
+                ].forEach((key) => {
+                    if (rawMetadata[key] != null && rawMetadata[key] !== '') {
+                        allowedMetadata[key] = rawMetadata[key];
+                    }
+                });
+
+                await fetch(`${API_URL}/payment/funnel-event`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    keepalive: true,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify({
+                        eventName: 'checkout_auth_required',
+                        source: context.source || 'auth_pending_plan',
+                        feature: context.feature || null,
+                        planId,
+                        metadata: {
+                            path: window.location.pathname,
+                            redirect: context.redirect || null,
+                            auth_mode: context.authMode || null,
+                            billing_interval: context.billing_interval || context.billingInterval || null,
+                            ...allowedMetadata
+                        }
+                    })
+                });
+            } catch (error) {
+                console.warn('[FUNNEL] Could not record checkout auth requirement:', error.message);
+            }
+        },
+
         startPlanCheckout(planId, context = {}) {
             if (!planId) return;
 
@@ -773,6 +824,11 @@
                 const authMode = context.authMode === 'login' ? 'login' : 'register';
 
                 this.setPendingCheckout(planId, {
+                    ...context,
+                    redirect: redirectTarget,
+                    authMode
+                });
+                void this.trackCheckoutAuthRequired(planId, {
                     ...context,
                     redirect: redirectTarget,
                     authMode
