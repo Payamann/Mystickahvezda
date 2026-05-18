@@ -101,6 +101,24 @@ function shouldRunDailyHoroscopeEmails() {
             process.env.ENABLE_DAILY_HOROSCOPE_EMAILS === 'true' ||
             process.env.ENABLE_SCHEDULED_JOBS === 'true');
 }
+
+function shouldRunSocialAgentScheduler() {
+    return shouldRunScheduledJobs() &&
+        process.env.ENABLE_SOCIAL_AGENT_SCHEDULER === 'true';
+}
+
+function getSocialAgentSchedulerStatus() {
+    if (!shouldRunScheduledJobs()) {
+        return 'disabled';
+    }
+
+    if (process.env.ENABLE_SOCIAL_AGENT_SCHEDULER !== 'true') {
+        return 'disabled';
+    }
+
+    return hasEnvValue('ANTHROPIC_API_KEY') ? 'enabled' : 'missing_api_key';
+}
+
 const DAILY_HOROSCOPE_SEND_HOUR_UTC = 7;
 let dailyHoroscopeJobRunning = false;
 
@@ -111,6 +129,7 @@ function isAfterDailyHoroscopeSendWindow(date = new Date()) {
 function getBackgroundJobStatus() {
     return {
         general: shouldRunScheduledJobs() ? 'enabled' : 'disabled',
+        socialAgent: getSocialAgentSchedulerStatus(),
         dailyHoroscopeEmail: shouldRunDailyHoroscopeEmails() ? 'enabled' : 'disabled'
     };
 }
@@ -943,7 +962,7 @@ if (isMain || isProductionRuntime()) {
             };
 
             // 1. Generate new content daily (08:00 UTC)
-            if (process.env.ANTHROPIC_API_KEY) {
+            if (shouldRunSocialAgentScheduler() && process.env.ANTHROPIC_API_KEY) {
                 schedule.scheduleJob('0 8 * * *', () => {
                     runSocialAgent('auto');
                 });
@@ -954,8 +973,10 @@ if (isMain || isProductionRuntime()) {
                 });
 
                 console.warn('📅 Social Media Agent schedules initialized.');
-            } else {
+            } else if (shouldRunSocialAgentScheduler()) {
                 console.warn('⚠️ Social Media Agent skipped (missing ANTHROPIC_API_KEY).');
+            } else {
+                console.warn('📵 Social Media Agent scheduler disabled (set ENABLE_SOCIAL_AGENT_SCHEDULER=true to enable).');
             }
 
             // Prefill horoscope cache — every day at 05:00 UTC (6:00 CET)

@@ -206,15 +206,26 @@ describe('manual script guardrails', () => {
         expect(runtime).toContain("function isProductionRuntime()");
         expect(source).toContain("isProductionRuntime() || process.env.ENABLE_SCHEDULED_JOBS === 'true'");
         expect(source).toContain("process.env.DISABLE_SCHEDULED_JOBS !== 'true'");
+        expect(source).toContain("process.env.ENABLE_SOCIAL_AGENT_SCHEDULER === 'true'");
         expect(source).toContain("process.env.ENABLE_DAILY_HOROSCOPE_EMAILS === 'true'");
         expect(source).toContain("process.env.DISABLE_DAILY_HOROSCOPE_EMAILS !== 'true'");
+        expect(source).toContain('socialAgent: getSocialAgentSchedulerStatus()');
         expect(source).toContain('dailyHoroscopeEmail: shouldRunDailyHoroscopeEmails()');
         expect(source).toContain('scheduledJobs: getBackgroundJobStatus()');
         expect(source).toContain('startup_catchup');
         expect(source).toContain('hourly_catchup');
         expect(envExample).toContain('ENABLE_SCHEDULED_JOBS=false');
+        expect(envExample).toContain('ENABLE_SOCIAL_AGENT_SCHEDULER=false');
         expect(envExample).toContain('ENABLE_DAILY_HOROSCOPE_EMAILS=false');
         expect(envExample).toContain('DISABLE_DAILY_HOROSCOPE_EMAILS=false');
+    });
+
+    test('social media agent scheduler is opt-in beyond the AI API key', () => {
+        const source = readScript('server/index.js');
+
+        expect(source).toContain('function shouldRunSocialAgentScheduler()');
+        expect(source).toContain("if (shouldRunSocialAgentScheduler() && process.env.ANTHROPIC_API_KEY)");
+        expect(source).toContain('set ENABLE_SOCIAL_AGENT_SCHEDULER=true to enable');
     });
 
     test('production background jobs handle process and promise failures locally', () => {
