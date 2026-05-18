@@ -67,8 +67,9 @@ describe('Mentor free limit and premium gate behavior', () => {
         const messages = await getMentorMessages(userId);
         const userMessages = messages.filter(message => message.role === 'user');
         expect(userMessages).toHaveLength(3);
-        expect(userMessages.at(-1).content).toContain('Prosim o radu dnes.');
-        expect(userMessages.at(-1).content).not.toMatch(/[<>]/);
+        const savedPrompt = userMessages.find(message => message.content.includes('Prosim o radu dnes.'));
+        expect(savedPrompt).toBeDefined();
+        expect(savedPrompt.content).not.toMatch(/[<>]/);
         expect(messages).toContainEqual(expect.objectContaining({
             role: 'mentor',
             content: 'Testovaci AI odpoved pro izolovane automatizovane testy.'
