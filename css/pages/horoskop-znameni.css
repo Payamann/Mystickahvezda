@@ -1,0 +1,275 @@
+/* Shared static zodiac sign landing page styles. */
+.sign-logo-text {
+    margin-left: 10px;
+}
+
+.sign-auth-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.sign-register-btn {
+    margin-left: 1rem;
+    font-size: 0.9em;
+    padding: 0.5rem 1rem;
+}
+
+.sign-hero {
+    padding: 5rem 0 3rem;
+    text-align: center;
+}
+
+.sign-emoji {
+    display: block;
+    margin-bottom: 1rem;
+    animation: sign-float 4s ease-in-out infinite;
+    font-size: 5rem;
+}
+
+@keyframes sign-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.sign-dates {
+    margin-bottom: 2rem;
+    color: var(--color-mystic-gold);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.sign-answer-box {
+    max-width: 760px;
+    margin: 0 auto 2rem;
+    padding: 1.4rem 1.6rem;
+    border: 1px solid rgba(235, 192, 102, 0.22);
+    border-radius: 18px;
+    background: rgba(10, 10, 26, 0.68);
+    color: #e5e7eb;
+    line-height: 1.7;
+    text-align: left;
+}
+
+.sign-answer-label {
+    color: var(--color-mystic-gold);
+}
+
+.sign-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    max-width: 700px;
+    margin: 2rem auto;
+}
+
+.meta-card {
+    padding: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    text-align: center;
+}
+
+.meta-label {
+    margin-bottom: 0.4rem;
+    color: var(--color-text-mutated);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.meta-value {
+    color: var(--color-mystic-gold);
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+}
+
+.sign-section {
+    padding-top: 0;
+}
+
+.sign-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.sign-panel,
+.sign-faq {
+    margin-bottom: 2rem;
+    padding: 2.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    background: rgba(10, 10, 26, 0.6);
+}
+
+.sign-panel--body {
+    padding: 3rem;
+    color: var(--color-text-light);
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.traits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.traits-card {
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.traits-card.strengths {
+    border-top: 3px solid #27ae60;
+}
+
+.traits-card.weaknesses {
+    border-top: 3px solid #e74c3c;
+}
+
+.traits-card h3 {
+    margin-top: 0;
+}
+
+.traits-card ul {
+    padding-left: 1.2rem;
+}
+
+.traits-card li {
+    margin-bottom: 0.5rem;
+}
+
+.sign-section-title {
+    margin-top: 0;
+    color: var(--color-mystic-gold);
+}
+
+.sign-muted {
+    margin-bottom: 1.5rem;
+    color: var(--color-text-mutated);
+}
+
+.sign-chip {
+    display: inline-block;
+    margin: 0.3rem;
+    padding: 0.4rem 1rem;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 50px;
+    background: rgba(212, 175, 55, 0.1);
+    color: #d4af37;
+    font-size: 0.95rem;
+}
+
+.sign-center-action {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.sign-secondary-cta {
+    font-size: 1rem;
+}
+
+.sign-number-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.sign-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid rgba(155, 89, 182, 0.4);
+    border-radius: 50%;
+    background: rgba(155, 89, 182, 0.2);
+    color: white;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+}
+
+.sign-cta-panel {
+    margin-bottom: 2rem;
+    padding: 3rem;
+    border: 1px solid rgba(155, 89, 182, 0.3);
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(10, 10, 26, 0.9));
+    text-align: center;
+}
+
+.sign-cta-title {
+    margin-top: 0;
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+}
+
+.sign-cta-text {
+    margin-bottom: 2rem;
+    color: #cbd5e1;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.sign-primary-cta {
+    padding: 1.2rem 2.5rem;
+    font-size: 1.1rem;
+}
+
+.sign-faq {
+    margin-bottom: 0;
+}
+
+.sign-faq-list {
+    margin-top: 1.5rem;
+}
+
+.sign-faq-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+}
+
+.sign-faq-item--last {
+    border-bottom: 0;
+}
+
+.sign-faq-summary {
+    color: white;
+    font-weight: 600;
+}
+
+.sign-faq-answer {
+    margin: 1rem 0 0;
+    color: var(--color-text-mutated);
+}
+
+.bread {
+    margin-bottom: 2rem;
+    color: var(--color-text-mutated);
+    font-size: 0.9rem;
+}
+
+.bread a {
+    color: var(--color-mystic-gold);
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    .traits-grid {
+        grid-template-columns: 1fr;
+    }
+}

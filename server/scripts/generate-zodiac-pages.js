@@ -15,8 +15,8 @@ function buildPage(sign) {
     const strengthsList = sign.strengths.map(s => `<li>${s}</li>`).join('\n                    ');
     const weaknessesList = sign.weaknesses.map(w => `<li>${w}</li>`).join('\n                    ');
     const compatList = sign.compatible_signs.map(c => `
-        <span style="display:inline-block; padding: 0.4rem 1rem; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3); border-radius: 50px; color: #d4af37; margin: 0.3rem; font-size: 0.95rem;">${c}</span>`).join('');
-    const luckyNums = sign.lucky_numbers.map(n => `<span style="display:inline-flex; align-items:center; justify-content:center; width: 3rem; height: 3rem; border-radius: 50%; background: rgba(155,89,182,0.2); border: 1px solid rgba(155,89,182,0.4); font-family:'Cinzel',serif; font-size:1.1rem; color:white;">${n}</span>`).join(' ');
+        <span class="sign-chip">${c}</span>`).join('');
+    const luckyNums = sign.lucky_numbers.map(n => `<span class="sign-number">${n}</span>`).join(' ');
     const natalCtaLink = sign.natal_cta.link.includes('source=')
         ? sign.natal_cta.link
         : `${sign.natal_cta.link}?source=seo_zodiac_sign&feature=natal_chart&sign=${sign.slug}`;
@@ -65,30 +65,9 @@ function buildPage(sign) {
     <!-- Fonts & Styles -->
     <link rel="stylesheet" href="/fonts/local-fonts.css">
     <link rel="stylesheet" href="../css/style.v2.css">
+    <link rel="stylesheet" href="../css/pages/horoskop-znameni.css">
 
     <script type="application/ld+json">${faqSchema}</script>
-
-    <style>
-        .sign-hero { padding: 5rem 0 3rem; text-align: center; }
-        .sign-emoji { font-size: 5rem; display: block; margin-bottom: 1rem; animation: float 4s ease-in-out infinite; }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
-        .sign-dates { color: var(--color-mystic-gold); font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 2rem; }
-        .sign-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin: 2rem 0; max-width: 700px; margin-inline: auto; }
-        .meta-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.2rem; text-align: center; }
-        .meta-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-mutated); margin-bottom: 0.4rem; }
-        .meta-value { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--color-mystic-gold); }
-        .sign-content { max-width: 800px; margin: 0 auto; }
-        .traits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2rem 0; }
-        .traits-card { background: rgba(255,255,255,0.04); border-radius: 16px; padding: 2rem; border: 1px solid rgba(255,255,255,0.08); }
-        .traits-card.strengths { border-top: 3px solid #27ae60; }
-        .traits-card.weaknesses { border-top: 3px solid #e74c3c; }
-        .traits-card h3 { margin-top: 0; }
-        .traits-card ul { padding-left: 1.2rem; }
-        .traits-card li { margin-bottom: 0.5rem; }
-        .bread a { color: var(--color-mystic-gold); text-decoration: none; }
-        .bread { font-size: 0.9rem; color: var(--color-text-mutated); margin-bottom: 2rem; }
-        @media(max-width:600px) { .traits-grid { grid-template-columns: 1fr; } }
-    </style>
 </head>
 <body>
     <div class="stars" aria-hidden="true"></div>
@@ -96,7 +75,7 @@ function buildPage(sign) {
         <div class="container">
             <div class="header__inner">
                 <a href="../index.html" class="logo">
-                    <span style="margin-left: 10px;">Mystická<span class="text-gradient">Hvězda</span></span>
+                    <span class="sign-logo-text">Mystická<span class="text-gradient">Hvězda</span></span>
                 </a>
                 <nav class="nav">
                     <button class="nav__toggle" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -108,8 +87,8 @@ function buildPage(sign) {
                         <li><a href="../natalni-karta.html" class="nav__link">Natální Karta</a></li>
                         <li><a href="../tarot.html" class="nav__link">Tarot</a></li>
                     </ul>
-                    <div class="auth-buttons" style="display: flex; gap: 0.5rem; align-items: center;">
-                        <a href="#" id="auth-register-btn" class="btn btn--secondary" style="margin-left: 1rem; font-size: 0.9em; padding: 0.5rem 1rem;">Registrace</a>
+                    <div class="auth-buttons sign-auth-buttons">
+                        <a href="#" id="auth-register-btn" class="btn btn--secondary sign-register-btn">Registrace</a>
                         <a href="#" id="auth-btn" class="btn btn--primary">Přihlásit</a>
                     </div>
                 </nav>
@@ -125,8 +104,8 @@ function buildPage(sign) {
                 <h1 class="hero__title">${sign.name} <span class="text-gradient">(${sign.en})</span></h1>
                 <p class="sign-dates">📅 ${sign.dates}</p>
 
-                <div style="max-width: 760px; margin: 0 auto 2rem; background: rgba(10,10,26,0.68); border: 1px solid rgba(235,192,102,0.22); border-radius: 18px; padding: 1.4rem 1.6rem; text-align: left; color: #e5e7eb; line-height: 1.7;">
-                    <strong style="color: var(--color-mystic-gold);">Rychlá odpověď:</strong>
+                <div class="sign-answer-box">
+                    <strong class="sign-answer-label">Rychlá odpověď:</strong>
                     ${answerSummary}
                 </div>
 
@@ -147,10 +126,10 @@ function buildPage(sign) {
             </div>
         </section>
 
-        <section class="section" style="padding-top:0;">
+        <section class="section sign-section">
             <div class="container">
                 <div class="sign-content">
-                    <div style="background: rgba(10,10,26,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 3rem; font-size: 1.1rem; line-height: 1.8; color: var(--color-text-light); margin-bottom: 2rem;">
+                    <div class="sign-panel sign-panel--body">
                         ${sign.description}
                     </div>
 
@@ -165,41 +144,41 @@ function buildPage(sign) {
                         </div>
                     </div>
 
-                    <div style="background: rgba(10,10,26,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem;">
-                        <h2 style="margin-top:0; color: var(--color-mystic-gold);">💞 Partnerská kompatibilita</h2>
-                        <p style="color: var(--color-text-mutated); margin-bottom: 1.5rem;">Znamení, se kterými ${sign.name} přirozeně rezonuje:</p>
+                    <div class="sign-panel">
+                        <h2 class="sign-section-title">💞 Partnerská kompatibilita</h2>
+                        <p class="sign-muted">Znamení, se kterými ${sign.name} přirozeně rezonuje:</p>
                         <div>${compatList}</div>
-                        <div style="margin-top: 2rem; text-align: center;">
-                            <a href="${sign.featured_tool.link}" class="btn btn--secondary" style="font-size: 1rem;">${sign.featured_tool.label}</a>
+                        <div class="sign-center-action">
+                            <a href="${sign.featured_tool.link}" class="btn btn--secondary sign-secondary-cta">${sign.featured_tool.label}</a>
                         </div>
                     </div>
 
-                    <div style="background: rgba(10,10,26,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem;">
-                        <h2 style="margin-top:0; color: var(--color-mystic-gold);">🔢 Šťastná čísla</h2>
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; margin-top: 1rem;">${luckyNums}</div>
+                    <div class="sign-panel">
+                        <h2 class="sign-section-title">🔢 Šťastná čísla</h2>
+                        <div class="sign-number-grid">${luckyNums}</div>
                     </div>
 
-                    <div style="background: linear-gradient(135deg, rgba(155,89,182,0.15), rgba(10,10,26,0.9)); border: 1px solid rgba(155,89,182,0.3); border-radius: 20px; padding: 3rem; text-align: center; margin-bottom: 2rem;">
-                        <h2 style="margin-top:0; font-family:'Cinzel',serif; font-size: 1.8rem;">Vaše hvězdná mapa jde hlouběji</h2>
-                        <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; color: #cbd5e1;">Sluneční znamení je jen jedno ze stovek bodů vaší Natální mapy. Zjistěte, kde skutečně leží váš Ascendent, Měsíc v znamení a pozice klíčových planet.</p>
-                        <a href="${natalCtaLink}" class="btn btn--primary" style="font-size: 1.1rem; padding: 1.2rem 2.5rem;">${sign.natal_cta.label}</a>
+                    <div class="sign-cta-panel">
+                        <h2 class="sign-cta-title">Vaše hvězdná mapa jde hlouběji</h2>
+                        <p class="sign-cta-text">Sluneční znamení je jen jedno ze stovek bodů vaší Natální mapy. Zjistěte, kde skutečně leží váš Ascendent, Měsíc v znamení a pozice klíčových planet.</p>
+                        <a href="${natalCtaLink}" class="btn btn--primary sign-primary-cta">${sign.natal_cta.label}</a>
                     </div>
 
                     <!-- FAQ Section -->
-                    <div style="background: rgba(10,10,26,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 2.5rem;">
-                        <h2 style="margin-top:0; color: var(--color-mystic-gold);">❓ Nejčastější otázky o ${sign.name}</h2>
-                        <div style="margin-top: 1.5rem;">
-                            <details style="border-bottom: 1px solid rgba(255,255,255,0.05); padding: 1rem 0; cursor: pointer;">
-                                <summary style="font-weight:600; color:white;">Kdy se rodí ${sign.name}?</summary>
-                                <p style="margin: 1rem 0 0; color: var(--color-text-mutated);">${sign.dates}</p>
+                    <div class="sign-faq">
+                        <h2 class="sign-section-title">❓ Nejčastější otázky o ${sign.name}</h2>
+                        <div class="sign-faq-list">
+                            <details class="sign-faq-item">
+                                <summary class="sign-faq-summary">Kdy se rodí ${sign.name}?</summary>
+                                <p class="sign-faq-answer">${sign.dates}</p>
                             </details>
-                            <details style="border-bottom: 1px solid rgba(255,255,255,0.05); padding: 1rem 0; cursor: pointer;">
-                                <summary style="font-weight:600; color:white;">Jaký je element a vládce ${sign.name}?</summary>
-                                <p style="margin: 1rem 0 0; color: var(--color-text-mutated);">Element: <strong>${sign.element}</strong>. Vládnoucí planeta: <strong>${sign.ruling_planet}</strong>. Modalita: <strong>${sign.modality}</strong>.</p>
+                            <details class="sign-faq-item">
+                                <summary class="sign-faq-summary">Jaký je element a vládce ${sign.name}?</summary>
+                                <p class="sign-faq-answer">Element: <strong>${sign.element}</strong>. Vládnoucí planeta: <strong>${sign.ruling_planet}</strong>. Modalita: <strong>${sign.modality}</strong>.</p>
                             </details>
-                            <details style="padding: 1rem 0; cursor: pointer;">
-                                <summary style="font-weight:600; color:white;">S jakými znameními je ${sign.name} nejkompatibilnější?</summary>
-                                <p style="margin: 1rem 0 0; color: var(--color-text-mutated);">Nejharmoničtější vztahy bývají se znameními: ${sign.compatible_signs.join(', ')}. Pro přesnou analýzu doporučujeme výpočet Synastrie (porovnání dvou Natálních map).</p>
+                            <details class="sign-faq-item sign-faq-item--last">
+                                <summary class="sign-faq-summary">S jakými znameními je ${sign.name} nejkompatibilnější?</summary>
+                                <p class="sign-faq-answer">Nejharmoničtější vztahy bývají se znameními: ${sign.compatible_signs.join(', ')}. Pro přesnou analýzu doporučujeme výpočet Synastrie (porovnání dvou Natálních map).</p>
                             </details>
                         </div>
                     </div>
@@ -216,10 +195,10 @@ function buildPage(sign) {
         </div>
     </footer>
 
-    <script src="../js/api-config.js" defer></script>
-    <script src="../js/auth-client.js" defer></script>
-    <script src="../js/components.js" defer></script>
-    <script type="module" src="../js/main.js"></script>
+    <script src="../js/dist/api-config.js" defer></script>
+    <script src="../js/dist/auth-client.js" defer></script>
+    <script src="../js/dist/components.js" defer></script>
+    <script type="module" src="../js/dist/main.js"></script>
 </body>
 </html>`;
 }
@@ -231,6 +210,16 @@ for (const sign of ZODIAC_SIGNS) {
     const outPath = path.join(OUTPUT_DIR, `${sign.slug}.html`);
     fs.writeFileSync(outPath, html, 'utf8');
     console.log(`✅ Vygenerováno: /horoskop/${sign.slug}.html`);
+
+    if (sign.slug === 'vodnar') {
+        const legacyHtml = html.replace(
+            '<meta name="robots" content="index, follow">',
+            '<meta name="robots" content="noindex, follow">'
+        );
+        fs.writeFileSync(path.join(OUTPUT_DIR, 'vodnár.html'), legacyHtml, 'utf8');
+        console.log('✅ Vygenerováno: /horoskop/vodnár.html (legacy noindex)');
+    }
+
     sitemapEntries.push({ url: `/horoskop/${sign.slug}.html`, changefreq: 'weekly', priority: '0.8' });
 }
 
