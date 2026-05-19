@@ -8,7 +8,7 @@ import { expect } from '@playwright/test';
 
 // ─── Konstanty ───────────────────────────────────────────────────────────────
 
-export const BASE_URL = 'http://localhost:3001';
+export const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${process.env.PLAYWRIGHT_PORT || '3001'}`;
 
 export const ZODIAC_SIGNS = [
     { cs: 'Beran',     slug: 'beran',     anchor: '#beran'     },

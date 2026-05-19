@@ -6,7 +6,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { waitForPageReady, assertBasicSEO, assertSecurityHeaders, MOBILE_VIEWPORT } from './helpers.js';
+import { BASE_URL, waitForPageReady, assertBasicSEO, assertSecurityHeaders, MOBILE_VIEWPORT } from './helpers.js';
 
 test.describe('Homepage', () => {
 
@@ -110,7 +110,7 @@ test.describe('Homepage', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
         await page.evaluate(() => {
             localStorage.setItem('auth_user', JSON.stringify({

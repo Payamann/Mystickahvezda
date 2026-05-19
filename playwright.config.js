@@ -7,8 +7,28 @@
 
 import { defineConfig, devices } from '@playwright/test';
 
-const E2E_PORT = Number.parseInt(process.env.PLAYWRIGHT_PORT || '3001', 10);
-const E2E_BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${E2E_PORT}`;
+function parsePort(value) {
+    const parsed = Number.parseInt(value || '', 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function portFromBaseUrl(value) {
+    try {
+        const url = new URL(value);
+        return parsePort(url.port) || (url.protocol === 'https:' ? 443 : 80);
+    } catch {
+        return null;
+    }
+}
+
+const configuredBaseUrl = process.env.PLAYWRIGHT_BASE_URL || '';
+const explicitPort = parsePort(process.env.PLAYWRIGHT_PORT);
+const defaultLocalPort = process.env.CI ? 3001 : 3100 + (process.pid % 700);
+const E2E_PORT = explicitPort || portFromBaseUrl(configuredBaseUrl) || defaultLocalPort;
+const E2E_BASE_URL = configuredBaseUrl || `http://localhost:${E2E_PORT}`;
+
+process.env.PLAYWRIGHT_PORT = String(E2E_PORT);
+process.env.PLAYWRIGHT_BASE_URL = E2E_BASE_URL;
 
 export default defineConfig({
     testDir: './tests/e2e',
@@ -61,13 +81,15 @@ export default defineConfig({
     // Spustí dev server pokud ještě neběží
     webServer: {
         command: 'node server/index.js',
-        port: E2E_PORT,
+        url: `${E2E_BASE_URL}/api/health`,
         // Lokálně reuse (rychlejší), v CI vždy čerstvý start
         reuseExistingServer: !process.env.CI,
         timeout: 30_000,
         env: {
             NODE_ENV: 'test',
             PORT: String(E2E_PORT),
+            APP_URL: E2E_BASE_URL,
+            ALLOWED_ORIGINS: E2E_BASE_URL,
             DISABLE_SCHEDULED_JOBS: 'true',
             DISABLE_DAILY_HOROSCOPE_EMAILS: 'true',
             MOCK_AI: 'true',

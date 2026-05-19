@@ -6,7 +6,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { waitForPageReady, getCsrfToken, MOBILE_VIEWPORT } from './helpers.js';
+import { BASE_URL, waitForPageReady, getCsrfToken, MOBILE_VIEWPORT } from './helpers.js';
 
 // ═══════════════════════════════════════════════════════════
 // MENTOR — Hvězdný průvodce (AI Chat)
@@ -18,7 +18,7 @@ test.describe('Mentor — Hvězdný průvodce', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.addInitScript(() => {

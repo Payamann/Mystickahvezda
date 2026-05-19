@@ -7,7 +7,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { waitForPageReady, getCsrfToken, MOBILE_VIEWPORT } from './helpers.js';
+import { BASE_URL, waitForPageReady, getCsrfToken, MOBILE_VIEWPORT } from './helpers.js';
 
 // ─── Pomocná funkce pro opakující se page smoke test ─────────────────────────
 
@@ -594,7 +594,7 @@ test.describe('Tarot karta dne', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.addInitScript(() => {

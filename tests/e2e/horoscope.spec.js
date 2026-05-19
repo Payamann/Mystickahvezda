@@ -6,7 +6,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { waitForPageReady, assertBasicSEO, ZODIAC_SIGNS, MOBILE_VIEWPORT } from './helpers.js';
+import { BASE_URL, waitForPageReady, assertBasicSEO, ZODIAC_SIGNS, MOBILE_VIEWPORT } from './helpers.js';
 
 test.describe('Horoskopy', () => {
 
@@ -148,7 +148,7 @@ test.describe('Horoskopy', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.goto('/horoskopy.html');
@@ -222,7 +222,7 @@ test.describe('Horoskopy', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.goto('/horoskopy.html');
@@ -307,7 +307,7 @@ test.describe('Horoskopy', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.evaluate(() => {

@@ -6,7 +6,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { waitForPageReady, MOBILE_VIEWPORT } from './helpers.js';
+import { BASE_URL, waitForPageReady, MOBILE_VIEWPORT } from './helpers.js';
 
 // ═══════════════════════════════════════════════════════════
 // PROFIL
@@ -142,7 +142,7 @@ test.describe('Profil aktivace', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.addInitScript((authUser) => {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { MOBILE_VIEWPORT, waitForPageReady } from './helpers.js';
+import { BASE_URL, MOBILE_VIEWPORT, waitForPageReady } from './helpers.js';
 
 const DESKTOP_VIEWPORT = { width: 1280, height: 720 };
 const EXTERNAL_SCRIPT_RE = /.*(googletagmanager|google-analytics|clarity|facebook|hotjar|sentry).*/i;
@@ -32,7 +32,7 @@ async function createSmokePage(browser, { mobile = false, auth = false } = {}) {
         await context.addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await context.addInitScript((authUser) => {

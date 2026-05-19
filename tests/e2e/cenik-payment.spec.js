@@ -10,7 +10,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { waitForPageReady } from './helpers.js';
+import { BASE_URL, waitForPageReady } from './helpers.js';
 
 async function waitForPath(page, pathname, options = {}) {
     await page.waitForURL(
@@ -840,7 +840,7 @@ test.describe('Ceník — platební tlačítka', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.addInitScript(() => {
@@ -896,7 +896,7 @@ test.describe('Ceník — platební tlačítka', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.addInitScript(() => {
@@ -949,7 +949,7 @@ test.describe('Ceník — platební tlačítka', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.addInitScript(() => {
@@ -1091,7 +1091,7 @@ test.describe('Ceník — platební tlačítka', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.addInitScript(() => {
@@ -1137,7 +1137,7 @@ test.describe('Ceník — platební tlačítka', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.addInitScript(() => {
@@ -1189,7 +1189,7 @@ test.describe('Ceník — platební tlačítka', () => {
         await page.context().addCookies([{
             name: 'logged_in',
             value: '1',
-            url: 'http://localhost:3001'
+            url: BASE_URL
         }]);
 
         await page.addInitScript(() => {
