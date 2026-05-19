@@ -147,10 +147,27 @@ const CONTEXT_COPY_BY_INTEREST = {
 
 function getOnboardingContext() {
     const params = new URLSearchParams(window.location.search);
+    const redirect = getSafeLocalRedirect(params.get('redirect') || '');
+
     return {
         source: params.get('source') || '',
-        feature: params.get('feature') || ''
+        feature: params.get('feature') || '',
+        plan: params.get('plan') || '',
+        redirect
     };
+}
+
+function getSafeLocalRedirect(value) {
+    const redirect = typeof value === 'string' ? value.trim() : '';
+    if (!redirect || !redirect.startsWith('/') || redirect.startsWith('//')) return '';
+
+    try {
+        const parsed = new URL(redirect, window.location.origin);
+        if (parsed.origin !== window.location.origin) return '';
+        return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+    } catch {
+        return '';
+    }
 }
 
 function getManifestInterest(featureId) {
@@ -179,9 +196,10 @@ function getContextDefaultInterest() {
 }
 
 function appendEntryContext(url) {
-    const { source, feature } = getOnboardingContext();
+    const { source, feature, plan } = getOnboardingContext();
     if (source) url.searchParams.set('entry_source', source);
     if (feature) url.searchParams.set('entry_feature', feature);
+    if (plan) url.searchParams.set('plan', plan);
     return url;
 }
 
@@ -573,6 +591,8 @@ async function notifyBackendOnboardingComplete(context = {}) {
             body: JSON.stringify({
                 source: entryContext.source || null,
                 feature: entryContext.feature || null,
+                plan: entryContext.plan || null,
+                redirect: entryContext.redirect || null,
                 destination: context.destination || null,
                 skipped: context.skipped === true
             })
@@ -620,7 +640,9 @@ async function finishOnboarding(action) {
         interests_count: interests.length,
         destination: destinationHref,
         entry_source: getOnboardingContext().source || null,
-        entry_feature: getOnboardingContext().feature || null
+        entry_feature: getOnboardingContext().feature || null,
+        plan: getOnboardingContext().plan || null,
+        redirect: getOnboardingContext().redirect || null
     });
 
     await notifyBackendOnboardingComplete({ destination: destinationHref, skipped: false });
@@ -638,7 +660,9 @@ async function skipOnboarding(event, action) {
     window.MH_ANALYTICS?.trackEvent?.('onboarding_skipped', {
         destination: getPrimaryDestination().href('onboarding_skip'),
         entry_source: getOnboardingContext().source || null,
-        entry_feature: getOnboardingContext().feature || null
+        entry_feature: getOnboardingContext().feature || null,
+        plan: getOnboardingContext().plan || null,
+        redirect: getOnboardingContext().redirect || null
     });
 
     const destination = getPrimaryDestination().href('onboarding_skip');

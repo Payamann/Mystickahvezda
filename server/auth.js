@@ -674,11 +674,24 @@ router.put('/profile', authenticateToken, async (req, res) => {
 router.post('/onboarding/complete', authenticateToken, async (req, res) => {
     try {
         const userId = req.user?.id;
-        const { source = '', feature = '', destination = '', skipped = false } = req.body || {};
+        const {
+            source = '',
+            feature = '',
+            plan = '',
+            redirect = '',
+            destination = '',
+            skipped = false
+        } = req.body || {};
 
         if (!userId) {
             return res.status(401).json({ error: 'Authentication required' });
         }
+
+        const safePlan = typeof plan === 'string' ? plan.slice(0, 80) : '';
+        const safeRedirect = typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')
+            ? redirect.slice(0, 240)
+            : '';
+        const safeDestination = typeof destination === 'string' ? destination.slice(0, 240) : '';
 
         const { data, error } = await supabase
             .from('users')
@@ -702,7 +715,9 @@ router.post('/onboarding/complete', authenticateToken, async (req, res) => {
                     name: data.first_name || '',
                     source,
                     feature: feature || 'daily_guidance',
-                    destination
+                    plan: safePlan,
+                    redirect: safeRedirect,
+                    destination: safeDestination
                 });
                 activationLifecycleQueued = lifecycleResult?.success === true;
             } catch (emailError) {
@@ -716,7 +731,9 @@ router.post('/onboarding/complete', authenticateToken, async (req, res) => {
             source,
             feature,
             metadata: {
-                destination: typeof destination === 'string' ? destination.slice(0, 240) : null,
+                destination: safeDestination || null,
+                plan: safePlan || null,
+                redirect: safeRedirect || null,
                 onboarding_state: skipped ? 'skipped' : 'completed'
             }
         });

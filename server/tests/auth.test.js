@@ -288,6 +288,8 @@ describe('🔐 Auth Endpoint Tests', () => {
                 .send({
                     source: 'life_number_result',
                     feature: 'numerologie_vyklad',
+                    plan: 'pruvodce',
+                    redirect: '/cenik.html?source=onboarding_return',
                     destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
                     skipped: false
                 });
@@ -319,6 +321,8 @@ describe('🔐 Auth Endpoint Tests', () => {
             expect(firstPayload).toMatchObject({
                 source: 'life_number_result',
                 feature: 'numerologie_vyklad',
+                plan: 'pruvodce',
+                redirect: '/cenik.html?source=onboarding_return',
                 destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
                 dedupeKey: `activation:${userId}:day0`
             });
@@ -341,6 +345,8 @@ describe('🔐 Auth Endpoint Tests', () => {
             });
             expect(funnelEvents[0].metadata).toMatchObject({
                 destination: '/numerologie.html?source=signup_activation&feature=numerologie_vyklad',
+                plan: 'pruvodce',
+                redirect: '/cenik.html?source=onboarding_return',
                 onboarding_state: 'completed'
             });
         });

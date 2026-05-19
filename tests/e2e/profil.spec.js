@@ -846,6 +846,50 @@ test.describe('Onboarding', () => {
         expect(url.searchParams.get('entry_feature')).toBe('tarot');
     });
 
+    test('preskoceni zachova placeny intent bez presmerovani mimo prvni hodnotu', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+
+        let completionPayload = null;
+        await page.route('**/api/auth/onboarding/complete', async (route) => {
+            completionPayload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.goto('/onboarding.html?source=tarot_inline_upsell&feature=tarot_multi_card&plan=pruvodce&redirect=%2Fcenik.html%3Fsource%3Donboarding_return');
+        await waitForPageReady(page);
+
+        const skipHref = await page.locator('[data-action="skipOnboarding"]').getAttribute('href');
+        const skipUrl = new URL(skipHref, page.url());
+        expect(skipUrl.pathname).toBe('/tarot.html');
+        expect(skipUrl.searchParams.get('source')).toBe('onboarding_skip');
+        expect(skipUrl.searchParams.get('entry_source')).toBe('tarot_inline_upsell');
+        expect(skipUrl.searchParams.get('entry_feature')).toBe('tarot_multi_card');
+        expect(skipUrl.searchParams.get('plan')).toBe('pruvodce');
+        expect(skipUrl.searchParams.get('redirect')).toBeNull();
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/tarot.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            page.locator('[data-action="skipOnboarding"]').click(),
+        ]);
+
+        const url = new URL(page.url());
+        expect(url.pathname).toBe('/tarot.html');
+        expect(url.searchParams.get('plan')).toBe('pruvodce');
+        expect(completionPayload).toMatchObject({
+            source: 'tarot_inline_upsell',
+            feature: 'tarot_multi_card',
+            plan: 'pruvodce',
+            redirect: '/cenik.html?source=onboarding_return',
+            skipped: true
+        });
+        expect(completionPayload.destination).toContain('/tarot.html');
+        expect(completionPayload.destination).not.toContain('redirect=');
+    });
+
     test('mentor kontext predvybere pruvodce a upravi prvni krok', async ({ page }) => {
         await mockOnboardingComplete(page);
 

@@ -819,6 +819,8 @@
                 const onboardingUrl = new URL('/onboarding.html', window.location.origin);
                 if (context.source) onboardingUrl.searchParams.set('source', context.source);
                 if (context.feature) onboardingUrl.searchParams.set('feature', context.feature);
+                if (context.plan) onboardingUrl.searchParams.set('plan', context.plan);
+                if (safeRedirect) onboardingUrl.searchParams.set('redirect', safeRedirect);
                 return `${onboardingUrl.pathname}${onboardingUrl.search}`;
             };
 

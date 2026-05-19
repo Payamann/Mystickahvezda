@@ -1049,6 +1049,8 @@ export async function sendActivationLifecycleSequence({
   name = '',
   source = '',
   feature = 'daily_guidance',
+  plan = '',
+  redirect = '',
   destination = '',
   delays = {}
 } = {}) {
@@ -1063,6 +1065,8 @@ export async function sendActivationLifecycleSequence({
       name,
       source,
       feature: feature || 'daily_guidance',
+      plan,
+      redirect,
       destination
     };
 
