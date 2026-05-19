@@ -10,6 +10,8 @@ const premiumSource = await readFile(path.join(rootDir, 'js', 'premium-gates.js'
 const synastrySource = await readFile(path.join(rootDir, 'js', 'synastry.js'), 'utf8');
 const tarotSource = await readFile(path.join(rootDir, 'js', 'tarot.js'), 'utf8');
 const tarotHtml = await readFile(path.join(rootDir, 'tarot.html'), 'utf8');
+const pastLifeSource = await readFile(path.join(rootDir, 'js', 'minuly-zivot.js'), 'utf8');
+const pastLifeHtml = await readFile(path.join(rootDir, 'minuly-zivot.html'), 'utf8');
 
 const requiredSnippetGroups = [
     ['Cena se zobrazí ve Stripe před potvrzením', 'Cena se zobraz\\u00ed ve Stripe p\\u0159ed potvrzen\\u00edm'],
@@ -95,6 +97,30 @@ const tarotForbidden = [
 for (const snippet of tarotForbidden) {
     if (`${tarotSource}\n${tarotHtml}`.includes(snippet)) {
         errors.push(`Forbidden hardcoded tarot paywall claim found: ${snippet}`);
+    }
+}
+
+const pastLifeRequired = [
+    'past_life_banner_upgrade',
+    'past_life_register_gate',
+    'past-life-upgrade-reassurance'
+];
+
+for (const snippet of pastLifeRequired) {
+    if (!`${pastLifeSource}\n${pastLifeHtml}`.includes(snippet)) {
+        errors.push(`Missing past life paywall trust snippet: ${snippet}`);
+    }
+}
+
+const pastLifeForbidden = [
+    'Odemknout Průvodce za 199 Kč/měsíc',
+    'source=past_life_premium_wall',
+    'source=past_life_login_gate'
+];
+
+for (const snippet of pastLifeForbidden) {
+    if (`${pastLifeSource}\n${pastLifeHtml}`.includes(snippet)) {
+        errors.push(`Forbidden hardcoded past life paywall claim found: ${snippet}`);
     }
 }
 

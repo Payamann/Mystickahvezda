@@ -2,6 +2,8 @@
     'use strict';
 
     var selectedGender = '';
+    var PAST_LIFE_BANNER_SOURCE = 'past_life_banner_upgrade';
+    var PAST_LIFE_REGISTER_SOURCE = 'past_life_register_gate';
 
     function apiBase() {
         return (window.API_CONFIG && window.API_CONFIG.BASE_URL) || '/api';
@@ -48,7 +50,7 @@
     }
 
     function startPastLifeCheckout(source, authMode) {
-        var checkoutSource = source || 'past_life_premium_wall';
+        var checkoutSource = source || PAST_LIFE_BANNER_SOURCE;
         window.MH_ANALYTICS?.trackCTA?.(checkoutSource, {
             plan_id: 'pruvodce',
             feature: 'minuly_zivot'
@@ -68,7 +70,7 @@
     }
 
     function startPastLifeLogin() {
-        window.MH_ANALYTICS?.trackCTA?.('past_life_login_gate', {
+        window.MH_ANALYTICS?.trackCTA?.(PAST_LIFE_REGISTER_SOURCE, {
             destination: '/prihlaseni.html',
             feature: 'minuly_zivot',
             auth_mode: 'login'
@@ -77,7 +79,7 @@
         var authUrl = new URL('/prihlaseni.html', window.location.origin);
         authUrl.searchParams.set('mode', 'login');
         authUrl.searchParams.set('redirect', '/minuly-zivot.html');
-        authUrl.searchParams.set('source', 'past_life_login_gate');
+        authUrl.searchParams.set('source', PAST_LIFE_REGISTER_SOURCE);
         authUrl.searchParams.set('feature', 'minuly_zivot');
         window.location.href = authUrl.pathname + authUrl.search;
     }
@@ -191,7 +193,7 @@
         if (upgradeBtn) {
             upgradeBtn.addEventListener('click', function(event) {
                 event.preventDefault();
-                startPastLifeCheckout('past_life_premium_wall', 'register');
+                startPastLifeCheckout(PAST_LIFE_BANNER_SOURCE, 'register');
             });
         }
 

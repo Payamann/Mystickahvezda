@@ -267,6 +267,13 @@
             max-width: 560px;
             margin: 0 auto 1rem;
         }
+        .past-life-upgrade-reassurance {
+            max-width: 28rem;
+            margin: 0.75rem auto 0;
+            color: rgba(255,255,255,0.62);
+            font-size: 0.85rem;
+            line-height: 1.45;
+        }
         .loading-dots span {
             display: inline-block;
             animation: blink 1.4s infinite both;

@@ -690,13 +690,16 @@ test.describe('Minulý život', () => {
     test('premium wall CTA odkazy nesou tracking kontext', async ({ page }) => {
         const upgradeHref = await page.locator('#past-life-upgrade-btn').getAttribute('href');
         expect(upgradeHref).toContain('plan=pruvodce');
-        expect(upgradeHref).toContain('source=past_life_premium_wall');
+        expect(upgradeHref).toContain('source=past_life_banner_upgrade');
         expect(upgradeHref).toContain('feature=minuly_zivot');
+        await expect(page.locator('#past-life-upgrade-btn')).toContainText('Odemknout Hvězdného Průvodce');
+        await expect(page.locator('#premium-wall')).toContainText('Cena a případné zkušební období se zobrazí ve Stripe před potvrzením.');
+        await expect(page.locator('#premium-wall')).not.toContainText('199 Kč');
 
         const registerHref = await page.locator('#past-life-register-btn').getAttribute('href');
         expect(registerHref).toContain('mode=login');
         expect(registerHref).toContain('redirect=/minuly-zivot.html');
-        expect(registerHref).toContain('source=past_life_login_gate');
+        expect(registerHref).toContain('source=past_life_register_gate');
         expect(registerHref).toContain('feature=minuly_zivot');
     });
 
