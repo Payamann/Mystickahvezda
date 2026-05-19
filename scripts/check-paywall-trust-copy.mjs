@@ -8,6 +8,8 @@ const rootDir = path.resolve(__dirname, '..');
 
 const premiumSource = await readFile(path.join(rootDir, 'js', 'premium-gates.js'), 'utf8');
 const synastrySource = await readFile(path.join(rootDir, 'js', 'synastry.js'), 'utf8');
+const tarotSource = await readFile(path.join(rootDir, 'js', 'tarot.js'), 'utf8');
+const tarotHtml = await readFile(path.join(rootDir, 'tarot.html'), 'utf8');
 
 const requiredSnippetGroups = [
     ['Cena se zobrazí ve Stripe před potvrzením', 'Cena se zobraz\\u00ed ve Stripe p\\u0159ed potvrzen\\u00edm'],
@@ -69,6 +71,30 @@ const synastryForbidden = [
 for (const snippet of synastryForbidden) {
     if (synastrySource.includes(snippet)) {
         errors.push(`Forbidden hardcoded synastry paywall claim found: ${snippet}`);
+    }
+}
+
+const tarotRequired = [
+    'TAROT_PAYMENT_REASSURANCE',
+    'getTarotUpgradeLabel',
+    'tarot-upgrade-reassurance'
+];
+
+for (const snippet of tarotRequired) {
+    if (!tarotSource.includes(snippet)) {
+        errors.push(`Missing tarot paywall trust snippet: ${snippet}`);
+    }
+}
+
+const tarotForbidden = [
+    'Získejte Premium pro neomezené výklady',
+    'Získat Premium',
+    'Získat Premium a odhalit vše'
+];
+
+for (const snippet of tarotForbidden) {
+    if (`${tarotSource}\n${tarotHtml}`.includes(snippet)) {
+        errors.push(`Forbidden hardcoded tarot paywall claim found: ${snippet}`);
     }
 }
 

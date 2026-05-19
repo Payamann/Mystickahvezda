@@ -82,6 +82,14 @@ html body .mh-inline-4665ff48a5 { font-size: 4rem; }
     color: var(--color-mystic-gold);
 }
 
+.tarot-upgrade-reassurance {
+    max-width: 28rem;
+    margin: 0.75rem auto 0;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.85rem;
+    line-height: 1.45;
+}
+
 .favorite-reading-action {
     margin-top: var(--space-xl);
 }

@@ -7,6 +7,7 @@
 let TAROT_CARDS = {};
 // Convert to array for backward compatibility
 let TAROT_CARDS_ARRAY = [];
+const TAROT_PAYMENT_REASSURANCE = 'Cena a případné zkušební období se zobrazí ve Stripe před potvrzením.';
 
 function getTarotPlanForSpread(spreadType) {
     return spreadType === 'Celtic Cross' ? 'vip-majestrat' : 'pruvodce';
@@ -132,6 +133,16 @@ function startTarotUpgradeFlow(spreadType, source = 'tarot_inline_upsell') {
     }
 
     window.location.href = buildTarotUpgradeUrl(spreadType, source);
+}
+
+function getTarotUpgradeLabel(spreadType, context = 'teaser') {
+    if (spreadType === 'Celtic Cross') return 'Odemknout Keltský kříž';
+    if (context === 'locked_card') return 'Odemknout zbývající karty';
+    return 'Odemknout celý tarotový výklad';
+}
+
+function getTarotPaymentReassuranceHtml() {
+    return `<p class="tarot-upgrade-reassurance">${TAROT_PAYMENT_REASSURANCE}</p>`;
 }
 
 function getTarotUpgradeCopy(spreadType) {
@@ -332,7 +343,7 @@ function initTarot() {
                     catch { localStorage.removeItem('tarot_free_usage'); }
 
                     if (usage.date === today && usage.count >= 1) {
-                        window.Auth.showToast('Limit vyčerpán 🔒', 'Dnešní ukázka zdarma již byla vyčerpána. Získejte Premium pro neomezené výklady.', 'error');
+                        window.Auth.showToast('Limit vyčerpán 🔒', 'Dnešní ukázka zdarma už byla vyčerpána. Celý výklad a další karty odemknete přes ceník.', 'error');
                         void trackTarotFunnelEvent('paywall_viewed', 'tarot_limit_gate', spreadType, {
                             gate_reason: 'free_limit'
                         });
@@ -461,7 +472,8 @@ async function startReading(spreadType, isSoftGated = false) {
                                         <p class="tarot-card-lock__copy">
                                             ${escapeHtml(upgradeCopy.body)}
                                         </p>
-                                        <a href="${buildTarotUpgradeUrl(spreadType, 'tarot_locked_card')}" class="btn btn--primary tarot-upgrade-btn">Získat Premium</a>
+                                        <a href="${buildTarotUpgradeUrl(spreadType, 'tarot_locked_card')}" class="btn btn--primary tarot-upgrade-btn">${getTarotUpgradeLabel(spreadType, 'locked_card')}</a>
+                                        ${getTarotPaymentReassuranceHtml()}
                                     </div>
                                     <img src="img/tarot-back.webp" class="tarot-card-image--locked" alt="Locked">
                                 ` : (card.image ? `
@@ -483,7 +495,8 @@ async function startReading(spreadType, isSoftGated = false) {
                 <div class="text-center mt-xl p-lg tarot-soft-gate">
                     <h3 class="tarot-soft-gate__title">${escapeHtml(upgradeCopy.title)}</h3>
                     <p class="mb-lg">${escapeHtml(upgradeCopy.body)}</p>
-                    <a href="${buildTarotUpgradeUrl(spreadType, 'tarot_teaser_banner')}" class="btn btn--primary tarot-upgrade-btn">Získat Premium a odhalit vše</a>
+                    <a href="${buildTarotUpgradeUrl(spreadType, 'tarot_teaser_banner')}" class="btn btn--primary tarot-upgrade-btn">${getTarotUpgradeLabel(spreadType, 'teaser')}</a>
+                    ${getTarotPaymentReassuranceHtml()}
                 </div>
             ` : ''}
         </div>
