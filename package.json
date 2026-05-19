@@ -31,6 +31,7 @@
     "test:e2e:checkout": "node scripts/run-e2e-sections.mjs --section=checkout",
     "test:e2e:activation-smoke": "playwright test tests/e2e/activation-visual-smoke.spec.js --project=chromium --workers=1",
     "test:e2e:paywall-smoke": "playwright test tests/e2e/paywall-visual-smoke.spec.js --project=chromium --workers=1",
+    "test:e2e:funnel-smoke": "playwright test tests/e2e/activation-visual-smoke.spec.js tests/e2e/paywall-visual-smoke.spec.js --project=chromium --workers=1",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
