@@ -371,6 +371,13 @@ html body .mh-inline-a8470d2eb9 { max-width: 800px; }
     margin-top: 1.1rem;
 }
 
+.runes-upgrade-preview__reassurance {
+    margin-top: 0.85rem;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 0.86rem;
+    line-height: 1.45;
+}
+
 /* Migrated from runy.html remaining static style attributes. */
 html body .mh-inline-de33ec85ca { color: var(--color-silver-mist); margin: 0; }
 html body .mh-inline-7c806d36e5 { font-family: var(--font-heading); color: var(--color-mystic-gold); margin-bottom: 1.5rem; }

@@ -6,6 +6,7 @@
 let runesData = [];
 let drawnRune = null;
 const RUNES_DEEP_FEATURE = 'runy_hluboky_vyklad';
+const RUNES_PAYMENT_REASSURANCE = 'Cena a p\u0159\u00edpadn\u00e9 zku\u0161ebn\u00ed obdob\u00ed se zobraz\u00ed ve Stripe p\u0159ed potvrzen\u00edm.';
 
 function apiBase() {
     return window.API_CONFIG?.BASE_URL || '/api';
@@ -74,6 +75,7 @@ function showRuneUpgradePreview(source = 'runes_inline_gate', intention = '') {
             <button type="button" class="btn btn--gold runes-upgrade-preview__cta">Odemknout \u0161amansk\u00FD v\u00FDklad</button>
             <button type="button" class="btn btn--ghost runes-upgrade-preview__free">Z\u016Fstat u runy zdarma</button>
         </div>
+        <p class="runes-upgrade-preview__reassurance">${RUNES_PAYMENT_REASSURANCE}</p>
     `;
 
     window.MH_ANALYTICS?.trackAction?.('paywall_viewed', {

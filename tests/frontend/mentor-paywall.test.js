@@ -13,6 +13,8 @@ describe('Mentor paywall copy contract', () => {
         expect(source).toContain('Zůstat u dnešního chatu');
         expect(source).toContain('jeden konkrétní další krok');
         expect(source).toContain('feature: \'mentor\'');
+        expect(source).toContain('MENTOR_PAYMENT_REASSURANCE');
+        expect(source).toContain('mentor-paywall__reassurance');
     });
 
     test('backend paywall overlay can be dismissed without starting checkout', () => {

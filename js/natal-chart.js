@@ -56,6 +56,7 @@ const NATAL_PLANET_ORDER = [
     'pluto'
 ];
 const SVG_NS = "http://www.w3.org/2000/svg";
+const NATAL_PAYMENT_REASSURANCE = 'Cena a p\u0159\u00edpadn\u00e9 zku\u0161ebn\u00ed obdob\u00ed se zobraz\u00ed ve Stripe p\u0159ed potvrzen\u00edm.';
 
 function buildNatalUpgradeUrl(source = 'natal_teaser_gate') {
     const pricingUrl = new URL('/cenik.html', window.location.origin);
@@ -837,6 +838,7 @@ async function generateNatalChart(planetsGroup) {
                     <div class="teaser-content">
                         <p>✨ Chcete odemknout celý výklad své natální mapy?</p>
                         <a href="${buildNatalUpgradeUrl('natal_teaser_gate')}" class="btn btn--premium natal-teaser-upgrade-btn">Pokračovat s Premium</a>
+                        <p class="natal-teaser-reassurance">${NATAL_PAYMENT_REASSURANCE}</p>
                     </div>
                 `;
                 contentDiv.appendChild(teaserMsg);

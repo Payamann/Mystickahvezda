@@ -508,6 +508,14 @@ html body .mh-inline-e8965e1cb8 { margin: 0; color: var(--color-mystic-gold); }
     white-space: pre-wrap;
 }
 
+.natal-teaser-reassurance {
+    margin: 0.85rem 0 0;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 0.86rem;
+    line-height: 1.45;
+    white-space: normal;
+}
+
 .favorite-reading-action {
     margin-top: var(--space-xl);
 }

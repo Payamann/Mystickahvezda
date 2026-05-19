@@ -7,6 +7,7 @@ let chatInput, sendBtn, messagesContainer, typingIndicator;
 const MENTOR_DAILY_LIMIT = 3;
 const MENTOR_PENDING_PROMPT_KEY = 'mentor_pending_prompt_v1';
 const MENTOR_PENDING_PROMPT_MAX_AGE_MS = 30 * 60 * 1000;
+const MENTOR_PAYMENT_REASSURANCE = 'Cena a p\u0159\u00edpadn\u00e9 zku\u0161ebn\u00ed obdob\u00ed se zobraz\u00ed ve Stripe p\u0159ed potvrzen\u00edm.';
 
 function getMentorUsageStorageKey(date = new Date()) {
     return `mh_daily_mentor_${date.toDateString()}`;
@@ -423,6 +424,7 @@ function showTeaserResponse() {
                 <a href="${buildMentorUpgradeUrl('mentor_teaser_gate')}" class="btn btn--primary btn--sm mentor-upgrade-btn">Odemknout vedení</a>
                 <button type="button" class="btn btn--ghost btn--sm mentor-paywall-dismiss-btn">Zůstat u dnešního chatu</button>
             </div>
+            <p class="mentor-paywall__reassurance">${MENTOR_PAYMENT_REASSURANCE}</p>
         </div>
     `;
     messagesContainer?.insertBefore(div, typingIndicator);
@@ -519,6 +521,7 @@ function showPaywall() {
                 <a href="${buildMentorUpgradeUrl('mentor_paywall_overlay')}" class="btn btn--primary mentor-paywall-upgrade-btn">Odemknout vedení</a>
                 <button type="button" class="btn btn--ghost mentor-paywall-dismiss-btn">Zůstat u dnešního chatu</button>
             </div>
+            <p class="mentor-paywall__reassurance">${MENTOR_PAYMENT_REASSURANCE}</p>
         </div>
     `;
 

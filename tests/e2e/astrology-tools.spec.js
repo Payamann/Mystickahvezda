@@ -152,6 +152,7 @@ test.describe('Natální karta', () => {
         const teaser = page.locator('.teaser-overlay');
         await expect(teaser).toContainText('celý výklad své natální mapy');
         await expect(teaser).toContainText('Pokračovat s Premium');
+        await expect(page.locator('.natal-teaser-reassurance')).toContainText('Cena a případné zkušební období se zobrazí ve Stripe před potvrzením.');
         await expect(teaser).not.toContainText('úplný osud');
     });
 

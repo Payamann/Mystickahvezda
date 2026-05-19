@@ -12,6 +12,9 @@ const tarotSource = await readFile(path.join(rootDir, 'js', 'tarot.js'), 'utf8')
 const tarotHtml = await readFile(path.join(rootDir, 'tarot.html'), 'utf8');
 const pastLifeSource = await readFile(path.join(rootDir, 'js', 'minuly-zivot.js'), 'utf8');
 const pastLifeHtml = await readFile(path.join(rootDir, 'minuly-zivot.html'), 'utf8');
+const runesSource = await readFile(path.join(rootDir, 'js', 'runes.js'), 'utf8');
+const mentorSource = await readFile(path.join(rootDir, 'js', 'mentor.js'), 'utf8');
+const natalSource = await readFile(path.join(rootDir, 'js', 'natal-chart.js'), 'utf8');
 
 const requiredSnippetGroups = [
     ['Cena se zobrazí ve Stripe před potvrzením', 'Cena se zobraz\\u00ed ve Stripe p\\u0159ed potvrzen\\u00edm'],
@@ -121,6 +124,47 @@ const pastLifeForbidden = [
 for (const snippet of pastLifeForbidden) {
     if (`${pastLifeSource}\n${pastLifeHtml}`.includes(snippet)) {
         errors.push(`Forbidden hardcoded past life paywall claim found: ${snippet}`);
+    }
+}
+
+const customGateRequired = [
+    {
+        name: 'runes',
+        source: runesSource,
+        snippets: [
+            'RUNES_PAYMENT_REASSURANCE',
+            'runes-upgrade-preview__reassurance',
+            'runes_auth_gate',
+            'runes_premium_gate'
+        ]
+    },
+    {
+        name: 'mentor',
+        source: mentorSource,
+        snippets: [
+            'MENTOR_PAYMENT_REASSURANCE',
+            'mentor-paywall__reassurance',
+            'mentor_teaser_gate',
+            'mentor_paywall_overlay'
+        ]
+    },
+    {
+        name: 'natal',
+        source: natalSource,
+        snippets: [
+            'NATAL_PAYMENT_REASSURANCE',
+            'natal-teaser-reassurance',
+            'natal_teaser_gate',
+            'natalni_interpretace'
+        ]
+    }
+];
+
+for (const gate of customGateRequired) {
+    for (const snippet of gate.snippets) {
+        if (!gate.source.includes(snippet)) {
+            errors.push(`Missing ${gate.name} custom upgrade trust snippet: ${snippet}`);
+        }
     }
 }
 
