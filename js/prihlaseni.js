@@ -469,8 +469,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (checkoutContextTitle) checkoutContextTitle.textContent = plan.title;
             if (checkoutContextCopy) {
                 checkoutContextCopy.textContent = featureLabel
-                    ? `Navazujete na funkci: ${featureLabel}. ${plan.copy}`
-                    : plan.copy;
+                    ? `Navazujete na funkci: ${featureLabel}. ${plan.copy} Po registraci zachováme tento kontext a rovnou otevřeme bezpečný checkout.`
+                    : `${plan.copy} Po registraci zachováme vybraný plán a rovnou otevřeme bezpečný checkout.`;
             }
             if (checkoutContextLabel) {
                 checkoutContextLabel.textContent = requestedSource ? 'Pokračujete k odemčení' : 'Pokračujete k plánu';

@@ -423,6 +423,7 @@ test.describe('Login stránka', () => {
         const cases = [
             { feature: 'tarot_celtic_cross', expected: 'Keltsk' },
             { feature: 'natal_chart', expected: 'Nat' },
+            { feature: 'monthly_horoscope', expected: 'Měsíční horoskop' },
             { feature: 'runes_deep_reading', expected: 'run' },
             { feature: 'rituals', expected: 'ritu' }
         ];
@@ -434,6 +435,8 @@ test.describe('Login stránka', () => {
             const banner = page.locator('#checkout-context-banner');
             await expect(banner).toBeVisible();
             await expect(banner).toContainText(item.expected);
+            await expect(banner).toContainText('Po registraci zachováme');
+            await expect(banner).toContainText('bezpečný checkout');
             await expect(banner).not.toContainText(item.feature);
         }
     });
