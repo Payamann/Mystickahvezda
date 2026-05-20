@@ -37,6 +37,20 @@ const OPTIONAL_COLUMNS = [
     'checkout_to_purchase_rate'
 ];
 
+function authHandoffAction(row) {
+    const { source, feature } = row;
+
+    if (row.checkout_post_verification_pending > 0 && row.checkout_post_verification_recovered === 0) {
+        return `Inspect post-verification recovery for ${source}/${feature}: users reached email verification, so confirm reminder copy, verification return, and stored checkout intent recovery before changing Stripe.`;
+    }
+
+    if (row.checkout_post_verification_recovered > 0) {
+        return `Debug checkout resume after verified auth for ${source}/${feature}: recovery fired, so inspect _startCheckout and /payment/create-checkout-session.`;
+    }
+
+    return `Audit auth completion for ${source}/${feature}: confirm the auth page keeps the checkout context banner, signup/login submission succeeds, and pending_plan resumes only after users complete auth.`;
+}
+
 const STEP_DEFINITIONS = [
     {
         id: 'first_value_to_checkout',
@@ -90,7 +104,7 @@ const STEP_DEFINITIONS = [
         toColumn: 'checkout_requested',
         rateColumn: 'auth_handoff_to_checkout_request_rate',
         deltaColumn: 'auth_handoff_to_checkout_request_rate_delta',
-        action: ({ source, feature }) => `Audit the post-auth recovery for ${source}/${feature}: confirm pending_plan survives registration/login and _startCheckout reaches /payment/create-checkout-session.`
+        action: authHandoffAction
     },
     {
         id: 'checkout_request_to_session',
@@ -449,7 +463,7 @@ function buildDataQualityNotes(rows) {
             } else if (row.checkout_post_verification_recovered > 0) {
                 notes.push(`${row.source}/${row.feature}: post-verification recovery exists but no checkout request. Check _startCheckout and /payment/create-checkout-session after login.`);
             } else {
-                notes.push(`${row.source}/${row.feature}: auth handoff exists but no checkout request. Check whether users complete auth and pending checkout resumes.`);
+                notes.push(`${row.source}/${row.feature}: auth handoff exists but no checkout request or verification-pending event. Check auth page completion/abandonment before debugging Stripe.`);
             }
         }
         if (row.checkout_post_verification_recovered > row.checkout_post_verification_pending) {
