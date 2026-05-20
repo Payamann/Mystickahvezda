@@ -70,6 +70,8 @@ function buildMentorUpgradeUrl(source = 'mentor_inline_upsell') {
     pricingUrl.searchParams.set('plan', 'pruvodce');
     pricingUrl.searchParams.set('source', source);
     pricingUrl.searchParams.set('feature', 'mentor');
+    pricingUrl.searchParams.set('entry_source', source);
+    pricingUrl.searchParams.set('entry_feature', 'mentor');
     return `${pricingUrl.pathname}${pricingUrl.search}`;
 }
 
@@ -145,6 +147,10 @@ function startMentorUpgradeFlow(source = 'mentor_inline_upsell') {
         window.Auth.startPlanCheckout('pruvodce', {
             source,
             feature: 'mentor',
+            metadata: {
+                entry_source: source,
+                entry_feature: 'mentor'
+            },
             redirect: '/cenik.html',
             authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register'
         });

@@ -127,6 +127,23 @@ function expectCheckoutState(state, {
     }));
 }
 
+function expectDirectCheckoutState(state, {
+    source,
+    feature
+}) {
+    expect(state.authPayload).toBeNull();
+    expect(state.checkoutPayload).toEqual(expect.objectContaining({
+        planId: 'pruvodce',
+        source,
+        feature,
+        billingInterval: null,
+        metadata: expect.objectContaining({
+            entry_source: source,
+            entry_feature: feature
+        })
+    }));
+}
+
 test.describe('Inline paywall checkout handoff', () => {
     test('tarot multi-card inline paywall preserves checkout context through registration', async ({ page }) => {
         const state = await setupCheckoutRoutes(page, {
@@ -407,5 +424,53 @@ test.describe('Inline paywall checkout handoff', () => {
             feature: 'runy_hluboky_vyklad'
         });
         expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
+    });
+
+    test('mentor teaser gate starts checkout with entry context for logged-in free user', async ({ page }) => {
+        const state = await setupCheckoutRoutes(page, {
+            userId: 'mentor-teaser-user',
+            email: 'mentor-teaser@example.com',
+            checkoutSessionId: 'cs_test_mentor_teaser',
+            csrfToken: 'e2e-mentor-teaser-token'
+        });
+
+        await page.goto('/mentor.html?source=e2e_mentor_teaser');
+        await waitForPageReady(page);
+        await expect.poll(() => page.evaluate(() => typeof window.Auth?.startPlanCheckout)).toBe('function');
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+            const todayKey = `mh_daily_mentor_${new Date().toDateString()}`;
+            localStorage.setItem(todayKey, '3');
+            Object.assign(window.Auth, {
+                isLoggedIn: () => true,
+                isPremium: () => false,
+                getProfile: async () => ({ subscription_status: 'free' }),
+                showToast: () => {}
+            });
+            window.isPremium = false;
+            window.MH_ANALYTICS = {
+                trackAction: () => {},
+                trackCTA: () => {},
+                trackCheckoutStarted: () => {}
+            };
+        });
+
+        await page.locator('#chat-input').fill('Co mam dnes udelat jako dalsi krok?');
+        await page.locator('#send-btn').click();
+
+        const mentorGate = page.locator('.premium-lock-overlay');
+        await expect(mentorGate).toBeVisible({ timeout: 5000 });
+        await expect(mentorGate).toContainText(/krok|odpov/i);
+
+        await Promise.all([
+            waitForPath(page, '/profil.html'),
+            mentorGate.locator('.mentor-upgrade-btn').click(),
+        ]);
+
+        expectDirectCheckoutState(state, {
+            source: 'mentor_teaser_gate',
+            feature: 'mentor'
+        });
     });
 });
