@@ -130,6 +130,83 @@ window.Premium = {
         return this._featurePlanMap?.[featureName] || fallbackPlanId;
     },
 
+    buildCheckoutMetadata(source, feature, metadata = {}) {
+        const nextMetadata = metadata && typeof metadata === 'object' && !Array.isArray(metadata)
+            ? { ...metadata }
+            : {};
+
+        if (source && !nextMetadata.entry_source) nextMetadata.entry_source = source;
+        if (feature && !nextMetadata.entry_feature) nextMetadata.entry_feature = feature;
+
+        return nextMetadata;
+    },
+
+    buildCheckoutAuthUrl(planId, context = {}) {
+        const source = context.source || 'premium_gate';
+        const feature = context.feature || null;
+        const redirect = typeof context.redirect === 'string'
+            && context.redirect.startsWith('/')
+            && !context.redirect.startsWith('//')
+            ? context.redirect
+            : '/cenik.html';
+        const authMode = context.authMode === 'login' ? 'login' : 'register';
+        const metadata = this.buildCheckoutMetadata(source, feature, context.metadata);
+        const authUrl = new URL('/prihlaseni.html', window.location.origin);
+
+        authUrl.searchParams.set('mode', authMode);
+        authUrl.searchParams.set('redirect', redirect);
+        authUrl.searchParams.set('plan', planId);
+        authUrl.searchParams.set('source', source);
+        if (feature) authUrl.searchParams.set('feature', feature);
+        if (context.billing_interval || context.billingInterval) {
+            authUrl.searchParams.set('billing_interval', context.billing_interval || context.billingInterval);
+        }
+
+        [
+            'entry_source',
+            'entry_feature',
+            'utm_source',
+            'utm_medium',
+            'utm_campaign',
+            'utm_content',
+            'requested_card',
+            'card_param'
+        ].forEach((key) => {
+            const value = metadata[key];
+            if (!value) return;
+            authUrl.searchParams.set(key === 'card_param' ? 'card' : key, String(value));
+        });
+
+        return `${authUrl.pathname}${authUrl.search}`;
+    },
+
+    rememberFallbackPendingCheckout(planId, context = {}) {
+        try {
+            const source = context.source || 'premium_gate';
+            const feature = context.feature || null;
+            const redirect = typeof context.redirect === 'string'
+                && context.redirect.startsWith('/')
+                && !context.redirect.startsWith('//')
+                ? context.redirect
+                : '/cenik.html';
+            const authMode = context.authMode === 'login' ? 'login' : 'register';
+            const metadata = this.buildCheckoutMetadata(source, feature, context.metadata);
+
+            sessionStorage.setItem('pending_plan', planId);
+            sessionStorage.setItem('pending_checkout_context', JSON.stringify({
+                planId,
+                source,
+                feature,
+                redirect,
+                authMode,
+                billing_interval: context.billing_interval || context.billingInterval || null,
+                metadata
+            }));
+        } catch (error) {
+            console.warn('[Premium] Could not store fallback pending checkout:', error.message);
+        }
+    },
+
     async trackServerFunnelEvent(eventName, payload = {}) {
         try {
             const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
@@ -158,9 +235,11 @@ window.Premium = {
     },
 
     startUpgradeFlow(planId, featureName, source = 'paywall', authMode = null) {
+        const metadata = this.buildCheckoutMetadata(source, featureName);
         const checkoutContext = {
             source,
             feature: featureName || null,
+            metadata,
             redirect: '/cenik.html',
             authMode: authMode || (window.Auth?.isLoggedIn?.() ? 'login' : 'register')
         };
@@ -170,11 +249,8 @@ window.Premium = {
             return;
         }
 
-        const pricingUrl = new URL('/cenik.html', window.location.origin);
-        pricingUrl.searchParams.set('plan', planId);
-        pricingUrl.searchParams.set('source', source);
-        if (featureName) pricingUrl.searchParams.set('feature', featureName);
-        window.location.href = `${pricingUrl.pathname}${pricingUrl.search}`;
+        this.rememberFallbackPendingCheckout(planId, checkoutContext);
+        window.location.href = this.buildCheckoutAuthUrl(planId, checkoutContext);
     },
 
     createOverlay({ icon, title, message, benefits, ctaLabel, footer, badgeLabel = '' }) {

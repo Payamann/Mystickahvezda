@@ -10,11 +10,15 @@ const NUMEROLOGY_RESULT_SOURCE = 'numerology_result';
 let lastNumerologyShareResult = null;
 
 function buildNumerologyUpgradeUrl(source = 'numerology_inline_gate') {
-    const pricingUrl = new URL('/cenik.html', window.location.origin);
-    pricingUrl.searchParams.set('plan', 'pruvodce');
-    pricingUrl.searchParams.set('source', source);
-    pricingUrl.searchParams.set('feature', 'numerologie_vyklad');
-    return `${pricingUrl.pathname}${pricingUrl.search}`;
+    const authUrl = new URL('/prihlaseni.html', window.location.origin);
+    authUrl.searchParams.set('mode', 'register');
+    authUrl.searchParams.set('redirect', '/cenik.html');
+    authUrl.searchParams.set('plan', 'pruvodce');
+    authUrl.searchParams.set('source', source);
+    authUrl.searchParams.set('feature', 'numerologie_vyklad');
+    authUrl.searchParams.set('entry_source', source);
+    authUrl.searchParams.set('entry_feature', 'numerologie_vyklad');
+    return `${authUrl.pathname}${authUrl.search}`;
 }
 
 function startNumerologyUpgradeFlow(source = 'numerology_inline_gate', authMode = 'register') {
@@ -27,6 +31,10 @@ function startNumerologyUpgradeFlow(source = 'numerology_inline_gate', authMode 
         window.Auth.startPlanCheckout('pruvodce', {
             source,
             feature: 'numerologie_vyklad',
+            metadata: {
+                entry_source: source,
+                entry_feature: 'numerologie_vyklad'
+            },
             redirect: '/cenik.html',
             authMode
         });

@@ -67,12 +67,17 @@ function appendTarotEntryContextToUrl(url) {
 
 function buildTarotUpgradeUrl(spreadType, source = 'tarot_inline_upsell') {
     const planId = getTarotPlanForSpread(spreadType);
-    const pricingUrl = new URL('/cenik.html', window.location.origin);
-    pricingUrl.searchParams.set('plan', planId);
-    pricingUrl.searchParams.set('source', source);
-    pricingUrl.searchParams.set('feature', getTarotFeatureForSpread(spreadType));
-    appendTarotEntryContextToUrl(pricingUrl);
-    return `${pricingUrl.pathname}${pricingUrl.search}`;
+    const feature = getTarotFeatureForSpread(spreadType);
+    const authUrl = new URL('/prihlaseni.html', window.location.origin);
+    authUrl.searchParams.set('mode', 'register');
+    authUrl.searchParams.set('redirect', '/cenik.html');
+    authUrl.searchParams.set('plan', planId);
+    authUrl.searchParams.set('source', source);
+    authUrl.searchParams.set('feature', feature);
+    const entryContext = appendTarotEntryContextToUrl(authUrl);
+    authUrl.searchParams.set('entry_source', entryContext.entry_source || source);
+    authUrl.searchParams.set('entry_feature', entryContext.entry_feature || feature);
+    return `${authUrl.pathname}${authUrl.search}`;
 }
 
 async function trackTarotFunnelEvent(eventName, source, spreadType, metadata = {}) {
@@ -110,11 +115,16 @@ function startTarotUpgradeFlow(spreadType, source = 'tarot_inline_upsell') {
     const planId = getTarotPlanForSpread(spreadType);
     const feature = getTarotFeatureForSpread(spreadType);
     const entryContext = getTarotEntryContext();
+    const checkoutMetadata = {
+        entry_source: entryContext.entry_source || source,
+        entry_feature: entryContext.entry_feature || feature,
+        ...entryContext
+    };
     window.MH_ANALYTICS?.trackCTA?.(source, {
         plan_id: planId,
         spread_type: spreadType,
         feature,
-        ...entryContext
+        ...checkoutMetadata
     });
 
     void trackTarotFunnelEvent('paywall_cta_clicked', source, spreadType, {
@@ -125,7 +135,7 @@ function startTarotUpgradeFlow(spreadType, source = 'tarot_inline_upsell') {
         window.Auth.startPlanCheckout(planId, {
             source,
             feature,
-            metadata: entryContext,
+            metadata: checkoutMetadata,
             redirect: '/cenik.html',
             authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register'
         });

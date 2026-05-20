@@ -265,6 +265,14 @@ test.describe('Partnerská shoda', () => {
         const premiumBridge = page.locator('[data-synastry-upgrade]');
         await expect(premiumBridge).toHaveAttribute('href', /source=partner_match_result/);
         await expect(premiumBridge).toHaveAttribute('href', /feature=partnerska_detail/);
+
+        const premiumBridgeUrl = new URL(await premiumBridge.getAttribute('href'), 'https://www.mystickahvezda.cz/');
+        expect(premiumBridgeUrl.pathname).toBe('/prihlaseni.html');
+        expect(premiumBridgeUrl.searchParams.get('mode')).toBe('register');
+        expect(premiumBridgeUrl.searchParams.get('redirect')).toBe('/cenik.html');
+        expect(premiumBridgeUrl.searchParams.get('plan')).toBe('pruvodce');
+        expect(premiumBridgeUrl.searchParams.get('entry_source')).toBe('partner_match_result');
+        expect(premiumBridgeUrl.searchParams.get('entry_feature')).toBe('partnerska_detail');
     });
 
     test('fallback verdikt nepoužívá osudové sliby', async ({ page }) => {

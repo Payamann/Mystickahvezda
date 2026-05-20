@@ -59,11 +59,15 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 const NATAL_PAYMENT_REASSURANCE = 'Cena se zobraz\u00ed ve Stripe p\u0159ed potvrzen\u00edm. Zru\u0161en\u00ed najdete v profilu.';
 
 function buildNatalUpgradeUrl(source = 'natal_teaser_gate') {
-    const pricingUrl = new URL('/cenik.html', window.location.origin);
-    pricingUrl.searchParams.set('plan', 'pruvodce');
-    pricingUrl.searchParams.set('source', source);
-    pricingUrl.searchParams.set('feature', 'natalni_interpretace');
-    return `${pricingUrl.pathname}${pricingUrl.search}`;
+    const authUrl = new URL('/prihlaseni.html', window.location.origin);
+    authUrl.searchParams.set('mode', 'register');
+    authUrl.searchParams.set('redirect', '/cenik.html');
+    authUrl.searchParams.set('plan', 'pruvodce');
+    authUrl.searchParams.set('source', source);
+    authUrl.searchParams.set('feature', 'natalni_interpretace');
+    authUrl.searchParams.set('entry_source', source);
+    authUrl.searchParams.set('entry_feature', 'natalni_interpretace');
+    return `${authUrl.pathname}${authUrl.search}`;
 }
 
 function startNatalUpgradeFlow(source = 'natal_teaser_gate') {
@@ -76,6 +80,10 @@ function startNatalUpgradeFlow(source = 'natal_teaser_gate') {
         window.Auth.startPlanCheckout('pruvodce', {
             source,
             feature: 'natalni_interpretace',
+            metadata: {
+                entry_source: source,
+                entry_feature: 'natalni_interpretace'
+            },
             redirect: '/cenik.html',
             authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register'
         });

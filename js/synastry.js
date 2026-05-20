@@ -12,14 +12,18 @@ document.addEventListener('DOMContentLoaded', () => {
 const SYNASTRY_FEATURE = 'partnerska_detail';
 const SYNASTRY_PLAN_ID = 'pruvodce';
 const SYNASTRY_RESULT_SOURCE = 'partner_match_result';
-const SYNASTRY_PAYMENT_REASSURANCE = 'Cena a případné zkušební období se zobrazí ve Stripe před potvrzením.';
+const SYNASTRY_PAYMENT_REASSURANCE = 'Cena se zobraz\u00ed ve Stripe p\u0159ed potvrzen\u00edm. Zru\u0161en\u00ed najdete v profilu.';
 
 function buildSynastryUpgradeUrl(source = 'synastry_teaser_overlay') {
-    const pricingUrl = new URL('/cenik.html', window.location.origin);
-    pricingUrl.searchParams.set('plan', SYNASTRY_PLAN_ID);
-    pricingUrl.searchParams.set('source', source);
-    pricingUrl.searchParams.set('feature', SYNASTRY_FEATURE);
-    return `${pricingUrl.pathname}${pricingUrl.search}`;
+    const authUrl = new URL('/prihlaseni.html', window.location.origin);
+    authUrl.searchParams.set('mode', 'register');
+    authUrl.searchParams.set('redirect', '/cenik.html');
+    authUrl.searchParams.set('plan', SYNASTRY_PLAN_ID);
+    authUrl.searchParams.set('source', source);
+    authUrl.searchParams.set('feature', SYNASTRY_FEATURE);
+    authUrl.searchParams.set('entry_source', source);
+    authUrl.searchParams.set('entry_feature', SYNASTRY_FEATURE);
+    return `${authUrl.pathname}${authUrl.search}`;
 }
 
 function getSynastryAttribution() {
@@ -72,6 +76,10 @@ function startSynastryUpgradeFlow(source) {
         window.Auth.startPlanCheckout(SYNASTRY_PLAN_ID, {
             source,
             feature: SYNASTRY_FEATURE,
+            metadata: {
+                entry_source: source,
+                entry_feature: SYNASTRY_FEATURE
+            },
             redirect: '/cenik.html',
             authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register'
         });

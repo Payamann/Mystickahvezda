@@ -528,6 +528,44 @@ test.describe('Ceník — platební tlačítka', () => {
         expect(url.searchParams.get('plan')).toBe('pruvodce');
         expect(url.searchParams.get('source')).toBe('natal_teaser_gate');
         expect(url.searchParams.get('feature')).toBe('natalni_interpretace');
+        expect(url.searchParams.get('entry_source')).toBe('natal_teaser_gate');
+        expect(url.searchParams.get('entry_feature')).toBe('natalni_interpretace');
+    });
+
+    test('premium gate fallback bez Auth preskoci cenik a drzi pending checkout', async ({ page }) => {
+        await page.goto('/tests/premium-test.html');
+        await waitForPageReady(page);
+        await page.waitForFunction(() => !!window.Premium?.startUpgradeFlow);
+
+        await page.evaluate(() => {
+            sessionStorage.clear();
+            window.Auth = null;
+            window.Premium.startUpgradeFlow('pruvodce', 'numerologie_vyklad', 'trial_paywall', 'register');
+        });
+
+        await waitForPath(page, '/prihlaseni.html');
+
+        const url = new URL(page.url());
+        expect(url.searchParams.get('mode')).toBe('register');
+        expect(url.searchParams.get('redirect')).toBe('/cenik.html');
+        expect(url.searchParams.get('plan')).toBe('pruvodce');
+        expect(url.searchParams.get('source')).toBe('trial_paywall');
+        expect(url.searchParams.get('feature')).toBe('numerologie_vyklad');
+        expect(url.searchParams.get('entry_source')).toBe('trial_paywall');
+        expect(url.searchParams.get('entry_feature')).toBe('numerologie_vyklad');
+
+        const pending = await page.evaluate(() => JSON.parse(sessionStorage.getItem('pending_checkout_context') || '{}'));
+        expect(pending).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            source: 'trial_paywall',
+            feature: 'numerologie_vyklad',
+            redirect: '/cenik.html',
+            authMode: 'register',
+            metadata: expect.objectContaining({
+                entry_source: 'trial_paywall',
+                entry_feature: 'numerologie_vyklad'
+            })
+        }));
     });
 
     test('klik na placeny plan zapise serverovy funnel intent pred registraci', async ({ page }) => {

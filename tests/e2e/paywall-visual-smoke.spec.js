@@ -60,6 +60,20 @@ async function expectPaywallSurface(page, {
     await expectNoHorizontalOverflow(page);
 }
 
+function expectAuthCheckoutHref(href, expected) {
+    expect(href).toBeTruthy();
+    const url = new URL(href, 'https://www.mystickahvezda.cz/');
+    expect(url.pathname).toBe('/prihlaseni.html');
+    expect(url.searchParams.get('mode')).toBe('register');
+    expect(url.searchParams.get('redirect')).toBe('/cenik.html');
+
+    for (const [key, value] of Object.entries(expected)) {
+        expect(url.searchParams.get(key)).toBe(value);
+    }
+
+    return url;
+}
+
 async function showTarotPaywall(page) {
     await page.goto('/tarot.html?card=Hvezda&source=paywall_smoke&utm_source=e2e');
     await waitForPageReady(page);
@@ -168,6 +182,13 @@ test.describe('Custom paywall visual smoke', () => {
                 cta: '.tarot-upgrade-btn',
                 reassurance: '.tarot-soft-gate'
             });
+            expectAuthCheckoutHref(await page.locator('.tarot-soft-gate .tarot-upgrade-btn').first().getAttribute('href'), {
+                plan: 'pruvodce',
+                source: 'tarot_teaser_banner',
+                feature: 'tarot_multi_card',
+                entry_source: 'paywall_smoke',
+                entry_feature: 'tarot_multi_card'
+            });
         });
 
         test(`runes paywall keeps CTA and reassurance stable on ${name}`, async ({ page }) => {
@@ -187,6 +208,13 @@ test.describe('Custom paywall visual smoke', () => {
                 surface: '.teaser-overlay',
                 cta: '.natal-teaser-upgrade-btn',
                 reassurance: '.natal-teaser-reassurance'
+            });
+            expectAuthCheckoutHref(await page.locator('.teaser-overlay .natal-teaser-upgrade-btn').first().getAttribute('href'), {
+                plan: 'pruvodce',
+                source: 'natal_teaser_gate',
+                feature: 'natalni_interpretace',
+                entry_source: 'natal_teaser_gate',
+                entry_feature: 'natalni_interpretace'
             });
         });
 
