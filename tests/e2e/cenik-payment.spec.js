@@ -568,11 +568,25 @@ test.describe('Ceník — platební tlačítka', () => {
         }));
     });
 
-    test('klik na placeny plan zapise serverovy funnel intent pred registraci', async ({ page }) => {
-        let resolvePricingIntent;
-        const pricingIntent = new Promise((resolve) => {
-            resolvePricingIntent = resolve;
-        });
+    test('klik na placeny plan zapise pricing intent i auth handoff pro top paywall kontexty', async ({ page }) => {
+        const funnelEvents = [];
+        const scenarios = [
+            {
+                url: '/cenik.html?source=inline_paywall&feature=tarot_multi_card&plan=pruvodce',
+                source: 'inline_paywall',
+                feature: 'tarot_multi_card'
+            },
+            {
+                url: '/cenik.html?source=inline_paywall&feature=numerologie_vyklad&plan=pruvodce',
+                source: 'inline_paywall',
+                feature: 'numerologie_vyklad'
+            },
+            {
+                url: '/cenik.html?source=natal_teaser_gate&feature=natalni_interpretace&plan=pruvodce',
+                source: 'natal_teaser_gate',
+                feature: 'natalni_interpretace'
+            }
+        ];
 
         await page.route('**/api/csrf-token', async (route) => {
             await route.fulfill({
@@ -584,9 +598,7 @@ test.describe('Ceník — platební tlačítka', () => {
 
         await page.route('**/api/payment/funnel-event', async (route) => {
             const payload = route.request().postDataJSON();
-            if (payload?.eventName === 'pricing_plan_cta_clicked') {
-                resolvePricingIntent(payload);
-            }
+            funnelEvents.push(payload);
 
             await route.fulfill({
                 status: 200,
@@ -595,30 +607,57 @@ test.describe('Ceník — platební tlačítka', () => {
             });
         });
 
-        await page.goto('/cenik.html?source=inline_paywall&feature=tarot_multi_card&plan=pruvodce');
-        await waitForPageReady(page);
+        for (const scenario of scenarios) {
+            funnelEvents.length = 0;
+            await page.evaluate(() => {
+                localStorage.clear();
+                sessionStorage.clear();
+            });
 
-        await Promise.all([
-            pricingIntent,
-            waitForPath(page, '/prihlaseni.html'),
-            page.locator('.plan-checkout-btn[data-plan="pruvodce"]').click()
-        ]);
+            await page.goto(scenario.url);
+            await waitForPageReady(page);
 
-        await expect.poll(async () => {
-            const payload = await pricingIntent;
-            return payload;
-        }).toEqual(expect.objectContaining({
-            eventName: 'pricing_plan_cta_clicked',
-            source: 'inline_paywall',
-            feature: 'tarot_multi_card',
-            planId: 'pruvodce',
-            metadata: expect.objectContaining({
-                path: '/cenik.html',
-                requires_auth: true,
-                destination: '/prihlaseni.html',
-                billing_interval: 'monthly'
-            })
-        }));
+            await Promise.all([
+                waitForPath(page, '/prihlaseni.html'),
+                page.locator('.plan-checkout-btn[data-plan="pruvodce"]').click()
+            ]);
+
+            await expect.poll(() => funnelEvents.find((event) => (
+                event.eventName === 'pricing_plan_cta_clicked'
+                && event.source === scenario.source
+                && event.feature === scenario.feature
+            )) || null).toEqual(expect.objectContaining({
+                eventName: 'pricing_plan_cta_clicked',
+                source: scenario.source,
+                feature: scenario.feature,
+                planId: 'pruvodce',
+                metadata: expect.objectContaining({
+                    path: '/cenik.html',
+                    requires_auth: true,
+                    destination: '/prihlaseni.html',
+                    billing_interval: 'monthly'
+                })
+            }));
+
+            await expect.poll(() => funnelEvents.find((event) => (
+                event.eventName === 'checkout_auth_required'
+                && event.source === scenario.source
+                && event.feature === scenario.feature
+            )) || null).toEqual(expect.objectContaining({
+                eventName: 'checkout_auth_required',
+                source: scenario.source,
+                feature: scenario.feature,
+                planId: 'pruvodce',
+                metadata: expect.objectContaining({
+                    path: '/cenik.html',
+                    redirect: '/cenik.html',
+                    auth_mode: 'register',
+                    billing_interval: 'monthly',
+                    entry_source: scenario.source,
+                    entry_feature: scenario.feature
+                })
+            }));
+        }
     });
 
     test('free CTA zapise serverovy funnel intent pred registraci', async ({ page }) => {
