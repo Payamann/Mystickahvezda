@@ -279,4 +279,76 @@ test.describe('Inline paywall checkout handoff', () => {
         });
         expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
     });
+
+    test('partner match result bridge preserves checkout context through registration', async ({ page }) => {
+        const state = await setupCheckoutRoutes(page, {
+            userId: 'partner-match-user',
+            email: 'partner-match@example.com',
+            checkoutSessionId: 'cs_test_partner_match',
+            csrfToken: 'e2e-partner-match-token'
+        });
+
+        await page.goto('/partnerska-shoda.html?source=e2e_partner_match');
+        await waitForPageReady(page);
+        await expect.poll(() => page.evaluate(() => typeof window.Auth?.startPlanCheckout)).toBe('function');
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+            Object.assign(window.Auth, {
+                isLoggedIn: () => false,
+                isPremium: () => false,
+                getProfile: async () => null,
+                showToast: () => {}
+            });
+            window.callAPI = async () => ({
+                synastry: {
+                    scores: {
+                        total: 82,
+                        emotion: 84,
+                        communication: 76,
+                        passion: 88,
+                        stability: 79
+                    },
+                    engine: {
+                        precision: 'birth_date',
+                        version: 'e2e'
+                    }
+                }
+            });
+        });
+
+        await page.locator('#p1-name').fill('Anna');
+        await page.locator('#p1-date').fill('1990-01-01');
+        await page.locator('#p2-name').fill('Pavel');
+        await page.locator('#p2-date').fill('1992-07-15');
+        await page.locator('#synastry-form button[type="submit"]').click();
+
+        await expect(page.locator('#synastry-next-step')).toBeVisible();
+        const premiumBridge = page.locator('[data-synastry-upgrade]').first();
+        await expect(premiumBridge).toBeVisible();
+        await expect(premiumBridge).toHaveAttribute('href', /source=partner_match_result/);
+
+        await Promise.all([
+            waitForPath(page, '/prihlaseni.html'),
+            premiumBridge.click(),
+        ]);
+
+        await expectAuthUrl(page, {
+            source: 'partner_match_result',
+            feature: 'partnerska_detail'
+        });
+
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect(page.locator('#checkout-context-banner')).toContainText(/vztah|partner/i);
+        await expect(page.locator('#checkout-context-banner')).toContainText(/checkout/i);
+
+        await submitRegistration(page, 'partner-match@example.com');
+
+        expectCheckoutState(state, {
+            email: 'partner-match@example.com',
+            source: 'partner_match_result',
+            feature: 'partnerska_detail'
+        });
+        expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
+    });
 });
