@@ -318,6 +318,8 @@ function buildAngelUpgradeUrl(source) {
     pricingUrl.searchParams.set('plan', 'pruvodce');
     pricingUrl.searchParams.set('source', source);
     pricingUrl.searchParams.set('feature', 'andelske_karty_hluboky_vhled');
+    pricingUrl.searchParams.set('entry_source', source);
+    pricingUrl.searchParams.set('entry_feature', 'andelske_karty_hluboky_vhled');
     return `${pricingUrl.pathname}${pricingUrl.search}`;
 }
 
@@ -331,6 +333,10 @@ function startAngelUpgradeFlow(source, authMode = 'register') {
         window.Auth.startPlanCheckout('pruvodce', {
             source,
             feature: 'andelske_karty_hluboky_vhled',
+            metadata: {
+                entry_source: source,
+                entry_feature: 'andelske_karty_hluboky_vhled'
+            },
             redirect: '/cenik.html',
             authMode
         });

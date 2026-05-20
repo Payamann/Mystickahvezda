@@ -473,4 +473,44 @@ test.describe('Inline paywall checkout handoff', () => {
             feature: 'mentor'
         });
     });
+
+    test('angel cards premium gate starts checkout with entry context for logged-in free user', async ({ page }) => {
+        const state = await setupCheckoutRoutes(page, {
+            userId: 'angel-card-user',
+            email: 'angel-card@example.com',
+            checkoutSessionId: 'cs_test_angel_card',
+            csrfToken: 'e2e-angel-card-token'
+        });
+
+        await page.goto('/andelske-karty.html?source=e2e_angel_card');
+        await waitForPageReady(page);
+        await expect.poll(() => page.evaluate(() => typeof window.Auth?.startPlanCheckout)).toBe('function');
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+            Object.assign(window.Auth, {
+                isLoggedIn: () => true,
+                isPremium: () => false,
+                showToast: () => {}
+            });
+            window.MH_ANALYTICS = {
+                trackAction: () => {},
+                trackCTA: () => {},
+                trackCheckoutStarted: () => {}
+            };
+        });
+
+        await page.locator('#draw-btn').click();
+        await expect(page.locator('#btn-deep-angel')).toBeVisible({ timeout: 3000 });
+
+        await Promise.all([
+            waitForPath(page, '/profil.html'),
+            page.locator('#btn-deep-angel').click(),
+        ]);
+
+        expectDirectCheckoutState(state, {
+            source: 'angel_card_premium_gate',
+            feature: 'andelske_karty_hluboky_vhled'
+        });
+    });
 });
