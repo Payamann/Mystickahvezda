@@ -33,12 +33,18 @@
 
     function resolveCheckoutContext() {
         const pageName = resolvePageName();
+        const source = `exit_intent_${pageName}`;
+        const feature = FEATURE_MAP[pageName] || pageName;
         return {
             planId: 'pruvodce',
-            source: `exit_intent_${pageName}`,
-            feature: FEATURE_MAP[pageName] || pageName,
+            source,
+            feature,
             redirect: '/cenik.html',
-            authMode: 'register'
+            authMode: 'register',
+            metadata: {
+                entry_source: source,
+                entry_feature: feature
+            }
         };
     }
 
