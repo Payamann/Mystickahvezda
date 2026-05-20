@@ -8,6 +8,13 @@
 import { test, expect } from '@playwright/test';
 import { BASE_URL, waitForPageReady, assertBasicSEO, ZODIAC_SIGNS, MOBILE_VIEWPORT } from './helpers.js';
 
+async function waitForPath(page, pathname, options = {}) {
+    await page.waitForURL(
+        url => url.pathname === pathname,
+        { timeout: 10000, waitUntil: 'domcontentloaded', ...options }
+    );
+}
+
 test.describe('Horoskopy', () => {
 
     test.beforeEach(async ({ page }) => {
@@ -114,6 +121,124 @@ test.describe('Horoskopy', () => {
         await expect(monthlyTab).toBeVisible();
         await monthlyTab.click();
         await expect(page.locator('body')).toBeVisible();
+    });
+
+    test('monthly horoscope upsell keeps checkout context through registration', async ({ page }) => {
+        let authPayload = null;
+        let checkoutPayload = null;
+        const funnelEvents = [];
+
+        await page.route('**/api/csrf-token', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ csrfToken: 'e2e-horoscope-checkout-token' })
+            });
+        });
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            funnelEvents.push(route.request().postDataJSON());
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.route('**/api/auth/register', async (route) => {
+            authPayload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    success: true,
+                    user: {
+                        id: 'monthly-horoscope-user',
+                        email: 'monthly-horoscope@example.com',
+                        role: 'user',
+                        subscription_status: 'free'
+                    }
+                })
+            });
+        });
+
+        await page.route('**/api/payment/create-checkout-session', async (route) => {
+            checkoutPayload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    id: 'cs_test_monthly_horoscope',
+                    url: '/profil.html?payment=success&plan=pruvodce&session_id=cs_test_monthly_horoscope'
+                })
+            });
+        });
+
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+        });
+
+        await page.locator('[data-tab="monthly"]').click();
+        const upsell = page.locator('.horoscope-upsell');
+        await expect(upsell).toBeVisible();
+
+        await Promise.all([
+            waitForPath(page, '/prihlaseni.html'),
+            upsell.locator('.horoscope-upsell-btn').click(),
+        ]);
+
+        const authUrl = new URL(page.url());
+        expect(authUrl.searchParams.get('mode')).toBe('register');
+        expect(authUrl.searchParams.get('redirect')).toBe('/cenik.html');
+        expect(authUrl.searchParams.get('plan')).toBe('pruvodce');
+        expect(authUrl.searchParams.get('source')).toBe('horoscope_inline_upsell');
+        expect(authUrl.searchParams.get('feature')).toBe('monthly_horoscope');
+        expect(authUrl.searchParams.get('entry_source')).toBe('horoscope_inline_upsell');
+        expect(authUrl.searchParams.get('entry_feature')).toBe('monthly_horoscope');
+
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect(page.locator('#checkout-context-banner')).toContainText('horoskop');
+
+        await page.locator('#email').fill('monthly-horoscope@example.com');
+        await page.locator('#password').fill('TestPassword123!');
+        await page.locator('#confirm-password-reg').fill('TestPassword123!');
+        await page.locator('#gdpr-consent').check();
+
+        await Promise.all([
+            waitForPath(page, '/profil.html'),
+            page.locator('#auth-submit').click(),
+        ]);
+
+        expect(authPayload).toEqual(expect.objectContaining({
+            email: 'monthly-horoscope@example.com',
+            password: 'TestPassword123!',
+            password_confirm: 'TestPassword123!'
+        }));
+        expect(checkoutPayload).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            source: 'horoscope_inline_upsell',
+            feature: 'monthly_horoscope',
+            billingInterval: null,
+            metadata: expect.objectContaining({
+                entry_source: 'horoscope_inline_upsell',
+                entry_feature: 'monthly_horoscope'
+            })
+        }));
+        await expect.poll(() => funnelEvents.find((event) => (
+            event.eventName === 'checkout_auth_required'
+            && event.source === 'horoscope_inline_upsell'
+            && event.feature === 'monthly_horoscope'
+        )) || null).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                redirect: '/cenik.html',
+                auth_mode: 'register',
+                entry_source: 'horoscope_inline_upsell',
+                entry_feature: 'monthly_horoscope'
+            })
+        }));
+        expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
     });
 
     test('tabs mají role="tab" ARIA atributy', async ({ page }) => {

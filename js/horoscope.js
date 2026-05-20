@@ -8,24 +8,35 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function buildHoroscopeUpgradeUrl(period) {
+    const feature = `${period}_horoscope`;
     const pricingUrl = new URL('/cenik.html', window.location.origin);
     pricingUrl.searchParams.set('plan', 'pruvodce');
     pricingUrl.searchParams.set('source', 'horoscope_inline_upsell');
-    pricingUrl.searchParams.set('feature', `${period}_horoscope`);
+    pricingUrl.searchParams.set('feature', feature);
+    pricingUrl.searchParams.set('entry_source', 'horoscope_inline_upsell');
+    pricingUrl.searchParams.set('entry_feature', feature);
     return `${pricingUrl.pathname}${pricingUrl.search}`;
 }
 
 function startHoroscopeUpgradeFlow(period, reason) {
+    const feature = `${period}_horoscope`;
+    const metadata = {
+        entry_source: 'horoscope_inline_upsell',
+        entry_feature: feature
+    };
+
     window.MH_ANALYTICS?.trackCTA?.('horoscope_inline_upsell', {
         plan_id: 'pruvodce',
         period,
-        reason
+        reason,
+        ...metadata
     });
 
     if (window.Auth?.startPlanCheckout) {
         window.Auth.startPlanCheckout('pruvodce', {
             source: 'horoscope_inline_upsell',
-            feature: `${period}_horoscope`,
+            feature,
+            metadata,
             redirect: '/cenik.html',
             authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register'
         });
