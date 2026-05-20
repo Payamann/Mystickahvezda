@@ -1,0 +1,190 @@
+import { execFileSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+function usage() {
+    return [
+        'Usage: node scripts/revenue-truth-monitor.mjs [--since ISO] [--output-dir <temp-dir>]',
+        '       [--top 10] [--min-events 1] [--min-step 1] [--allow-repo-output]',
+        '',
+        'Exports post-deploy, 24h, 7d, and 30d live funnel windows outside the repo,',
+        'then runs the funnel leak analyzer for each generated CSV.'
+    ].join('\n');
+}
+
+function parseArgs(argv) {
+    const args = {
+        since: null,
+        outputDir: path.join(os.tmpdir(), 'mh-funnel'),
+        top: '10',
+        minEvents: '1',
+        minStep: '1',
+        allowRepoOutput: false
+    };
+
+    for (let index = 0; index < argv.length; index += 1) {
+        const arg = argv[index];
+        const next = () => argv[++index];
+
+        if (arg === '--help' || arg === '-h') {
+            console.log(usage());
+            process.exit(0);
+        } else if (arg === '--since') {
+            args.since = next();
+        } else if (arg.startsWith('--since=')) {
+            args.since = arg.slice('--since='.length);
+        } else if (arg === '--output-dir') {
+            args.outputDir = next();
+        } else if (arg.startsWith('--output-dir=')) {
+            args.outputDir = arg.slice('--output-dir='.length);
+        } else if (arg === '--top') {
+            args.top = next();
+        } else if (arg.startsWith('--top=')) {
+            args.top = arg.slice('--top='.length);
+        } else if (arg === '--min-events') {
+            args.minEvents = next();
+        } else if (arg.startsWith('--min-events=')) {
+            args.minEvents = arg.slice('--min-events='.length);
+        } else if (arg === '--min-step') {
+            args.minStep = next();
+        } else if (arg.startsWith('--min-step=')) {
+            args.minStep = arg.slice('--min-step='.length);
+        } else if (arg === '--allow-repo-output') {
+            args.allowRepoOutput = true;
+        } else {
+            throw new Error(`Unknown argument: ${arg}\n${usage()}`);
+        }
+    }
+
+    return args;
+}
+
+function assertOutsideRepo(outputDir, allowRepoOutput) {
+    const resolvedOutputDir = path.resolve(outputDir);
+    const relative = path.relative(rootDir, resolvedOutputDir);
+    const insideRepo = relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+
+    if (insideRepo && !allowRepoOutput) {
+        throw new Error(`Refusing to write live funnel exports inside the repo: ${resolvedOutputDir}. Use --allow-repo-output only for sanitized test fixtures.`);
+    }
+
+    return resolvedOutputDir;
+}
+
+function runNodeScript(scriptPath, args) {
+    execFileSync(process.execPath, [scriptPath, ...args], {
+        cwd: rootDir,
+        stdio: 'inherit',
+        env: process.env
+    });
+}
+
+function readSummary(summaryPath) {
+    if (!existsSync(summaryPath)) return null;
+    return JSON.parse(readFileSync(summaryPath, 'utf8'));
+}
+
+function formatDecision(metrics = {}) {
+    const authRequired = metrics.checkoutAuthRequired || 0;
+    const checkoutRequested = metrics.checkoutRequested || 0;
+    const checkoutStarted = metrics.checkoutStarted || 0;
+    const purchases = (metrics.subscriptionCompleted || 0) + (metrics.oneTimeCompleted || 0);
+
+    if (authRequired > 0 && checkoutRequested === 0) {
+        return 'P0: post-auth checkout resume/debug';
+    }
+    if (checkoutRequested > 0 && checkoutStarted === 0) {
+        return 'P0: server/Stripe session creation';
+    }
+    if (checkoutStarted > 0 && purchases === 0) {
+        return 'P0: checkout trust/cancel recovery';
+    }
+    if ((metrics.totalEvents || 0) === 0) {
+        return 'No product change: insufficient post-deploy funnel events';
+    }
+    return 'Monitor: no critical revenue leak in this aggregate window';
+}
+
+function printSummary(label, summary) {
+    if (!summary) {
+        console.log(`[revenue-truth] ${label}: summary unavailable`);
+        return;
+    }
+
+    const metrics = summary.metrics || {};
+    const purchases = (metrics.subscriptionCompleted || 0) + (metrics.oneTimeCompleted || 0);
+
+    console.log([
+        `[revenue-truth] ${label}:`,
+        `events=${summary.totalEvents || 0}`,
+        `segments=${summary.segments || 0}`,
+        `checkout_auth_required=${metrics.checkoutAuthRequired || 0}`,
+        `checkout_requested=${metrics.checkoutRequested || 0}`,
+        `checkout_started=${metrics.checkoutStarted || 0}`,
+        `purchases=${purchases}`,
+        `decision="${formatDecision({ ...metrics, totalEvents: summary.totalEvents || 0 })}"`
+    ].join(' '));
+}
+
+function windowDefinitions(since) {
+    const windows = [];
+    if (since) {
+        windows.push({
+            label: 'post-deploy',
+            slug: 'post-deploy',
+            exportArgs: ['--since', since]
+        });
+    }
+
+    return [
+        ...windows,
+        { label: '24h', slug: '24h', exportArgs: ['--days', '1'] },
+        { label: '7d', slug: '7d', exportArgs: ['--days', '7'] },
+        { label: '30d', slug: '30d', exportArgs: ['--days', '30'] }
+    ];
+}
+
+function main() {
+    const args = parseArgs(process.argv.slice(2));
+    const outputDir = assertOutsideRepo(args.outputDir, args.allowRepoOutput);
+    mkdirSync(outputDir, { recursive: true });
+
+    console.log(`[revenue-truth] output_dir=${outputDir}`);
+    console.log('[revenue-truth] raw CSV/JSON exports stay local and must not be committed.');
+
+    for (const windowDef of windowDefinitions(args.since)) {
+        const csvPath = path.join(outputDir, `${windowDef.slug}.csv`);
+        const summaryPath = path.join(outputDir, `${windowDef.slug}.json`);
+
+        runNodeScript('scripts/export-live-funnel.mjs', [
+            ...windowDef.exportArgs,
+            '--output',
+            csvPath,
+            '--summary-json',
+            summaryPath
+        ]);
+
+        printSummary(windowDef.label, readSummary(summaryPath));
+
+        runNodeScript('scripts/analyze-funnel-segments.mjs', [
+            csvPath,
+            '--top',
+            args.top,
+            '--min-events',
+            args.minEvents,
+            '--min-step',
+            args.minStep
+        ]);
+    }
+}
+
+try {
+    main();
+} catch (error) {
+    console.error(`[revenue-truth] ${error.message}`);
+    process.exitCode = 1;
+}

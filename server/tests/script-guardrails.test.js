@@ -130,6 +130,17 @@ describe('manual script guardrails', () => {
         expect(productionVerifier).toContain('Add ${VERIFY_APEX_URL} as a Railway custom domain');
     });
 
+    test('revenue truth monitor keeps live exports out of the repo by default', () => {
+        const source = readScript('scripts/revenue-truth-monitor.mjs');
+
+        expect(source).toContain("path.join(os.tmpdir(), 'mh-funnel')");
+        expect(source).toContain('assertOutsideRepo');
+        expect(source).toContain('Refusing to write live funnel exports inside the repo');
+        expect(source).toContain('raw CSV/JSON exports stay local and must not be committed');
+        expect(source).toContain('scripts/export-live-funnel.mjs');
+        expect(source).toContain('scripts/analyze-funnel-segments.mjs');
+    });
+
     test('production verifier covers intent landing clusters', () => {
         const source = readScript('server/scripts/verify-production.js');
 
