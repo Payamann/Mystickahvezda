@@ -12,6 +12,7 @@ const rootDir = path.resolve(__dirname, '..');
 dotenv.config({ path: path.join(rootDir, 'server', '.env') });
 
 const ACTIVE_SUBSCRIPTION_STATUSES = new Set(['active', 'trialing', 'cancel_pending', 'past_due']);
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 function parseArgs(argv) {
     const args = {
@@ -19,6 +20,8 @@ function parseArgs(argv) {
         limit: 5000,
         output: path.join(rootDir, 'social-media-agent', 'output', 'revenue', 'funnel-segments-90d.csv'),
         summaryJson: null,
+        since: null,
+        until: null,
         skipEntitlementAudit: false,
         json: false,
         verbose: false,
@@ -30,17 +33,20 @@ function parseArgs(argv) {
         else if (arg === '--limit') args.limit = Number(argv[++i]);
         else if (arg === '--output') args.output = argv[++i];
         else if (arg === '--summary-json') args.summaryJson = argv[++i];
+        else if (arg === '--since') args.since = argv[++i];
+        else if (arg === '--until') args.until = argv[++i];
         else if (arg === '--skip-entitlement-audit') args.skipEntitlementAudit = true;
         else if (arg === '--json') args.json = true;
         else if (arg === '--verbose') args.verbose = true;
         else if (arg === '--help' || arg === '-h') {
             console.log([
-                'Usage: node scripts/export-live-funnel.mjs [--days 90] [--limit 5000]',
+                'Usage: node scripts/export-live-funnel.mjs [--days 90] [--since ISO] [--until ISO] [--limit 5000]',
                 '       [--output social-media-agent/output/revenue/funnel-segments-90d.csv]',
                 '       [--summary-json social-media-agent/output/revenue/funnel-live-summary.json]',
                 '       [--skip-entitlement-audit] [--json]',
                 '',
                 'Exports live Supabase funnel_events into the same segments CSV used by the Codex growth operator.',
+                'When --since is provided, exports that exact window and compares it to the previous equally long window.',
                 'Also audits subscription/user entitlement drift without printing emails or payment identifiers.',
             ].join('\n'));
             process.exit(0);
@@ -55,11 +61,29 @@ function parseArgs(argv) {
     if (!Number.isFinite(args.limit) || args.limit < 1 || args.limit > 5000) {
         throw new Error('--limit must be a number between 1 and 5000.');
     }
+    if (args.until && !args.since) {
+        throw new Error('--until requires --since so the export window is explicit.');
+    }
+
+    if (args.since) args.since = parseIsoDateArg('--since', args.since).toISOString();
+    if (args.until) args.until = parseIsoDateArg('--until', args.until).toISOString();
+    if (args.since && args.until && new Date(args.until).getTime() <= new Date(args.since).getTime()) {
+        throw new Error('--until must be later than --since.');
+    }
 
     args.output = path.resolve(rootDir, args.output);
     if (args.summaryJson) args.summaryJson = path.resolve(rootDir, args.summaryJson);
 
     return args;
+}
+
+function parseIsoDateArg(name, value) {
+    if (!value) throw new Error(`${name} requires an ISO timestamp value.`);
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+        throw new Error(`${name} must be a valid ISO timestamp.`);
+    }
+    return date;
 }
 
 function resolveSupabaseUrl(value) {
@@ -92,16 +116,23 @@ async function importAdminFunnelTools(verbose) {
     }
 }
 
-async function fetchFunnelEvents(supabase, { days, limit }) {
-    const periodEndDate = new Date();
-    const sinceDate = new Date(periodEndDate.getTime() - days * 24 * 60 * 60 * 1000);
-    const previousSinceDate = new Date(periodEndDate.getTime() - days * 2 * 24 * 60 * 60 * 1000);
+async function fetchFunnelEvents(supabase, { days, limit, since: explicitSince, until }) {
+    const periodEndDate = until ? new Date(until) : new Date();
+    const sinceDate = explicitSince
+        ? new Date(explicitSince)
+        : new Date(periodEndDate.getTime() - days * DAY_MS);
+    const windowMs = periodEndDate.getTime() - sinceDate.getTime();
+    if (windowMs <= 0) {
+        throw new Error('Export window is empty: --since must be earlier than --until/current time.');
+    }
+    const previousSinceDate = new Date(sinceDate.getTime() - windowMs);
     const since = sinceDate.toISOString();
     const previousSince = previousSinceDate.toISOString();
     const periodEnd = periodEndDate.toISOString();
+    const reportDays = explicitSince ? Math.max(1, Math.ceil(windowMs / DAY_MS)) : days;
     const queryLimit = Math.min(5000, limit * 2);
 
-    const { data, error } = await supabase
+    const query = supabase
         .from('funnel_events')
         .select(`
             id,
@@ -117,14 +148,17 @@ async function fetchFunnelEvents(supabase, { days, limit }) {
             created_at
         `)
         .gte('created_at', previousSince)
+        .lt('created_at', periodEnd)
         .order('created_at', { ascending: false })
         .limit(queryLimit);
+
+    const { data, error } = await query;
 
     if (error) throw error;
 
     return {
         events: data || [],
-        options: { days, since, previousSince, periodEnd, limit },
+        options: { days: reportDays, since, previousSince, periodEnd, limit },
     };
 }
 
@@ -220,7 +254,10 @@ async function main() {
     const summary = {
         generatedAt: new Date().toISOString(),
         output: args.output,
-        days: args.days,
+        days: options.days,
+        since: options.since,
+        previousSince: options.previousSince,
+        periodEnd: options.periodEnd,
         limit: args.limit,
         totalEvents: report.totalEvents,
         segments: report.sourceFeatureSegments?.length || 0,
@@ -237,6 +274,7 @@ async function main() {
         console.log(JSON.stringify(summary, null, 2));
     } else {
         console.log(`Live funnel CSV exported: ${args.output}`);
+        console.log(`Window: ${summary.since} -> ${summary.periodEnd} | previous: ${summary.previousSince} -> ${summary.since}`);
         console.log(`Events: ${summary.totalEvents} | segments: ${summary.segments} | checkout_auth_required: ${summary.metrics.checkoutAuthRequired || 0} | checkout_requested: ${summary.metrics.checkoutRequested || 0} | checkout_started: ${summary.metrics.checkoutStarted || 0} | purchases: ${(summary.metrics.subscriptionCompleted || 0) + (summary.metrics.oneTimeCompleted || 0)}`);
         if (entitlementAudit) {
             console.log(`Entitlements: active premium ${entitlementAudit.activePremiumSubscriptions}, premium flag mismatches ${entitlementAudit.premiumFlagMismatches}`);
