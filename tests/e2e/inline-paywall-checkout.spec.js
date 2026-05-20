@@ -213,4 +213,70 @@ test.describe('Inline paywall checkout handoff', () => {
         });
         expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
     });
+
+    test('natal teaser gate preserves checkout context through registration', async ({ page }) => {
+        const state = await setupCheckoutRoutes(page, {
+            userId: 'natal-teaser-user',
+            email: 'natal-teaser@example.com',
+            checkoutSessionId: 'cs_test_natal_teaser',
+            csrfToken: 'e2e-natal-teaser-token'
+        });
+
+        await page.goto('/natalni-karta.html?source=e2e_natal_teaser');
+        await waitForPageReady(page);
+        await expect.poll(() => page.evaluate(() => typeof window.Auth?.startPlanCheckout)).toBe('function');
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+            Object.assign(window.Auth, {
+                isLoggedIn: () => true,
+                isPremium: () => true,
+                saveReading: async () => ({ id: 'natal-teaser-reading' }),
+                showToast: () => {}
+            });
+            window.callAPI = async () => ({
+                success: true,
+                isTeaser: true,
+                response: 'DATA: Slunce=Kozoroh, Mesic=Rak, Ascendent=Lev\n\nUkazkovy vyklad.'
+            });
+        });
+
+        await page.locator('#name').fill('Test');
+        await page.locator('#birth-date').fill('1990-01-01');
+        await page.locator('#birth-time').fill('12:00');
+        await page.locator('#birth-place').fill('Praha');
+        await page.locator('#natal-form button[type="submit"]').click();
+
+        const teaser = page.locator('.teaser-overlay');
+        await expect(teaser).toBeVisible();
+        await expect(teaser).toContainText(/nat/i);
+
+        await page.evaluate(() => {
+            window.Auth.isLoggedIn = () => false;
+            window.Auth.isPremium = () => false;
+        });
+
+        await Promise.all([
+            waitForPath(page, '/prihlaseni.html'),
+            teaser.locator('.natal-teaser-upgrade-btn').click(),
+        ]);
+
+        await expectAuthUrl(page, {
+            source: 'natal_teaser_gate',
+            feature: 'natalni_interpretace'
+        });
+
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect(page.locator('#checkout-context-banner')).toContainText(/nat/i);
+        await expect(page.locator('#checkout-context-banner')).toContainText(/checkout/i);
+
+        await submitRegistration(page, 'natal-teaser@example.com');
+
+        expectCheckoutState(state, {
+            email: 'natal-teaser@example.com',
+            source: 'natal_teaser_gate',
+            feature: 'natalni_interpretace'
+        });
+        expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
+    });
 });
