@@ -472,6 +472,132 @@ test.describe('Login stránka', () => {
         }));
     });
 
+    test('checkout intent prezije email verifikaci a obnovi se pri dalsim prihlaseni', async ({ page }) => {
+        test.setTimeout(60000);
+
+        const scenarios = [
+            {
+                email: 'verify-tarot@example.com',
+                source: 'inline_paywall',
+                feature: 'tarot_multi_card',
+                entrySource: 'inline_paywall'
+            },
+            {
+                email: 'verify-numerology@example.com',
+                source: 'trial_paywall',
+                feature: 'numerologie_vyklad',
+                entrySource: 'trial_paywall'
+            },
+            {
+                email: 'verify-natal@example.com',
+                source: 'natal_teaser_gate',
+                feature: 'natalni_interpretace',
+                entrySource: 'natal_teaser_gate'
+            },
+            {
+                email: 'verify-partner@example.com',
+                source: 'partner_match_result',
+                feature: 'partnerska_detail',
+                entrySource: 'partner_match_result'
+            }
+        ];
+        const checkoutPayloads = [];
+
+        await page.route('**/api/auth/register', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    success: true,
+                    requireEmailVerification: true
+                })
+            });
+        });
+
+        await page.route('**/api/auth/login', async (route) => {
+            const payload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    user: {
+                        id: `verified-${payload.email}`,
+                        email: payload.email,
+                        role: 'user',
+                        subscription_status: 'free'
+                    }
+                })
+            });
+        });
+
+        await page.route('**/api/payment/create-checkout-session', async (route) => {
+            const payload = route.request().postDataJSON();
+            checkoutPayloads.push(payload);
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    id: `cs_${payload.feature}`,
+                    url: `/profil.html?payment=success&plan=${payload.planId}&session_id=cs_${payload.feature}`
+                })
+            });
+        });
+
+        for (const scenario of scenarios) {
+            await page.evaluate(() => {
+                localStorage.clear();
+                sessionStorage.clear();
+            });
+
+            const registerUrl = `/prihlaseni.html?mode=register&redirect=/cenik.html&plan=pruvodce&source=${scenario.source}&feature=${scenario.feature}&entry_source=${scenario.entrySource}&entry_feature=${scenario.feature}`;
+            await page.goto(registerUrl);
+            await waitForPageReady(page);
+            await submitRegisterForm(page, scenario.email);
+
+            await expect.poll(
+                () => page.evaluate(() => JSON.parse(localStorage.getItem('mh_post_verification_checkout') || 'null')),
+                { timeout: 5000 }
+            ).not.toBeNull();
+            const storedCheckout = await page.evaluate(() => JSON.parse(localStorage.getItem('mh_post_verification_checkout') || 'null'));
+            expect(storedCheckout).toEqual(expect.objectContaining({
+                planId: 'pruvodce',
+                context: expect.objectContaining({
+                    source: scenario.source,
+                    feature: scenario.feature,
+                    redirect: '/cenik.html',
+                    metadata: expect.objectContaining({
+                        entry_source: scenario.entrySource,
+                        entry_feature: scenario.feature
+                    })
+                })
+            }));
+            expect(checkoutPayloads.find((payload) => payload.feature === scenario.feature)).toBeUndefined();
+
+            await page.goto('/prihlaseni.html?mode=login');
+            await waitForPageReady(page);
+
+            await Promise.all([
+                page.waitForURL(
+                    url => url.pathname === '/profil.html' && url.searchParams.get('session_id') === `cs_${scenario.feature}`,
+                    { timeout: 10000, waitUntil: 'domcontentloaded' }
+                ),
+                submitLoginForm(page, scenario.email),
+            ]);
+
+            expect(checkoutPayloads.find((payload) => payload.feature === scenario.feature)).toEqual(expect.objectContaining({
+                planId: 'pruvodce',
+                source: scenario.source,
+                feature: scenario.feature,
+                billingInterval: null,
+                metadata: expect.objectContaining({
+                    entry_source: scenario.entrySource,
+                    entry_feature: scenario.feature
+                })
+            }));
+            expect(await page.evaluate(() => localStorage.getItem('mh_post_verification_checkout'))).toBeNull();
+        }
+    });
+
     test('registrace s email verifikaci posila signup analytics jen jednou', async ({ page }) => {
         await page.route('**/api/auth/register', async (route) => {
             await route.fulfill({

@@ -2,6 +2,8 @@
     const API_URL = window.API_CONFIG?.BASE_URL || '/api';
     const PENDING_PLAN_KEY = 'pending_plan';
     const PENDING_CONTEXT_KEY = 'pending_checkout_context';
+    const POST_VERIFICATION_CHECKOUT_KEY = 'mh_post_verification_checkout';
+    const POST_VERIFICATION_CHECKOUT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
     const POST_AUTH_ACTIVATION_KEY = 'post_auth_activation';
     const POST_AUTH_REDIRECT_PENDING_KEY = 'post_auth_redirect_pending';
     const SIGNUP_INTENT_KEY = 'mh_signup_intent';
@@ -322,9 +324,19 @@
                                 source: standaloneContext.source || 'standalone_auth_plan',
                                 feature: standaloneContext.feature || null,
                                 metadata: standaloneContext.metadata || {},
-                                billing_interval: standaloneContext.billing_interval || null
+                                billing_interval: standaloneContext.billing_interval || null,
+                                redirect: typeof standaloneContext.redirect === 'string'
+                                    && standaloneContext.redirect.startsWith('/')
+                                    && !standaloneContext.redirect.startsWith('//')
+                                    ? standaloneContext.redirect
+                                    : '/cenik.html',
+                                authMode: standaloneContext.mode || 'register'
                             }
                             : null;
+                    const checkoutPlan = pendingPlan || standalonePlan;
+                    if (checkoutPlan && checkoutContext) {
+                        this.rememberPostVerificationCheckout(checkoutPlan, checkoutContext);
+                    }
                     const authSource = checkoutContext?.source || standaloneContext?.source || null;
                     const authFeature = checkoutContext?.feature || standaloneContext?.feature || null;
                     window.MH_ANALYTICS?.trackAuthCompleted?.('register', {
@@ -414,7 +426,10 @@
             const pendingPlan = this.getPendingCheckoutPlan();
             const standaloneContext = this.getStandaloneAuthContext();
             const standalonePlan = !pendingPlan && standaloneContext?.plan ? standaloneContext.plan : null;
-            const checkoutPlan = pendingPlan || standalonePlan;
+            const postVerificationCheckout = !pendingPlan && !standalonePlan
+                ? this.getPostVerificationCheckout()
+                : null;
+            const checkoutPlan = pendingPlan || standalonePlan || postVerificationCheckout?.planId;
             const checkoutContext = pendingPlan
                 ? this.getPendingCheckoutContext()
                 : standalonePlan
@@ -432,7 +447,7 @@
                             : '/cenik.html',
                         authMode: standaloneContext.mode || options.mode || 'register'
                     }
-                    : null;
+                    : postVerificationCheckout?.context || null;
             const postAuthRedirect = checkoutPlan ? null : this.resolvePostAuthRedirect(options);
             if (postAuthRedirect) {
                 sessionStorage.setItem(POST_AUTH_REDIRECT_PENDING_KEY, postAuthRedirect);
@@ -860,6 +875,80 @@
             } catch {
                 return {};
             }
+        },
+
+        sanitizeCheckoutContextForStorage(planId, context = {}) {
+            const metadata = {};
+            const rawMetadata = getCheckoutMetadataFromParams(new URLSearchParams(), context);
+            CHECKOUT_METADATA_PARAM_KEYS.forEach((key) => {
+                setCheckoutMetadataValue(metadata, key, rawMetadata[key]);
+            });
+
+            const redirect = typeof context.redirect === 'string'
+                && context.redirect.startsWith('/')
+                && !context.redirect.startsWith('//')
+                ? context.redirect
+                : '/cenik.html';
+            const storedContext = {
+                planId: sanitizeCheckoutMetadataValue(planId, 80),
+                source: sanitizeCheckoutMetadataValue(context.source, 120) || 'auth_pending_plan',
+                feature: sanitizeCheckoutMetadataValue(context.feature, 120),
+                redirect,
+                authMode: context.authMode === 'login' ? 'login' : 'register',
+                metadata
+            };
+            const billingInterval = sanitizeCheckoutMetadataValue(
+                context.billing_interval || context.billingInterval,
+                40
+            );
+            if (billingInterval) storedContext.billing_interval = billingInterval;
+
+            return storedContext;
+        },
+
+        rememberPostVerificationCheckout(planId, context = {}) {
+            const storedContext = this.sanitizeCheckoutContextForStorage(planId, context);
+            if (!storedContext.planId) return;
+
+            try {
+                localStorage.setItem(POST_VERIFICATION_CHECKOUT_KEY, JSON.stringify({
+                    planId: storedContext.planId,
+                    context: storedContext,
+                    createdAt: Date.now()
+                }));
+            } catch (error) {
+                console.warn('Unable to remember post-verification checkout:', error);
+            }
+        },
+
+        getPostVerificationCheckout() {
+            try {
+                const raw = localStorage.getItem(POST_VERIFICATION_CHECKOUT_KEY);
+                if (!raw) return null;
+
+                const parsed = JSON.parse(raw);
+                if (!parsed?.planId || !parsed?.context) {
+                    localStorage.removeItem(POST_VERIFICATION_CHECKOUT_KEY);
+                    return null;
+                }
+
+                if (Date.now() - Number(parsed.createdAt || 0) > POST_VERIFICATION_CHECKOUT_TTL_MS) {
+                    localStorage.removeItem(POST_VERIFICATION_CHECKOUT_KEY);
+                    return null;
+                }
+
+                return {
+                    planId: parsed.planId,
+                    context: parsed.context
+                };
+            } catch {
+                localStorage.removeItem(POST_VERIFICATION_CHECKOUT_KEY);
+                return null;
+            }
+        },
+
+        clearPostVerificationCheckout() {
+            localStorage.removeItem(POST_VERIFICATION_CHECKOUT_KEY);
         },
 
         setPendingCheckout(planId, context = {}) {
@@ -1520,13 +1609,16 @@
                 const data = await res.json();
                 if (res.ok && data.url) {
                     this.clearPendingCheckout();
+                    this.clearPostVerificationCheckout();
                     window.location.href = data.url;
                 } else {
                     console.warn('Checkout session failed:', data);
+                    this.clearPostVerificationCheckout();
                     window.location.href = this.buildCheckoutRecoveryUrl(planId, context, 'session_failed');
                 }
             } catch (e) {
                 console.error('Checkout error:', e);
+                this.clearPostVerificationCheckout();
                 window.location.href = this.buildCheckoutRecoveryUrl(planId, context, 'network_error');
             }
         },

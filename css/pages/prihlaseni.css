@@ -117,13 +117,30 @@
                 padding: 4.8rem 0.75rem 12rem;
             }
 
+            body.auth-register-mode.auth-checkout-plan-mode .login-section {
+                padding-top: 4.45rem;
+            }
+
             body.auth-register-mode .login-card {
                 padding: 1.05rem 1rem 1.15rem;
+            }
+
+            body.auth-register-mode.auth-checkout-plan-mode .login-card {
+                padding-top: 0.82rem;
             }
 
             body.auth-register-mode .login-card__title {
                 margin-bottom: 0.35rem;
                 font-size: 1.42rem;
+            }
+
+            body.auth-register-mode.auth-checkout-plan-mode .login-card__title {
+                max-width: 17rem;
+                margin-right: auto;
+                margin-left: auto;
+                margin-bottom: 0.14rem;
+                font-size: 1.32rem;
+                line-height: 1.06;
             }
 
             body.auth-register-mode .login-card .hero__subtitle {
@@ -140,8 +157,16 @@
                 margin-top: 0.75rem;
             }
 
+            body.auth-register-mode.auth-checkout-plan-mode #login-form {
+                margin-top: 0.55rem;
+            }
+
             body.auth-register-mode .login-card .form-group {
                 margin-bottom: 0.62rem;
+            }
+
+            body.auth-register-mode.auth-checkout-plan-mode .login-card .form-group {
+                margin-bottom: 0.5rem;
             }
 
             body.auth-register-mode .login-card .form-input {
@@ -160,6 +185,10 @@
                 display: none !important;
             }
 
+            body.auth-register-mode.auth-checkout-plan-mode #password-help {
+                display: none !important;
+            }
+
             body.auth-register-mode .mh-inline-6dada34cf2 {
                 gap: 0.42rem;
                 font-size: 0.76rem;
@@ -173,8 +202,8 @@
             }
 
             body.auth-register-mode.auth-checkout-plan-mode #checkout-context-banner {
-                margin-top: 0.72rem;
-                padding: 0.68rem 0.78rem;
+                margin-top: 0.48rem;
+                padding: 0.58rem 0.72rem;
                 border-radius: 14px;
             }
 
