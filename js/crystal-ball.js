@@ -31,6 +31,8 @@ function initCrystalBall() {
         pricingUrl.searchParams.set('plan', 'pruvodce');
         pricingUrl.searchParams.set('source', source);
         pricingUrl.searchParams.set('feature', 'kristalova_koule');
+        pricingUrl.searchParams.set('entry_source', source);
+        pricingUrl.searchParams.set('entry_feature', 'kristalova_koule');
         return `${pricingUrl.pathname}${pricingUrl.search}`;
     }
 
@@ -67,7 +69,11 @@ function initCrystalBall() {
                 source,
                 feature: 'kristalova_koule',
                 redirect: '/cenik.html',
-                authMode
+                authMode,
+                metadata: {
+                    entry_source: source,
+                    entry_feature: 'kristalova_koule'
+                }
             });
             return;
         }

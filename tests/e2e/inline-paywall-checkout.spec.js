@@ -514,6 +514,57 @@ test.describe('Inline paywall checkout handoff', () => {
         });
     });
 
+    test('crystal ball limit gate starts checkout with entry context for logged-in free user', async ({ page }) => {
+        const state = await setupCheckoutRoutes(page, {
+            userId: 'crystal-ball-user',
+            email: 'crystal-ball@example.com',
+            checkoutSessionId: 'cs_test_crystal_ball',
+            csrfToken: 'e2e-crystal-ball-token'
+        });
+
+        await page.route('**/api/crystal-ball', async route => {
+            await route.fulfill({
+                status: 402,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    success: false,
+                    error: 'Premium required'
+                })
+            });
+        });
+
+        await page.goto('/kristalova-koule.html?source=e2e_crystal_limit&feature=kristalova_koule');
+        await waitForPageReady(page);
+        await expect.poll(() => page.evaluate(() => typeof window.Auth?.startPlanCheckout)).toBe('function');
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+            localStorage.removeItem('crystalBall_lastUsage');
+            Object.assign(window.Auth, {
+                isLoggedIn: () => true,
+                isPremium: () => false,
+                showToast: () => {}
+            });
+            window.MH_ANALYTICS = {
+                trackAction: () => {},
+                trackCTA: () => {},
+                trackCheckoutStarted: () => {}
+            };
+        });
+
+        await page.locator('#question-input').fill('Muzu se zeptat na dalsi krok?');
+
+        await Promise.all([
+            waitForPath(page, '/profil.html'),
+            page.locator('#ask-btn').click(),
+        ]);
+
+        expectDirectCheckoutState(state, {
+            source: 'crystal_ball_limit_gate',
+            feature: 'kristalova_koule'
+        });
+    });
+
     test('medicine wheel premium wall starts checkout with entry context for logged-in free user', async ({ page }) => {
         const state = await setupCheckoutRoutes(page, {
             userId: 'medicine-wheel-user',
