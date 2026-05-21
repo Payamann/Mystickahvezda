@@ -23,13 +23,13 @@ async function preparePricingPage(page, viewport, query = '') {
     await waitForPageReady(page);
 }
 
-async function preparePricingPageWithCookieBanner(page, viewport) {
+async function preparePricingPageWithCookieBanner(page, viewport, query = '') {
     await page.setViewportSize(viewport);
     await page.addInitScript(() => {
         localStorage.removeItem('mh_cookie_prefs');
         localStorage.removeItem('cookieConsent');
     });
-    await page.goto('/cenik.html');
+    await page.goto(`/cenik.html${query}`);
     await waitForPageReady(page);
 }
 
@@ -223,5 +223,30 @@ test.describe('Pricing visual smoke', () => {
         expect(ctaMetrics.overflow).toBeLessThanOrEqual(2);
         expect(ctaMetrics.overlaps[0].visible).toBe(true);
         expect(ctaMetrics.overlaps[0].overlap).toBe(false);
+    });
+
+    test('mobile cookie banner keeps feature recommendation visible', async ({ page }) => {
+        await preparePricingPageWithCookieBanner(page, MOBILE_VIEWPORT, '?source=inline_paywall&feature=astrocartography');
+
+        const banner = page.locator('#cookie-banner');
+        const recommendation = page.locator('#pricing-plan-recommendation');
+        const recommendationAction = recommendation.locator('[data-recommended-plan="osviceni"]');
+
+        await expect(banner).toBeVisible({ timeout: 4_000 });
+        await expect(recommendation).toBeVisible();
+        await expect(recommendation).toContainText(/Osv/i);
+        await expect(recommendationAction).toBeVisible();
+
+        const metrics = await getCookieOverlapMetrics(page, [
+            '#pricing-plan-recommendation',
+            '#pricing-plan-recommendation [data-recommended-plan="osviceni"]'
+        ]);
+
+        expect(metrics.cookieHeight).toBeLessThan(190);
+        expect(metrics.overflow).toBeLessThanOrEqual(2);
+        for (const item of metrics.overlaps) {
+            expect(item.visible, `${item.selector} should be visible`).toBe(true);
+            expect(item.overlap, `${item.selector} should not overlap cookie banner`).toBe(false);
+        }
     });
 });
