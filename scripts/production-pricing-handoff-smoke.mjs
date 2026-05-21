@@ -1,4 +1,5 @@
 import { chromium } from '@playwright/test';
+import { createSmokeTelemetryBlocker } from './smoke-telemetry-blocker.mjs';
 
 const PRODUCTION_BASE_URL = 'https://www.mystickahvezda.cz';
 const DEFAULT_LOCAL_BASE_URL = `http://localhost:${process.env.PLAYWRIGHT_PORT || '3001'}`;
@@ -6,12 +7,6 @@ const DEFAULT_LOCAL_BASE_URL = `http://localhost:${process.env.PLAYWRIGHT_PORT |
 const VIEWPORTS = [
     { name: 'desktop', width: 1280, height: 720 },
     { name: 'mobile', width: 393, height: 851 }
-];
-
-const READ_ONLY_ENDPOINTS = [
-    '**/api/payment/funnel-event',
-    '**/api/analytics/event',
-    '**/api/analytics/batch'
 ];
 
 function parseArgs(argv) {
@@ -57,18 +52,6 @@ function rectOverlaps(a, b) {
         || a.bottom < b.top
         || a.top > b.bottom
     ));
-}
-
-async function blockSmokeTelemetry(context) {
-    const response = {
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ success: true, smoke: true, readOnly: true })
-    };
-
-    for (const pattern of READ_ONLY_ENDPOINTS) {
-        await context.route(pattern, route => route.fulfill(response));
-    }
 }
 
 function validateQuery(actual, expected, label, errors) {
@@ -236,6 +219,7 @@ async function inspectPricingHandoff(page, viewportName, baseUrl) {
 async function main() {
     const args = parseArgs(process.argv.slice(2));
     const browser = await chromium.launch({ headless: true });
+    const telemetry = createSmokeTelemetryBlocker();
     const results = [];
 
     try {
@@ -246,7 +230,7 @@ async function main() {
                 timezoneId: 'Europe/Prague',
                 serviceWorkers: 'block'
             });
-            await blockSmokeTelemetry(context);
+            await telemetry.install(context);
             await context.addInitScript(() => {
                 localStorage.clear();
                 sessionStorage.clear();
@@ -263,6 +247,7 @@ async function main() {
     }
 
     const failures = results.filter((result) => result.errors.length > 0);
+    telemetry.print('pricing-handoff-smoke');
     for (const result of results) {
         const status = result.errors.length ? 'FAIL' : 'OK';
         console.log(`[pricing-handoff-smoke] ${status} ${result.viewport} submit="${result.submitText}"`);

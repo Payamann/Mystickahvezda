@@ -153,7 +153,7 @@ npm.cmd run smoke:production:auth-handoff
 npm.cmd run smoke:production:pricing-handoff
 ```
 
-Production browser smoke scripts should route first-party analytics and funnel-event POSTs to local success responses so diagnostic checks do not pollute revenue truth windows.
+Production browser smoke scripts should route first-party analytics and funnel-event POSTs to local success responses so diagnostic checks do not pollute revenue truth windows. The smoke output should include `telemetry_blocked` counts; non-zero counts mean production requests were intercepted locally rather than written to analytics.
 
 If `deploy:guard` is blocked by GitHub API 403 but production health is otherwise ok, run `npm.cmd run verify:production:commit` after a short Railway wait. It derives local HEAD, requires `/api/health` to report that exact commit, and runs the full production verifier.
 

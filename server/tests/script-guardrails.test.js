@@ -152,6 +152,26 @@ describe('manual script guardrails', () => {
         expect(source).toContain('--github-status-fallback-minutes');
     });
 
+    test('production browser smokes keep telemetry read-only', () => {
+        const blocker = readScript('scripts/smoke-telemetry-blocker.mjs');
+
+        [
+            'scripts/production-pricing-handoff-smoke.mjs',
+            'scripts/production-auth-handoff-smoke.mjs',
+            'scripts/production-tool-runtime-smoke.mjs'
+        ].forEach((scriptPath) => {
+            const source = readScript(scriptPath);
+            expect(source).toContain('createSmokeTelemetryBlocker');
+            expect(source).toContain("telemetry.print('");
+        });
+
+        expect(blocker).toContain('**/api/payment/funnel-event');
+        expect(blocker).toContain('**/api/analytics/event');
+        expect(blocker).toContain('**/api/analytics/batch');
+        expect(blocker).toContain('telemetry_blocked');
+        expect(blocker).toContain('readOnly: true');
+    });
+
     test('production verifier covers intent landing clusters', () => {
         const source = readScript('server/scripts/verify-production.js');
 
