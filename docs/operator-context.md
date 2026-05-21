@@ -14,16 +14,18 @@ Primary funnel: visit -> first value -> signup -> onboarding completed -> saved 
 
 - Production branch: `origin/main`
 - Railway deploy target: `Payamann/MystickaHvezdaOriginalAntigravity` on `main`
-- Latest verified production commit when this file was created: `fb060285`
+- Latest verified production commit: `69b64063`
 - Latest important funnel work:
   - `56291416` preserved paywall checkout handoff context
   - `4bd2f08e` connected profile recovery to the growth funnel
   - `e923c94b` recovered checkout after email verification
   - `e20be3aa` made checkout auth handoff durable
   - `fb060285` added exact-window live funnel exports
+  - `69b64063` preserved homepage and pending checkout metadata through pricing/auth handoff
 - Latest known revenue truth:
-  - Post-deploy and 24h windows had insufficient funnel events
-  - 7d/30d historical windows still showed `checkout_auth_required > 0` and `checkout_requested = 0`
+  - Post-deploy window after `69b64063` still has insufficient paid funnel events
+  - First-party analytics ingestion is active and production health is ok
+  - 24h/7d/30d historical windows still show `checkout_auth_required > 0` and `checkout_requested = 0`
   - Do not treat the older windows as proof that the latest fix failed; use fresh post-deploy cohorts first
 
 ## Default Operator Loop
@@ -120,7 +122,7 @@ node scripts/analyze-funnel-segments.mjs (Join-Path $dir '7d.csv') --top 10 --mi
 
 `monitor:revenue-truth:production` also prints a read-only first-party analytics pulse for the post-deploy window. If `analytics_events > 0` and `funnel_events = 0`, ingestion is alive and the blocker is lack of paid funnel activity rather than a broken analytics endpoint. When a post-deploy window is present, 24h/7d/30d summaries are labeled `basis=historical_context`; use them to pick test coverage or diagnostics, not to justify a runtime fix before fresh post-deploy events arrive. Each run also writes an aggregate-only `monitor-summary.json` in the chosen temp output directory; read `next_action` first in the next heartbeat.
 
-For frequent 15-minute heartbeats, prefer `npm.cmd run monitor:revenue-truth:production:summary -- --output-dir <temp-dir>` first. It writes the same aggregate `monitor-summary.json` and skips the verbose segment analyzer; run the full monitor only when `next_action` or fresh paid events require segment detail.
+For frequent 10-15 minute heartbeats, prefer `npm.cmd run monitor:revenue-truth:production:summary -- --output-dir <temp-dir>` first. It writes the same aggregate `monitor-summary.json` and skips the verbose segment analyzer; run the full monitor only when `next_action` or fresh paid events require segment detail.
 
 Core checks:
 
@@ -143,6 +145,7 @@ If frequent heartbeat smoke runs hit a production natal-chart rate limit (`429`)
 
 ## Automation Cadence
 
+- During active autonomous sprints, run the summary revenue truth monitor every 10-15 minutes; report only aggregate counts and next P0.
 - Daily revenue truth monitor: export post-deploy, 24h, 7d, and 30d windows; report only aggregate counts and next P0.
 - Twice-weekly production smoke: run production health and public smoke checks; notify only on failure or changed deploy state.
 - Weekly sprint planner: summarize what changed, what data says, and the next 3 implementation slices.
