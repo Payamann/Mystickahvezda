@@ -1171,6 +1171,8 @@
             if (planId) url.searchParams.set('plan', planId);
             if (source) url.searchParams.set('source', source);
             if (feature) url.searchParams.set('feature', feature);
+            const billingInterval = context.billing_interval || context.billingInterval || null;
+            if (billingInterval) url.searchParams.set('billing_interval', String(billingInterval));
 
             const paramMap = {
                 entry_source: 'entry_source',

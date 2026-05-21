@@ -1136,6 +1136,7 @@ test.describe('Login stránka', () => {
         expect(failureUrl.searchParams.get('plan')).toBe('pruvodce');
         expect(failureUrl.searchParams.get('source')).toBe('natal_teaser_gate');
         expect(failureUrl.searchParams.get('feature')).toBe('natalni_interpretace');
+        expect(failureUrl.searchParams.get('billing_interval')).toBe('yearly');
         expect(failureUrl.searchParams.get('entry_source')).toBe('natal_teaser_gate');
         expect(failureUrl.searchParams.get('entry_feature')).toBe('natalni_interpretace');
         expect(failureUrl.searchParams.get('utm_source')).toBe('email');
