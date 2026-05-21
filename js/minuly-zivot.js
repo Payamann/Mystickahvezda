@@ -46,6 +46,8 @@
         pricingUrl.searchParams.set('plan', 'pruvodce');
         pricingUrl.searchParams.set('source', source);
         pricingUrl.searchParams.set('feature', 'minuly_zivot');
+        pricingUrl.searchParams.set('entry_source', source);
+        pricingUrl.searchParams.set('entry_feature', 'minuly_zivot');
         return pricingUrl.pathname + pricingUrl.search;
     }
 
@@ -61,7 +63,11 @@
                 source: checkoutSource,
                 feature: 'minuly_zivot',
                 redirect: '/cenik.html',
-                authMode: authMode || 'register'
+                authMode: authMode || 'register',
+                metadata: {
+                    entry_source: checkoutSource,
+                    entry_feature: 'minuly_zivot'
+                }
             });
             return;
         }

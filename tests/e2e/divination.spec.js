@@ -694,6 +694,8 @@ test.describe('Minulý život', () => {
         expect(upgradeHref).toContain('plan=pruvodce');
         expect(upgradeHref).toContain('source=past_life_banner_upgrade');
         expect(upgradeHref).toContain('feature=minuly_zivot');
+        expect(upgradeHref).toContain('entry_source=past_life_banner_upgrade');
+        expect(upgradeHref).toContain('entry_feature=minuly_zivot');
         await expect(page.locator('#past-life-upgrade-btn')).toContainText('Odemknout Hvězdného Průvodce');
         await expect(page.locator('#premium-wall')).toContainText('Cena a případné zkušební období se zobrazí ve Stripe před potvrzením.');
         await expect(page.locator('#premium-wall')).not.toContainText('199 Kč');
@@ -746,10 +748,14 @@ test.describe('Minulý život', () => {
         await page.locator('.past-life-preview-gate__cta').click();
         expect(await page.evaluate(() => window.__pastLifeCheckoutPayloads[0])).toMatchObject({
             planId: 'pruvodce',
-            context: {
+            context: expect.objectContaining({
                 source: 'past_life_submit_gate',
-                feature: 'minuly_zivot'
-            }
+                feature: 'minuly_zivot',
+                metadata: expect.objectContaining({
+                    entry_source: 'past_life_submit_gate',
+                    entry_feature: 'minuly_zivot'
+                })
+            })
         });
     });
 
@@ -778,10 +784,14 @@ test.describe('Minulý život', () => {
         await page.locator('.past-life-preview-gate__cta').click();
         expect(await page.evaluate(() => window.__pastLifeCheckoutPayloads[0])).toMatchObject({
             planId: 'pruvodce',
-            context: {
+            context: expect.objectContaining({
                 source: 'past_life_free_submit_gate',
-                feature: 'minuly_zivot'
-            }
+                feature: 'minuly_zivot',
+                metadata: expect.objectContaining({
+                    entry_source: 'past_life_free_submit_gate',
+                    entry_feature: 'minuly_zivot'
+                })
+            })
         });
     });
 

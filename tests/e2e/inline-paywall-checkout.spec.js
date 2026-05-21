@@ -565,6 +565,51 @@ test.describe('Inline paywall checkout handoff', () => {
         });
     });
 
+    test('past life preview gate starts checkout with entry context for logged-in free user', async ({ page }) => {
+        const state = await setupCheckoutRoutes(page, {
+            userId: 'past-life-user',
+            email: 'past-life@example.com',
+            checkoutSessionId: 'cs_test_past_life',
+            csrfToken: 'e2e-past-life-token'
+        });
+
+        await page.goto('/minuly-zivot.html?source=e2e_past_life');
+        await waitForPageReady(page);
+        await expect.poll(() => page.evaluate(() => typeof window.Auth?.startPlanCheckout)).toBe('function');
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+            Object.assign(window.Auth, {
+                isLoggedIn: () => true,
+                isPremium: () => false,
+                showToast: () => {}
+            });
+            window.MH_ANALYTICS = {
+                trackAction: () => {},
+                trackCTA: () => {},
+                trackCheckoutStarted: () => {}
+            };
+        });
+
+        await page.locator('#pl-name').fill('Pavel Test');
+        await page.locator('#pl-birth').fill('1988-11-20');
+        await page.locator('[data-gender="muz"]').click();
+        await page.locator('#pl-submit').click();
+
+        await expect(page.locator('#past-life-preview-gate')).toBeVisible();
+        await expect(page.locator('#past-life-preview-gate')).toContainText(/v[yĂ˝]klad|odemkn/i);
+
+        await Promise.all([
+            waitForPath(page, '/profil.html'),
+            page.locator('.past-life-preview-gate__cta').click(),
+        ]);
+
+        expectDirectCheckoutState(state, {
+            source: 'past_life_free_submit_gate',
+            feature: 'minuly_zivot'
+        });
+    });
+
     test('medicine wheel premium wall starts checkout with entry context for logged-in free user', async ({ page }) => {
         const state = await setupCheckoutRoutes(page, {
             userId: 'medicine-wheel-user',
