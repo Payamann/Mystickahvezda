@@ -361,6 +361,59 @@ test.describe('Ceník — platební tlačítka', () => {
         expect(href).toContain('entry_feature=tarot_celtic_cross');
     });
 
+    test('tarot keltsky kriz doporuceni spusti skryty vip checkout s kontextem', async ({ page }) => {
+        let checkoutPayload = null;
+
+        await page.route('**/api/payment/create-checkout-session', async (route) => {
+            checkoutPayload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    id: 'cs_test_celtic_cross_vip',
+                    url: '/profil.html?payment=success&plan=vip-majestrat&session_id=cs_test_celtic_cross_vip'
+                })
+            });
+        });
+
+        await page.context().addCookies([{
+            name: 'logged_in',
+            value: '1',
+            url: BASE_URL
+        }]);
+
+        await page.addInitScript(() => {
+            localStorage.setItem('auth_user', JSON.stringify({
+                id: 'e2e-user',
+                email: 'e2e@example.com',
+                role: 'user'
+            }));
+        });
+
+        await page.goto('/cenik.html?plan=vip-majestrat&source=tarot_celtic_cross_landing&feature=tarot_celtic_cross');
+        await waitForPageReady(page);
+
+        const banner = page.locator('#pricing-plan-recommendation');
+        await expect(banner).toBeVisible();
+        await expect(page.locator('.plan-checkout-btn[data-plan="vip-majestrat"]')).toHaveCount(0);
+
+        await Promise.all([
+            waitForPath(page, '/profil.html'),
+            banner.locator('[data-recommended-plan="vip-majestrat"]').click(),
+        ]);
+
+        expect(checkoutPayload).toEqual(expect.objectContaining({
+            planId: 'vip-majestrat',
+            source: 'tarot_celtic_cross_landing',
+            feature: 'tarot_celtic_cross',
+            billingInterval: 'monthly',
+            metadata: expect.objectContaining({
+                entry_source: 'tarot_celtic_cross_landing',
+                entry_feature: 'tarot_celtic_cross'
+            })
+        }));
+    });
+
     test('tarot laska pricing kontext mluvi vztahove a vraci na trikartovy rozklad', async ({ page }) => {
         await page.goto('/cenik.html?plan=pruvodce&source=tarot_love_landing&feature=tarot_multi_card');
         await waitForPageReady(page);
