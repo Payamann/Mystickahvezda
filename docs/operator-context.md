@@ -168,6 +168,7 @@ npm.cmd run verify:production:commit
 npm.cmd run smoke:production:tool-runtime
 npm.cmd run smoke:production:auth-handoff
 npm.cmd run smoke:production:pricing-handoff
+npm.cmd run smoke:production:critical-assets
 ```
 
 Production browser smoke scripts should route first-party analytics and funnel-event POSTs to local success responses so diagnostic checks do not pollute revenue truth windows. The smoke output should include `telemetry_blocked` counts; non-zero counts mean production requests were intercepted locally rather than written to analytics.
