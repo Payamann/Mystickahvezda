@@ -361,6 +361,58 @@ test.describe('Profil aktivace', () => {
         });
     }
 
+    test('analytics outage neblokuje premium aktivaci po uspesne platbe', async ({ page }) => {
+        await mockLoggedInProfile(page, {
+            user: { subscription_status: 'premium_monthly' },
+            subscription: { planType: 'premium_monthly', status: 'active', canCancel: true }
+        });
+        await page.addInitScript(() => {
+            let analyticsValue = null;
+            Object.defineProperty(window, 'MH_ANALYTICS', {
+                configurable: true,
+                get: () => analyticsValue,
+                set: (value) => {
+                    analyticsValue = value && typeof value === 'object'
+                        ? {
+                            ...value,
+                            trackEvent: () => {
+                                throw new Error('profile analytics unavailable');
+                            },
+                            trackCTA: () => {
+                                throw new Error('profile cta analytics unavailable');
+                            },
+                            trackPaymentResult: () => {
+                                throw new Error('profile payment analytics unavailable');
+                            },
+                            trackPurchaseCompleted: () => {
+                                throw new Error('profile purchase analytics unavailable');
+                            }
+                        }
+                        : value;
+                }
+            });
+        });
+
+        await page.goto('/profil.html?payment=success&plan=pruvodce&session_id=cs_test_return&source=inline_paywall&feature=tarot_multi_card&entry_source=inline_paywall&entry_feature=tarot_multi_card');
+        await waitForPageReady(page);
+
+        const activation = page.locator('#premium-activation-card');
+        await expect(activation).toBeVisible();
+        await expect(activation).toHaveAttribute('data-source', 'inline_paywall');
+        await expect(activation).toHaveAttribute('data-feature', 'tarot_multi_card');
+
+        const firstAction = activation.locator('[data-activation-target]').first();
+        const href = await firstAction.getAttribute('href');
+        expect(href).toContain('tarot.html');
+        expect(href).toContain('source=profile_payment_return');
+        expect(href).toContain('feature=tarot_multi_card');
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/tarot.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            firstAction.click()
+        ]);
+    });
+
     test('prazdny profil drzi symbolicky zamer minuleho zivota', async ({ page }) => {
         await mockLoggedInProfile(page);
         await page.addInitScript(() => {

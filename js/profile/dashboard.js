@@ -28,15 +28,33 @@ let dailyGuidanceViewTracked = false;
 let activationChecklistViewTracked = false;
 let activePaymentReturnContext = null;
 
+function callProfileAnalytics(methodName, ...args) {
+    const method = window.MH_ANALYTICS?.[methodName];
+    if (typeof method !== 'function') {
+        return false;
+    }
+
+    try {
+        method.apply(window.MH_ANALYTICS, args);
+        return true;
+    } catch (error) {
+        console.warn(`[Profile analytics] ${methodName} failed:`, error?.message || error);
+        return false;
+    }
+}
+
 function trackProfileEvent(eventName, payload = {}, attemptsLeft = 12) {
-    if (window.MH_ANALYTICS?.trackEvent) {
-        window.MH_ANALYTICS.trackEvent(eventName, payload);
+    if (callProfileAnalytics('trackEvent', eventName, payload)) {
         return;
     }
 
-    if (attemptsLeft > 0) {
+    if (attemptsLeft > 0 && typeof window.MH_ANALYTICS?.trackEvent !== 'function') {
         window.setTimeout(() => trackProfileEvent(eventName, payload, attemptsLeft - 1), 150);
     }
+}
+
+function trackProfileCta(source, payload = {}) {
+    callProfileAnalytics('trackCTA', source, payload);
 }
 
 const PREMIUM_ACTIONS = {
@@ -386,7 +404,7 @@ function handlePaymentReturnState() {
         const sessionId = paymentContext.sessionId;
         const source = paymentContext.source || 'profile_return';
         const feature = paymentContext.feature || paymentContext.entryFeature || null;
-        window.MH_ANALYTICS?.trackPaymentResult?.('success', {
+        callProfileAnalytics('trackPaymentResult', 'success', {
             source,
             feature,
             plan_id: planId,
@@ -399,7 +417,7 @@ function handlePaymentReturnState() {
             utm_content: paymentContext.utmContent,
             card: paymentContext.card
         });
-        window.MH_ANALYTICS?.trackPurchaseCompleted?.(planId || 'subscription', getPlanPriceCzk(planId) || null, 'CZK', {
+        callProfileAnalytics('trackPurchaseCompleted', planId || 'subscription', getPlanPriceCzk(planId) || null, 'CZK', {
             product_type: 'subscription',
             transaction_id: sessionId,
             source,
@@ -541,7 +559,7 @@ function renderPremiumActivation(sub, user, paymentContext = null) {
             const activePlanType = card.dataset.planType || planType;
             const activeSource = card.dataset.source || 'profile';
             markActivationSeen(activePlanType);
-            window.MH_ANALYTICS?.trackCTA?.('premium_activation_action', {
+            trackProfileCta('premium_activation_action', {
                 destination: link.getAttribute('href'),
                 plan_id: activePlanType,
                 source: activeSource,
@@ -1210,7 +1228,7 @@ function handleDailyGuidanceClick(event) {
     const action = link.dataset.dailyAction;
     const destination = link.getAttribute('href');
 
-    window.MH_ANALYTICS?.trackCTA?.('profile_daily_guidance', {
+    trackProfileCta('profile_daily_guidance', {
         action,
         destination,
         ...getProfileCtaContextFromHref(destination)
@@ -1230,7 +1248,7 @@ function handleActivationChecklistClick(event) {
     const step = link.dataset.activationStep;
     const completed = link.dataset.completed === 'true';
 
-    window.MH_ANALYTICS?.trackCTA?.('profile_activation_checklist', {
+    trackProfileCta('profile_activation_checklist', {
         step,
         action,
         completed,
@@ -1270,7 +1288,7 @@ function handleRitualMemoryClick(event) {
     const action = link.dataset.memoryAction;
     const destination = link.getAttribute('href');
 
-    window.MH_ANALYTICS?.trackCTA?.('profile_ritual_memory', {
+    trackProfileCta('profile_ritual_memory', {
         action,
         theme: link.dataset.memoryTheme || null,
         destination,
