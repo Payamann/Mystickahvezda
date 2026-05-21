@@ -183,6 +183,9 @@ describe('manual script guardrails', () => {
         expect(authHandoff).toContain('payment_events=');
         expect(authHandoff).toContain('clearScenarioStorage');
         expect(authHandoff).toContain("new URL('/api/health'");
+        expect(authHandoff).toContain("name: 'register-weekly-horoscope-inline-flow'");
+        expect(authHandoff).toContain('mockCheckoutSubmit: true');
+        expect(authHandoff).toContain('checkout_auth_form_submitted');
     });
 
     test('production verifier covers intent landing clusters', () => {

@@ -52,7 +52,8 @@ const SCENARIOS = [
             path: '/horoskopy.html',
             tab: 'weekly',
             triggerSelector: '.horoscope-upsell-btn'
-        }
+        },
+        mockCheckoutSubmit: true
     }
 ];
 
@@ -103,6 +104,9 @@ async function installMockCheckoutSubmitRoutes(page, scenario) {
         checkoutRequests: 0,
         csrfRequests: 0
     };
+    const authEndpoint = scenario.expectedMode === 'register'
+        ? '**/api/auth/register'
+        : '**/api/auth/login';
 
     await page.route('**/api/csrf-token', async (route) => {
         state.csrfRequests += 1;
@@ -113,12 +117,13 @@ async function installMockCheckoutSubmitRoutes(page, scenario) {
         });
     });
 
-    await page.route('**/api/auth/login', async (route) => {
+    await page.route(authEndpoint, async (route) => {
         state.authPayload = route.request().postDataJSON();
         await route.fulfill({
             status: 200,
             contentType: 'application/json',
             body: JSON.stringify({
+                success: true,
                 user: {
                     id: 'production-auth-handoff-smoke-user',
                     email: state.authPayload?.email || 'smoke-login@example.com',
@@ -165,6 +170,19 @@ function validateCheckoutSubmit(metrics, scenario, errors) {
         feature: scenario.params.feature,
         billingInterval: scenario.params.billing_interval || null
     };
+    const expectedAuthPayload = scenario.expectedMode === 'register'
+        ? {
+            email: 'smoke-register@example.com',
+            password_confirm: 'SmokePassword123!'
+        }
+        : {
+            email: 'smoke-login@example.com'
+        };
+    Object.entries(expectedAuthPayload).forEach(([key, value]) => {
+        if (metrics.authPayload?.[key] !== value) {
+            errors.push(`auth payload ${key} expected ${value}, got ${metrics.authPayload?.[key] || '<missing>'}`);
+        }
+    });
     Object.entries(expected).forEach(([key, value]) => {
         if (metrics.checkoutPayload[key] !== value) {
             errors.push(`checkout payload ${key} expected ${value}, got ${metrics.checkoutPayload[key] || '<missing>'}`);
@@ -352,8 +370,15 @@ async function inspectScenario(page, scenario, viewportName, baseUrl, telemetry)
 
     const submitMetrics = {};
     if (scenario.mockCheckoutSubmit) {
-        await page.locator('#email').fill('smoke-login@example.com');
+        const email = scenario.expectedMode === 'register'
+            ? 'smoke-register@example.com'
+            : 'smoke-login@example.com';
+        await page.locator('#email').fill(email);
         await page.locator('#password').fill('SmokePassword123!');
+        if (scenario.expectedMode === 'register') {
+            await page.locator('#confirm-password-reg').fill('SmokePassword123!');
+            await page.locator('#gdpr-consent').check();
+        }
         await Promise.all([
             page.waitForURL(url => (
                 url.pathname === '/profil.html'
