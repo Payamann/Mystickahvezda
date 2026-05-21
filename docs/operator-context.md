@@ -118,6 +118,8 @@ node scripts/export-live-funnel.mjs --days 30 --output (Join-Path $dir '30d.csv'
 node scripts/analyze-funnel-segments.mjs (Join-Path $dir '7d.csv') --top 10 --min-events 1 --min-step 1
 ```
 
+`monitor:revenue-truth:production` also prints a read-only first-party analytics pulse for the post-deploy window. If `analytics_events > 0` and `funnel_events = 0`, ingestion is alive and the blocker is lack of paid funnel activity rather than a broken analytics endpoint.
+
 Core checks:
 
 ```powershell

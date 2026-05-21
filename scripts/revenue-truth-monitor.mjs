@@ -3,10 +3,15 @@ import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import dotenv from 'dotenv';
+import { createClient } from '@supabase/supabase-js';
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_REPO = 'Payamann/MystickaHvezdaOriginalAntigravity';
 const DEFAULT_BASE_URL = 'https://www.mystickahvezda.cz';
+const ANALYTICS_PULSE_LIMIT = 5000;
+
+dotenv.config({ path: path.join(rootDir, 'server', '.env') });
 
 function usage() {
     return [
@@ -30,7 +35,8 @@ function parseArgs(argv) {
         top: '10',
         minEvents: '1',
         minStep: '1',
-        allowRepoOutput: false
+        allowRepoOutput: false,
+        skipAnalyticsPulse: false
     };
 
     for (let index = 0; index < argv.length; index += 1) {
@@ -78,6 +84,8 @@ function parseArgs(argv) {
             args.minStep = arg.slice('--min-step='.length);
         } else if (arg === '--allow-repo-output') {
             args.allowRepoOutput = true;
+        } else if (arg === '--skip-analytics-pulse') {
+            args.skipAnalyticsPulse = true;
         } else {
             throw new Error(`Unknown argument: ${arg}\n${usage()}`);
         }
@@ -100,6 +108,21 @@ function assertOutsideRepo(outputDir, allowRepoOutput) {
     }
 
     return resolvedOutputDir;
+}
+
+function resolveSupabaseUrl(value) {
+    if (!value) return '';
+    return value.startsWith('http') ? value : `https://${value}.supabase.co`;
+}
+
+function createSupabaseClient() {
+    const supabaseUrl = resolveSupabaseUrl(process.env.SUPABASE_URL);
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !serviceKey) return null;
+
+    return createClient(supabaseUrl, serviceKey, {
+        auth: { autoRefreshToken: false, persistSession: false }
+    });
 }
 
 async function fetchGitHubJson(url) {
@@ -231,6 +254,59 @@ function printSummary(label, summary) {
     ].join(' '));
 }
 
+function analyticsPulseDiagnosis({ analyticsEvents, funnelEvents }) {
+    if (analyticsEvents === 0 && funnelEvents === 0) {
+        return 'No first-party analytics or funnel events in this window: likely no tracked traffic, consented analytics, or ingest smoke after deploy.';
+    }
+    if (analyticsEvents > 0 && funnelEvents === 0) {
+        return 'First-party analytics ingestion is active, but no paid funnel events were recorded in this window.';
+    }
+    if (analyticsEvents === 0 && funnelEvents > 0) {
+        return 'Funnel events exist while first-party analytics is quiet; inspect consent/analytics client separately.';
+    }
+    return 'First-party analytics and funnel events both have activity in this window.';
+}
+
+async function printAnalyticsPulse(label, summary, supabase) {
+    if (!summary?.since || !summary?.periodEnd || !supabase) return;
+
+    const { data, error, count } = await supabase
+        .from('analytics_events')
+        .select('event_type,created_at', { count: 'exact' })
+        .gte('created_at', summary.since)
+        .lt('created_at', summary.periodEnd)
+        .order('created_at', { ascending: false })
+        .limit(ANALYTICS_PULSE_LIMIT);
+
+    if (error) {
+        console.log(`[revenue-truth] ${label} analytics pulse unavailable: ${error.message}`);
+        return;
+    }
+
+    const events = data || [];
+    const counts = events.reduce((acc, event) => {
+        const type = event.event_type || 'unknown';
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+    }, {});
+    const clientErrors = (counts.client_error || 0) + (counts.error || 0);
+    const funnelEvents = summary.totalEvents || 0;
+    const analyticsEvents = count ?? events.length;
+    const latest = events[0]?.created_at || null;
+
+    console.log([
+        `[revenue-truth] ${label} analytics pulse:`,
+        `analytics_events=${analyticsEvents}`,
+        `page_view=${counts.page_view || 0}`,
+        `cta_clicked=${counts.cta_clicked || 0}`,
+        `begin_checkout=${counts.begin_checkout || 0}`,
+        `production_smoke_checked=${counts.production_smoke_checked || 0}`,
+        `client_errors=${clientErrors}`,
+        `latest=${latest || 'none'}`,
+        `diagnosis="${analyticsPulseDiagnosis({ analyticsEvents, funnelEvents })}"`
+    ].join(' '));
+}
+
 function windowDefinitions(since) {
     const windows = [];
     if (since) {
@@ -253,10 +329,14 @@ async function main() {
     const args = parseArgs(process.argv.slice(2));
     args.since = await resolveSince(args);
     const outputDir = assertOutsideRepo(args.outputDir, args.allowRepoOutput);
+    const supabase = args.skipAnalyticsPulse ? null : createSupabaseClient();
     mkdirSync(outputDir, { recursive: true });
 
     console.log(`[revenue-truth] output_dir=${outputDir}`);
     console.log('[revenue-truth] raw CSV/JSON exports stay local and must not be committed.');
+    if (!supabase && !args.skipAnalyticsPulse) {
+        console.log('[revenue-truth] analytics pulse skipped: missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.');
+    }
 
     for (const windowDef of windowDefinitions(args.since)) {
         const csvPath = path.join(outputDir, `${windowDef.slug}.csv`);
@@ -270,7 +350,11 @@ async function main() {
             summaryPath
         ]);
 
-        printSummary(windowDef.label, readSummary(summaryPath));
+        const summary = readSummary(summaryPath);
+        printSummary(windowDef.label, summary);
+        if (windowDef.slug === 'post-deploy') {
+            await printAnalyticsPulse(windowDef.label, summary, supabase);
+        }
 
         runNodeScript('scripts/analyze-funnel-segments.mjs', [
             csvPath,
