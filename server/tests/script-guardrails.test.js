@@ -150,6 +150,10 @@ describe('manual script guardrails', () => {
         expect(source).toContain('--summary-only');
         expect(source).toContain('GitHub deployment status unavailable');
         expect(source).toContain('--github-status-fallback-minutes');
+        expect(source).toContain('analyzeFunnelSegments');
+        expect(source).toContain('segment_analysis');
+        expect(source).toContain('top_segment_actions');
+        expect(source).toContain('recommended_segment_action');
     });
 
     test('production browser smokes keep telemetry read-only', () => {

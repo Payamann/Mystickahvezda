@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -514,6 +514,64 @@ function buildDataQualityNotes(rows) {
     return notes.slice(0, 5);
 }
 
+export function analyzeFunnelSegments(csvPath, options = {}) {
+    const resolvedOptions = {
+        top: options.top ?? 8,
+        minEvents: options.minEvents ?? 3,
+        minStep: options.minStep ?? 2
+    };
+    const text = fs.readFileSync(csvPath, 'utf8');
+    const parsedRows = parseCsv(text);
+    const missingOptional = missingOptionalColumns(parsedRows);
+    const records = rowsToObjects(parsedRows);
+    const rows = records.map(normalizeRow);
+    const consideredRows = rows.filter(row => row.totalEvents >= resolvedOptions.minEvents);
+    const leaks = buildLeaks(rows, resolvedOptions);
+
+    return {
+        csvPath,
+        rows,
+        consideredRows,
+        leaks,
+        options: resolvedOptions,
+        missingOptional,
+        summary: {
+            rows: rows.length,
+            considered_rows: consideredRows.length,
+            thresholds: {
+                top: resolvedOptions.top,
+                min_events: resolvedOptions.minEvents,
+                min_step: resolvedOptions.minStep
+            },
+            missing_optional_columns: missingOptional,
+            leak_totals_by_step: summarizeByStep(leaks).map((item) => ({
+                step_label: item.stepLabel,
+                denominator: item.denominator,
+                next: item.next,
+                loss: item.loss,
+                segments: item.segments,
+                conversion_rate: item.conversionRate
+            })),
+            top_segment_actions: leaks.slice(0, resolvedOptions.top).map((leak) => ({
+                severity: leak.severity,
+                step_id: leak.stepId,
+                step_label: leak.stepLabel,
+                source: leak.source,
+                feature: leak.feature,
+                denominator: leak.denominator,
+                next: leak.next,
+                loss: leak.loss,
+                conversion_rate: leak.conversionRate,
+                delta: leak.delta,
+                total_events: leak.totalEvents,
+                failures: leak.failures,
+                action: leak.action
+            })),
+            data_quality_notes: buildDataQualityNotes(consideredRows)
+        }
+    };
+}
+
 function printReport({ csvPath, rows, consideredRows, leaks, options, missingOptional }) {
     const relativePath = path.relative(rootDir, csvPath).replace(/\\/g, '/');
     console.log(`Funnel segment leak analysis`);
@@ -569,20 +627,26 @@ function main() {
     }
 
     const csvPath = path.resolve(process.cwd(), options.csvPath);
-    const text = fs.readFileSync(csvPath, 'utf8');
-    const parsedRows = parseCsv(text);
-    const missingOptional = missingOptionalColumns(parsedRows);
-    const records = rowsToObjects(parsedRows);
-    const rows = records.map(normalizeRow);
-    const consideredRows = rows.filter(row => row.totalEvents >= options.minEvents);
-    const leaks = buildLeaks(rows, options);
+    const analysis = analyzeFunnelSegments(csvPath, options);
 
-    printReport({ csvPath, rows, consideredRows, leaks, options, missingOptional });
+    printReport({
+        csvPath,
+        rows: analysis.rows,
+        consideredRows: analysis.consideredRows,
+        leaks: analysis.leaks,
+        options: analysis.options,
+        missingOptional: analysis.missingOptional
+    });
 }
 
-try {
-    main();
-} catch (error) {
-    console.error(`Funnel analysis failed: ${error.message}`);
-    process.exitCode = 1;
+const invokedAsScript = process.argv[1]
+    && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
+
+if (invokedAsScript) {
+    try {
+        main();
+    } catch (error) {
+        console.error(`Funnel analysis failed: ${error.message}`);
+        process.exitCode = 1;
+    }
 }

@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
+import { analyzeFunnelSegments } from './analyze-funnel-segments.mjs';
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_REPO = 'Payamann/MystickaHvezdaOriginalAntigravity';
@@ -327,6 +328,28 @@ function buildWindowReport(windowDef, summary, { historicalContext = false, diag
     };
 }
 
+function parsePositiveInteger(value, fallback) {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function analyzeWindowSegments(csvPath, args) {
+    try {
+        return analyzeFunnelSegments(csvPath, {
+            top: parsePositiveInteger(args.top, 10),
+            minEvents: parsePositiveInteger(args.minEvents, 1),
+            minStep: parsePositiveInteger(args.minStep, 1)
+        }).summary;
+    } catch (error) {
+        return {
+            error: error.message,
+            top_segment_actions: [],
+            leak_totals_by_step: [],
+            data_quality_notes: []
+        };
+    }
+}
+
 function printSummary(label, summary, { historicalContext = false, diagnosticBaseline = false } = {}) {
     if (!summary) {
         console.log(`[revenue-truth] ${label}: summary unavailable`);
@@ -414,19 +437,56 @@ async function printAnalyticsPulse(label, summary, supabase) {
     return pulse;
 }
 
+function chooseSegmentActionForDecision(windowDef) {
+    const actions = windowDef?.segment_analysis?.top_segment_actions || [];
+    const decision = windowDef?.decision || '';
+    let selected = actions[0] || null;
+
+    if (/post-auth checkout resume/i.test(decision)) {
+        selected = actions.find((item) => (
+            item.step_id === 'auth_handoff_to_checkout_request'
+            || item.step_id === 'auth_handoff_to_auth_page'
+            || item.step_id === 'auth_page_to_auth_form_submit'
+        )) || selected;
+    } else if (/server\/Stripe session creation/i.test(decision)) {
+        selected = actions.find((item) => item.step_id === 'checkout_request_to_session') || selected;
+    } else if (/checkout trust\/cancel recovery/i.test(decision)) {
+        selected = actions.find((item) => item.step_id === 'checkout_to_purchase') || selected;
+    }
+
+    return selected;
+}
+
+function formatSegmentAction(segmentAction) {
+    if (!segmentAction) return null;
+    return `${segmentAction.step_label}: ${segmentAction.source}/${segmentAction.feature} (${segmentAction.denominator}->${segmentAction.next}, lost ${segmentAction.loss}). ${segmentAction.action}`;
+}
+
 function deriveNextAction(primaryWindow, windows = []) {
     if (!primaryWindow) return 'No primary window available; rerun the monitor with a valid deploy window.';
+    const formatTopSegment = (windowDef) => {
+        return formatSegmentAction(windowDef?.recommended_segment_action || chooseSegmentActionForDecision(windowDef));
+    };
+
     if (primaryWindow.events === 0) {
         const diagnosticWindow = windows.find((windowDef) => (
             windowDef.basis === 'diagnostic_baseline'
             && windowDef.events > 0
         ));
         if (diagnosticWindow) {
-            return `Latest deploy window has no paid funnel events; stable diagnostic baseline says: ${diagnosticWindow.decision}`;
+            const topSegment = formatTopSegment(diagnosticWindow);
+            return [
+                `Latest deploy window has no paid funnel events; stable diagnostic baseline says: ${diagnosticWindow.decision}`,
+                topSegment ? `Top segment: ${topSegment}` : null
+            ].filter(Boolean).join('. ');
         }
         return 'Repeat monitor later; use historical windows for diagnostics and test coverage only.';
     }
-    return primaryWindow.decision;
+    const topSegment = formatTopSegment(primaryWindow);
+    return [
+        primaryWindow.decision,
+        topSegment ? `Top segment: ${topSegment}` : null
+    ].filter(Boolean).join('. ');
 }
 
 function slugifyLabel(label) {
@@ -507,6 +567,10 @@ async function main() {
         const historicalContext = hasPostDeployWindow && windowDef.slug !== 'post-deploy' && !diagnosticBaseline;
         printSummary(windowDef.label, summary, { historicalContext, diagnosticBaseline });
         const windowReport = buildWindowReport(windowDef, summary, { historicalContext, diagnosticBaseline });
+        if (windowReport) {
+            windowReport.segment_analysis = analyzeWindowSegments(csvPath, args);
+            windowReport.recommended_segment_action = chooseSegmentActionForDecision(windowReport);
+        }
         if (windowDef.slug === 'post-deploy') {
             const analyticsPulse = await printAnalyticsPulse(windowDef.label, summary, supabase);
             if (windowReport && analyticsPulse) windowReport.analytics_pulse = analyticsPulse;
