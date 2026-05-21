@@ -196,7 +196,7 @@ function buildPage(sign) {
     </footer>
 
     <script src="../js/dist/api-config.js" defer></script>
-    <script src="../js/dist/auth-client.js" defer></script>
+    <script src="../js/dist/auth-client.js?v=11" defer></script>
     <script src="../js/dist/components.js" defer></script>
     <script type="module" src="../js/dist/main.js"></script>
 </body>

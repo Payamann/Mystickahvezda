@@ -46,7 +46,7 @@ const publicSourceExtensions = new Set([
     '.yaml',
     '.yml'
 ]);
-const criticalRootAssetVersions = new Map([
+const criticalAssetVersions = new Map([
     ['js/dist/auth-client.js', '11']
 ]);
 const nonCanonicalOrigin = siteOrigin.replace('https://www.', 'https://');
@@ -105,10 +105,6 @@ function walkPublicSourceFiles(dir = rootDir, out = []) {
 
 function relative(file) {
     return path.relative(rootDir, file).replace(/\\/g, '/');
-}
-
-function isRootHtmlFile(file) {
-    return !relative(file).includes('/');
 }
 
 function localPathForSiteUrl(url) {
@@ -386,9 +382,7 @@ function auditLocalLinks(file, html) {
     }
 }
 
-function auditCriticalRootAssetVersions(file, html) {
-    if (!isRootHtmlFile(file)) return;
-
+function auditCriticalAssetVersions(file, html) {
     const scriptPattern = /<script\b[^>]*>/gi;
     let match;
 
@@ -399,7 +393,7 @@ function auditCriticalRootAssetVersions(file, html) {
 
         const parsed = new URL(src, `${siteOrigin}/${relative(file)}`);
         const assetPath = parsed.pathname.replace(/^\/+/, '');
-        const expectedVersion = criticalRootAssetVersions.get(assetPath);
+        const expectedVersion = criticalAssetVersions.get(assetPath);
         if (!expectedVersion) continue;
 
         const actualVersion = parsed.searchParams.get('v');
@@ -704,7 +698,7 @@ for (const file of walkHtml()) {
     auditSitemapCoverage(file, html, sitemapLocs);
     collectIndexableCanonical(file, html, canonicalOwners);
     auditLocalLinks(file, html);
-    auditCriticalRootAssetVersions(file, html);
+    auditCriticalAssetVersions(file, html);
     auditBlogPricingContext(file, html);
     auditMetaImageTargets(file, html);
 }
@@ -722,4 +716,4 @@ if (issues.length > 0) {
     process.exit(1);
 }
 
-console.log('[site-audit] OK: robots.txt, sitemap targets, sitemap coverage, canonical uniqueness, canonical origins, canonical/hreflang targets, consent-managed analytics, local font loading, external script SRI/pinning, JSON-LD, manifest icons, local links/srcsets, critical root asset versions and meta images are valid.');
+console.log('[site-audit] OK: robots.txt, sitemap targets, sitemap coverage, canonical uniqueness, canonical origins, canonical/hreflang targets, consent-managed analytics, local font loading, external script SRI/pinning, JSON-LD, manifest icons, local links/srcsets, critical asset versions and meta images are valid.');
