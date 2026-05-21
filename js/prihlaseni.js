@@ -455,12 +455,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const payload = buildCheckoutAuthStepPayload(eventName, step);
         if (!payload) return;
 
+        const queueRetry = () => {
+            const queuedId = window.Auth?.queueCheckoutFunnelEvent?.(payload);
+            if (!queuedId || typeof window.Auth?.flushPendingCheckoutAuthRequiredEvents !== 'function') {
+                return;
+            }
+
+            window.setTimeout(() => {
+                window.Auth?.flushPendingCheckoutAuthRequiredEvents?.();
+            }, 250);
+        };
+
         try {
-            const sent = window.Auth?.sendServerFunnelEvent?.(payload);
+            const sender = window.Auth?.sendServerFunnelEvent;
+            if (typeof sender !== 'function') {
+                queueRetry();
+                return;
+            }
+
+            const sent = sender.call(window.Auth, payload);
             if (sent && typeof sent.catch === 'function') {
-                sent.catch(error => console.warn('[FUNNEL] Could not record checkout auth step:', error.message));
+                sent.then((success) => {
+                    if (!success) queueRetry();
+                }).catch(error => {
+                    queueRetry();
+                    console.warn('[FUNNEL] Could not record checkout auth step:', error.message);
+                });
+            } else if (!sent) {
+                queueRetry();
             }
         } catch (error) {
+            queueRetry();
             console.warn('[FUNNEL] Could not record checkout auth step:', error.message);
         }
     };

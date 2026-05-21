@@ -984,6 +984,20 @@
             sessionStorage.setItem(PENDING_AUTH_REQUIRED_EVENTS_KEY, JSON.stringify(cleanEvents));
         },
 
+        queueCheckoutFunnelEvent(payload) {
+            if (!payload?.eventName) return null;
+            const event = {
+                id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`,
+                payload,
+                createdAt: Date.now()
+            };
+            this.setQueuedCheckoutAuthRequiredEvents([
+                ...this.getQueuedCheckoutAuthRequiredEvents(),
+                event
+            ]);
+            return event.id;
+        },
+
         buildCheckoutAuthRequiredPayload(planId, context = {}) {
             const storedContext = this.sanitizeCheckoutContextForStorage(planId, context);
             return {
@@ -1003,16 +1017,7 @@
 
         queueCheckoutAuthRequiredEvent(planId, context = {}) {
             const payload = this.buildCheckoutAuthRequiredPayload(planId, context);
-            const event = {
-                id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`,
-                payload,
-                createdAt: Date.now()
-            };
-            this.setQueuedCheckoutAuthRequiredEvents([
-                ...this.getQueuedCheckoutAuthRequiredEvents(),
-                event
-            ]);
-            return event.id;
+            return this.queueCheckoutFunnelEvent(payload);
         },
 
         async sendServerFunnelEvent(payload) {

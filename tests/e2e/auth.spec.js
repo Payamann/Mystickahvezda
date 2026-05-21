@@ -536,6 +536,58 @@ test.describe('Login stránka', () => {
         await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_checkout_auth_required_events'))).toBeNull();
     });
 
+    test('checkout auth page view se retrynuje po docasnem CSRF selhani', async ({ page }) => {
+        const funnelEvents = [];
+        let csrfAttempts = 0;
+
+        await page.route('**/api/csrf-token', async (route) => {
+            csrfAttempts += 1;
+            if (csrfAttempts === 1) {
+                await route.fulfill({
+                    status: 503,
+                    contentType: 'application/json',
+                    body: JSON.stringify({ error: 'temporary csrf outage' })
+                });
+                return;
+            }
+
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ csrfToken: 'retry-checkout-auth-page-token' })
+            });
+        });
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            funnelEvents.push(route.request().postDataJSON());
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.goto('/prihlaseni.html?mode=register&redirect=/cenik.html&plan=pruvodce&source=horoscope_inline_upsell&feature=monthly_horoscope&entry_source=horoscope_inline_upsell&entry_feature=monthly_horoscope');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect.poll(() => csrfAttempts, { timeout: 10000 }).toBeGreaterThanOrEqual(2);
+        await expect.poll(() => funnelEvents.find((event) => event.eventName === 'checkout_auth_page_viewed') || null).toEqual(expect.objectContaining({
+            source: 'horoscope_inline_upsell',
+            feature: 'monthly_horoscope',
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                path: '/prihlaseni.html',
+                redirect: '/cenik.html',
+                auth_mode: 'register',
+                entry_source: 'horoscope_inline_upsell',
+                entry_feature: 'monthly_horoscope',
+                step: 'auth_page_viewed'
+            })
+        }));
+        await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_checkout_auth_required_events'))).toBeNull();
+    });
+
     test('checkout intent prezije email verifikaci a obnovi se pri dalsim prihlaseni', async ({ page }) => {
         test.setTimeout(60000);
 
