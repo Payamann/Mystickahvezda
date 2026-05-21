@@ -334,6 +334,10 @@ html body .mh-inline-de7ffff2a8 { opacity: 0.8; }
     gap: var(--space-md);
 }
 
+.synastry-next-grid--focused {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .synastry-next-card,
 .synastry-faq-item {
     display: flex;
@@ -359,8 +363,36 @@ html body .mh-inline-de7ffff2a8 { opacity: 0.8; }
 }
 
 .synastry-next-card--primary {
+    grid-column: span 2;
     border-color: rgba(212, 175, 55, 0.58);
     background: linear-gradient(135deg, rgba(212, 175, 55, 0.16), rgba(219, 39, 119, 0.1));
+}
+
+.synastry-next-card--primary strong {
+    font-size: 1.28rem;
+}
+
+.synastry-next-card__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 44px;
+    margin-top: auto;
+    padding: 0.72rem 1rem;
+    border-radius: var(--radius-full);
+    background: var(--gradient-gold);
+    color: var(--color-deep-space);
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.synastry-next-card__reassurance {
+    display: block;
+    margin-top: 0.8rem;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.82rem;
+    line-height: 1.45;
 }
 
 .synastry-next-card strong,
@@ -451,6 +483,10 @@ html body .mh-inline-de7ffff2a8 { opacity: 0.8; }
     .compat-index-grid {
         grid-template-columns: 1fr 1fr;
     }
+
+    .synastry-next-grid--focused .synastry-next-card--primary {
+        grid-column: 1 / -1;
+    }
 }
 
 @media (max-width: 640px) {
@@ -482,6 +518,15 @@ html body .mh-inline-de7ffff2a8 { opacity: 0.8; }
     .synastry-intent-card,
     .synastry-faq-item {
         padding: var(--space-md);
+    }
+
+    .synastry-next-grid--focused .synastry-next-card--primary {
+        grid-column: auto;
+    }
+
+    .synastry-next-card__cta {
+        width: 100%;
+        text-align: center;
     }
 
     body.page-compatibility .cookie-banner {

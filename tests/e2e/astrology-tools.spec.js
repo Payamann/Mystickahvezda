@@ -265,6 +265,8 @@ test.describe('Partnerská shoda', () => {
         const premiumBridge = page.locator('[data-synastry-upgrade]');
         await expect(premiumBridge).toHaveAttribute('href', /source=partner_match_result/);
         await expect(premiumBridge).toHaveAttribute('href', /feature=partnerska_detail/);
+        await expect(premiumBridge.locator('.synastry-next-card__cta')).toContainText(/checkout/i);
+        await expect(premiumBridge.locator('.synastry-next-card__reassurance')).toContainText(/Stripe/);
 
         const premiumBridgeUrl = new URL(await premiumBridge.getAttribute('href'), 'https://www.mystickahvezda.cz/');
         expect(premiumBridgeUrl.pathname).toBe('/prihlaseni.html');
