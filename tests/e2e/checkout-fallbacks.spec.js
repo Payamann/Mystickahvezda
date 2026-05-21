@@ -36,7 +36,10 @@ test.describe('Checkout fallbacks without Auth client', () => {
             mode: 'register',
             redirect: '/cenik.html',
             plan: 'pruvodce',
-            source: 'pricing_page'
+            source: 'pricing_page',
+            feature: 'premium_membership',
+            entry_source: 'pricing_page',
+            entry_feature: 'premium_membership'
         });
     });
 
@@ -53,7 +56,9 @@ test.describe('Checkout fallbacks without Auth client', () => {
         await expectUrlParams(page, '/cenik.html', {
             plan: 'pruvodce',
             source: 'horoscope_inline_upsell',
-            feature: 'weekly_horoscope'
+            feature: 'weekly_horoscope',
+            entry_source: 'horoscope_inline_upsell',
+            entry_feature: 'weekly_horoscope'
         });
     });
 
@@ -70,7 +75,9 @@ test.describe('Checkout fallbacks without Auth client', () => {
         await expectUrlParams(page, '/cenik.html', {
             plan: 'osviceni',
             source: 'astro_map_auth_gate',
-            feature: 'astrocartography'
+            feature: 'astrocartography',
+            entry_source: 'astro_map_auth_gate',
+            entry_feature: 'astrocartography'
         });
     });
 });

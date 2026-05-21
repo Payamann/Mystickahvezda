@@ -909,7 +909,11 @@ function startRecommendedCheckout(planId, context) {
     const checkoutContext = {
         source: context.source || 'pricing_recommendation',
         feature: context.feature || null,
-        metadata: context.metadata || {},
+        metadata: getEntryMetadata({
+            source: context.source || 'pricing_recommendation',
+            feature: context.feature || null,
+            metadata: context.metadata || {}
+        }),
         billing_interval: resolvedBillingInterval,
         redirect: '/cenik.html',
         authMode: 'register'
@@ -979,10 +983,16 @@ function bindCheckoutButtons(context) {
             if (button.dataset.checkoutPending === '1') return;
 
             const isLoggedIn = !!window.Auth?.isLoggedIn?.();
+            const checkoutSource = context.source || 'pricing_page';
+            const checkoutFeature = context.feature || 'premium_membership';
             const checkoutContext = {
-                source: context.source || 'pricing_page',
-                feature: context.feature || 'premium_membership',
-                metadata: context.metadata || {},
+                source: checkoutSource,
+                feature: checkoutFeature,
+                metadata: getEntryMetadata({
+                    source: checkoutSource,
+                    feature: checkoutFeature,
+                    metadata: context.metadata || {}
+                }),
                 billing_interval: currentBilling,
                 redirect: '/cenik.html',
                 authMode: 'register'

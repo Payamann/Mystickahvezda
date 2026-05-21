@@ -17,6 +17,8 @@ function buildAstroMapPricingUrl(source) {
     pricingUrl.searchParams.set('plan', 'osviceni');
     pricingUrl.searchParams.set('source', source);
     pricingUrl.searchParams.set('feature', 'astrocartography');
+    pricingUrl.searchParams.set('entry_source', source);
+    pricingUrl.searchParams.set('entry_feature', 'astrocartography');
     return `${pricingUrl.pathname}${pricingUrl.search}`;
 }
 
@@ -103,7 +105,11 @@ function startAstroMapUpgradeFlow(source) {
             source,
             feature: 'astrocartography',
             redirect: '/cenik.html',
-            authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register'
+            authMode: window.Auth?.isLoggedIn?.() ? 'login' : 'register',
+            metadata: {
+                entry_source: source,
+                entry_feature: 'astrocartography'
+            }
         });
         return;
     }
