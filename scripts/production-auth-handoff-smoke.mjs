@@ -29,9 +29,11 @@ const SCENARIOS = [
             source: 'trial_paywall',
             feature: 'numerologie_vyklad',
             entry_source: 'trial_paywall',
-            entry_feature: 'numerologie_vyklad'
+            entry_feature: 'numerologie_vyklad',
+            billing_interval: 'monthly'
         },
-        expectedMode: 'login'
+        expectedMode: 'login',
+        mockCheckoutSubmit: true
     }
 ];
 
@@ -75,7 +77,103 @@ function scenarioUrl(baseUrl, scenario) {
     return url.toString();
 }
 
+async function installMockCheckoutSubmitRoutes(page, scenario) {
+    const state = {
+        authPayload: null,
+        checkoutPayload: null,
+        checkoutRequests: 0,
+        csrfRequests: 0
+    };
+
+    await page.route('**/api/csrf-token', async (route) => {
+        state.csrfRequests += 1;
+        await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ csrfToken: 'production-auth-handoff-smoke-token' })
+        });
+    });
+
+    await page.route('**/api/auth/login', async (route) => {
+        state.authPayload = route.request().postDataJSON();
+        await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+                user: {
+                    id: 'production-auth-handoff-smoke-user',
+                    email: state.authPayload?.email || 'smoke-login@example.com',
+                    role: 'user',
+                    subscription_status: 'free'
+                }
+            })
+        });
+    });
+
+    await page.route('**/api/payment/create-checkout-session', async (route) => {
+        state.checkoutRequests += 1;
+        state.checkoutPayload = route.request().postDataJSON();
+        await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+                id: `cs_smoke_${scenario.name}`,
+                url: `/profil.html?payment=success&plan=${scenario.params.plan}&session_id=cs_smoke_${scenario.name}`
+            })
+        });
+    });
+
+    return state;
+}
+
+function validateCheckoutSubmit(metrics, scenario, errors) {
+    if (!scenario.mockCheckoutSubmit) return;
+
+    if (!metrics.authPayload) {
+        errors.push('mocked login request was not sent');
+    }
+    if (!metrics.checkoutPayload) {
+        errors.push('mocked checkout request was not sent');
+        return;
+    }
+    if (metrics.checkoutRequests !== 1) {
+        errors.push(`expected one checkout request, got ${metrics.checkoutRequests}`);
+    }
+
+    const expected = {
+        planId: scenario.params.plan,
+        source: scenario.params.source,
+        feature: scenario.params.feature,
+        billingInterval: scenario.params.billing_interval || null
+    };
+    Object.entries(expected).forEach(([key, value]) => {
+        if (metrics.checkoutPayload[key] !== value) {
+            errors.push(`checkout payload ${key} expected ${value}, got ${metrics.checkoutPayload[key] || '<missing>'}`);
+        }
+    });
+
+    const metadata = metrics.checkoutPayload.metadata || {};
+    ['entry_source', 'entry_feature'].forEach((key) => {
+        if (metadata[key] !== scenario.params[key]) {
+            errors.push(`checkout metadata ${key} expected ${scenario.params[key]}, got ${metadata[key] || '<missing>'}`);
+        }
+    });
+
+    if (metrics.finalPath !== '/profil.html') {
+        errors.push(`post-checkout path expected /profil.html, got ${metrics.finalPath || '<missing>'}`);
+    }
+    if (metrics.finalSessionId !== `cs_smoke_${scenario.name}`) {
+        errors.push(`post-checkout session_id expected cs_smoke_${scenario.name}, got ${metrics.finalSessionId || '<missing>'}`);
+    }
+    if (metrics.pendingPlanAfterSubmit) {
+        errors.push('pending checkout plan remained after mocked checkout success');
+    }
+}
+
 async function inspectScenario(page, scenario, viewportName, baseUrl) {
+    const submitState = scenario.mockCheckoutSubmit
+        ? await installMockCheckoutSubmitRoutes(page, scenario)
+        : null;
     const targetUrl = scenarioUrl(baseUrl, scenario);
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await page.waitForSelector('#auth-submit', { state: 'visible', timeout: 10_000 });
@@ -144,10 +242,41 @@ async function inspectScenario(page, scenario, viewportName, baseUrl) {
         errors.push('mobile cookie banner overlaps submit button');
     }
 
+    const submitMetrics = {};
+    if (scenario.mockCheckoutSubmit) {
+        await page.locator('#email').fill('smoke-login@example.com');
+        await page.locator('#password').fill('SmokePassword123!');
+        await Promise.all([
+            page.waitForURL(url => (
+                url.pathname === '/profil.html'
+                && url.searchParams.get('session_id') === `cs_smoke_${scenario.name}`
+            ), {
+                timeout: 10_000,
+                waitUntil: 'domcontentloaded'
+            }),
+            page.locator('#auth-submit').click()
+        ]);
+
+        const postSubmit = await page.evaluate(() => ({
+            finalPath: window.location.pathname,
+            finalSessionId: new URLSearchParams(window.location.search).get('session_id'),
+            pendingPlanAfterSubmit: sessionStorage.getItem('pending_plan')
+        }));
+        Object.assign(submitMetrics, {
+            ...postSubmit,
+            authPayload: submitState.authPayload,
+            checkoutPayload: submitState.checkoutPayload,
+            checkoutRequests: submitState.checkoutRequests,
+            csrfRequests: submitState.csrfRequests
+        });
+        validateCheckoutSubmit(submitMetrics, scenario, errors);
+    }
+
     return {
         name: scenario.name,
         viewport: viewportName,
         submitText: metrics.submitText,
+        checkoutRequests: submitMetrics.checkoutRequests || 0,
         errors
     };
 }
@@ -188,7 +317,7 @@ async function main() {
     telemetry.print('auth-handoff-smoke');
     for (const result of results) {
         const status = result.errors.length ? 'FAIL' : 'OK';
-        console.log(`[auth-handoff-smoke] ${status} ${result.viewport} ${result.name} submit="${result.submitText}"`);
+        console.log(`[auth-handoff-smoke] ${status} ${result.viewport} ${result.name} submit="${result.submitText}" checkout_requests=${result.checkoutRequests}`);
         for (const error of result.errors) {
             console.log(`  - ${error}`);
         }
