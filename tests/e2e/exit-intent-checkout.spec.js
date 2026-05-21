@@ -57,6 +57,29 @@ async function triggerExitIntent(page) {
     }, afterScriptTimestamp);
 }
 
+async function expectFunnelEvent(funnelEvents, eventName, {
+    source,
+    feature,
+    step
+}) {
+    const metadata = {
+        redirect: '/cenik.html',
+        auth_mode: 'register',
+        entry_source: source,
+        entry_feature: feature
+    };
+    if (step) metadata.step = step;
+
+    await expect.poll(() => funnelEvents.find((event) => (
+        event.eventName === eventName
+        && event.source === source
+        && event.feature === feature
+    )) || null).toEqual(expect.objectContaining({
+        planId: 'pruvodce',
+        metadata: expect.objectContaining(metadata)
+    }));
+}
+
 test.describe('Exit intent checkout handoff', () => {
     test('horoskopy exit intent preserves paid checkout context through registration', async ({ page }) => {
         let authPayload = null;
@@ -140,6 +163,12 @@ test.describe('Exit intent checkout handoff', () => {
         await expect(page.locator('#checkout-context-banner')).toContainText('Horoskopy');
         await expect(page.locator('#checkout-context-banner')).toContainText('bezpečný checkout');
 
+        await expectFunnelEvent(funnelEvents, 'checkout_auth_page_viewed', {
+            source: 'exit_intent_horoskopy',
+            feature: 'horoskopy',
+            step: 'auth_page_viewed'
+        });
+
         await page.locator('#email').fill('exit-intent-horoscope@example.com');
         await page.locator('#password').fill('TestPassword123!');
         await page.locator('#confirm-password-reg').fill('TestPassword123!');
@@ -165,19 +194,15 @@ test.describe('Exit intent checkout handoff', () => {
                 entry_feature: 'horoskopy'
             })
         }));
-        await expect.poll(() => funnelEvents.find((event) => (
-            event.eventName === 'checkout_auth_required'
-            && event.source === 'exit_intent_horoskopy'
-            && event.feature === 'horoskopy'
-        )) || null).toEqual(expect.objectContaining({
-            planId: 'pruvodce',
-            metadata: expect.objectContaining({
-                redirect: '/cenik.html',
-                auth_mode: 'register',
-                entry_source: 'exit_intent_horoskopy',
-                entry_feature: 'horoskopy'
-            })
-        }));
+        await expectFunnelEvent(funnelEvents, 'checkout_auth_required', {
+            source: 'exit_intent_horoskopy',
+            feature: 'horoskopy'
+        });
+        await expectFunnelEvent(funnelEvents, 'checkout_auth_form_submitted', {
+            source: 'exit_intent_horoskopy',
+            feature: 'horoskopy',
+            step: 'register_form_submitted'
+        });
         expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
     });
 });
