@@ -1158,6 +1158,117 @@ test.describe('Login stránka', () => {
         expect(await page.evaluate(() => localStorage.getItem('mh_post_verification_checkout'))).toBeNull();
     });
 
+    test('post-verification checkout network error vrati na cenik s puvodnim kontextem', async ({ page }) => {
+        const checkoutPayloads = [];
+        const funnelEvents = [];
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            funnelEvents.push(route.request().postDataJSON());
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.route('**/api/auth/login', async (route) => {
+            const payload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    user: {
+                        id: 'verified-tarot-network',
+                        email: payload.email,
+                        role: 'user',
+                        subscription_status: 'free'
+                    }
+                })
+            });
+        });
+
+        await page.route('**/api/payment/create-checkout-session', async (route) => {
+            checkoutPayloads.push(route.request().postDataJSON());
+            await route.abort('failed');
+        });
+
+        await page.goto('/prihlaseni.html?mode=login');
+        await waitForPageReady(page);
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+            localStorage.setItem('mh_post_verification_checkout', JSON.stringify({
+                planId: 'pruvodce',
+                createdAt: Date.now(),
+                context: {
+                    planId: 'pruvodce',
+                    source: 'inline_paywall',
+                    feature: 'tarot_multi_card',
+                    redirect: '/cenik.html',
+                    authMode: 'register',
+                    billing_interval: 'monthly',
+                    metadata: {
+                        entry_source: 'inline_paywall',
+                        entry_feature: 'tarot_multi_card',
+                        utm_source: 'email',
+                        utm_campaign: 'tarot_recovery'
+                    }
+                }
+            }));
+        });
+
+        await Promise.all([
+            page.waitForURL(
+                url => url.pathname === '/cenik.html' && url.searchParams.get('reason') === 'network_error',
+                { timeout: 10000, waitUntil: 'domcontentloaded' }
+            ),
+            submitLoginForm(page, 'verify-tarot-network@example.com'),
+        ]);
+
+        expect(checkoutPayloads).toEqual([
+            expect.objectContaining({
+                planId: 'pruvodce',
+                source: 'inline_paywall',
+                feature: 'tarot_multi_card',
+                billingInterval: 'monthly',
+                metadata: expect.objectContaining({
+                    entry_source: 'inline_paywall',
+                    entry_feature: 'tarot_multi_card',
+                    utm_source: 'email',
+                    utm_campaign: 'tarot_recovery'
+                })
+            })
+        ]);
+
+        const failureUrl = new URL(page.url());
+        expect(failureUrl.pathname).toBe('/cenik.html');
+        expect(failureUrl.searchParams.get('payment')).toBe('failure');
+        expect(failureUrl.searchParams.get('reason')).toBe('network_error');
+        expect(failureUrl.searchParams.get('plan')).toBe('pruvodce');
+        expect(failureUrl.searchParams.get('source')).toBe('inline_paywall');
+        expect(failureUrl.searchParams.get('feature')).toBe('tarot_multi_card');
+        expect(failureUrl.searchParams.get('billing_interval')).toBe('monthly');
+        expect(failureUrl.searchParams.get('entry_source')).toBe('inline_paywall');
+        expect(failureUrl.searchParams.get('entry_feature')).toBe('tarot_multi_card');
+        expect(failureUrl.searchParams.get('utm_source')).toBe('email');
+        expect(failureUrl.searchParams.get('utm_campaign')).toBe('tarot_recovery');
+
+        await expect.poll(() => funnelEvents.find((event) => (
+            event.eventName === 'checkout_post_verification_recovered'
+            && event.feature === 'tarot_multi_card'
+        )) || null).toEqual(expect.objectContaining({
+            source: 'inline_paywall',
+            feature: 'tarot_multi_card',
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                billing_interval: 'monthly',
+                entry_source: 'inline_paywall',
+                entry_feature: 'tarot_multi_card'
+            })
+        }));
+        expect(await page.evaluate(() => localStorage.getItem('mh_post_verification_checkout'))).toBeNull();
+    });
+
     test('registrace s email verifikaci posila signup analytics jen jednou', async ({ page }) => {
         await page.route('**/api/auth/register', async (route) => {
             await route.fulfill({
