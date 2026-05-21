@@ -1039,12 +1039,16 @@
         },
 
         async flushPendingCheckoutAuthRequiredEvents() {
-            if (this._flushingCheckoutAuthRequiredEvents) return;
+            if (this._flushingCheckoutAuthRequiredEvents) {
+                this._flushCheckoutAuthRequiredEventsAgain = true;
+                return;
+            }
             const queuedEvents = this.getQueuedCheckoutAuthRequiredEvents();
             if (!queuedEvents.length) return;
 
             this._flushingCheckoutAuthRequiredEvents = true;
             const remaining = [];
+            const attemptedIds = new Set(queuedEvents.map((event) => event.id));
             try {
                 for (const event of queuedEvents) {
                     try {
@@ -1054,9 +1058,23 @@
                         remaining.push(event);
                     }
                 }
-                this.setQueuedCheckoutAuthRequiredEvents(remaining);
+                const newlyQueuedEvents = this
+                    .getQueuedCheckoutAuthRequiredEvents()
+                    .filter((event) => !attemptedIds.has(event.id));
+                this.setQueuedCheckoutAuthRequiredEvents([
+                    ...remaining,
+                    ...newlyQueuedEvents
+                ]);
             } finally {
                 this._flushingCheckoutAuthRequiredEvents = false;
+                if (this._flushCheckoutAuthRequiredEventsAgain) {
+                    this._flushCheckoutAuthRequiredEventsAgain = false;
+                    if (this.getQueuedCheckoutAuthRequiredEvents().length) {
+                        window.setTimeout(() => {
+                            void this.flushPendingCheckoutAuthRequiredEvents();
+                        }, 0);
+                    }
+                }
             }
         },
 

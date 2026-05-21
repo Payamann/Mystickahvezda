@@ -644,6 +644,88 @@ test.describe('Login stránka', () => {
         await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_checkout_auth_required_events'))).toBeNull();
     });
 
+    test('checkout auth page view se odesle i kdyz se zaradi behem aktivniho flush', async ({ page }) => {
+        const funnelEvents = [];
+        let pageViewAttempts = 0;
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            const payload = route.request().postDataJSON();
+            funnelEvents.push(payload);
+
+            if (payload.eventName === 'checkout_auth_required') {
+                await new Promise(resolve => setTimeout(resolve, 800));
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({ success: true })
+                });
+                return;
+            }
+
+            if (payload.eventName === 'checkout_auth_page_viewed') {
+                pageViewAttempts += 1;
+                if (pageViewAttempts === 1) {
+                    await new Promise(resolve => setTimeout(resolve, 150));
+                    await route.fulfill({
+                        status: 503,
+                        contentType: 'application/json',
+                        body: JSON.stringify({ error: 'temporary auth page telemetry outage' })
+                    });
+                    return;
+                }
+            }
+
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.goto('/tarot.html', { waitUntil: 'domcontentloaded' });
+        await page.evaluate(() => {
+            sessionStorage.setItem('mh_pending_checkout_auth_required_events', JSON.stringify([{
+                id: 'queued-weekly-horoscope-auth-required',
+                createdAt: Date.now(),
+                payload: {
+                    eventName: 'checkout_auth_required',
+                    source: 'horoscope_inline_upsell',
+                    feature: 'weekly_horoscope',
+                    planId: 'pruvodce',
+                    metadata: {
+                        path: '/horoskopy.html',
+                        redirect: '/cenik.html',
+                        auth_mode: 'register',
+                        entry_source: 'horoscope_inline_upsell',
+                        entry_feature: 'weekly_horoscope'
+                    }
+                }
+            }]));
+        });
+
+        await page.goto('/prihlaseni.html?mode=register&redirect=/cenik.html&plan=pruvodce&source=horoscope_inline_upsell&feature=weekly_horoscope&entry_source=horoscope_inline_upsell&entry_feature=weekly_horoscope');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect.poll(() => pageViewAttempts, { timeout: 10000 }).toBe(2);
+        await expect.poll(() => funnelEvents.find((event) => (
+            event.eventName === 'checkout_auth_page_viewed'
+            && event.source === 'horoscope_inline_upsell'
+            && event.feature === 'weekly_horoscope'
+        )) || null).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                path: '/prihlaseni.html',
+                redirect: '/cenik.html',
+                auth_mode: 'register',
+                entry_source: 'horoscope_inline_upsell',
+                entry_feature: 'weekly_horoscope',
+                step: 'auth_page_viewed'
+            })
+        }));
+        await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_checkout_auth_required_events'))).toBeNull();
+    });
+
     test('checkout auth page retry neblokuje checkout po registraci', async ({ page }) => {
         const email = 'retry-resume-checkout@example.com';
         const funnelEvents = [];
