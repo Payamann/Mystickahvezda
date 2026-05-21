@@ -6,11 +6,12 @@ import { fileURLToPath } from 'node:url';
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_REPO = 'Payamann/MystickaHvezdaOriginalAntigravity';
+const DEFAULT_BASE_URL = 'https://www.mystickahvezda.cz';
 
 function usage() {
     return [
-        'Usage: node scripts/revenue-truth-monitor.mjs [--since ISO | --since-railway-status] [--output-dir <temp-dir>]',
-        '       [--sha <commit>] [--repo owner/name] [--top 10] [--min-events 1] [--min-step 1] [--allow-repo-output]',
+        'Usage: node scripts/revenue-truth-monitor.mjs [--since ISO | --since-railway-status | --since-live-production] [--output-dir <temp-dir>]',
+        '       [--sha <commit>] [--repo owner/name] [--base-url https://...] [--top 10] [--min-events 1] [--min-step 1] [--allow-repo-output]',
         '',
         'Exports post-deploy, 24h, 7d, and 30d live funnel windows outside the repo,',
         'then runs the funnel leak analyzer for each generated CSV.'
@@ -21,8 +22,10 @@ function parseArgs(argv) {
     const args = {
         since: null,
         sinceRailwayStatus: false,
+        sinceLiveProduction: false,
         sha: null,
         repo: process.env.GITHUB_REPOSITORY || DEFAULT_REPO,
+        baseUrl: process.env.VERIFY_BASE_URL || DEFAULT_BASE_URL,
         outputDir: path.join(os.tmpdir(), 'mh-funnel'),
         top: '10',
         minEvents: '1',
@@ -43,6 +46,8 @@ function parseArgs(argv) {
             args.since = arg.slice('--since='.length);
         } else if (arg === '--since-railway-status') {
             args.sinceRailwayStatus = true;
+        } else if (arg === '--since-live-production') {
+            args.sinceLiveProduction = true;
         } else if (arg === '--sha') {
             args.sha = next();
         } else if (arg.startsWith('--sha=')) {
@@ -51,6 +56,10 @@ function parseArgs(argv) {
             args.repo = next();
         } else if (arg.startsWith('--repo=')) {
             args.repo = arg.slice('--repo='.length);
+        } else if (arg === '--base-url') {
+            args.baseUrl = next().replace(/\/$/, '');
+        } else if (arg.startsWith('--base-url=')) {
+            args.baseUrl = arg.slice('--base-url='.length).replace(/\/$/, '');
         } else if (arg === '--output-dir') {
             args.outputDir = next();
         } else if (arg.startsWith('--output-dir=')) {
@@ -110,6 +119,29 @@ async function fetchGitHubJson(url) {
     return response.json();
 }
 
+async function fetchLiveProductionDeployment({ baseUrl }) {
+    const normalizedBaseUrl = baseUrl.replace(/\/$/, '');
+    const response = await fetch(`${normalizedBaseUrl}/api/health`, {
+        headers: {
+            Accept: 'application/json',
+            'Cache-Control': 'no-cache',
+            Pragma: 'no-cache'
+        }
+    });
+    if (!response.ok) {
+        throw new Error(`${normalizedBaseUrl}/api/health returned ${response.status}`);
+    }
+
+    const health = await response.json();
+    const commit = health.deployment?.commit || null;
+    if (!commit) {
+        throw new Error(`Production health metadata missing deployment commit at ${normalizedBaseUrl}/api/health.`);
+    }
+
+    console.log(`[revenue-truth] live production commit: ${commit} branch=${health.deployment?.branch || 'unknown'} health_timestamp=${health.timestamp || 'unknown'}`);
+    return commit;
+}
+
 async function getRailwayStatusSince({ repo, sha }) {
     const resolvedSha = sha || git(['rev-parse', 'HEAD']);
     const status = await fetchGitHubJson(`https://api.github.com/repos/${repo}/commits/${resolvedSha}/status`);
@@ -129,10 +161,15 @@ async function getRailwayStatusSince({ repo, sha }) {
 }
 
 async function resolveSince(args) {
-    if (args.since && args.sinceRailwayStatus) {
-        throw new Error('Use either --since or --since-railway-status, not both.');
+    const selectedModes = [args.since, args.sinceRailwayStatus, args.sinceLiveProduction].filter(Boolean).length;
+    if (selectedModes > 1) {
+        throw new Error('Use only one deploy window selector: --since, --since-railway-status, or --since-live-production.');
     }
     if (args.since) return args.since;
+    if (args.sinceLiveProduction) {
+        args.sha = await fetchLiveProductionDeployment(args);
+        return getRailwayStatusSince(args);
+    }
     if (args.sinceRailwayStatus) {
         return getRailwayStatusSince(args);
     }

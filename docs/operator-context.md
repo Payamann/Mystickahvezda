@@ -108,6 +108,7 @@ Revenue truth:
 
 ```powershell
 $dir = Join-Path $env:TEMP 'mh-funnel'
+node scripts/revenue-truth-monitor.mjs --since-live-production --output-dir $dir
 node scripts/revenue-truth-monitor.mjs --since-railway-status --output-dir $dir
 node scripts/revenue-truth-monitor.mjs --since <DEPLOY_ISO> --output-dir $dir
 node scripts/export-live-funnel.mjs --since 2026-05-20T12:55:00Z --output (Join-Path $dir 'post-deploy.csv') --summary-json (Join-Path $dir 'post-deploy.json')
