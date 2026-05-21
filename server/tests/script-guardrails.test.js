@@ -139,6 +139,8 @@ describe('manual script guardrails', () => {
         expect(source).toContain('raw CSV/JSON exports stay local and must not be committed');
         expect(source).toContain('scripts/export-live-funnel.mjs');
         expect(source).toContain('scripts/analyze-funnel-segments.mjs');
+        expect(source).toContain('monitor-summary.json');
+        expect(source).toContain('next_action');
     });
 
     test('production verifier covers intent landing clusters', () => {

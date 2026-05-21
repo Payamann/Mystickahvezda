@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -238,25 +238,45 @@ function formatDecision(metrics = {}, { historicalContext = false } = {}) {
         : 'Monitor: no critical revenue leak in this aggregate window';
 }
 
+function buildWindowReport(windowDef, summary, { historicalContext = false } = {}) {
+    if (!summary) return null;
+    const metrics = summary.metrics || {};
+    const purchases = (metrics.subscriptionCompleted || 0) + (metrics.oneTimeCompleted || 0);
+
+    return {
+        label: windowDef.label,
+        slug: windowDef.slug,
+        basis: historicalContext ? 'historical_context' : 'primary_window',
+        since: summary.since || null,
+        until: summary.periodEnd || null,
+        events: summary.totalEvents || 0,
+        segments: summary.segments || 0,
+        checkout_auth_required: metrics.checkoutAuthRequired || 0,
+        checkout_requested: metrics.checkoutRequested || 0,
+        checkout_started: metrics.checkoutStarted || 0,
+        purchases,
+        decision: formatDecision({ ...metrics, totalEvents: summary.totalEvents || 0 }, { historicalContext })
+    };
+}
+
 function printSummary(label, summary, { historicalContext = false } = {}) {
     if (!summary) {
         console.log(`[revenue-truth] ${label}: summary unavailable`);
         return;
     }
 
-    const metrics = summary.metrics || {};
-    const purchases = (metrics.subscriptionCompleted || 0) + (metrics.oneTimeCompleted || 0);
+    const report = buildWindowReport({ label, slug: label }, summary, { historicalContext });
 
     console.log([
         `[revenue-truth] ${label}:`,
-        `events=${summary.totalEvents || 0}`,
-        `segments=${summary.segments || 0}`,
-        `checkout_auth_required=${metrics.checkoutAuthRequired || 0}`,
-        `checkout_requested=${metrics.checkoutRequested || 0}`,
-        `checkout_started=${metrics.checkoutStarted || 0}`,
-        `purchases=${purchases}`,
-        `basis=${historicalContext ? 'historical_context' : 'primary_window'}`,
-        `decision="${formatDecision({ ...metrics, totalEvents: summary.totalEvents || 0 }, { historicalContext })}"`
+        `events=${report.events}`,
+        `segments=${report.segments}`,
+        `checkout_auth_required=${report.checkout_auth_required}`,
+        `checkout_requested=${report.checkout_requested}`,
+        `checkout_started=${report.checkout_started}`,
+        `purchases=${report.purchases}`,
+        `basis=${report.basis}`,
+        `decision="${report.decision}"`
     ].join(' '));
 }
 
@@ -274,7 +294,7 @@ function analyticsPulseDiagnosis({ analyticsEvents, funnelEvents }) {
 }
 
 async function printAnalyticsPulse(label, summary, supabase) {
-    if (!summary?.since || !summary?.periodEnd || !supabase) return;
+    if (!summary?.since || !summary?.periodEnd || !supabase) return null;
 
     const { data, error, count } = await supabase
         .from('analytics_events')
@@ -286,7 +306,7 @@ async function printAnalyticsPulse(label, summary, supabase) {
 
     if (error) {
         console.log(`[revenue-truth] ${label} analytics pulse unavailable: ${error.message}`);
-        return;
+        return null;
     }
 
     const events = data || [];
@@ -300,17 +320,38 @@ async function printAnalyticsPulse(label, summary, supabase) {
     const analyticsEvents = count ?? events.length;
     const latest = events[0]?.created_at || null;
 
+    const pulse = {
+        analytics_events: analyticsEvents,
+        page_view: counts.page_view || 0,
+        cta_clicked: counts.cta_clicked || 0,
+        begin_checkout: counts.begin_checkout || 0,
+        production_smoke_checked: counts.production_smoke_checked || 0,
+        client_errors: clientErrors,
+        latest,
+        diagnosis: analyticsPulseDiagnosis({ analyticsEvents, funnelEvents })
+    };
+
     console.log([
         `[revenue-truth] ${label} analytics pulse:`,
-        `analytics_events=${analyticsEvents}`,
-        `page_view=${counts.page_view || 0}`,
-        `cta_clicked=${counts.cta_clicked || 0}`,
-        `begin_checkout=${counts.begin_checkout || 0}`,
-        `production_smoke_checked=${counts.production_smoke_checked || 0}`,
-        `client_errors=${clientErrors}`,
+        `analytics_events=${pulse.analytics_events}`,
+        `page_view=${pulse.page_view}`,
+        `cta_clicked=${pulse.cta_clicked}`,
+        `begin_checkout=${pulse.begin_checkout}`,
+        `production_smoke_checked=${pulse.production_smoke_checked}`,
+        `client_errors=${pulse.client_errors}`,
         `latest=${latest || 'none'}`,
-        `diagnosis="${analyticsPulseDiagnosis({ analyticsEvents, funnelEvents })}"`
+        `diagnosis="${pulse.diagnosis}"`
     ].join(' '));
+
+    return pulse;
+}
+
+function deriveNextAction(primaryWindow) {
+    if (!primaryWindow) return 'No primary window available; rerun the monitor with a valid deploy window.';
+    if (primaryWindow.events === 0) {
+        return 'Repeat monitor later; use historical windows for diagnostics and test coverage only.';
+    }
+    return primaryWindow.decision;
 }
 
 function windowDefinitions(since) {
@@ -338,6 +379,11 @@ async function main() {
     const supabase = args.skipAnalyticsPulse ? null : createSupabaseClient();
     const windows = windowDefinitions(args.since);
     const hasPostDeployWindow = windows.some((windowDef) => windowDef.slug === 'post-deploy');
+    const monitorReport = {
+        generated_at: new Date().toISOString(),
+        deploy_since: args.since || null,
+        windows: []
+    };
     mkdirSync(outputDir, { recursive: true });
 
     console.log(`[revenue-truth] output_dir=${outputDir}`);
@@ -359,12 +405,14 @@ async function main() {
         ]);
 
         const summary = readSummary(summaryPath);
-        printSummary(windowDef.label, summary, {
-            historicalContext: hasPostDeployWindow && windowDef.slug !== 'post-deploy'
-        });
+        const historicalContext = hasPostDeployWindow && windowDef.slug !== 'post-deploy';
+        printSummary(windowDef.label, summary, { historicalContext });
+        const windowReport = buildWindowReport(windowDef, summary, { historicalContext });
         if (windowDef.slug === 'post-deploy') {
-            await printAnalyticsPulse(windowDef.label, summary, supabase);
+            const analyticsPulse = await printAnalyticsPulse(windowDef.label, summary, supabase);
+            if (windowReport && analyticsPulse) windowReport.analytics_pulse = analyticsPulse;
         }
+        if (windowReport) monitorReport.windows.push(windowReport);
 
         runNodeScript('scripts/analyze-funnel-segments.mjs', [
             csvPath,
@@ -376,6 +424,14 @@ async function main() {
             args.minStep
         ]);
     }
+
+    const primaryWindow = monitorReport.windows.find((windowDef) => windowDef.basis === 'primary_window') || monitorReport.windows[0] || null;
+    monitorReport.primary_decision = primaryWindow?.decision || null;
+    monitorReport.next_action = deriveNextAction(primaryWindow);
+    const monitorSummaryPath = path.join(outputDir, 'monitor-summary.json');
+    writeFileSync(monitorSummaryPath, `${JSON.stringify(monitorReport, null, 2)}\n`, 'utf8');
+    console.log(`[revenue-truth] monitor_summary=${monitorSummaryPath}`);
+    console.log(`[revenue-truth] next_action="${monitorReport.next_action}"`);
 }
 
 try {
