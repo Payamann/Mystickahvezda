@@ -588,6 +588,119 @@ test.describe('Login stránka', () => {
         await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_checkout_auth_required_events'))).toBeNull();
     });
 
+    test('checkout auth page retry neblokuje checkout po registraci', async ({ page }) => {
+        const email = 'retry-resume-checkout@example.com';
+        const funnelEvents = [];
+        let checkoutPayload = null;
+        let csrfAttempts = 0;
+
+        await page.route('**/api/csrf-token', async (route) => {
+            csrfAttempts += 1;
+            if (csrfAttempts === 1) {
+                await route.fulfill({
+                    status: 503,
+                    contentType: 'application/json',
+                    body: JSON.stringify({ error: 'temporary csrf outage' })
+                });
+                return;
+            }
+
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ csrfToken: 'retry-resume-checkout-token' })
+            });
+        });
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            funnelEvents.push(route.request().postDataJSON());
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.route('**/api/auth/register', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    success: true,
+                    user: {
+                        id: 'retry-resume-checkout-user',
+                        email,
+                        role: 'user',
+                        subscription_status: 'free'
+                    }
+                })
+            });
+        });
+
+        await page.route('**/api/payment/create-checkout-session', async (route) => {
+            checkoutPayload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    id: 'cs_retry_resume_checkout',
+                    url: '/profil.html?payment=success&plan=pruvodce&session_id=cs_retry_resume_checkout'
+                })
+            });
+        });
+
+        await page.goto('/prihlaseni.html?mode=register&redirect=/cenik.html&plan=pruvodce&source=exit_intent_horoskopy&feature=horoskopy&entry_source=exit_intent_horoskopy&entry_feature=horoskopy');
+        await waitForPageReady(page);
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+
+        await Promise.all([
+            page.waitForURL(
+                url => url.pathname === '/profil.html' && url.searchParams.get('session_id') === 'cs_retry_resume_checkout',
+                { timeout: 10000, waitUntil: 'domcontentloaded' }
+            ),
+            submitRegisterForm(page, email),
+        ]);
+
+        await expect.poll(() => csrfAttempts, { timeout: 10000 }).toBeGreaterThanOrEqual(2);
+        await expect.poll(() => funnelEvents.find((event) => event.eventName === 'checkout_auth_page_viewed') || null).toEqual(expect.objectContaining({
+            source: 'exit_intent_horoskopy',
+            feature: 'horoskopy',
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                path: '/prihlaseni.html',
+                redirect: '/cenik.html',
+                auth_mode: 'register',
+                entry_source: 'exit_intent_horoskopy',
+                entry_feature: 'horoskopy',
+                step: 'auth_page_viewed'
+            })
+        }));
+        await expect.poll(() => funnelEvents.find((event) => event.eventName === 'checkout_auth_form_submitted') || null).toEqual(expect.objectContaining({
+            source: 'exit_intent_horoskopy',
+            feature: 'horoskopy',
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                path: '/prihlaseni.html',
+                redirect: '/cenik.html',
+                auth_mode: 'register',
+                entry_source: 'exit_intent_horoskopy',
+                entry_feature: 'horoskopy',
+                step: 'register_form_submitted'
+            })
+        }));
+        expect(checkoutPayload).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            source: 'exit_intent_horoskopy',
+            feature: 'horoskopy',
+            billingInterval: null,
+            metadata: expect.objectContaining({
+                entry_source: 'exit_intent_horoskopy',
+                entry_feature: 'horoskopy'
+            })
+        }));
+        await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_checkout_auth_required_events'))).toBeNull();
+    });
+
     test('checkout intent prezije email verifikaci a obnovi se pri dalsim prihlaseni', async ({ page }) => {
         test.setTimeout(60000);
 
