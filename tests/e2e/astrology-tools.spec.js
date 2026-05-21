@@ -277,6 +277,62 @@ test.describe('Partnerská shoda', () => {
         expect(premiumBridgeUrl.searchParams.get('entry_feature')).toBe('partnerska_detail');
     });
 
+    test('mobilni partner bridge drzi primarni upgrade CTA klikatelne', async ({ page }) => {
+        await page.setViewportSize(MOBILE_VIEWPORT);
+        await page.fill('#p1-name', 'Anna');
+        await page.fill('#p1-date', '1990-01-01');
+        await page.fill('#p2-name', 'Pavel');
+        await page.fill('#p2-date', '1992-07-15');
+
+        await page.locator('#synastry-form button[type="submit"]').click();
+
+        const premiumBridge = page.locator('[data-synastry-upgrade]');
+        const cta = premiumBridge.locator('.synastry-next-card__cta');
+        await expect(page.locator('#synastry-next-step')).toBeVisible();
+        await premiumBridge.scrollIntoViewIfNeeded();
+        await expect(cta).toBeVisible();
+        await expect(cta).toContainText(/checkout/i);
+        await expect(premiumBridge.locator('.synastry-next-card__reassurance')).toContainText(/Stripe/);
+
+        const overflow = await page.evaluate(() =>
+            document.documentElement.scrollWidth > document.documentElement.clientWidth
+        );
+        expect(overflow).toBe(false);
+
+        const ctaBox = await cta.boundingBox();
+        const viewport = page.viewportSize();
+        expect(ctaBox).toBeTruthy();
+        expect(ctaBox.y).toBeGreaterThanOrEqual(0);
+        expect(ctaBox.y + ctaBox.height).toBeLessThan(viewport.height);
+
+        const overlapsCookieBanner = await page.evaluate(() => {
+            const ctaRect = document.querySelector('.synastry-next-card__cta')?.getBoundingClientRect();
+            const bannerRect = document.querySelector('.cookie-banner, #cookie-banner')?.getBoundingClientRect();
+            if (!ctaRect || !bannerRect) return false;
+            return !(
+                ctaRect.bottom <= bannerRect.top
+                || ctaRect.top >= bannerRect.bottom
+                || ctaRect.right <= bannerRect.left
+                || ctaRect.left >= bannerRect.right
+            );
+        });
+        expect(overlapsCookieBanner).toBe(false);
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/prihlaseni.html', { timeout: 10000 }),
+            cta.click(),
+        ]);
+
+        const authUrl = new URL(page.url());
+        expect(authUrl.searchParams.get('mode')).toBe('register');
+        expect(authUrl.searchParams.get('redirect')).toBe('/cenik.html');
+        expect(authUrl.searchParams.get('plan')).toBe('pruvodce');
+        expect(authUrl.searchParams.get('source')).toBe('partner_match_result');
+        expect(authUrl.searchParams.get('feature')).toBe('partnerska_detail');
+        expect(authUrl.searchParams.get('entry_source')).toBe('partner_match_result');
+        expect(authUrl.searchParams.get('entry_feature')).toBe('partnerska_detail');
+    });
+
     test('fallback verdikt nepoužívá osudové sliby', async ({ page }) => {
         const synastryBundle = await page.request.get('/js/dist/synastry.js');
         expect(synastryBundle.status()).toBe(200);
