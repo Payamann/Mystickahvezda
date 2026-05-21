@@ -17,7 +17,8 @@ const SCENARIOS = [
             entry_source: 'inline_paywall',
             entry_feature: 'tarot_multi_card'
         },
-        expectedMode: 'register'
+        expectedMode: 'register',
+        mockCheckoutSubmit: true
     },
     {
         name: 'login-paid-numerology',
