@@ -308,6 +308,8 @@ test.describe('Tarot', () => {
 
         const trigger = page.locator('[data-spread-type="Jedna karta"]').first();
         await expect(page.locator('#cookie-banner')).toBeVisible();
+        await expect(page.locator('#cookie-banner')).toHaveClass(/visible/, { timeout: 5000 });
+        await page.waitForFunction(() => document.body.classList.contains('cookie-banner-active'));
         await expect(trigger).toBeVisible();
 
         const metrics = await page.evaluate(() => {

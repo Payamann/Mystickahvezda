@@ -389,7 +389,7 @@ body.page-tarot .tarot-intent-card {
     }
 
     body.page-tarot.cookie-banner-active .t-spread-card + .t-spread-card {
-        margin-top: 0;
+        margin-top: 20rem;
     }
 
     body.page-tarot .spread-trigger {

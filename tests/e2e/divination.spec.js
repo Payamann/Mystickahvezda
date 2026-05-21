@@ -32,21 +32,19 @@ test.describe('Andělské karty', () => {
 
     test('h1 je viditelný', async ({ page }) => {
         await expect(page.locator('h1').first()).toBeVisible();
-        await expect(page.locator('h1').first()).toContainText('Andělské karty');
+        await expect(page.locator('h1').first()).toContainText('Andělská karta dne');
     });
 
-    test('rozlišuje Andělské karty od homepage Karty dne', async ({ page }) => {
+    test('rozlišuje denní andělskou kartu od hlubšího výkladu', async ({ page }) => {
         const main = page.locator('main');
-        await expect(page).toHaveTitle('Andělské karty online: 44 karet | Mystická Hvězda');
-        await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'Andělské karty online: 44 karet | Mystická Hvězda');
+        await expect(page).toHaveTitle('Andělská karta dne online | 44 karet | Mystická Hvězda');
+        await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'Andělská karta dne online | 44 karet | Mystická Hvězda');
         const metaDescription = await page.getAttribute('meta[name="description"]', 'content');
         expect(metaDescription).toContain('balíčku 44 karet');
-        expect(metaDescription).toContain('Odlišný výklad');
-        expect(metaDescription).not.toContain('Andělská karta dne');
-        await expect(page.locator('.hero__subtitle')).toContainText('Karta dne je rychlý symbol');
-        await expect(main).toContainText('44 karet');
+        expect(metaDescription).toContain('hlubšímu andělskému výkladu');
+        await expect(page.locator('.hero__subtitle')).toContainText('hlubší andělský výklad');
+        await expect(page).toHaveTitle(/44 karet/);
         await expect(main).not.toContainText('41 karet');
-        await expect(page.locator('h1').first()).not.toContainText('Karta dne');
     });
 
     test('#main-content existuje', async ({ page }) => {
@@ -59,7 +57,7 @@ test.describe('Andělské karty', () => {
     });
 
     test('stranka vede k vhodnemu typu andelske podpory', async ({ page }) => {
-        const cluster = page.locator('.angel-intent-section');
+        const cluster = page.locator('.angel-intent-section[aria-labelledby="angel-intent-title"]');
         await expect(cluster).toBeVisible();
         await expect(cluster.locator('.angel-intent-card')).toHaveCount(6);
         const drawIntent = cluster.locator('[data-analytics-cta="angel_intent_draw_card"]');

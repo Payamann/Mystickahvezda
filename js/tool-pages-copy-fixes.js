@@ -27,10 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (path.endsWith('/tarot.html') || path.endsWith('tarot.html')) {
-        document.title = 'Tarotové Výklady Online | Mystická Hvězda';
-        setMeta('meta[name="description"]', 'Online tarotové výklady s hvězdnou interpretací. Vyberte si z karet Velké arkány a získejte personalizovaný výklad.');
-        setMeta('meta[property="og:title"]', 'Tarotové Výklady Online | Mystická Hvězda');
-        setMeta('meta[property="og:description"]', 'Online tarotové výklady s hvězdnou interpretací. Vyberte si z karet Velké arkány a získejte personalizovaný výklad.');
+        document.title = 'Tarot online: výklad z 78 karet | Mystická Hvězda';
+        setMeta('meta[name="description"]', 'Vyber si tarot online: jedna karta zdarma, tři karty nebo Keltský kříž. Český výklad z 78 karet s osobním vedením a dalším krokem.');
+        setMeta('meta[property="og:title"]', 'Tarot online: výklad z 78 karet | Mystická Hvězda');
+        setMeta('meta[property="og:description"]', 'Jedna karta zdarma, tři karty nebo Keltský kříž. Český tarotový výklad z 78 karet s osobním vedením.');
         setHtml('.hero__title', 'Tarotové <span class="text-gradient">výklady</span>');
         setText('.hero__subtitle', 'Vyberte si výklad, zamíchejte karty a nechte symboliku tarotu promluvit do vaší aktuální situace.');
     }
