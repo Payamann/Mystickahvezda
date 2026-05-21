@@ -174,6 +174,15 @@ describe('manual script guardrails', () => {
         expect(blocker).toContain('**/api/analytics/batch');
         expect(blocker).toContain('telemetry_blocked');
         expect(blocker).toContain('readOnly: true');
+        expect(blocker).toContain('sanitizeTelemetryPayload');
+        expect(blocker).toContain('events(routeKey = null)');
+
+        const authHandoff = readScript('scripts/production-auth-handoff-smoke.mjs');
+        expect(authHandoff).toContain('checkout_auth_required');
+        expect(authHandoff).toContain('checkout_auth_page_viewed');
+        expect(authHandoff).toContain('payment_events=');
+        expect(authHandoff).toContain('clearScenarioStorage');
+        expect(authHandoff).toContain("new URL('/api/health'");
     });
 
     test('production verifier covers intent landing clusters', () => {

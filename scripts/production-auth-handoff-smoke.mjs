@@ -189,10 +189,62 @@ function validateCheckoutSubmit(metrics, scenario, errors) {
     }
 }
 
-async function inspectScenario(page, scenario, viewportName, baseUrl) {
+async function clearScenarioStorage(page, baseUrl) {
+    const healthUrl = new URL('/api/health', `${baseUrl}/`);
+    healthUrl.searchParams.set('cache', String(Date.now()));
+    await page.goto(healthUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+    });
+}
+
+function findPaymentFunnelEvent(events, eventName, scenario) {
+    return events.find((event) => (
+        event.eventName === eventName
+        && event.source === scenario.params.source
+        && event.feature === scenario.params.feature
+        && event.planId === scenario.params.plan
+    )) || null;
+}
+
+async function waitForPaymentFunnelEvent(telemetry, startIndex, eventName, scenario, timeoutMs = 5_000) {
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline) {
+        const event = findPaymentFunnelEvent(
+            telemetry.events('payment_funnel').slice(startIndex),
+            eventName,
+            scenario
+        );
+        if (event) return event;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    return null;
+}
+
+function validatePaymentFunnelEvent(events, eventName, scenario, errors, expectedMetadata = {}) {
+    const event = findPaymentFunnelEvent(events, eventName, scenario);
+    if (!event) {
+        errors.push(`missing payment funnel event ${eventName}`);
+        return null;
+    }
+
+    const metadata = event.metadata || {};
+    Object.entries(expectedMetadata).forEach(([key, value]) => {
+        if (metadata[key] !== value) {
+            errors.push(`payment funnel ${eventName} metadata ${key} expected ${value}, got ${metadata[key] || '<missing>'}`);
+        }
+    });
+    return event;
+}
+
+async function inspectScenario(page, scenario, viewportName, baseUrl, telemetry) {
+    await clearScenarioStorage(page, baseUrl);
+
     const submitState = scenario.mockCheckoutSubmit
         ? await installMockCheckoutSubmitRoutes(page, scenario)
         : null;
+    const paymentFunnelStartIndex = telemetry.events('payment_funnel').length;
     if (scenario.entryFlow) {
         const entryUrl = new URL(scenario.entryFlow.path, `${baseUrl}/`);
         entryUrl.searchParams.set('cache', String(Date.now()));
@@ -212,7 +264,10 @@ async function inspectScenario(page, scenario, viewportName, baseUrl) {
         await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
     }
     await page.waitForSelector('#auth-submit', { state: 'visible', timeout: 10_000 });
-    await page.waitForTimeout(1_000);
+    await waitForPaymentFunnelEvent(telemetry, paymentFunnelStartIndex, 'checkout_auth_page_viewed', scenario);
+    if (scenario.entryFlow) {
+        await waitForPaymentFunnelEvent(telemetry, paymentFunnelStartIndex, 'checkout_auth_required', scenario);
+    }
 
     const metrics = await page.evaluate(() => {
         function rectOverlaps(a, b) {
@@ -277,6 +332,24 @@ async function inspectScenario(page, scenario, viewportName, baseUrl) {
         errors.push('mobile cookie banner overlaps submit button');
     }
 
+    const preSubmitPaymentFunnelEvents = telemetry.events('payment_funnel').slice(paymentFunnelStartIndex);
+    validatePaymentFunnelEvent(preSubmitPaymentFunnelEvents, 'checkout_auth_page_viewed', scenario, errors, {
+        redirect: '/cenik.html',
+        auth_mode: scenario.expectedMode,
+        entry_source: scenario.params.entry_source,
+        entry_feature: scenario.params.entry_feature,
+        step: 'auth_page_viewed'
+    });
+    if (scenario.entryFlow) {
+        validatePaymentFunnelEvent(preSubmitPaymentFunnelEvents, 'checkout_auth_required', scenario, errors, {
+            path: scenario.entryFlow.path,
+            redirect: '/cenik.html',
+            auth_mode: scenario.expectedMode,
+            entry_source: scenario.params.entry_source,
+            entry_feature: scenario.params.entry_feature
+        });
+    }
+
     const submitMetrics = {};
     if (scenario.mockCheckoutSubmit) {
         await page.locator('#email').fill('smoke-login@example.com');
@@ -305,13 +378,27 @@ async function inspectScenario(page, scenario, viewportName, baseUrl) {
             csrfRequests: submitState.csrfRequests
         });
         validateCheckoutSubmit(submitMetrics, scenario, errors);
+        await waitForPaymentFunnelEvent(telemetry, paymentFunnelStartIndex, 'checkout_auth_form_submitted', scenario);
+        const postSubmitPaymentFunnelEvents = telemetry.events('payment_funnel').slice(paymentFunnelStartIndex);
+        validatePaymentFunnelEvent(postSubmitPaymentFunnelEvents, 'checkout_auth_form_submitted', scenario, errors, {
+            redirect: '/cenik.html',
+            auth_mode: scenario.expectedMode,
+            entry_source: scenario.params.entry_source,
+            entry_feature: scenario.params.entry_feature,
+            step: `${scenario.expectedMode}_form_submitted`
+        });
     }
+    const paymentEventNames = telemetry
+        .events('payment_funnel')
+        .slice(paymentFunnelStartIndex)
+        .map((event) => event.eventName || '<unnamed>');
 
     return {
         name: scenario.name,
         viewport: viewportName,
         submitText: metrics.submitText,
         checkoutRequests: submitMetrics.checkoutRequests || 0,
+        paymentEventNames,
         errors
     };
 }
@@ -331,15 +418,11 @@ async function main() {
                 serviceWorkers: 'block'
             });
             await telemetry.install(context);
-            await context.addInitScript(() => {
-                localStorage.clear();
-                sessionStorage.clear();
-            });
             const page = await context.newPage();
             page.setDefaultTimeout(args.timeoutMs);
 
             for (const scenario of SCENARIOS) {
-                results.push(await inspectScenario(page, scenario, viewport.name, args.baseUrl));
+                results.push(await inspectScenario(page, scenario, viewport.name, args.baseUrl, telemetry));
             }
 
             await context.close();
@@ -352,7 +435,7 @@ async function main() {
     telemetry.print('auth-handoff-smoke');
     for (const result of results) {
         const status = result.errors.length ? 'FAIL' : 'OK';
-        console.log(`[auth-handoff-smoke] ${status} ${result.viewport} ${result.name} submit="${result.submitText}" checkout_requests=${result.checkoutRequests}`);
+        console.log(`[auth-handoff-smoke] ${status} ${result.viewport} ${result.name} submit="${result.submitText}" checkout_requests=${result.checkoutRequests} payment_events=${result.paymentEventNames.join(',') || '<none>'}`);
         for (const error of result.errors) {
             console.log(`  - ${error}`);
         }
