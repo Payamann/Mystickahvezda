@@ -592,6 +592,84 @@ test.describe('Login stránka', () => {
         await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_checkout_auth_required_events'))).toBeNull();
     });
 
+    test('checkout auth required retry po docasnem vypadku odesle puvodni handoff', async ({ page }) => {
+        const funnelEvents = [];
+        let authRequiredAttempts = 0;
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            const payload = route.request().postDataJSON();
+            funnelEvents.push(payload);
+
+            if (payload.eventName === 'checkout_auth_required') {
+                authRequiredAttempts += 1;
+                if (authRequiredAttempts === 1) {
+                    await route.fulfill({
+                        status: 503,
+                        contentType: 'application/json',
+                        body: JSON.stringify({ error: 'temporary funnel outage' })
+                    });
+                    return;
+                }
+            }
+
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+        });
+        await page.goto('/tarot.html', { waitUntil: 'domcontentloaded' });
+        await waitForPageReady(page);
+
+        await page.evaluate(() => {
+            window.Auth.startPlanCheckout('pruvodce', {
+                source: 'inline_paywall',
+                feature: 'tarot_multi_card',
+                redirect: '/cenik.html',
+                metadata: {
+                    entry_source: 'inline_paywall',
+                    entry_feature: 'tarot_multi_card'
+                }
+            });
+        });
+
+        await page.waitForURL(
+            url => url.pathname === '/prihlaseni.html' && url.searchParams.get('plan') === 'pruvodce',
+            { timeout: 10000, waitUntil: 'domcontentloaded' }
+        );
+
+        await expect.poll(() => authRequiredAttempts, { timeout: 10000 }).toBe(1);
+        await expect.poll(
+            () => page.evaluate(() => JSON.parse(sessionStorage.getItem('mh_pending_checkout_auth_required_events') || '[]')),
+            { timeout: 5000 }
+        ).toEqual([
+            expect.objectContaining({
+                payload: expect.objectContaining({
+                    eventName: 'checkout_auth_required',
+                    source: 'inline_paywall',
+                    feature: 'tarot_multi_card',
+                    planId: 'pruvodce',
+                    metadata: expect.objectContaining({
+                        redirect: '/cenik.html',
+                        entry_source: 'inline_paywall',
+                        entry_feature: 'tarot_multi_card'
+                    })
+                })
+            })
+        ]);
+
+        await page.evaluate(() => window.Auth.flushPendingCheckoutAuthRequiredEvents());
+
+        await expect.poll(() => authRequiredAttempts, { timeout: 10000 }).toBe(2);
+        await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_checkout_auth_required_events'))).toBeNull();
+        expect(funnelEvents.filter((event) => event.eventName === 'checkout_auth_required')).toHaveLength(2);
+    });
+
     test('checkout auth page view se retrynuje po docasnem CSRF selhani', async ({ page }) => {
         const funnelEvents = [];
         let csrfAttempts = 0;
