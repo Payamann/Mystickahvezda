@@ -859,7 +859,8 @@ test.describe('Login stránka', () => {
                 email: 'verify-natal@example.com',
                 source: 'natal_teaser_gate',
                 feature: 'natalni_interpretace',
-                entrySource: 'natal_teaser_gate'
+                entrySource: 'natal_teaser_gate',
+                billingInterval: 'yearly'
             },
             {
                 email: 'verify-partner@example.com',
@@ -926,8 +927,18 @@ test.describe('Login stránka', () => {
                 sessionStorage.clear();
             });
 
-            const registerUrl = `/prihlaseni.html?mode=register&redirect=/cenik.html&plan=pruvodce&source=${scenario.source}&feature=${scenario.feature}&entry_source=${scenario.entrySource}&entry_feature=${scenario.feature}`;
-            await page.goto(registerUrl);
+            const registerUrl = new URL('/prihlaseni.html', 'http://localhost');
+            registerUrl.searchParams.set('mode', 'register');
+            registerUrl.searchParams.set('redirect', '/cenik.html');
+            registerUrl.searchParams.set('plan', 'pruvodce');
+            registerUrl.searchParams.set('source', scenario.source);
+            registerUrl.searchParams.set('feature', scenario.feature);
+            registerUrl.searchParams.set('entry_source', scenario.entrySource);
+            registerUrl.searchParams.set('entry_feature', scenario.feature);
+            if (scenario.billingInterval) {
+                registerUrl.searchParams.set('billing_interval', scenario.billingInterval);
+            }
+            await page.goto(`${registerUrl.pathname}${registerUrl.search}`);
             await waitForPageReady(page);
             await submitRegisterForm(page, scenario.email);
 
@@ -965,17 +976,21 @@ test.describe('Login stránka', () => {
                 { timeout: 5000 }
             ).not.toBeNull();
             const storedCheckout = await page.evaluate(() => JSON.parse(localStorage.getItem('mh_post_verification_checkout') || 'null'));
+            const expectedStoredContext = {
+                source: scenario.source,
+                feature: scenario.feature,
+                redirect: '/cenik.html',
+                metadata: expect.objectContaining({
+                    entry_source: scenario.entrySource,
+                    entry_feature: scenario.feature
+                })
+            };
+            if (scenario.billingInterval) {
+                expectedStoredContext.billing_interval = scenario.billingInterval;
+            }
             expect(storedCheckout).toEqual(expect.objectContaining({
                 planId: 'pruvodce',
-                context: expect.objectContaining({
-                    source: scenario.source,
-                    feature: scenario.feature,
-                    redirect: '/cenik.html',
-                    metadata: expect.objectContaining({
-                        entry_source: scenario.entrySource,
-                        entry_feature: scenario.feature
-                    })
-                })
+                context: expect.objectContaining(expectedStoredContext)
             }));
             await expect.poll(() => funnelEvents.find((event) => (
                 event.eventName === 'checkout_post_verification_pending'
@@ -1006,7 +1021,7 @@ test.describe('Login stránka', () => {
                 planId: 'pruvodce',
                 source: scenario.source,
                 feature: scenario.feature,
-                billingInterval: null,
+                billingInterval: scenario.billingInterval || null,
                 metadata: expect.objectContaining({
                     entry_source: scenario.entrySource,
                     entry_feature: scenario.feature
