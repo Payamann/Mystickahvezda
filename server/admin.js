@@ -56,6 +56,14 @@ const FUNNEL_CHECKOUT_AUTH_REQUIRED_EVENTS = new Set([
     'checkout_auth_required',
 ]);
 
+const FUNNEL_CHECKOUT_AUTH_PAGE_VIEW_EVENTS = new Set([
+    'checkout_auth_page_viewed',
+]);
+
+const FUNNEL_CHECKOUT_AUTH_FORM_SUBMIT_EVENTS = new Set([
+    'checkout_auth_form_submitted',
+]);
+
 const FUNNEL_CHECKOUT_POST_VERIFICATION_PENDING_EVENTS = new Set([
     'checkout_post_verification_pending',
 ]);
@@ -125,6 +133,8 @@ function createDailyBucket(date) {
         paywallViewed: 0,
         pricingIntent: 0,
         checkoutAuthRequired: 0,
+        checkoutAuthPageViewed: 0,
+        checkoutAuthFormSubmitted: 0,
         checkoutPostVerificationPending: 0,
         checkoutPostVerificationRecovered: 0,
         checkoutRequested: 0,
@@ -239,6 +249,8 @@ function createSourceFeatureSegment(source, feature) {
         paywallViewed: 0,
         pricingIntent: 0,
         checkoutAuthRequired: 0,
+        checkoutAuthPageViewed: 0,
+        checkoutAuthFormSubmitted: 0,
         checkoutPostVerificationPending: 0,
         checkoutPostVerificationRecovered: 0,
         checkoutRequested: 0,
@@ -274,6 +286,8 @@ function addFunnelConversionCounts(segment, eventName) {
     if (eventName === 'reading_feedback_submitted') segment.readingFeedbackSubmitted += 1;
     if (FUNNEL_PRICING_INTENT_EVENTS.has(eventName)) segment.pricingIntent += 1;
     if (FUNNEL_CHECKOUT_AUTH_REQUIRED_EVENTS.has(eventName)) segment.checkoutAuthRequired += 1;
+    if (FUNNEL_CHECKOUT_AUTH_PAGE_VIEW_EVENTS.has(eventName)) segment.checkoutAuthPageViewed += 1;
+    if (FUNNEL_CHECKOUT_AUTH_FORM_SUBMIT_EVENTS.has(eventName)) segment.checkoutAuthFormSubmitted += 1;
     if (FUNNEL_CHECKOUT_POST_VERIFICATION_PENDING_EVENTS.has(eventName)) segment.checkoutPostVerificationPending += 1;
     if (FUNNEL_CHECKOUT_POST_VERIFICATION_RECOVERED_EVENTS.has(eventName)) segment.checkoutPostVerificationRecovered += 1;
     if (FUNNEL_CHECKOUT_REQUEST_EVENTS.has(eventName)) segment.checkoutRequested += 1;
@@ -936,6 +950,8 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
             if (FUNNEL_PAYWALL_VIEW_EVENTS.has(eventName)) byDay[date].paywallViewed += 1;
             if (FUNNEL_PRICING_INTENT_EVENTS.has(eventName)) byDay[date].pricingIntent += 1;
             if (FUNNEL_CHECKOUT_AUTH_REQUIRED_EVENTS.has(eventName)) byDay[date].checkoutAuthRequired += 1;
+            if (FUNNEL_CHECKOUT_AUTH_PAGE_VIEW_EVENTS.has(eventName)) byDay[date].checkoutAuthPageViewed += 1;
+            if (FUNNEL_CHECKOUT_AUTH_FORM_SUBMIT_EVENTS.has(eventName)) byDay[date].checkoutAuthFormSubmitted += 1;
             if (FUNNEL_CHECKOUT_POST_VERIFICATION_PENDING_EVENTS.has(eventName)) byDay[date].checkoutPostVerificationPending += 1;
             if (FUNNEL_CHECKOUT_POST_VERIFICATION_RECOVERED_EVENTS.has(eventName)) byDay[date].checkoutPostVerificationRecovered += 1;
             if (FUNNEL_CHECKOUT_REQUEST_EVENTS.has(eventName)) byDay[date].checkoutRequested += 1;
@@ -952,6 +968,8 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
     const paywallViewed = [...FUNNEL_PAYWALL_VIEW_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
     const pricingIntent = [...FUNNEL_PRICING_INTENT_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
     const checkoutAuthRequired = [...FUNNEL_CHECKOUT_AUTH_REQUIRED_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
+    const checkoutAuthPageViewed = [...FUNNEL_CHECKOUT_AUTH_PAGE_VIEW_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
+    const checkoutAuthFormSubmitted = [...FUNNEL_CHECKOUT_AUTH_FORM_SUBMIT_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
     const checkoutPostVerificationPending = [...FUNNEL_CHECKOUT_POST_VERIFICATION_PENDING_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
     const checkoutPostVerificationRecovered = [...FUNNEL_CHECKOUT_POST_VERIFICATION_RECOVERED_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
     const checkoutRequested = [...FUNNEL_CHECKOUT_REQUEST_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
@@ -1027,6 +1045,8 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
             paywallViewed,
             pricingIntent,
             checkoutAuthRequired,
+            checkoutAuthPageViewed,
+            checkoutAuthFormSubmitted,
             checkoutPostVerificationPending,
             checkoutPostVerificationRecovered,
             checkoutRequested,
@@ -1092,6 +1112,8 @@ export function buildFunnelDailyCsv(report) {
         'paywall_viewed',
         'pricing_intent',
         'checkout_auth_required',
+        'checkout_auth_page_viewed',
+        'checkout_auth_form_submitted',
         'checkout_post_verification_pending',
         'checkout_post_verification_recovered',
         'checkout_requested',
@@ -1113,6 +1135,8 @@ export function buildFunnelDailyCsv(report) {
         row.paywallViewed,
         row.pricingIntent,
         row.checkoutAuthRequired,
+        row.checkoutAuthPageViewed,
+        row.checkoutAuthFormSubmitted,
         row.checkoutPostVerificationPending,
         row.checkoutPostVerificationRecovered,
         row.checkoutRequested,
@@ -1142,6 +1166,8 @@ export function buildFunnelSegmentsCsv(report) {
         'paywall_viewed',
         'pricing_intent',
         'checkout_auth_required',
+        'checkout_auth_page_viewed',
+        'checkout_auth_form_submitted',
         'checkout_post_verification_pending',
         'checkout_post_verification_recovered',
         'checkout_requested',
@@ -1199,6 +1225,8 @@ export function buildFunnelSegmentsCsv(report) {
         row.paywallViewed,
         row.pricingIntent,
         row.checkoutAuthRequired,
+        row.checkoutAuthPageViewed,
+        row.checkoutAuthFormSubmitted,
         row.checkoutPostVerificationPending,
         row.checkoutPostVerificationRecovered,
         row.checkoutRequested,

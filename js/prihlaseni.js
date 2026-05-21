@@ -342,6 +342,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const requestedPlan = urlParams.get('plan') || pendingPlan;
     const requestedFeature = urlParams.get('feature') || pendingContext.feature || null;
     const requestedSource = urlParams.get('source') || pendingContext.source || null;
+    const requestedBillingInterval = urlParams.get('billing_interval')
+        || urlParams.get('billingInterval')
+        || pendingContext.billing_interval
+        || pendingContext.billingInterval
+        || null;
     const requestedEmail = urlParams.get('email') || '';
 
     const hasPendingAuthRedirect = () => Boolean(
@@ -418,6 +423,47 @@ document.addEventListener('DOMContentLoaded', () => {
             ? redirectTarget
             : '/profil.html'
     );
+
+    const buildCheckoutAuthStepPayload = (eventName, step) => {
+        if (!requestedPlan) return null;
+
+        const pendingMetadata = pendingContext.metadata && typeof pendingContext.metadata === 'object' && !Array.isArray(pendingContext.metadata)
+            ? pendingContext.metadata
+            : {};
+        const metadata = {
+            ...pendingMetadata,
+            path: window.location.pathname,
+            redirect: getSafeRedirectTarget(),
+            auth_mode: isRegisterMode ? 'register' : 'login',
+            step
+        };
+
+        if (requestedBillingInterval) metadata.billing_interval = requestedBillingInterval;
+        if (!metadata.entry_source && requestedSource) metadata.entry_source = requestedSource;
+        if (!metadata.entry_feature && requestedFeature) metadata.entry_feature = requestedFeature;
+
+        return {
+            eventName,
+            source: requestedSource || pendingContext.source || 'auth_pending_plan',
+            feature: requestedFeature || pendingContext.feature || null,
+            planId: requestedPlan,
+            metadata
+        };
+    };
+
+    const trackCheckoutAuthStep = (eventName, step) => {
+        const payload = buildCheckoutAuthStepPayload(eventName, step);
+        if (!payload) return;
+
+        try {
+            const sent = window.Auth?.sendServerFunnelEvent?.(payload);
+            if (sent && typeof sent.catch === 'function') {
+                sent.catch(error => console.warn('[FUNNEL] Could not record checkout auth step:', error.message));
+            }
+        } catch (error) {
+            console.warn('[FUNNEL] Could not record checkout auth step:', error.message);
+        }
+    };
 
     const getGrowthLoop = () => window.MH_GROWTH_LOOP || null;
 
@@ -503,6 +549,9 @@ document.addEventListener('DOMContentLoaded', () => {
             redirect_target: redirectTarget,
             pending_plan: pendingPlan
         });
+        if (source === 'page_load') {
+            trackCheckoutAuthStep('checkout_auth_page_viewed', 'auth_page_viewed');
+        }
     };
 
     const bindPasswordToggles = () => {
@@ -643,6 +692,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!validateRegisterFields()) {
             return;
         }
+
+        trackCheckoutAuthStep(
+            'checkout_auth_form_submitted',
+            isRegisterMode ? 'register_form_submitted' : 'login_form_submitted'
+        );
 
         authSubmitBtn.disabled = true;
         const originalText = authSubmitBtn.textContent;

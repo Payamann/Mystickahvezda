@@ -17,6 +17,8 @@ const OPTIONAL_COLUMNS = [
     'paywall_viewed',
     'pricing_intent',
     'checkout_auth_required',
+    'checkout_auth_page_viewed',
+    'checkout_auth_form_submitted',
     'checkout_post_verification_pending',
     'checkout_post_verification_recovered',
     'checkout_requested',
@@ -39,6 +41,14 @@ const OPTIONAL_COLUMNS = [
 
 function authHandoffAction(row) {
     const { source, feature } = row;
+
+    if (row.checkout_auth_page_viewed === 0) {
+        return `Audit auth navigation for ${source}/${feature}: checkout_auth_required fired, but the auth page view did not. Check redirect timing, blocked navigation, and queued event flushing before debugging checkout.`;
+    }
+
+    if (row.checkout_auth_form_submitted === 0) {
+        return `Audit auth-page friction for ${source}/${feature}: users reached the checkout auth page but did not submit the form. Check context banner clarity, mobile layout, validation, and form completion copy.`;
+    }
 
     if (row.checkout_post_verification_pending > 0 && row.checkout_post_verification_recovered === 0) {
         return `Inspect post-verification recovery for ${source}/${feature}: users reached email verification, so confirm reminder copy, verification return, and stored checkout intent recovery before changing Stripe.`;
@@ -105,6 +115,24 @@ const STEP_DEFINITIONS = [
         rateColumn: 'auth_handoff_to_checkout_request_rate',
         deltaColumn: 'auth_handoff_to_checkout_request_rate_delta',
         action: authHandoffAction
+    },
+    {
+        id: 'auth_handoff_to_auth_page',
+        label: 'auth handoff -> auth page',
+        fromColumn: 'checkout_auth_required',
+        toColumn: 'checkout_auth_page_viewed',
+        rateColumn: 'auth_handoff_to_auth_page_rate',
+        deltaColumn: 'auth_handoff_to_auth_page_rate_delta',
+        action: ({ source, feature }) => `Audit auth navigation for ${source}/${feature}: checkout_auth_required fired, but checkout_auth_page_viewed did not. Check redirect timing and whether the auth page loads with plan/source/feature context.`
+    },
+    {
+        id: 'auth_page_to_auth_form_submit',
+        label: 'auth page -> auth form submit',
+        fromColumn: 'checkout_auth_page_viewed',
+        toColumn: 'checkout_auth_form_submitted',
+        rateColumn: 'auth_page_to_auth_form_submit_rate',
+        deltaColumn: 'auth_page_to_auth_form_submit_rate_delta',
+        action: ({ source, feature }) => `Audit auth-page friction for ${source}/${feature}: users reached the auth page but did not submit checkout auth. Check form validation, context banner clarity, and mobile layout.`
     },
     {
         id: 'checkout_request_to_session',
@@ -338,6 +366,8 @@ function normalizeRow(record) {
         paywall_viewed: parseNumber(record.paywall_viewed),
         pricing_intent: parseNumber(record.pricing_intent),
         checkout_auth_required: parseNumber(record.checkout_auth_required),
+        checkout_auth_page_viewed: parseNumber(record.checkout_auth_page_viewed),
+        checkout_auth_form_submitted: parseNumber(record.checkout_auth_form_submitted),
         checkout_post_verification_pending: parseNumber(record.checkout_post_verification_pending),
         checkout_post_verification_recovered: parseNumber(record.checkout_post_verification_recovered),
         checkout_requested: parseNumber(record.checkout_requested),
@@ -458,7 +488,11 @@ function buildDataQualityNotes(rows) {
             notes.push(`${row.source}/${row.feature}: checkout_requested exists with no checkout_auth_required. This may be fine for logged-in users; verify logged-out auth handoff coverage separately.`);
         }
         if (row.checkout_auth_required > row.checkout_requested && row.checkout_requested === 0) {
-            if (row.checkout_post_verification_pending > 0 && row.checkout_post_verification_recovered === 0) {
+            if (row.checkout_auth_page_viewed === 0) {
+                notes.push(`${row.source}/${row.feature}: auth handoff exists but no checkout auth page view. Check redirect timing, blocked navigation, or whether the auth page loaded before event capture.`);
+            } else if (row.checkout_auth_form_submitted === 0) {
+                notes.push(`${row.source}/${row.feature}: auth page was viewed but no checkout auth form submit was recorded. Check auth-page abandonment, form validation, and mobile context clarity.`);
+            } else if (row.checkout_post_verification_pending > 0 && row.checkout_post_verification_recovered === 0) {
                 notes.push(`${row.source}/${row.feature}: auth handoff reached email verification but no recovery yet. Wait for verification or inspect reminder/recovery path before changing checkout.`);
             } else if (row.checkout_post_verification_recovered > 0) {
                 notes.push(`${row.source}/${row.feature}: post-verification recovery exists but no checkout request. Check _startCheckout and /payment/create-checkout-session after login.`);

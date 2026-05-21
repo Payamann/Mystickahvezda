@@ -136,26 +136,33 @@ describe('Public funnel event endpoint', () => {
         expect(res.body.success).toBe(true);
     });
 
-    test('accepts checkout auth requirement events before registration', async () => {
+    test('accepts checkout auth funnel events before registration', async () => {
         const csrfToken = await getCsrfToken();
-        const res = await request(app)
-            .post('/api/payment/funnel-event')
-            .set('x-csrf-token', csrfToken)
-            .send({
-                eventName: 'checkout_auth_required',
-                source: 'trial_paywall',
-                feature: 'numerologie_vyklad',
-                planId: 'pruvodce',
-                metadata: {
-                    path: '/numerologie.html',
-                    redirect: '/cenik.html',
-                    auth_mode: 'register',
-                    billing_interval: 'monthly'
-                }
-            });
 
-        expect(res.status).toBe(200);
-        expect(res.body.success).toBe(true);
+        for (const eventName of [
+            'checkout_auth_required',
+            'checkout_auth_page_viewed',
+            'checkout_auth_form_submitted'
+        ]) {
+            const res = await request(app)
+                .post('/api/payment/funnel-event')
+                .set('x-csrf-token', csrfToken)
+                .send({
+                    eventName,
+                    source: 'trial_paywall',
+                    feature: 'numerologie_vyklad',
+                    planId: 'pruvodce',
+                    metadata: {
+                        path: eventName === 'checkout_auth_required' ? '/numerologie.html' : '/prihlaseni.html',
+                        redirect: '/cenik.html',
+                        auth_mode: 'register',
+                        billing_interval: 'monthly'
+                    }
+                });
+
+            expect(res.status).toBe(200);
+            expect(res.body.success).toBe(true);
+        }
     });
 
     test('accepts activation and ritual events with product context', async () => {

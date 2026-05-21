@@ -521,6 +521,18 @@ test.describe('Login stránka', () => {
                 entry_feature: 'tarot_multi_card'
             })
         }));
+        await expect.poll(() => funnelEvents.find((event) => event.eventName === 'checkout_auth_page_viewed') || null).toEqual(expect.objectContaining({
+            source: 'inline_paywall',
+            feature: 'tarot_multi_card',
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                path: '/prihlaseni.html',
+                redirect: '/cenik.html',
+                auth_mode: 'register',
+                entry_source: 'inline_paywall',
+                entry_feature: 'tarot_multi_card'
+            })
+        }));
         await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_checkout_auth_required_events'))).toBeNull();
     });
 
@@ -616,6 +628,35 @@ test.describe('Login stránka', () => {
             await waitForPageReady(page);
             await submitRegisterForm(page, scenario.email);
 
+            await expect.poll(() => funnelEvents.find((event) => (
+                event.eventName === 'checkout_auth_page_viewed'
+                && event.feature === scenario.feature
+            )) || null).toEqual(expect.objectContaining({
+                source: scenario.source,
+                feature: scenario.feature,
+                planId: 'pruvodce',
+                metadata: expect.objectContaining({
+                    path: '/prihlaseni.html',
+                    redirect: '/cenik.html',
+                    entry_source: scenario.entrySource,
+                    entry_feature: scenario.feature
+                })
+            }));
+            await expect.poll(() => funnelEvents.find((event) => (
+                event.eventName === 'checkout_auth_form_submitted'
+                && event.feature === scenario.feature
+            )) || null).toEqual(expect.objectContaining({
+                source: scenario.source,
+                feature: scenario.feature,
+                planId: 'pruvodce',
+                metadata: expect.objectContaining({
+                    path: '/prihlaseni.html',
+                    redirect: '/cenik.html',
+                    auth_mode: 'register',
+                    entry_source: scenario.entrySource,
+                    entry_feature: scenario.feature
+                })
+            }));
             await expect.poll(
                 () => page.evaluate(() => JSON.parse(localStorage.getItem('mh_post_verification_checkout') || 'null')),
                 { timeout: 5000 }

@@ -176,6 +176,8 @@ const PUBLIC_FUNNEL_EVENTS = new Set([
     'pricing_product_cta_clicked',
     'pricing_recommendation_clicked',
     'checkout_auth_required',
+    'checkout_auth_page_viewed',
+    'checkout_auth_form_submitted',
     'checkout_post_verification_pending',
     'checkout_post_verification_recovered',
     'first_value_completed',
