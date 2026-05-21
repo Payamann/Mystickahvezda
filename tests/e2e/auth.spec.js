@@ -386,6 +386,89 @@ test.describe('Login stránka', () => {
         ]);
     });
 
+    test('login s pending checkout kontextem dokonci Stripe checkout', async ({ page }) => {
+        const email = 'login-pending-checkout@example.com';
+        const funnelEvents = [];
+        let checkoutPayload = null;
+
+        await mockSuccessfulLogin(page, email);
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            funnelEvents.push(route.request().postDataJSON());
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.route('**/api/payment/create-checkout-session', async (route) => {
+            checkoutPayload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    id: 'cs_login_pending_checkout',
+                    url: '/profil.html?payment=success&plan=pruvodce&session_id=cs_login_pending_checkout'
+                })
+            });
+        });
+
+        await page.goto('/prihlaseni.html?mode=login&redirect=/cenik.html&plan=pruvodce&source=trial_paywall&feature=numerologie_vyklad&entry_source=trial_paywall&entry_feature=numerologie_vyklad&billing_interval=monthly');
+        await waitForPageReady(page);
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+
+        await Promise.all([
+            page.waitForURL(
+                url => url.pathname === '/profil.html' && url.searchParams.get('session_id') === 'cs_login_pending_checkout',
+                { timeout: 10000, waitUntil: 'domcontentloaded' }
+            ),
+            submitLoginForm(page, email),
+        ]);
+
+        expect(checkoutPayload).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            source: 'trial_paywall',
+            feature: 'numerologie_vyklad',
+            billingInterval: 'monthly',
+            metadata: expect.objectContaining({
+                entry_source: 'trial_paywall',
+                entry_feature: 'numerologie_vyklad'
+            })
+        }));
+
+        await expect.poll(() => funnelEvents.find((event) => event.eventName === 'checkout_auth_page_viewed') || null).toEqual(expect.objectContaining({
+            source: 'trial_paywall',
+            feature: 'numerologie_vyklad',
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                path: '/prihlaseni.html',
+                redirect: '/cenik.html',
+                auth_mode: 'login',
+                billing_interval: 'monthly',
+                entry_source: 'trial_paywall',
+                entry_feature: 'numerologie_vyklad'
+            })
+        }));
+
+        await expect.poll(() => funnelEvents.find((event) => event.eventName === 'checkout_auth_form_submitted') || null).toEqual(expect.objectContaining({
+            source: 'trial_paywall',
+            feature: 'numerologie_vyklad',
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                path: '/prihlaseni.html',
+                redirect: '/cenik.html',
+                auth_mode: 'login',
+                billing_interval: 'monthly',
+                entry_source: 'trial_paywall',
+                entry_feature: 'numerologie_vyklad',
+                step: 'login_form_submitted'
+            })
+        }));
+        expect(await page.evaluate(() => localStorage.getItem('mh_post_verification_checkout'))).toBeNull();
+        expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
+    });
+
     test('mobilni login s pending checkout kontextem nekryje cookie banner', async ({ page }) => {
         await page.setViewportSize(MOBILE_VIEWPORT);
         await page.evaluate(() => {
