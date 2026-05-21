@@ -218,6 +218,28 @@ describe('Admin funnel report helpers', () => {
         }));
     });
 
+    test('counts direct paywall CTA clicks as paid intent', () => {
+        const report = buildFunnelReport([
+            { event_name: 'paywall_viewed', source: 'partner_match_result', feature: 'partnerska_detail', created_at: '2026-04-20T10:00:00.000Z' },
+            { event_name: 'paywall_cta_clicked', source: 'partner_match_result', feature: 'partnerska_detail', plan_id: 'pruvodce', created_at: '2026-04-20T10:00:10.000Z' },
+            { event_name: 'checkout_auth_required', source: 'partner_match_result', feature: 'partnerska_detail', plan_id: 'pruvodce', created_at: '2026-04-20T10:00:11.000Z' },
+        ]);
+
+        expect(report.metrics.paywallViewed).toBe(1);
+        expect(report.metrics.pricingIntent).toBe(1);
+        expect(report.metrics.checkoutAuthRequired).toBe(1);
+        expect(report.metrics.paywallToPricingIntentRate).toBe(100);
+        expect(report.metrics.pricingIntentToAuthHandoffRate).toBe(100);
+        expect(report.sourceFeatureSegments[0]).toEqual(expect.objectContaining({
+            source: 'partner_match_result',
+            feature: 'partnerska_detail',
+            pricingIntent: 1,
+            checkoutAuthRequired: 1,
+            paywallToPricingIntentRate: 100,
+            pricingIntentToAuthHandoffRate: 100
+        }));
+    });
+
     test('separates checkout requests from created Stripe sessions', () => {
         const report = buildFunnelReport([
             { event_name: 'paywall_viewed', source: 'trial_paywall', feature: 'numerologie_vyklad', created_at: '2026-04-20T10:00:00.000Z' },

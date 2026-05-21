@@ -42,6 +42,7 @@ const FUNNEL_PAYWALL_VIEW_EVENTS = new Set([
 ]);
 
 const FUNNEL_PRICING_INTENT_EVENTS = new Set([
+    'paywall_cta_clicked',
     'pricing_plan_cta_clicked',
     'pricing_product_cta_clicked',
     'one_time_product_cta_clicked',
