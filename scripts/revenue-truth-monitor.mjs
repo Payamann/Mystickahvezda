@@ -16,7 +16,7 @@ dotenv.config({ path: path.join(rootDir, 'server', '.env') });
 function usage() {
     return [
         'Usage: node scripts/revenue-truth-monitor.mjs [--since ISO | --since-railway-status | --since-live-production] [--output-dir <temp-dir>]',
-        '       [--sha <commit>] [--repo owner/name] [--base-url https://...] [--top 10] [--min-events 1] [--min-step 1] [--allow-repo-output]',
+        '       [--sha <commit>] [--repo owner/name] [--base-url https://...] [--top 10] [--min-events 1] [--min-step 1] [--allow-repo-output] [--summary-only]',
         '',
         'Exports post-deploy, 24h, 7d, and 30d live funnel windows outside the repo,',
         'then runs the funnel leak analyzer for each generated CSV.'
@@ -36,7 +36,8 @@ function parseArgs(argv) {
         minEvents: '1',
         minStep: '1',
         allowRepoOutput: false,
-        skipAnalyticsPulse: false
+        skipAnalyticsPulse: false,
+        summaryOnly: false
     };
 
     for (let index = 0; index < argv.length; index += 1) {
@@ -86,6 +87,8 @@ function parseArgs(argv) {
             args.allowRepoOutput = true;
         } else if (arg === '--skip-analytics-pulse') {
             args.skipAnalyticsPulse = true;
+        } else if (arg === '--summary-only') {
+            args.summaryOnly = true;
         } else {
             throw new Error(`Unknown argument: ${arg}\n${usage()}`);
         }
@@ -414,15 +417,17 @@ async function main() {
         }
         if (windowReport) monitorReport.windows.push(windowReport);
 
-        runNodeScript('scripts/analyze-funnel-segments.mjs', [
-            csvPath,
-            '--top',
-            args.top,
-            '--min-events',
-            args.minEvents,
-            '--min-step',
-            args.minStep
-        ]);
+        if (!args.summaryOnly) {
+            runNodeScript('scripts/analyze-funnel-segments.mjs', [
+                csvPath,
+                '--top',
+                args.top,
+                '--min-events',
+                args.minEvents,
+                '--min-step',
+                args.minStep
+            ]);
+        }
     }
 
     const primaryWindow = monitorReport.windows.find((windowDef) => windowDef.basis === 'primary_window') || monitorReport.windows[0] || null;

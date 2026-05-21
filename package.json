@@ -46,6 +46,7 @@
     "analyze:funnel": "node scripts/analyze-funnel-segments.mjs",
     "monitor:revenue-truth": "node scripts/revenue-truth-monitor.mjs",
     "monitor:revenue-truth:production": "node scripts/revenue-truth-monitor.mjs --since-live-production",
+    "monitor:revenue-truth:production:summary": "node scripts/revenue-truth-monitor.mjs --since-live-production --summary-only",
     "audit:site": "node scripts/audit-site-structure.mjs",
     "audit:tarot-assets": "node server/scripts/verify-tarot-paths.js",
     "sitemap:generate": "node scripts/generate-sitemap-from-canonicals.mjs",

@@ -141,6 +141,7 @@ describe('manual script guardrails', () => {
         expect(source).toContain('scripts/analyze-funnel-segments.mjs');
         expect(source).toContain('monitor-summary.json');
         expect(source).toContain('next_action');
+        expect(source).toContain('--summary-only');
     });
 
     test('production verifier covers intent landing clusters', () => {
