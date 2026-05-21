@@ -1063,6 +1063,90 @@ test.describe('Login stránka', () => {
         }));
     });
 
+    test('auth completed analytics outage neblokuje post-verification checkout resume', async ({ page }) => {
+        const funnelEvents = [];
+        let checkoutPayload = null;
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            funnelEvents.push(route.request().postDataJSON());
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await mockSuccessfulLogin(page, 'auth-analytics-outage@example.com');
+
+        await page.route('**/api/payment/create-checkout-session', async (route) => {
+            checkoutPayload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    id: 'cs_auth_analytics_outage',
+                    url: '/profil.html?payment=success&plan=pruvodce&session_id=cs_auth_analytics_outage'
+                })
+            });
+        });
+
+        await page.goto('/prihlaseni.html?mode=login');
+        await waitForPageReady(page);
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+            localStorage.setItem('mh_post_verification_checkout', JSON.stringify({
+                planId: 'pruvodce',
+                createdAt: Date.now(),
+                context: {
+                    planId: 'pruvodce',
+                    source: 'trial_paywall',
+                    feature: 'numerologie_vyklad',
+                    redirect: '/cenik.html',
+                    authMode: 'register',
+                    metadata: {
+                        entry_source: 'trial_paywall',
+                        entry_feature: 'numerologie_vyklad'
+                    }
+                }
+            }));
+
+            const analytics = window.MH_ANALYTICS || (window.MH_ANALYTICS = {});
+            analytics.trackAuthCompleted = () => {
+                throw new Error('temporary auth analytics outage');
+            };
+        });
+
+        await Promise.all([
+            page.waitForURL(
+                url => url.pathname === '/profil.html' && url.searchParams.get('session_id') === 'cs_auth_analytics_outage',
+                { timeout: 10000, waitUntil: 'domcontentloaded' }
+            ),
+            submitLoginForm(page, 'auth-analytics-outage@example.com'),
+        ]);
+
+        expect(checkoutPayload).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            source: 'trial_paywall',
+            feature: 'numerologie_vyklad',
+            billingInterval: null,
+            metadata: expect.objectContaining({
+                entry_source: 'trial_paywall',
+                entry_feature: 'numerologie_vyklad'
+            })
+        }));
+        await expect.poll(() => funnelEvents.find((event) => event.eventName === 'checkout_post_verification_recovered') || null).toEqual(expect.objectContaining({
+            source: 'trial_paywall',
+            feature: 'numerologie_vyklad',
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                entry_source: 'trial_paywall',
+                entry_feature: 'numerologie_vyklad'
+            })
+        }));
+        expect(await page.evaluate(() => localStorage.getItem('mh_post_verification_checkout'))).toBeNull();
+    });
+
     test('checkout intent prezije email verifikaci a obnovi se pri dalsim prihlaseni', async ({ page }) => {
         test.setTimeout(60000);
 

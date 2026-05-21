@@ -346,7 +346,7 @@
                     }
                     const authSource = checkoutContext?.source || standaloneContext?.source || null;
                     const authFeature = checkoutContext?.feature || standaloneContext?.feature || null;
-                    window.MH_ANALYTICS?.trackAuthCompleted?.('register', {
+                    const analyticsTracked = this.trackAuthCompletedSafely('register', {
                         source: authSource,
                         feature: authFeature,
                         entry_source: authSource,
@@ -354,7 +354,7 @@
                     });
                     this.showToast('Ověření emailu', 'Pro dokončení registrace potvrďte prosím svůj email. 📧', 'success');
                     this.closeModal(); // Close modal but don't login yet
-                    return { success: true, verificationRequired: true, analyticsTracked: true };
+                    return { success: true, verificationRequired: true, analyticsTracked };
                 }
 
                 this.loginSuccess(data, { mode: 'register' });
@@ -427,6 +427,16 @@
             }
         },
 
+        trackAuthCompletedSafely(authMode, payload = {}) {
+            try {
+                window.MH_ANALYTICS?.trackAuthCompleted?.(authMode, payload);
+                return true;
+            } catch (analyticsError) {
+                console.warn('[FUNNEL] Auth completion analytics failed:', analyticsError.message);
+                return false;
+            }
+        },
+
         loginSuccess(data, options = {}) {
             // Token is now in HttpOnly cookie (set by server)
             // We only store user data in localStorage
@@ -472,7 +482,7 @@
             const authMode = options.mode === 'register' ? 'register' : 'login';
             const authSource = checkoutContext?.source || standaloneContext?.source || null;
             const authFeature = checkoutContext?.feature || standaloneContext?.feature || null;
-            window.MH_ANALYTICS?.trackAuthCompleted?.(authMode, {
+            this.trackAuthCompletedSafely(authMode, {
                 source: authSource,
                 feature: authFeature,
                 entry_source: authSource,
