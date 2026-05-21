@@ -5,11 +5,12 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const DEFAULT_REPO = 'Payamann/MystickaHvezdaOriginalAntigravity';
 
 function usage() {
     return [
-        'Usage: node scripts/revenue-truth-monitor.mjs [--since ISO] [--output-dir <temp-dir>]',
-        '       [--top 10] [--min-events 1] [--min-step 1] [--allow-repo-output]',
+        'Usage: node scripts/revenue-truth-monitor.mjs [--since ISO | --since-railway-status] [--output-dir <temp-dir>]',
+        '       [--sha <commit>] [--repo owner/name] [--top 10] [--min-events 1] [--min-step 1] [--allow-repo-output]',
         '',
         'Exports post-deploy, 24h, 7d, and 30d live funnel windows outside the repo,',
         'then runs the funnel leak analyzer for each generated CSV.'
@@ -19,6 +20,9 @@ function usage() {
 function parseArgs(argv) {
     const args = {
         since: null,
+        sinceRailwayStatus: false,
+        sha: null,
+        repo: process.env.GITHUB_REPOSITORY || DEFAULT_REPO,
         outputDir: path.join(os.tmpdir(), 'mh-funnel'),
         top: '10',
         minEvents: '1',
@@ -37,6 +41,16 @@ function parseArgs(argv) {
             args.since = next();
         } else if (arg.startsWith('--since=')) {
             args.since = arg.slice('--since='.length);
+        } else if (arg === '--since-railway-status') {
+            args.sinceRailwayStatus = true;
+        } else if (arg === '--sha') {
+            args.sha = next();
+        } else if (arg.startsWith('--sha=')) {
+            args.sha = arg.slice('--sha='.length);
+        } else if (arg === '--repo') {
+            args.repo = next();
+        } else if (arg.startsWith('--repo=')) {
+            args.repo = arg.slice('--repo='.length);
         } else if (arg === '--output-dir') {
             args.outputDir = next();
         } else if (arg.startsWith('--output-dir=')) {
@@ -63,6 +77,10 @@ function parseArgs(argv) {
     return args;
 }
 
+function git(args) {
+    return execFileSync('git', args, { cwd: rootDir, encoding: 'utf8' }).trim();
+}
+
 function assertOutsideRepo(outputDir, allowRepoOutput) {
     const resolvedOutputDir = path.resolve(outputDir);
     const relative = path.relative(rootDir, resolvedOutputDir);
@@ -73,6 +91,52 @@ function assertOutsideRepo(outputDir, allowRepoOutput) {
     }
 
     return resolvedOutputDir;
+}
+
+async function fetchGitHubJson(url) {
+    const headers = {
+        Accept: 'application/vnd.github+json',
+        'User-Agent': 'mysticka-hvezda-revenue-truth-monitor'
+    };
+    if (process.env.GITHUB_TOKEN) {
+        headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+    }
+
+    const response = await fetch(url, { headers });
+    if (!response.ok) {
+        throw new Error(`${url} returned ${response.status}`);
+    }
+
+    return response.json();
+}
+
+async function getRailwayStatusSince({ repo, sha }) {
+    const resolvedSha = sha || git(['rev-parse', 'HEAD']);
+    const status = await fetchGitHubJson(`https://api.github.com/repos/${repo}/commits/${resolvedSha}/status`);
+    const statuses = Array.isArray(status.statuses) ? status.statuses : [];
+    const railwayStatus = statuses.find((item) => (
+        item.state === 'success'
+        && /railway|mystickahvezda/i.test(`${item.context || ''} ${item.description || ''} ${item.target_url || ''}`)
+    )) || statuses.find((item) => item.state === 'success');
+
+    if (!railwayStatus?.updated_at && !railwayStatus?.created_at) {
+        throw new Error(`No successful deployment status timestamp found for ${repo}@${resolvedSha}.`);
+    }
+
+    const since = railwayStatus.updated_at || railwayStatus.created_at;
+    console.log(`[revenue-truth] since from GitHub deployment status: ${since} sha=${resolvedSha} context="${railwayStatus.context || 'unknown'}"`);
+    return since;
+}
+
+async function resolveSince(args) {
+    if (args.since && args.sinceRailwayStatus) {
+        throw new Error('Use either --since or --since-railway-status, not both.');
+    }
+    if (args.since) return args.since;
+    if (args.sinceRailwayStatus) {
+        return getRailwayStatusSince(args);
+    }
+    return null;
 }
 
 function runNodeScript(scriptPath, args) {
@@ -148,8 +212,9 @@ function windowDefinitions(since) {
     ];
 }
 
-function main() {
+async function main() {
     const args = parseArgs(process.argv.slice(2));
+    args.since = await resolveSince(args);
     const outputDir = assertOutsideRepo(args.outputDir, args.allowRepoOutput);
     mkdirSync(outputDir, { recursive: true });
 
@@ -183,7 +248,7 @@ function main() {
 }
 
 try {
-    main();
+    await main();
 } catch (error) {
     console.error(`[revenue-truth] ${error.message}`);
     process.exitCode = 1;
