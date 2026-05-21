@@ -730,9 +730,29 @@ body.page-pricing.cookie-banner-active .mh-inline-cc8b54ce84 {
 }
 
 @media (max-width: 680px) {
-    body.page-pricing.cookie-banner-active .pricing-plan-recommendation,
     body.page-pricing.cookie-banner-active .hero__trust-badge {
         display: none;
+    }
+
+    body.page-pricing.cookie-banner-active .pricing-plan-recommendation {
+        display: block;
+        max-width: 100%;
+        margin-top: 0.65rem;
+        padding: 0.72rem 0.78rem;
+        border-radius: 14px;
+    }
+
+    body.page-pricing.cookie-banner-active .pricing-plan-recommendation__actions {
+        gap: 0.45rem;
+        margin-top: 0.6rem;
+    }
+
+    body.page-pricing.cookie-banner-active .pricing-plan-recommendation__action,
+    body.page-pricing.cookie-banner-active .pricing-plan-recommendation__preview {
+        min-height: 38px;
+        padding: 0.44rem 0.62rem;
+        font-size: 0.72rem;
+        line-height: 1.18;
     }
 
     body.page-pricing.cookie-banner-active .mh-inline-fd21170680 {

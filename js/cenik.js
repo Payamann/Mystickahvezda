@@ -976,6 +976,9 @@ function bindCheckoutButtons(context) {
             button.setAttribute('aria-describedby', Array.from(describedBy).join(' '));
         }
 
+        if (button.dataset.checkoutBound === '1') return;
+        button.dataset.checkoutBound = '1';
+
         button.addEventListener('click', async (event) => {
             event.preventDefault();
             const planId = button.dataset.plan;
@@ -983,15 +986,16 @@ function bindCheckoutButtons(context) {
             if (button.dataset.checkoutPending === '1') return;
 
             const isLoggedIn = !!window.Auth?.isLoggedIn?.();
-            const checkoutSource = context.source || 'pricing_page';
-            const checkoutFeature = context.feature || 'premium_membership';
+            const activeContext = resolveCheckoutContext();
+            const checkoutSource = activeContext.source || context.source || 'pricing_page';
+            const checkoutFeature = activeContext.feature || context.feature || 'premium_membership';
             const checkoutContext = {
                 source: checkoutSource,
                 feature: checkoutFeature,
                 metadata: getEntryMetadata({
                     source: checkoutSource,
                     feature: checkoutFeature,
-                    metadata: context.metadata || {}
+                    metadata: activeContext.metadata || context.metadata || {}
                 }),
                 billing_interval: currentBilling,
                 redirect: '/cenik.html',
@@ -1006,11 +1010,11 @@ function bindCheckoutButtons(context) {
                 source: checkoutContext.source,
                 feature: checkoutContext.feature,
                 billing_interval: currentBilling,
-                ...(context.metadata || {})
+                ...(activeContext.metadata || context.metadata || {})
             });
 
             const pricingIntentPromise = waitForFunnelEventBeforeNavigation(trackPricingFunnelEvent('pricing_plan_cta_clicked', {
-                ...context,
+                ...activeContext,
                 recommendedPlan: planId
             }, {
                 label: button.textContent?.trim() || 'checkout',
@@ -1145,6 +1149,9 @@ function bindPricingDecisionGuide(context) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const initialContext = resolveCheckoutContext();
+    bindCheckoutButtons(initialContext);
+
     await loadPlanManifest();
     const context = resolveCheckoutContext();
     const initialBilling = resolveBillingIntervalFromPlan(context.recommendedPlan) || 'monthly';
