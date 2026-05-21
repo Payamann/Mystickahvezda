@@ -18,10 +18,12 @@ function usage() {
     return [
         'Usage: node scripts/revenue-truth-monitor.mjs [--since ISO | --since-railway-status | --since-live-production] [--output-dir <temp-dir>]',
         '       [--sha <commit>] [--repo owner/name] [--base-url https://...] [--top 10] [--min-events 1] [--min-step 1] [--allow-repo-output] [--summary-only]',
+        '       [--diagnostic-since ISO] [--diagnostic-label funnel-fix]',
         '       [--github-status-fallback-minutes 15]',
         '',
         'Exports post-deploy, 24h, 7d, and 30d live funnel windows outside the repo,',
-        'then runs the funnel leak analyzer for each generated CSV.'
+        'then runs the funnel leak analyzer for each generated CSV. Use --diagnostic-since',
+        'to keep a stable funnel-fix baseline beside the latest production-deploy window.'
     ].join('\n');
 }
 
@@ -37,6 +39,8 @@ function parseArgs(argv) {
         top: '10',
         minEvents: '1',
         minStep: '1',
+        diagnosticSince: null,
+        diagnosticLabel: 'diagnostic-baseline',
         allowRepoOutput: false,
         skipAnalyticsPulse: false,
         summaryOnly: false,
@@ -89,6 +93,14 @@ function parseArgs(argv) {
             args.minStep = next();
         } else if (arg.startsWith('--min-step=')) {
             args.minStep = arg.slice('--min-step='.length);
+        } else if (arg === '--diagnostic-since') {
+            args.diagnosticSince = next();
+        } else if (arg.startsWith('--diagnostic-since=')) {
+            args.diagnosticSince = arg.slice('--diagnostic-since='.length);
+        } else if (arg === '--diagnostic-label') {
+            args.diagnosticLabel = next();
+        } else if (arg.startsWith('--diagnostic-label=')) {
+            args.diagnosticLabel = arg.slice('--diagnostic-label='.length);
         } else if (arg === '--allow-repo-output') {
             args.allowRepoOutput = true;
         } else if (arg === '--skip-analytics-pulse') {
@@ -254,12 +266,16 @@ function readSummary(summaryPath) {
     return JSON.parse(readFileSync(summaryPath, 'utf8'));
 }
 
-function formatDecision(metrics = {}, { historicalContext = false } = {}) {
+function formatDecision(metrics = {}, { historicalContext = false, diagnosticBaseline = false } = {}) {
     const authRequired = metrics.checkoutAuthRequired || 0;
     const checkoutRequested = metrics.checkoutRequested || 0;
     const checkoutStarted = metrics.checkoutStarted || 0;
     const purchases = (metrics.subscriptionCompleted || 0) + (metrics.oneTimeCompleted || 0);
-    const prefix = historicalContext ? 'Historical context only: ' : '';
+    const prefix = diagnosticBaseline
+        ? 'Diagnostic baseline: '
+        : historicalContext
+            ? 'Historical context only: '
+            : '';
 
     if (authRequired > 0 && checkoutRequested === 0) {
         return `${prefix}P0: post-auth checkout resume/debug`;
@@ -271,16 +287,22 @@ function formatDecision(metrics = {}, { historicalContext = false } = {}) {
         return `${prefix}P0: checkout trust/cancel recovery`;
     }
     if ((metrics.totalEvents || 0) === 0) {
+        if (diagnosticBaseline) {
+            return 'Diagnostic baseline: no funnel events in this stable window';
+        }
         return historicalContext
             ? 'Historical context only: no funnel events in this aggregate window'
             : 'No product change: insufficient post-deploy funnel events';
+    }
+    if (diagnosticBaseline) {
+        return 'Diagnostic baseline: no critical revenue leak in this stable window';
     }
     return historicalContext
         ? 'Historical context only: no critical revenue leak in this aggregate window'
         : 'Monitor: no critical revenue leak in this aggregate window';
 }
 
-function buildWindowReport(windowDef, summary, { historicalContext = false } = {}) {
+function buildWindowReport(windowDef, summary, { historicalContext = false, diagnosticBaseline = false } = {}) {
     if (!summary) return null;
     const metrics = summary.metrics || {};
     const purchases = (metrics.subscriptionCompleted || 0) + (metrics.oneTimeCompleted || 0);
@@ -288,7 +310,11 @@ function buildWindowReport(windowDef, summary, { historicalContext = false } = {
     return {
         label: windowDef.label,
         slug: windowDef.slug,
-        basis: historicalContext ? 'historical_context' : 'primary_window',
+        basis: diagnosticBaseline
+            ? 'diagnostic_baseline'
+            : historicalContext
+                ? 'historical_context'
+                : 'primary_window',
         since: summary.since || null,
         until: summary.periodEnd || null,
         events: summary.totalEvents || 0,
@@ -297,17 +323,17 @@ function buildWindowReport(windowDef, summary, { historicalContext = false } = {
         checkout_requested: metrics.checkoutRequested || 0,
         checkout_started: metrics.checkoutStarted || 0,
         purchases,
-        decision: formatDecision({ ...metrics, totalEvents: summary.totalEvents || 0 }, { historicalContext })
+        decision: formatDecision({ ...metrics, totalEvents: summary.totalEvents || 0 }, { historicalContext, diagnosticBaseline })
     };
 }
 
-function printSummary(label, summary, { historicalContext = false } = {}) {
+function printSummary(label, summary, { historicalContext = false, diagnosticBaseline = false } = {}) {
     if (!summary) {
         console.log(`[revenue-truth] ${label}: summary unavailable`);
         return;
     }
 
-    const report = buildWindowReport({ label, slug: label }, summary, { historicalContext });
+    const report = buildWindowReport({ label, slug: label }, summary, { historicalContext, diagnosticBaseline });
 
     console.log([
         `[revenue-truth] ${label}:`,
@@ -388,21 +414,45 @@ async function printAnalyticsPulse(label, summary, supabase) {
     return pulse;
 }
 
-function deriveNextAction(primaryWindow) {
+function deriveNextAction(primaryWindow, windows = []) {
     if (!primaryWindow) return 'No primary window available; rerun the monitor with a valid deploy window.';
     if (primaryWindow.events === 0) {
+        const diagnosticWindow = windows.find((windowDef) => (
+            windowDef.basis === 'diagnostic_baseline'
+            && windowDef.events > 0
+        ));
+        if (diagnosticWindow) {
+            return `Latest deploy window has no paid funnel events; stable diagnostic baseline says: ${diagnosticWindow.decision}`;
+        }
         return 'Repeat monitor later; use historical windows for diagnostics and test coverage only.';
     }
     return primaryWindow.decision;
 }
 
-function windowDefinitions(since) {
+function slugifyLabel(label) {
+    return String(label || 'diagnostic-baseline')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'diagnostic-baseline';
+}
+
+function windowDefinitions({ since, diagnosticSince, diagnosticLabel }) {
     const windows = [];
     if (since) {
         windows.push({
             label: 'post-deploy',
             slug: 'post-deploy',
             exportArgs: ['--since', since]
+        });
+    }
+    if (diagnosticSince) {
+        const slug = `diagnostic-${slugifyLabel(diagnosticLabel)}`;
+        windows.push({
+            label: diagnosticLabel || 'diagnostic-baseline',
+            slug,
+            exportArgs: ['--since', diagnosticSince],
+            diagnosticBaseline: true
         });
     }
 
@@ -419,11 +469,17 @@ async function main() {
     args.since = await resolveSince(args);
     const outputDir = assertOutsideRepo(args.outputDir, args.allowRepoOutput);
     const supabase = args.skipAnalyticsPulse ? null : createSupabaseClient();
-    const windows = windowDefinitions(args.since);
+    const windows = windowDefinitions({
+        since: args.since,
+        diagnosticSince: args.diagnosticSince,
+        diagnosticLabel: args.diagnosticLabel
+    });
     const hasPostDeployWindow = windows.some((windowDef) => windowDef.slug === 'post-deploy');
     const monitorReport = {
         generated_at: new Date().toISOString(),
         deploy_since: args.since || null,
+        diagnostic_since: args.diagnosticSince || null,
+        diagnostic_label: args.diagnosticSince ? args.diagnosticLabel : null,
         windows: []
     };
     mkdirSync(outputDir, { recursive: true });
@@ -447,9 +503,10 @@ async function main() {
         ]);
 
         const summary = readSummary(summaryPath);
-        const historicalContext = hasPostDeployWindow && windowDef.slug !== 'post-deploy';
-        printSummary(windowDef.label, summary, { historicalContext });
-        const windowReport = buildWindowReport(windowDef, summary, { historicalContext });
+        const diagnosticBaseline = Boolean(windowDef.diagnosticBaseline);
+        const historicalContext = hasPostDeployWindow && windowDef.slug !== 'post-deploy' && !diagnosticBaseline;
+        printSummary(windowDef.label, summary, { historicalContext, diagnosticBaseline });
+        const windowReport = buildWindowReport(windowDef, summary, { historicalContext, diagnosticBaseline });
         if (windowDef.slug === 'post-deploy') {
             const analyticsPulse = await printAnalyticsPulse(windowDef.label, summary, supabase);
             if (windowReport && analyticsPulse) windowReport.analytics_pulse = analyticsPulse;
@@ -471,7 +528,7 @@ async function main() {
 
     const primaryWindow = monitorReport.windows.find((windowDef) => windowDef.basis === 'primary_window') || monitorReport.windows[0] || null;
     monitorReport.primary_decision = primaryWindow?.decision || null;
-    monitorReport.next_action = deriveNextAction(primaryWindow);
+    monitorReport.next_action = deriveNextAction(primaryWindow, monitorReport.windows);
     const monitorSummaryPath = path.join(outputDir, 'monitor-summary.json');
     writeFileSync(monitorSummaryPath, `${JSON.stringify(monitorReport, null, 2)}\n`, 'utf8');
     console.log(`[revenue-truth] monitor_summary=${monitorSummaryPath}`);

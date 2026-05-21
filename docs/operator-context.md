@@ -42,12 +42,17 @@ Primary funnel: visit -> first value -> signup -> onboarding completed -> saved 
   - `1fb1b40d` guarded post-auth checkout resume against auth-completed analytics failures
   - `77ab0e02` guarded signup activation redirects against activation analytics failures
   - `a90ea939` guarded reading save, first-value completion, and reading feedback against analytics failures
+  - `f04ac7c5` busted the cached auth client for checkout handoff and verified production context preservation
+  - `bc04f871` unified the auth client cache version across public pages
+  - `4c7e4b30` added production critical asset smoke coverage
+  - `e14ce2c7` made deploy guard run the critical asset smoke before declaring `DEPLOY OK`
 - Latest known revenue truth:
-  - Production is verified on `a90ea939`
-  - Latest post-deploy windows after `a90ea939` still have insufficient paid funnel events
+  - Production is verified on `e14ce2c7`
+  - Latest post-deploy windows after `e14ce2c7` still have insufficient paid funnel events
   - First-party analytics ingestion is active and production health is ok
   - 24h/7d/30d historical windows still show `checkout_auth_required > 0` and `checkout_requested = 0`
   - Do not treat the older windows as proof that the latest fix failed; use fresh post-deploy cohorts first
+  - Frequent QA deploys can reset the latest post-deploy window; use `--diagnostic-since <FUNNEL_FIX_ISO>` when you need a stable funnel-fix baseline beside the latest deploy health window
   - If the next fresh post-deploy paid event again shows `checkout_auth_required > 0` and `checkout_requested = 0`, prioritize post-auth checkout resume/debug with segment detail
 
 ## Default Operator Loop
@@ -133,6 +138,7 @@ Revenue truth:
 ```powershell
 $dir = Join-Path $env:TEMP 'mh-funnel'
 node scripts/revenue-truth-monitor.mjs --since-live-production --output-dir $dir
+node scripts/revenue-truth-monitor.mjs --since-live-production --diagnostic-since <FUNNEL_FIX_ISO> --diagnostic-label funnel-fix --output-dir $dir
 node scripts/revenue-truth-monitor.mjs --since-railway-status --output-dir $dir
 node scripts/revenue-truth-monitor.mjs --since <DEPLOY_ISO> --output-dir $dir
 node scripts/export-live-funnel.mjs --since 2026-05-20T12:55:00Z --output (Join-Path $dir 'post-deploy.csv') --summary-json (Join-Path $dir 'post-deploy.json')
@@ -144,7 +150,7 @@ node scripts/analyze-funnel-segments.mjs (Join-Path $dir '7d.csv') --top 10 --mi
 
 `monitor:revenue-truth:production` also prints a read-only first-party analytics pulse for the post-deploy window. If `analytics_events > 0` and `funnel_events = 0`, ingestion is alive and the blocker is lack of paid funnel activity rather than a broken analytics endpoint. When a post-deploy window is present, 24h/7d/30d summaries are labeled `basis=historical_context`; use them to pick test coverage or diagnostics, not to justify a runtime fix before fresh post-deploy events arrive. Each run also writes an aggregate-only `monitor-summary.json` in the chosen temp output directory; read `next_action` first in the next heartbeat.
 
-For frequent 10-15 minute heartbeats, prefer `npm.cmd run monitor:revenue-truth:production:summary -- --output-dir <temp-dir>` first. It writes the same aggregate `monitor-summary.json` and skips the verbose segment analyzer; run the full monitor only when `next_action` or fresh paid events require segment detail.
+For frequent 10-15 minute heartbeats, prefer `npm.cmd run monitor:revenue-truth:production:summary -- --output-dir <temp-dir>` first. It writes the same aggregate `monitor-summary.json` and skips the verbose segment analyzer; run the full monitor only when `next_action` or fresh paid events require segment detail. If recent QA-only deploys keep resetting the primary window, add `--diagnostic-since <FUNNEL_FIX_ISO> --diagnostic-label funnel-fix`; this keeps the latest deploy window as the production-health source of truth while adding a stable diagnostic baseline for revenue-leak triage.
 
 If GitHub commit status API returns 403 during frequent monitoring, the summary monitor falls back to a short production-health timestamp window so the operator gets an aggregate report instead of stalling. Use `--github-status-fallback-minutes <N>` only when a different heartbeat window is needed.
 
