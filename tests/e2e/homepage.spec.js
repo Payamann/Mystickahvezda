@@ -616,6 +616,8 @@ test.describe('Homepage', () => {
         expect(url.searchParams.get('plan')).toBe('pruvodce');
         expect(url.searchParams.get('source')).toBe('homepage_pricing_preview');
         expect(url.searchParams.get('feature')).toBe('premium_membership');
+        expect(url.searchParams.get('entry_source')).toBe('homepage_pricing_preview');
+        expect(url.searchParams.get('entry_feature')).toBe('premium_membership');
 
         const pendingContext = await page.evaluate(() => JSON.parse(sessionStorage.getItem('pending_checkout_context') || '{}'));
         expect(pendingContext).toEqual(expect.objectContaining({
@@ -623,7 +625,11 @@ test.describe('Homepage', () => {
             source: 'homepage_pricing_preview',
             feature: 'premium_membership',
             redirect: '/cenik.html',
-            authMode: 'register'
+            authMode: 'register',
+            metadata: expect.objectContaining({
+                entry_source: 'homepage_pricing_preview',
+                entry_feature: 'premium_membership'
+            })
         }));
     });
 

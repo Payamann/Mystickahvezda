@@ -1063,14 +1063,11 @@
         setPendingCheckout(planId, context = {}) {
             if (!planId) return;
 
-            sessionStorage.setItem(PENDING_PLAN_KEY, planId);
-            sessionStorage.setItem(PENDING_CONTEXT_KEY, JSON.stringify({
-                planId,
-                source: 'unknown',
-                redirect: '/cenik.html',
-                authMode: 'register',
-                ...context
-            }));
+            const storedContext = this.sanitizeCheckoutContextForStorage(planId, context);
+            if (!storedContext.planId) return;
+
+            sessionStorage.setItem(PENDING_PLAN_KEY, storedContext.planId);
+            sessionStorage.setItem(PENDING_CONTEXT_KEY, JSON.stringify(storedContext));
         },
 
         clearPendingCheckout() {
@@ -1669,9 +1666,10 @@
         async _startCheckout(planId, context = {}) {
             try {
                 const source = context.source || this.getPendingCheckoutContext().source || 'auth_pending_plan';
-                const checkoutMetadata = context.metadata && typeof context.metadata === 'object' && !Array.isArray(context.metadata)
-                    ? context.metadata
-                    : {};
+                const checkoutMetadata = getCheckoutMetadataFromParams(new URLSearchParams(), {
+                    ...context,
+                    source
+                });
                 window.MH_ANALYTICS?.trackCheckoutStarted?.(planId, {
                     ...checkoutMetadata,
                     source,
