@@ -46,6 +46,9 @@ const publicSourceExtensions = new Set([
     '.yaml',
     '.yml'
 ]);
+const criticalRootAssetVersions = new Map([
+    ['js/dist/auth-client.js', '11']
+]);
 const nonCanonicalOrigin = siteOrigin.replace('https://www.', 'https://');
 const allowedNonCanonicalOriginLines = new Map([
     ['server/index.js', new Set([`'${nonCanonicalOrigin}',`])],
@@ -102,6 +105,10 @@ function walkPublicSourceFiles(dir = rootDir, out = []) {
 
 function relative(file) {
     return path.relative(rootDir, file).replace(/\\/g, '/');
+}
+
+function isRootHtmlFile(file) {
+    return !relative(file).includes('/');
 }
 
 function localPathForSiteUrl(url) {
@@ -375,6 +382,33 @@ function auditLocalLinks(file, html) {
             if (!fs.existsSync(target)) {
                 report('missing_local_srcset_target', relative(file), `${candidate} -> ${relative(target)}`);
             }
+        }
+    }
+}
+
+function auditCriticalRootAssetVersions(file, html) {
+    if (!isRootHtmlFile(file)) return;
+
+    const scriptPattern = /<script\b[^>]*>/gi;
+    let match;
+
+    while ((match = scriptPattern.exec(html)) !== null) {
+        const tag = match[0];
+        const src = getAttribute(tag, 'src');
+        if (!src) continue;
+
+        const parsed = new URL(src, `${siteOrigin}/${relative(file)}`);
+        const assetPath = parsed.pathname.replace(/^\/+/, '');
+        const expectedVersion = criticalRootAssetVersions.get(assetPath);
+        if (!expectedVersion) continue;
+
+        const actualVersion = parsed.searchParams.get('v');
+        if (actualVersion !== expectedVersion) {
+            report(
+                'stale_critical_asset_version',
+                relative(file),
+                `${assetPath} must use ?v=${expectedVersion}, got ${actualVersion || '<missing>'}`
+            );
         }
     }
 }
@@ -670,6 +704,7 @@ for (const file of walkHtml()) {
     auditSitemapCoverage(file, html, sitemapLocs);
     collectIndexableCanonical(file, html, canonicalOwners);
     auditLocalLinks(file, html);
+    auditCriticalRootAssetVersions(file, html);
     auditBlogPricingContext(file, html);
     auditMetaImageTargets(file, html);
 }
@@ -687,4 +722,4 @@ if (issues.length > 0) {
     process.exit(1);
 }
 
-console.log('[site-audit] OK: robots.txt, sitemap targets, sitemap coverage, canonical uniqueness, canonical origins, canonical/hreflang targets, consent-managed analytics, local font loading, external script SRI/pinning, JSON-LD, manifest icons, local links/srcsets and meta images are valid.');
+console.log('[site-audit] OK: robots.txt, sitemap targets, sitemap coverage, canonical uniqueness, canonical origins, canonical/hreflang targets, consent-managed analytics, local font loading, external script SRI/pinning, JSON-LD, manifest icons, local links/srcsets, critical root asset versions and meta images are valid.');
