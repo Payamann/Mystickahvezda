@@ -33,9 +33,10 @@ Primary funnel: visit -> first value -> signup -> onboarding completed -> saved 
   - `ae561a5f` added checkout recovery coverage for preserving billing interval through email verification
   - `ca9eb58b` added post-verification checkout failure recovery coverage and included it in `test:e2e:checkout-recovery`
   - `8a107bc9` preserves `billing_interval` on checkout recovery URLs after session creation failures
+  - `1901b2b8` added post-verification checkout network-error recovery coverage and expanded `test:e2e:checkout-recovery` to 8 scenarios
 - Latest known revenue truth:
-  - Production is verified on `8a107bc9`
-  - Latest post-deploy windows after `8a107bc9` still have insufficient paid funnel events
+  - Production is verified on `1901b2b8`
+  - Latest post-deploy windows after `1901b2b8` still have insufficient paid funnel events
   - First-party analytics ingestion is active and production health is ok
   - 24h/7d/30d historical windows still show `checkout_auth_required > 0` and `checkout_requested = 0`
   - Do not treat the older windows as proof that the latest fix failed; use fresh post-deploy cohorts first
