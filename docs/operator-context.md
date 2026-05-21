@@ -145,12 +145,15 @@ Production checks:
 ```powershell
 npm.cmd run deploy:guard
 npm.cmd run verify:production
+npm.cmd run verify:production:commit
 npm.cmd run smoke:production:tool-runtime
 npm.cmd run smoke:production:auth-handoff
 npm.cmd run smoke:production:pricing-handoff
 ```
 
 Production browser smoke scripts should route first-party analytics and funnel-event POSTs to local success responses so diagnostic checks do not pollute revenue truth windows.
+
+If `deploy:guard` is blocked by GitHub API 403 but production health is otherwise ok, run `npm.cmd run verify:production:commit` after a short Railway wait. It derives local HEAD, requires `/api/health` to report that exact commit, and runs the full production verifier.
 
 If frequent heartbeat smoke runs hit a production natal-chart rate limit (`429`) while `/api/health` is ok, use `$env:VERIFY_SKIP_ASTRO='true'; npm.cmd run verify:production` for the next lightweight health/public-page pass. Keep full deploy confirmation on the default verifier with astro checks enabled.
 

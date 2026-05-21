@@ -116,6 +116,7 @@ describe('manual script guardrails', () => {
     test('deploy verification fails loudly when expected commit metadata is missing', () => {
         const deployGuard = readScript('scripts/deploy-guard.mjs');
         const productionVerifier = readScript('server/scripts/verify-production.js');
+        const productionCommitVerifier = readScript('scripts/verify-production-commit.mjs');
 
         expect(deployGuard).toContain('if (!liveCommit)');
         expect(deployGuard).toContain('Health deployment metadata missing');
@@ -130,6 +131,9 @@ describe('manual script guardrails', () => {
         expect(productionVerifier).toContain('VERIFY_SKIP_ASTRO');
         expect(productionVerifier).toContain('[Astro checks] skipped');
         expect(productionVerifier).toContain('Add ${VERIFY_APEX_URL} as a Railway custom domain');
+        expect(productionCommitVerifier).toContain('VERIFY_EXPECTED_SHA');
+        expect(productionCommitVerifier).toContain("git(['rev-parse', 'HEAD'])");
+        expect(productionCommitVerifier).toContain('server/scripts/verify-production.js');
     });
 
     test('revenue truth monitor keeps live exports out of the repo by default', () => {

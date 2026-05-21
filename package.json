@@ -54,6 +54,7 @@
     "sitemap:check": "node scripts/generate-sitemap-from-canonicals.mjs --check",
     "tarot:generate-meaning-hub": "node scripts/generate-tarot-meaning-hub.mjs",
     "verify:production": "node server/scripts/verify-production.js",
+    "verify:production:commit": "node scripts/verify-production-commit.mjs",
     "smoke:production:tool-runtime": "node scripts/production-tool-runtime-smoke.mjs --production",
     "smoke:production:auth-handoff": "node scripts/production-auth-handoff-smoke.mjs --production",
     "smoke:production:pricing-handoff": "node scripts/production-pricing-handoff-smoke.mjs --production",
