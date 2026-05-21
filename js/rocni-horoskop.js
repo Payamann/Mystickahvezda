@@ -28,9 +28,24 @@ function getAnnualEventPayload(extra = {}) {
     };
 }
 
+function trackAnnualAnalytics(methodName, ...args) {
+    const method = window.MH_ANALYTICS?.[methodName];
+    if (typeof method !== 'function') {
+        return false;
+    }
+
+    try {
+        method.apply(window.MH_ANALYTICS, args);
+        return true;
+    } catch (error) {
+        console.warn(`[Annual horoscope analytics] ${methodName} failed:`, error?.message || error);
+        return false;
+    }
+}
+
 function trackAnnualEvent(eventName, payload = {}) {
     const eventPayload = getAnnualEventPayload(payload);
-    window.MH_ANALYTICS?.trackEvent?.(eventName, eventPayload);
+    trackAnnualAnalytics('trackEvent', eventName, eventPayload);
     void trackAnnualFunnelEvent(eventName, eventPayload);
 }
 
@@ -93,14 +108,15 @@ function handleAnnualPaymentStatus() {
         if (formSection) formSection.hidden = true;
         if (sampleSection) sampleSection.hidden = true;
 
-        window.MH_ANALYTICS?.trackPaymentResult?.('success', {
+        trackAnnualAnalytics('trackPaymentResult', 'success', {
             product_id: ANNUAL_HOROSCOPE_PRODUCT.id,
             product_type: ANNUAL_HOROSCOPE_PRODUCT.type,
             session_id: sessionId,
             source: context.source,
             feature: context.feature
         });
-        window.MH_ANALYTICS?.trackPurchaseCompleted?.(
+        trackAnnualAnalytics(
+            'trackPurchaseCompleted',
             ANNUAL_HOROSCOPE_PRODUCT.id,
             ANNUAL_HOROSCOPE_PRODUCT.price,
             ANNUAL_HOROSCOPE_PRODUCT.currency,
@@ -115,7 +131,7 @@ function handleAnnualPaymentStatus() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (status === 'cancel') {
         document.getElementById('bannerCancel')?.classList.add('visible');
-        window.MH_ANALYTICS?.trackPaymentResult?.('cancel', {
+        trackAnnualAnalytics('trackPaymentResult', 'cancel', {
             product_id: ANNUAL_HOROSCOPE_PRODUCT.id,
             product_type: ANNUAL_HOROSCOPE_PRODUCT.type,
             source: context.source,
@@ -161,7 +177,7 @@ function getOrderBody() {
 function bindAnnualUpgradeLinks() {
     document.querySelectorAll('[data-annual-upgrade]').forEach((link) => {
         link.addEventListener('click', () => {
-            window.MH_ANALYTICS?.trackCTA?.('annual_horoscope_success_upgrade', {
+            trackAnnualAnalytics('trackCTA', 'annual_horoscope_success_upgrade', {
                 product_id: ANNUAL_HOROSCOPE_PRODUCT.id,
                 destination: link.getAttribute('href') || '/cenik.html',
                 source: 'annual_horoscope_success',
@@ -217,7 +233,7 @@ function bindAnnualOrderForm() {
         }
 
         try {
-            window.MH_ANALYTICS?.trackCheckoutStarted?.(ANNUAL_HOROSCOPE_PRODUCT.id, {
+            trackAnnualAnalytics('trackCheckoutStarted', ANNUAL_HOROSCOPE_PRODUCT.id, {
                 product_type: ANNUAL_HOROSCOPE_PRODUCT.type,
                 value: ANNUAL_HOROSCOPE_PRODUCT.price,
                 currency: ANNUAL_HOROSCOPE_PRODUCT.currency,
@@ -243,7 +259,7 @@ function bindAnnualOrderForm() {
 
             window.location.href = data.url;
         } catch (err) {
-            window.MH_ANALYTICS?.trackEvent?.('one_time_checkout_failed', {
+            trackAnnualAnalytics('trackEvent', 'one_time_checkout_failed', {
                 product_id: ANNUAL_HOROSCOPE_PRODUCT.id,
                 error_message: err.message,
                 source: getAnnualContext().source,

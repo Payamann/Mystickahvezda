@@ -278,6 +278,79 @@ test.describe('Roční horoskop — jednorázový checkout', () => {
         }));
     });
 
+    test('analytics outage neblokuje one-time checkout ročního horoskopu', async ({ page }) => {
+        let checkoutPayload = null;
+
+        await page.addInitScript(() => {
+            let analyticsValue = null;
+            Object.defineProperty(window, 'MH_ANALYTICS', {
+                configurable: true,
+                get: () => analyticsValue,
+                set: (value) => {
+                    analyticsValue = value && typeof value === 'object'
+                        ? {
+                            ...value,
+                            trackEvent: () => {
+                                throw new Error('annual analytics unavailable');
+                            },
+                            trackCheckoutStarted: () => {
+                                throw new Error('annual checkout analytics unavailable');
+                            }
+                        }
+                        : value;
+                }
+            });
+        });
+
+        await page.route('**/api/csrf-token', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ csrfToken: 'e2e-annual-analytics-token' })
+            });
+        });
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.route('**/api/rocni-horoskop/checkout', async (route) => {
+            checkoutPayload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    url: '/rocni-horoskop.html?status=success&source=pricing_addon&session_id=cs_test_annual_analytics'
+                })
+            });
+        });
+
+        await page.goto('/rocni-horoskop.html?source=pricing_addon');
+        await waitForPageReady(page);
+
+        await page.locator('#name').fill('Jana');
+        await page.locator('#birthDate').fill('1990-01-01');
+        await page.locator('#sign').selectOption('beran');
+        await page.locator('#email').fill('jana@example.cz');
+
+        await Promise.all([
+            page.waitForURL(/status=success/),
+            page.locator('#submitBtn').click(),
+        ]);
+
+        expect(checkoutPayload).toEqual(expect.objectContaining({
+            name: 'Jana',
+            birthDate: '1990-01-01',
+            sign: 'beran',
+            email: 'jana@example.cz',
+            source: 'pricing_addon'
+        }));
+    });
+
     test('úspěšný nákup nabízí přechod na Premium s konkrétním plánem', async ({ page }) => {
         await page.goto('/rocni-horoskop.html?status=success&source=pricing_addon&session_id=cs_test_annual');
         await waitForPageReady(page);
