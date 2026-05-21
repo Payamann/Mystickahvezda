@@ -39,6 +39,12 @@ const VIEWPORTS = [
     { name: 'mobile', width: 393, height: 851 }
 ];
 
+const READ_ONLY_ENDPOINTS = [
+    '**/api/payment/funnel-event',
+    '**/api/analytics/event',
+    '**/api/analytics/batch'
+];
+
 function parseArgs(argv) {
     const args = {
         baseUrl: process.env.AUTH_HANDOFF_BASE_URL || DEFAULT_LOCAL_BASE_URL,
@@ -72,6 +78,18 @@ function scenarioUrl(baseUrl, scenario) {
     });
     url.searchParams.set('cache', String(Date.now()));
     return url.toString();
+}
+
+async function blockSmokeTelemetry(context) {
+    const response = {
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true, smoke: true, readOnly: true })
+    };
+
+    for (const pattern of READ_ONLY_ENDPOINTS) {
+        await context.route(pattern, route => route.fulfill(response));
+    }
 }
 
 async function inspectScenario(page, scenario, viewportName, baseUrl) {
@@ -164,6 +182,7 @@ async function main() {
                 timezoneId: 'Europe/Prague',
                 serviceWorkers: 'block'
             });
+            await blockSmokeTelemetry(context);
             await context.addInitScript(() => {
                 localStorage.clear();
                 sessionStorage.clear();

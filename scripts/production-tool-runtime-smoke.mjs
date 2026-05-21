@@ -33,6 +33,12 @@ const VIEWPORTS = [
     { name: 'mobile', width: 393, height: 851 }
 ];
 
+const READ_ONLY_ENDPOINTS = [
+    '**/api/payment/funnel-event',
+    '**/api/analytics/event',
+    '**/api/analytics/batch'
+];
+
 function parseArgs(argv) {
     const args = {
         baseUrl: process.env.TOOL_RUNTIME_BASE_URL || DEFAULT_LOCAL_BASE_URL,
@@ -68,6 +74,18 @@ function pageUrl(baseUrl, pathname) {
     url.searchParams.set('source', 'tool_runtime_smoke');
     url.searchParams.set('cache', String(Date.now()));
     return url.toString();
+}
+
+async function blockSmokeTelemetry(context) {
+    const response = {
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true, smoke: true, readOnly: true })
+    };
+
+    for (const pattern of READ_ONLY_ENDPOINTS) {
+        await context.route(pattern, route => route.fulfill(response));
+    }
 }
 
 async function inspectPage(page, config, viewportName, baseUrl) {
@@ -140,6 +158,7 @@ async function main() {
                 timezoneId: 'Europe/Prague',
                 serviceWorkers: 'block'
             });
+            await blockSmokeTelemetry(context);
             await context.addInitScript(() => {
                 localStorage.removeItem('mh_cookie_prefs');
                 localStorage.removeItem('cookieConsent');

@@ -1,6 +1,6 @@
 # Mysticka Hvezda Operator Context
 
-Last updated: 2026-05-20
+Last updated: 2026-05-21
 
 ## Mission
 
@@ -14,7 +14,7 @@ Primary funnel: visit -> first value -> signup -> onboarding completed -> saved 
 
 - Production branch: `origin/main`
 - Railway deploy target: `Payamann/MystickaHvezdaOriginalAntigravity` on `main`
-- Latest verified production commit: `69b64063`
+- Latest verified production commit: `0ed0104d`
 - Latest important funnel work:
   - `56291416` preserved paywall checkout handoff context
   - `4bd2f08e` connected profile recovery to the growth funnel
@@ -22,8 +22,9 @@ Primary funnel: visit -> first value -> signup -> onboarding completed -> saved 
   - `e20be3aa` made checkout auth handoff durable
   - `fb060285` added exact-window live funnel exports
   - `69b64063` preserved homepage and pending checkout metadata through pricing/auth handoff
+  - `0ed0104d` fixed mobile paid auth handoff layout and verified production auth/tool smokes
 - Latest known revenue truth:
-  - Post-deploy window after `69b64063` still has insufficient paid funnel events
+  - Post-deploy window after `0ed0104d` still has insufficient paid funnel events
   - First-party analytics ingestion is active and production health is ok
   - 24h/7d/30d historical windows still show `checkout_auth_required > 0` and `checkout_requested = 0`
   - Do not treat the older windows as proof that the latest fix failed; use fresh post-deploy cohorts first
@@ -142,7 +143,10 @@ npm.cmd run deploy:guard
 npm.cmd run verify:production
 npm.cmd run smoke:production:tool-runtime
 npm.cmd run smoke:production:auth-handoff
+npm.cmd run smoke:production:pricing-handoff
 ```
+
+Production browser smoke scripts should route first-party analytics and funnel-event POSTs to local success responses so diagnostic checks do not pollute revenue truth windows.
 
 If frequent heartbeat smoke runs hit a production natal-chart rate limit (`429`) while `/api/health` is ok, use `$env:VERIFY_SKIP_ASTRO='true'; npm.cmd run verify:production` for the next lightweight health/public-page pass. Keep full deploy confirmation on the default verifier with astro checks enabled.
 

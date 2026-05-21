@@ -56,6 +56,7 @@
     "verify:production": "node server/scripts/verify-production.js",
     "smoke:production:tool-runtime": "node scripts/production-tool-runtime-smoke.mjs --production",
     "smoke:production:auth-handoff": "node scripts/production-auth-handoff-smoke.mjs --production",
+    "smoke:production:pricing-handoff": "node scripts/production-pricing-handoff-smoke.mjs --production",
     "deploy:guard": "node scripts/deploy-guard.mjs",
     "deploy:guard:local": "node scripts/deploy-guard.mjs --skip-remote --skip-railway --allow-dirty --base-url=http://localhost:3001",
     "test:verify": "npm run lint && npm run check:encoding && npm run check:hooks && npm run check:auth-feature-contexts && npm run audit:growth-loop && npm run check:paywall-trust && npm run test:unit:server && npm run test:unit:frontend && npm run audit:site && npm run audit:tarot-assets && npm run sitemap:check",
