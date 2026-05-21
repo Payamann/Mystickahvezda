@@ -14,7 +14,7 @@ Primary funnel: visit -> first value -> signup -> onboarding completed -> saved 
 
 - Production branch: `origin/main`
 - Railway deploy target: `Payamann/MystickaHvezdaOriginalAntigravity` on `main`
-- Latest verified production commit: `84d17132`
+- Verified production commit source of truth: `npm.cmd run verify:production:commit` compares local `HEAD` against `/api/health` `deployment.commit`.
 - Latest important funnel work:
   - `56291416` preserved paywall checkout handoff context
   - `4bd2f08e` connected profile recovery to the growth funnel
@@ -25,8 +25,10 @@ Primary funnel: visit -> first value -> signup -> onboarding completed -> saved 
   - `0ed0104d` fixed mobile paid auth handoff layout and verified production auth/tool smokes
   - `cbab2c2d` added read-only production pricing handoff smoke
   - `84d17132` updated operator context after pricing smoke deploy
+  - `2e2b99d7` made revenue truth monitoring resilient to GitHub status API limits
+  - `f2ea54dd` added exact production commit verification helper
 - Latest known revenue truth:
-  - Post-deploy window after `84d17132` still has insufficient paid funnel events
+  - Latest post-deploy windows still have insufficient paid funnel events
   - First-party analytics ingestion is active and production health is ok
   - 24h/7d/30d historical windows still show `checkout_auth_required > 0` and `checkout_requested = 0`
   - Do not treat the older windows as proof that the latest fix failed; use fresh post-deploy cohorts first
