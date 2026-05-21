@@ -917,6 +917,90 @@ test.describe('Login stránka', () => {
         await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_checkout_auth_required_events'))).toBeNull();
     });
 
+    test('checkout auth form telemetry outage neblokuje checkout po registraci', async ({ page }) => {
+        const email = 'form-telemetry-outage@example.com';
+        const funnelEvents = [];
+        let formTelemetryAttempts = 0;
+        let checkoutPayload = null;
+
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            const payload = route.request().postDataJSON();
+            funnelEvents.push(payload);
+
+            if (payload.eventName === 'checkout_auth_form_submitted') {
+                formTelemetryAttempts += 1;
+                if (formTelemetryAttempts === 1) {
+                    await route.fulfill({
+                        status: 503,
+                        contentType: 'application/json',
+                        body: JSON.stringify({ error: 'temporary form telemetry outage' })
+                    });
+                    return;
+                }
+            }
+
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        await page.route('**/api/auth/register', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    success: true,
+                    user: {
+                        id: 'form-telemetry-outage-user',
+                        email,
+                        role: 'user',
+                        subscription_status: 'free'
+                    }
+                })
+            });
+        });
+
+        await page.route('**/api/payment/create-checkout-session', async (route) => {
+            checkoutPayload = route.request().postDataJSON();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    id: 'cs_form_telemetry_outage',
+                    url: '/profil.html?payment=success&plan=pruvodce&session_id=cs_form_telemetry_outage'
+                })
+            });
+        });
+
+        await page.goto('/prihlaseni.html?mode=register&redirect=/cenik.html&plan=pruvodce&source=inline_paywall&feature=tarot_multi_card&entry_source=inline_paywall&entry_feature=tarot_multi_card');
+        await waitForPageReady(page);
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+
+        await Promise.all([
+            page.waitForURL(
+                url => url.pathname === '/profil.html' && url.searchParams.get('session_id') === 'cs_form_telemetry_outage',
+                { timeout: 10000, waitUntil: 'domcontentloaded' }
+            ),
+            submitRegisterForm(page, email),
+        ]);
+
+        expect(checkoutPayload).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            source: 'inline_paywall',
+            feature: 'tarot_multi_card',
+            billingInterval: null,
+            metadata: expect.objectContaining({
+                entry_source: 'inline_paywall',
+                entry_feature: 'tarot_multi_card'
+            })
+        }));
+        await expect.poll(() => formTelemetryAttempts, { timeout: 10000 }).toBe(2);
+        expect(funnelEvents.filter((event) => event.eventName === 'checkout_auth_form_submitted')).toHaveLength(2);
+        await expect.poll(() => page.evaluate(() => sessionStorage.getItem('mh_pending_checkout_auth_required_events'))).toBeNull();
+    });
+
     test('checkout intent prezije email verifikaci a obnovi se pri dalsim prihlaseni', async ({ page }) => {
         test.setTimeout(60000);
 

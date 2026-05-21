@@ -34,7 +34,7 @@
     "test:e2e:homepage-smoke": "playwright test tests/e2e/homepage-cta-smoke.spec.js --project=chromium --workers=1",
     "test:e2e:pricing-smoke": "playwright test tests/e2e/pricing-visual-smoke.spec.js --project=chromium --workers=1",
     "test:e2e:funnel-smoke": "playwright test tests/e2e/homepage-cta-smoke.spec.js tests/e2e/pricing-visual-smoke.spec.js tests/e2e/activation-visual-smoke.spec.js tests/e2e/paywall-visual-smoke.spec.js tests/e2e/exit-intent-checkout.spec.js tests/e2e/horoscope-inline-checkout.spec.js tests/e2e/inline-paywall-checkout.spec.js --project=chromium --workers=1",
-    "test:e2e:checkout-recovery": "playwright test tests/e2e/auth.spec.js tests/e2e/cenik-payment.spec.js --project=chromium --workers=1 --grep \"checkout intent prezije|post-verification checkout failure|post-verification checkout network error|post-verification telemetry outage|expired post-verification checkout|checkout auth page retry neblokuje|checkout auth required retry|rychla navigace|login s pending checkout|mobilni login s pending checkout|pending checkout se po registraci\"",
+    "test:e2e:checkout-recovery": "playwright test tests/e2e/auth.spec.js tests/e2e/cenik-payment.spec.js --project=chromium --workers=1 --grep \"checkout intent prezije|post-verification checkout failure|post-verification checkout network error|post-verification telemetry outage|expired post-verification checkout|checkout auth page retry neblokuje|checkout auth form telemetry outage|checkout auth required retry|rychla navigace|login s pending checkout|mobilni login s pending checkout|pending checkout se po registraci\"",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
