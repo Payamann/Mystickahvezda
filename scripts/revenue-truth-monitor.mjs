@@ -32,6 +32,12 @@ const AUTH_HANDOFF_SMOKE_COVERAGE = [
         step_ids: ['auth_handoff_to_checkout_request', 'auth_page_to_auth_form_submit']
     },
     {
+        source: 'inline_paywall',
+        feature: 'tarot_multi_card',
+        scenario: 'register-tarot-inline-paywall-bridge',
+        step_ids: ['paywall_to_pricing_intent', 'paywall_to_checkout']
+    },
+    {
         source: 'trial_paywall',
         feature: 'numerologie_vyklad',
         scenario: 'login-paid-numerology',

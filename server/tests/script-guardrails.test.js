@@ -161,6 +161,7 @@ describe('manual script guardrails', () => {
         expect(source).toContain('findAuthHandoffSmokeCoverage');
         expect(source).toContain("scenario: 'register-weekly-horoscope-inline-flow'");
         expect(source).toContain("scenario: 'register-monthly-horoscope-inline-flow'");
+        expect(source).toContain("scenario: 'register-tarot-inline-paywall-bridge'");
         expect(source).toContain("scenario: 'register-numerology-trial-paywall-bridge'");
         expect(source).toContain("scenario: 'register-natal-login-gate-bridge'");
         expect(source).toMatch(/scenario: 'register-natal-login-gate-bridge'[\s\S]*?step_ids: \['paywall_to_pricing_intent', 'paywall_to_checkout'\]/);
@@ -197,6 +198,10 @@ describe('manual script guardrails', () => {
         const authHandoff = readScript('scripts/production-auth-handoff-smoke.mjs');
         expect(authHandoff).toContain("name: 'register-paid-tarot'");
         expect(authHandoff).toMatch(/name: 'register-paid-tarot'[\s\S]*?mockCheckoutSubmit: true/);
+        expect(authHandoff).toContain("name: 'register-tarot-inline-paywall-bridge'");
+        expect(authHandoff).toMatch(/name: 'register-tarot-inline-paywall-bridge'[\s\S]*?source: 'inline_paywall'[\s\S]*?feature: 'tarot_multi_card'[\s\S]*?type: 'tarot-inline-paywall-bridge'[\s\S]*?mockCheckoutSubmit: true/);
+        expect(authHandoff).toMatch(/name: 'register-tarot-inline-paywall-bridge'[\s\S]*?expectedPaymentEvents: \['paywall_viewed', 'paywall_cta_clicked'\]/);
+        expect(authHandoff).toContain('enterTarotInlinePaywallBridge');
         expect(authHandoff).toContain("name: 'register-paid-natal'");
         expect(authHandoff).toMatch(/name: 'register-paid-natal'[\s\S]*?source: 'natal_teaser_gate'[\s\S]*?feature: 'natalni_interpretace'[\s\S]*?mockCheckoutSubmit: true/);
         expect(authHandoff).toContain("name: 'register-natal-login-gate-bridge'");
