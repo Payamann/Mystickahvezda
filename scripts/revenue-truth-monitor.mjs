@@ -41,7 +41,7 @@ const AUTH_HANDOFF_SMOKE_COVERAGE = [
         source: 'natal_teaser_gate',
         feature: 'natalni_interpretace',
         scenario: 'register-natal-login-gate-bridge',
-        step_ids: ['paywall_to_checkout']
+        step_ids: ['paywall_to_pricing_intent', 'paywall_to_checkout']
     },
     {
         source: 'partner_match_result',
@@ -535,7 +535,9 @@ function chooseSegmentActionForDecision(windowDef, { skipCoveredHistoricalAuth =
     const eligibleActions = skipCoveredHistoricalAuth
         ? actions.filter((item) => !findAuthHandoffSmokeCoverage(item))
         : actions;
-    let selected = actions[0] || null;
+    if (skipCoveredHistoricalAuth && eligibleActions.length === 0) return null;
+
+    let selected = eligibleActions[0] || actions[0] || null;
 
     if (/post-auth checkout resume/i.test(decision)) {
         selected = eligibleActions.find((item) => (
