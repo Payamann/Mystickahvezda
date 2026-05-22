@@ -79,6 +79,27 @@ const SCENARIOS = [
         mockCheckoutSubmit: true
     },
     {
+        name: 'register-numerology-inline-paywall-bridge',
+        path: '/prihlaseni.html',
+        params: {
+            mode: 'register',
+            redirect: '/cenik.html',
+            plan: 'pruvodce',
+            source: 'inline_paywall',
+            feature: 'numerologie_vyklad',
+            entry_source: 'inline_paywall',
+            entry_feature: 'numerologie_vyklad'
+        },
+        expectedMode: 'register',
+        entryFlow: {
+            type: 'numerology-inline-paywall-bridge',
+            path: '/numerologie.html',
+            triggerSelector: '.paywall-overlay .paywall-upgrade'
+        },
+        expectedPaymentEvents: ['paywall_viewed', 'paywall_cta_clicked'],
+        mockCheckoutSubmit: true
+    },
+    {
         name: 'register-paid-natal',
         path: '/prihlaseni.html',
         params: {
@@ -552,6 +573,38 @@ async function enterNumerologyTrialPaywallBridge(page, baseUrl, scenario) {
     ]);
 }
 
+async function enterNumerologyInlinePaywallBridge(page, baseUrl, scenario) {
+    const entryUrl = new URL(scenario.entryFlow.path, `${baseUrl}/`);
+    entryUrl.searchParams.set('cache', String(Date.now()));
+    await page.goto(entryUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.waitForSelector('#numerology-form', { state: 'visible', timeout: 10_000 });
+    await page.waitForFunction(
+        () => typeof window.Premium?.showPaywall === 'function'
+            && typeof window.Auth?.startPlanCheckout === 'function',
+        null,
+        { timeout: 10_000 }
+    );
+    await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+        Object.assign(window.Auth || {}, {
+            isLoggedIn: () => false,
+            isPremium: () => false,
+            getProfile: async () => null,
+            showToast: () => {}
+        });
+        window.Premium.showPaywall('numerologie_vyklad');
+    });
+    await page.waitForSelector(scenario.entryFlow.triggerSelector, { state: 'visible', timeout: 10_000 });
+    await Promise.all([
+        page.waitForURL(url => url.pathname === scenario.path, {
+            timeout: 10_000,
+            waitUntil: 'domcontentloaded'
+        }),
+        page.locator(scenario.entryFlow.triggerSelector).first().click()
+    ]);
+}
+
 async function enterTarotInlinePaywallBridge(page, baseUrl, scenario) {
     const entryUrl = new URL(scenario.entryFlow.path, `${baseUrl}/`);
     entryUrl.searchParams.set('cache', String(Date.now()));
@@ -630,6 +683,8 @@ async function inspectScenario(page, scenario, viewportName, baseUrl, telemetry)
             await enterSynastryResultBridge(page, baseUrl, scenario);
         } else if (scenario.entryFlow.type === 'numerology-trial-paywall-bridge') {
             await enterNumerologyTrialPaywallBridge(page, baseUrl, scenario);
+        } else if (scenario.entryFlow.type === 'numerology-inline-paywall-bridge') {
+            await enterNumerologyInlinePaywallBridge(page, baseUrl, scenario);
         } else if (scenario.entryFlow.type === 'tarot-inline-paywall-bridge') {
             await enterTarotInlinePaywallBridge(page, baseUrl, scenario);
         } else {

@@ -35,7 +35,13 @@ const AUTH_HANDOFF_SMOKE_COVERAGE = [
         source: 'inline_paywall',
         feature: 'tarot_multi_card',
         scenario: 'register-tarot-inline-paywall-bridge',
-        step_ids: ['paywall_to_pricing_intent', 'paywall_to_checkout']
+        step_ids: [
+            'paywall_to_pricing_intent',
+            'paywall_to_checkout',
+            'pricing_intent_to_auth_handoff',
+            'pricing_intent_to_checkout',
+            'pricing_intent_to_checkout_request'
+        ]
     },
     {
         source: 'trial_paywall',
@@ -48,6 +54,18 @@ const AUTH_HANDOFF_SMOKE_COVERAGE = [
         feature: 'numerologie_vyklad',
         scenario: 'register-numerology-trial-paywall-bridge',
         step_ids: ['paywall_to_pricing_intent', 'paywall_to_checkout']
+    },
+    {
+        source: 'inline_paywall',
+        feature: 'numerologie_vyklad',
+        scenario: 'register-numerology-inline-paywall-bridge',
+        step_ids: [
+            'paywall_to_pricing_intent',
+            'paywall_to_checkout',
+            'pricing_intent_to_auth_handoff',
+            'pricing_intent_to_checkout',
+            'pricing_intent_to_checkout_request'
+        ]
     },
     {
         source: 'natal_teaser_gate',
@@ -560,13 +578,13 @@ async function printAnalyticsPulse(label, summary, supabase) {
     return pulse;
 }
 
-function chooseSegmentActionForDecision(windowDef, { skipCoveredHistoricalAuth = false } = {}) {
+function chooseSegmentActionForDecision(windowDef, { skipCoveredHistoricalDiagnostics = false } = {}) {
     const actions = windowDef?.segment_analysis?.top_segment_actions || [];
     const decision = windowDef?.decision || '';
-    const eligibleActions = skipCoveredHistoricalAuth
+    const eligibleActions = skipCoveredHistoricalDiagnostics
         ? actions.filter((item) => !findAuthHandoffSmokeCoverage(item))
         : actions;
-    if (skipCoveredHistoricalAuth && eligibleActions.length === 0) return null;
+    if (skipCoveredHistoricalDiagnostics && eligibleActions.length === 0) return null;
 
     let selected = eligibleActions[0] || actions[0] || null;
 
@@ -615,7 +633,7 @@ function deriveNextAction(primaryWindow, windows = []) {
                 ? diagnosticWindow.recommended_segment_action
                 : null;
             const uncoveredSegment = coveredSegment
-                ? formatSegmentAction(chooseSegmentActionForDecision(diagnosticWindow, { skipCoveredHistoricalAuth: true }))
+                ? formatSegmentAction(chooseSegmentActionForDecision(diagnosticWindow, { skipCoveredHistoricalDiagnostics: true }))
                 : null;
             return [
                 `Latest deploy window has no paid funnel events; stable diagnostic baseline says: ${diagnosticWindow.decision}`,
@@ -714,7 +732,10 @@ async function main() {
         const windowReport = buildWindowReport(windowDef, summary, { historicalContext, diagnosticBaseline });
         if (windowReport) {
             windowReport.segment_analysis = analyzeWindowSegments(csvPath, args);
-            windowReport.recommended_segment_action = chooseSegmentActionForDecision(windowReport);
+            windowReport.recommended_segment_action = chooseSegmentActionForDecision(windowReport, {
+                skipCoveredHistoricalDiagnostics: windowReport.basis === 'historical_context'
+                    || windowReport.basis === 'diagnostic_baseline'
+            });
         }
         if (windowDef.slug === 'post-deploy') {
             const analyticsPulse = await printAnalyticsPulse(windowDef.label, summary, supabase);

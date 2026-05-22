@@ -255,6 +255,49 @@ test.describe('Inline paywall checkout handoff', () => {
         expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
     });
 
+    test('numerology inline paywall preserves checkout context through registration', async ({ page }) => {
+        const state = await setupCheckoutRoutes(page, {
+            userId: 'inline-paywall-numerology-user',
+            email: 'inline-paywall-numerology@example.com',
+            checkoutSessionId: 'cs_test_inline_paywall_numerology',
+            csrfToken: 'e2e-inline-numerology-token'
+        });
+
+        await page.goto('/numerologie.html?source=e2e_inline_paywall');
+        await waitForPageReady(page);
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+        });
+
+        await page.evaluate(() => window.Premium.showPaywall('numerologie_vyklad'));
+        await expect(page.locator('.paywall-overlay')).toBeVisible();
+        await expect(page.locator('.paywall-overlay')).toContainText(/numerolog/i);
+
+        await Promise.all([
+            waitForPath(page, '/prihlaseni.html'),
+            page.locator('.paywall-overlay .paywall-upgrade').click(),
+        ]);
+
+        await expectAuthUrl(page, {
+            source: 'inline_paywall',
+            feature: 'numerologie_vyklad'
+        });
+
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect(page.locator('#checkout-context-banner')).toContainText(/numerolog/i);
+        await expect(page.locator('#checkout-context-banner')).toContainText(/checkout/i);
+
+        await submitRegistration(page, 'inline-paywall-numerology@example.com');
+
+        await expectCheckoutState(state, {
+            email: 'inline-paywall-numerology@example.com',
+            source: 'inline_paywall',
+            feature: 'numerologie_vyklad'
+        });
+        expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
+    });
+
     test('natal teaser gate preserves checkout context through registration', async ({ page }) => {
         const state = await setupCheckoutRoutes(page, {
             userId: 'natal-teaser-user',
