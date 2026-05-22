@@ -157,6 +157,7 @@ describe('manual script guardrails', () => {
         expect(source).toContain('AUTH_HANDOFF_SMOKE_COVERAGE');
         expect(source).toContain('findAuthHandoffSmokeCoverage');
         expect(source).toContain("scenario: 'register-weekly-horoscope-inline-flow'");
+        expect(source).toContain("scenario: 'register-natal-login-gate-bridge'");
         expect(source).toContain("scenario: 'register-partner-match-result-bridge'");
         expect(source).toContain("'paywall_to_pricing_intent'");
         expect(source).toContain("'paywall_to_checkout'");
@@ -191,6 +192,9 @@ describe('manual script guardrails', () => {
         expect(authHandoff).toMatch(/name: 'register-paid-tarot'[\s\S]*?mockCheckoutSubmit: true/);
         expect(authHandoff).toContain("name: 'register-paid-natal'");
         expect(authHandoff).toMatch(/name: 'register-paid-natal'[\s\S]*?source: 'natal_teaser_gate'[\s\S]*?feature: 'natalni_interpretace'[\s\S]*?mockCheckoutSubmit: true/);
+        expect(authHandoff).toContain("name: 'register-natal-login-gate-bridge'");
+        expect(authHandoff).toMatch(/name: 'register-natal-login-gate-bridge'[\s\S]*?source: 'natal_teaser_gate'[\s\S]*?feature: 'natalni_interpretace'[\s\S]*?type: 'natal-login-gate-bridge'[\s\S]*?mockCheckoutSubmit: true/);
+        expect(authHandoff).toContain('enterNatalLoginGateBridge');
         expect(authHandoff).toContain("name: 'register-paid-partner-match'");
         expect(authHandoff).toMatch(/name: 'register-paid-partner-match'[\s\S]*?source: 'partner_match_result'[\s\S]*?feature: 'partnerska_detail'[\s\S]*?mockCheckoutSubmit: true/);
         expect(authHandoff).toContain("name: 'register-partner-match-result-bridge'");

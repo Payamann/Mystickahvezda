@@ -52,6 +52,26 @@ const SCENARIOS = [
         mockCheckoutSubmit: true
     },
     {
+        name: 'register-natal-login-gate-bridge',
+        path: '/prihlaseni.html',
+        params: {
+            mode: 'register',
+            redirect: '/cenik.html',
+            plan: 'pruvodce',
+            source: 'natal_teaser_gate',
+            feature: 'natalni_interpretace',
+            entry_source: 'natal_teaser_gate',
+            entry_feature: 'natalni_interpretace'
+        },
+        expectedMode: 'register',
+        entryFlow: {
+            type: 'natal-login-gate-bridge',
+            path: '/natalni-karta.html',
+            triggerSelector: '.login-gate-btn'
+        },
+        mockCheckoutSubmit: true
+    },
+    {
         name: 'register-paid-partner-match',
         path: '/prihlaseni.html',
         params: {
@@ -351,6 +371,45 @@ async function waitForPaymentFunnelEvent(telemetry, startIndex, eventName, scena
     return null;
 }
 
+async function enterNatalLoginGateBridge(page, baseUrl, scenario) {
+    await page.route('**/api/natal-chart/calculate?*', async (route) => {
+        await route.fulfill({
+            status: 500,
+            contentType: 'application/json',
+            body: JSON.stringify({ success: false, error: 'production auth handoff smoke fallback' })
+        });
+    });
+
+    const entryUrl = new URL(scenario.entryFlow.path, `${baseUrl}/`);
+    entryUrl.searchParams.set('cache', String(Date.now()));
+    await page.goto(entryUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.waitForSelector('#natal-form', { state: 'visible', timeout: 10_000 });
+    await page.waitForFunction(() => typeof window.Auth?.startPlanCheckout === 'function', null, { timeout: 10_000 });
+    await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+        Object.assign(window.Auth || {}, {
+            isLoggedIn: () => false,
+            isPremium: () => false,
+            getProfile: async () => null,
+            showToast: () => {}
+        });
+    });
+    await page.locator('#name').fill('Test');
+    await page.locator('#birth-date').fill('1990-01-01');
+    await page.locator('#birth-time').fill('12:00');
+    await page.locator('#birth-place').fill('Praha');
+    await page.locator('#natal-form button[type="submit"]').click();
+    await page.waitForSelector(scenario.entryFlow.triggerSelector, { state: 'visible', timeout: 10_000 });
+    await Promise.all([
+        page.waitForURL(url => url.pathname === scenario.path, {
+            timeout: 10_000,
+            waitUntil: 'domcontentloaded'
+        }),
+        page.locator(scenario.entryFlow.triggerSelector).first().click()
+    ]);
+}
+
 async function enterSynastryResultBridge(page, baseUrl, scenario) {
     const entryUrl = new URL(scenario.entryFlow.path, `${baseUrl}/`);
     entryUrl.searchParams.set('cache', String(Date.now()));
@@ -421,7 +480,9 @@ async function inspectScenario(page, scenario, viewportName, baseUrl, telemetry)
         : null;
     const paymentFunnelStartIndex = telemetry.events('payment_funnel').length;
     if (scenario.entryFlow) {
-        if (scenario.entryFlow.type === 'synastry-result-bridge') {
+        if (scenario.entryFlow.type === 'natal-login-gate-bridge') {
+            await enterNatalLoginGateBridge(page, baseUrl, scenario);
+        } else if (scenario.entryFlow.type === 'synastry-result-bridge') {
             await enterSynastryResultBridge(page, baseUrl, scenario);
         } else {
             const entryUrl = new URL(scenario.entryFlow.path, `${baseUrl}/`);
