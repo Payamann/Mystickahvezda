@@ -20,6 +20,12 @@ const AUTH_HANDOFF_SMOKE_COVERAGE = [
         step_ids: ['auth_handoff_to_auth_page', 'auth_handoff_to_checkout_request', 'auth_page_to_auth_form_submit']
     },
     {
+        source: 'horoscope_inline_upsell',
+        feature: 'monthly_horoscope',
+        scenario: 'register-monthly-horoscope-inline-flow',
+        step_ids: ['auth_handoff_to_auth_page', 'auth_handoff_to_checkout_request', 'auth_page_to_auth_form_submit']
+    },
+    {
         source: 'inline_paywall',
         feature: 'tarot_multi_card',
         scenario: 'register-paid-tarot',

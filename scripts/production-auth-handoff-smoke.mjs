@@ -187,6 +187,26 @@ const SCENARIOS = [
             triggerSelector: '.horoscope-upsell-btn'
         },
         mockCheckoutSubmit: true
+    },
+    {
+        name: 'register-monthly-horoscope-inline-flow',
+        path: '/prihlaseni.html',
+        params: {
+            mode: 'register',
+            redirect: '/cenik.html',
+            plan: 'pruvodce',
+            source: 'horoscope_inline_upsell',
+            feature: 'monthly_horoscope',
+            entry_source: 'horoscope_inline_upsell',
+            entry_feature: 'monthly_horoscope'
+        },
+        expectedMode: 'register',
+        entryFlow: {
+            path: '/horoskopy.html',
+            tab: 'monthly',
+            triggerSelector: '.horoscope-upsell-btn'
+        },
+        mockCheckoutSubmit: true
     }
 ];
 
