@@ -5,6 +5,7 @@
     const PENDING_AUTH_REQUIRED_EVENTS_KEY = 'mh_pending_checkout_auth_required_events';
     const POST_VERIFICATION_CHECKOUT_KEY = 'mh_post_verification_checkout';
     const POST_VERIFICATION_CHECKOUT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+    const POST_VERIFICATION_EVENT_FLUSH_TIMEOUT_MS = 600;
     const POST_AUTH_ACTIVATION_KEY = 'post_auth_activation';
     const POST_AUTH_REDIRECT_PENDING_KEY = 'post_auth_redirect_pending';
     const SIGNUP_INTENT_KEY = 'mh_signup_intent';
@@ -343,6 +344,9 @@
                             checkoutPlan,
                             checkoutContext
                         );
+                        if (pendingPlan) {
+                            this.clearPendingCheckout();
+                        }
                     }
                     const authSource = checkoutContext?.source || standaloneContext?.source || null;
                     const authFeature = checkoutContext?.feature || standaloneContext?.feature || null;
@@ -503,11 +507,14 @@
             if (checkoutPlan) {
                 sessionStorage.removeItem(POST_AUTH_REDIRECT_PENDING_KEY);
                 if (postVerificationCheckout) {
-                    void this.trackCheckoutPostVerificationEvent(
+                    void this.flushCheckoutPostVerificationEvent(
                         'checkout_post_verification_recovered',
                         checkoutPlan,
                         checkoutContext
-                    );
+                    ).finally(() => {
+                        this._startCheckout(checkoutPlan, checkoutContext);
+                    });
+                    return;
                 }
                 this._startCheckout(checkoutPlan, checkoutContext);
                 return;
@@ -1140,6 +1147,15 @@
             } catch (error) {
                 console.warn('[FUNNEL] Could not record post-verification checkout event:', error.message);
             }
+        },
+
+        flushCheckoutPostVerificationEvent(eventName, planId, context = {}) {
+            return Promise.race([
+                this.trackCheckoutPostVerificationEvent(eventName, planId, context),
+                new Promise((resolve) => {
+                    window.setTimeout(resolve, POST_VERIFICATION_EVENT_FLUSH_TIMEOUT_MS);
+                })
+            ]);
         },
 
         startPlanCheckout(planId, context = {}) {

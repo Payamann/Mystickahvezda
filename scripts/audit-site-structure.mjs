@@ -47,7 +47,7 @@ const publicSourceExtensions = new Set([
     '.yml'
 ]);
 const criticalAssetVersions = new Map([
-    ['js/dist/auth-client.js', '11']
+    ['js/dist/auth-client.js', '20260522-recovery-flush']
 ]);
 const nonCanonicalOrigin = siteOrigin.replace('https://www.', 'https://');
 const allowedNonCanonicalOriginLines = new Map([

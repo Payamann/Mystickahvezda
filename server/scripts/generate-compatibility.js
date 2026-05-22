@@ -169,7 +169,7 @@ for (let i = 0; i < SIGNS.length; i++) {
 
     <script src="../js/api-config.js?v=5" defer></script>
     <script src="../js/templates.js?v=10" defer></script>
-    <script src="../js/auth-client.js?v=11" defer></script>
+    <script src="../js/auth-client.js?v=20260522-recovery-flush" defer></script>
     <script src="../js/components.js?v=10" defer></script>
     <script type="module" src="../js/main.js?v=10"></script>
 </body>
