@@ -337,15 +337,23 @@ function readSummary(summaryPath) {
 
 function formatDecision(metrics = {}, { historicalContext = false, diagnosticBaseline = false } = {}) {
     const authRequired = metrics.checkoutAuthRequired || 0;
+    const postVerificationPending = metrics.checkoutPostVerificationPending || 0;
+    const postVerificationRecovered = metrics.checkoutPostVerificationRecovered || 0;
     const checkoutRequested = metrics.checkoutRequested || 0;
     const checkoutStarted = metrics.checkoutStarted || 0;
     const purchases = (metrics.subscriptionCompleted || 0) + (metrics.oneTimeCompleted || 0);
     const prefix = diagnosticBaseline
         ? 'Diagnostic baseline: '
-        : historicalContext
-            ? 'Historical context only: '
-            : '';
+            : historicalContext
+                ? 'Historical context only: '
+                : '';
 
+    if (postVerificationPending > 0 && postVerificationRecovered === 0) {
+        return `${prefix}P0: post-verification checkout recovery/debug`;
+    }
+    if (postVerificationRecovered > 0 && checkoutRequested === 0) {
+        return `${prefix}P0: checkout resume after verified auth`;
+    }
     if (authRequired > 0 && checkoutRequested === 0) {
         return `${prefix}P0: post-auth checkout resume/debug`;
     }
@@ -389,6 +397,9 @@ function buildWindowReport(windowDef, summary, { historicalContext = false, diag
         events: summary.totalEvents || 0,
         segments: summary.segments || 0,
         checkout_auth_required: metrics.checkoutAuthRequired || 0,
+        checkout_post_verification_pending: metrics.checkoutPostVerificationPending || 0,
+        checkout_post_verification_recovered: metrics.checkoutPostVerificationRecovered || 0,
+        post_verification_recovery_rate: metrics.postVerificationRecoveryRate ?? null,
         checkout_requested: metrics.checkoutRequested || 0,
         checkout_started: metrics.checkoutStarted || 0,
         purchases,
@@ -431,6 +442,8 @@ function printSummary(label, summary, { historicalContext = false, diagnosticBas
         `events=${report.events}`,
         `segments=${report.segments}`,
         `checkout_auth_required=${report.checkout_auth_required}`,
+        `checkout_post_verification_pending=${report.checkout_post_verification_pending}`,
+        `checkout_post_verification_recovered=${report.checkout_post_verification_recovered}`,
         `checkout_requested=${report.checkout_requested}`,
         `checkout_started=${report.checkout_started}`,
         `purchases=${report.purchases}`,
@@ -545,6 +558,10 @@ function chooseSegmentActionForDecision(windowDef, { skipCoveredHistoricalAuth =
             || item.step_id === 'auth_handoff_to_auth_page'
             || item.step_id === 'auth_page_to_auth_form_submit'
         )) || eligibleActions[0] || selected;
+    } else if (/post-verification checkout recovery|checkout resume after verified auth/i.test(decision)) {
+        selected = eligibleActions.find((item) => item.step_id === 'auth_handoff_to_checkout_request')
+            || eligibleActions[0]
+            || selected;
     } else if (/server\/Stripe session creation/i.test(decision)) {
         selected = eligibleActions.find((item) => item.step_id === 'checkout_request_to_session') || eligibleActions[0] || selected;
     } else if (/checkout trust\/cancel recovery/i.test(decision)) {

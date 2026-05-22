@@ -148,6 +148,9 @@ describe('manual script guardrails', () => {
         expect(source).toContain('monitor-summary.json');
         expect(source).toContain('next_action');
         expect(source).toContain('--summary-only');
+        expect(source).toContain('checkout_post_verification_pending');
+        expect(source).toContain('checkout_post_verification_recovered');
+        expect(source).toContain('P0: post-verification checkout recovery/debug');
         expect(source).toContain('GitHub deployment status unavailable');
         expect(source).toContain('--github-status-fallback-minutes');
         expect(source).toContain('analyzeFunnelSegments');
