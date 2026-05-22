@@ -38,6 +38,12 @@ const AUTH_HANDOFF_SMOKE_COVERAGE = [
         step_ids: ['auth_handoff_to_checkout_request', 'auth_page_to_auth_form_submit']
     },
     {
+        source: 'trial_paywall',
+        feature: 'numerologie_vyklad',
+        scenario: 'register-numerology-trial-paywall-bridge',
+        step_ids: ['paywall_to_pricing_intent', 'paywall_to_checkout']
+    },
+    {
         source: 'natal_teaser_gate',
         feature: 'natalni_interpretace',
         scenario: 'register-paid-natal',

@@ -161,6 +161,7 @@ describe('manual script guardrails', () => {
         expect(source).toContain('findAuthHandoffSmokeCoverage');
         expect(source).toContain("scenario: 'register-weekly-horoscope-inline-flow'");
         expect(source).toContain("scenario: 'register-monthly-horoscope-inline-flow'");
+        expect(source).toContain("scenario: 'register-numerology-trial-paywall-bridge'");
         expect(source).toContain("scenario: 'register-natal-login-gate-bridge'");
         expect(source).toMatch(/scenario: 'register-natal-login-gate-bridge'[\s\S]*?step_ids: \['paywall_to_pricing_intent', 'paywall_to_checkout'\]/);
         expect(source).toContain("scenario: 'register-partner-match-result-bridge'");
