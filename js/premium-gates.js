@@ -234,14 +234,18 @@ window.Premium = {
         }
     },
 
-    trackPaywallCtaClick({ source = 'premium_gate', feature = null, planId = null, label = 'upgrade' } = {}) {
-        window.MH_ANALYTICS?.trackEvent?.('paywall_cta_clicked', {
-            label,
-            source,
-            feature,
-            plan_id: planId
-        });
-        void this.trackServerFunnelEvent('paywall_cta_clicked', {
+    async trackPaywallCtaClick({ source = 'premium_gate', feature = null, planId = null, label = 'upgrade' } = {}) {
+        try {
+            window.MH_ANALYTICS?.trackEvent?.('paywall_cta_clicked', {
+                label,
+                source,
+                feature,
+                plan_id: planId
+            });
+        } catch (error) {
+            console.warn('[FUNNEL] Could not send client paywall CTA event:', error.message);
+        }
+        return this.trackServerFunnelEvent('paywall_cta_clicked', {
             source,
             feature,
             planId,
@@ -249,6 +253,15 @@ window.Premium = {
                 path: window.location.pathname,
                 label
             }
+        });
+    },
+
+    async waitBrieflyForFunnelEvent(promise, timeoutMs = 350) {
+        await Promise.race([
+            promise,
+            new Promise((resolve) => setTimeout(resolve, timeoutMs))
+        ]).catch((error) => {
+            console.warn('[FUNNEL] Premium gate event wait failed:', error.message);
         });
     },
 
@@ -301,7 +314,7 @@ window.Premium = {
             const source = context.source || 'premium_gate';
             const feature = context.feature || null;
             const planId = context.planId || null;
-            this.trackPaywallCtaClick({
+            void this.trackPaywallCtaClick({
                 source,
                 feature,
                 planId,
@@ -465,13 +478,13 @@ window.Premium = {
         `;
 
         container.appendChild(gate);
-        gate.querySelector('.login-gate-btn').addEventListener('click', () => {
-            this.trackPaywallCtaClick({
+        gate.querySelector('.login-gate-btn').addEventListener('click', async () => {
+            await this.waitBrieflyForFunnelEvent(this.trackPaywallCtaClick({
                 source,
                 feature: featureName || null,
                 planId,
                 label: gate.querySelector('.login-gate-btn')?.textContent?.trim() || 'login_gate'
-            });
+            }));
             this.startUpgradeFlow(planId, featureName, source, 'register');
         });
     },
