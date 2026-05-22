@@ -35,7 +35,7 @@
 
     if (!window.Premium && !document.querySelector('script[src*="premium-gates.js"]')) {
         const pg = document.createElement('script');
-        pg.src = basePath + 'js/dist/premium-gates.js?v=4';
+        pg.src = basePath + 'js/dist/premium-gates.js?v=20260522-login-gate-cta';
         pg.defer = true;
         document.head.appendChild(pg);
     }
