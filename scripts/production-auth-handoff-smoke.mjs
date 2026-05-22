@@ -52,6 +52,21 @@ const SCENARIOS = [
         mockCheckoutSubmit: true
     },
     {
+        name: 'register-paid-partner-match',
+        path: '/prihlaseni.html',
+        params: {
+            mode: 'register',
+            redirect: '/cenik.html',
+            plan: 'pruvodce',
+            source: 'partner_match_result',
+            feature: 'partnerska_detail',
+            entry_source: 'partner_match_result',
+            entry_feature: 'partnerska_detail'
+        },
+        expectedMode: 'register',
+        mockCheckoutSubmit: true
+    },
+    {
         name: 'register-weekly-horoscope-inline-flow',
         path: '/prihlaseni.html',
         params: {
