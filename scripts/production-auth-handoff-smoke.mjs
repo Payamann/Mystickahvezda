@@ -67,6 +67,21 @@ const SCENARIOS = [
         mockCheckoutSubmit: true
     },
     {
+        name: 'register-paid-runes',
+        path: '/prihlaseni.html',
+        params: {
+            mode: 'register',
+            redirect: '/cenik.html',
+            plan: 'pruvodce',
+            source: 'runes_auth_gate',
+            feature: 'runy_hluboky_vyklad',
+            entry_source: 'runes_auth_gate',
+            entry_feature: 'runy_hluboky_vyklad'
+        },
+        expectedMode: 'register',
+        mockCheckoutSubmit: true
+    },
+    {
         name: 'register-weekly-horoscope-inline-flow',
         path: '/prihlaseni.html',
         params: {
