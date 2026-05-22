@@ -495,8 +495,8 @@ async function displayInterpretation(name, birthDate, birthTime, lifePath, desti
             </div>
         `;
 
-        // Track paywall hit (if premium-gates.js is loaded)
-        if (window.Premium?.trackPaywallHit) window.Premium.trackPaywallHit('numerologie_vyklad');
+        // The preview button opens the trial paywall; keep attribution on one segment.
+        if (window.Premium?.trackPaywallHit) window.Premium.trackPaywallHit('numerologie_vyklad', 'trial_paywall');
 
         // Wire up the upgrade button to trial paywall
         const upgradeBtn = interpretationContainer.querySelector('.numerology-upgrade-btn');

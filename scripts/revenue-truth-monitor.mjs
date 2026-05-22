@@ -56,6 +56,12 @@ const AUTH_HANDOFF_SMOKE_COVERAGE = [
         step_ids: ['paywall_to_pricing_intent', 'paywall_to_checkout']
     },
     {
+        source: 'premium_gate',
+        feature: 'numerologie_vyklad',
+        scenario: 'register-numerology-result-premium-bridge',
+        step_ids: ['paywall_to_pricing_intent', 'paywall_to_checkout']
+    },
+    {
         source: 'inline_paywall',
         feature: 'numerologie_vyklad',
         scenario: 'register-numerology-inline-paywall-bridge',

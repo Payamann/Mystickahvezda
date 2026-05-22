@@ -163,6 +163,7 @@ describe('manual script guardrails', () => {
         expect(source).toContain("scenario: 'register-monthly-horoscope-inline-flow'");
         expect(source).toContain("scenario: 'register-tarot-inline-paywall-bridge'");
         expect(source).toContain("scenario: 'register-numerology-trial-paywall-bridge'");
+        expect(source).toContain("scenario: 'register-numerology-result-premium-bridge'");
         expect(source).toContain("scenario: 'register-numerology-inline-paywall-bridge'");
         expect(source).toMatch(/scenario: 'register-numerology-inline-paywall-bridge'[\s\S]*?'pricing_intent_to_auth_handoff'/);
         expect(source).toContain("scenario: 'register-natal-login-gate-bridge'");
@@ -208,6 +209,9 @@ describe('manual script guardrails', () => {
         expect(authHandoff).toMatch(/name: 'register-numerology-inline-paywall-bridge'[\s\S]*?source: 'inline_paywall'[\s\S]*?feature: 'numerologie_vyklad'[\s\S]*?type: 'numerology-inline-paywall-bridge'[\s\S]*?mockCheckoutSubmit: true/);
         expect(authHandoff).toMatch(/name: 'register-numerology-inline-paywall-bridge'[\s\S]*?expectedPaymentEvents: \['paywall_viewed', 'paywall_cta_clicked'\]/);
         expect(authHandoff).toContain('enterNumerologyInlinePaywallBridge');
+        expect(authHandoff).toContain("name: 'register-numerology-result-premium-bridge'");
+        expect(authHandoff).toMatch(/name: 'register-numerology-result-premium-bridge'[\s\S]*?source: 'trial_paywall'[\s\S]*?feature: 'numerologie_vyklad'[\s\S]*?type: 'numerology-result-premium-bridge'[\s\S]*?mockCheckoutSubmit: true/);
+        expect(authHandoff).toContain('enterNumerologyResultPremiumBridge');
         expect(authHandoff).toContain("name: 'register-paid-natal'");
         expect(authHandoff).toMatch(/name: 'register-paid-natal'[\s\S]*?source: 'natal_teaser_gate'[\s\S]*?feature: 'natalni_interpretace'[\s\S]*?mockCheckoutSubmit: true/);
         expect(authHandoff).toContain("name: 'register-natal-login-gate-bridge'");

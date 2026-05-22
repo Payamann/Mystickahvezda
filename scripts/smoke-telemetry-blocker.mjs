@@ -4,7 +4,7 @@ const READ_ONLY_ROUTES = [
     { key: 'analytics_batch', pattern: '**/api/analytics/batch' }
 ];
 
-const MAX_CAPTURED_EVENTS = 100;
+const MAX_CAPTURED_EVENTS = 500;
 const SAFE_METADATA_KEYS = [
     'auth_mode',
     'billing_interval',

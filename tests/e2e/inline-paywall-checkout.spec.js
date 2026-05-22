@@ -255,6 +255,68 @@ test.describe('Inline paywall checkout handoff', () => {
         expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
     });
 
+    test('numerology result premium gate keeps one trial paywall source through registration', async ({ page }) => {
+        const state = await setupCheckoutRoutes(page, {
+            userId: 'result-paywall-numerology-user',
+            email: 'result-paywall-numerology@example.com',
+            checkoutSessionId: 'cs_test_result_paywall_numerology',
+            csrfToken: 'e2e-result-numerology-token'
+        });
+
+        await page.goto('/numerologie.html?source=e2e_result_paywall');
+        await waitForPageReady(page);
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+        });
+
+        await page.locator('#num-name').fill('Jana Novakova');
+        await page.locator('#num-date').fill('1990-06-15');
+        await page.locator('#num-time').fill('14:30');
+        await page.locator('#numerology-form button[type="submit"]').click();
+        await expect(page.locator('.numerology-premium-shell')).toBeVisible();
+        await expect(page.locator('.numerology-upgrade-btn')).toContainText('Odemknout');
+
+        await expect.poll(() => state.funnelEvents.find((event) => (
+            event.eventName === 'paywall_viewed'
+            && event.source === 'trial_paywall'
+            && event.feature === 'numerologie_vyklad'
+        )) || null).toEqual(expect.objectContaining({
+            planId: 'pruvodce',
+            metadata: expect.objectContaining({
+                path: '/numerologie.html'
+            })
+        }));
+        expect(state.funnelEvents.some((event) => (
+            event.eventName === 'paywall_viewed'
+            && event.source === 'premium_gate'
+            && event.feature === 'numerologie_vyklad'
+        ))).toBe(false);
+
+        await page.locator('.numerology-upgrade-btn').click();
+        await expect(page.locator('.paywall-overlay')).toBeVisible();
+        await expect(page.locator('.paywall-overlay')).toContainText(/numerolog/i);
+
+        await Promise.all([
+            waitForPath(page, '/prihlaseni.html'),
+            page.locator('.paywall-overlay .paywall-upgrade').click(),
+        ]);
+
+        await expectAuthUrl(page, {
+            source: 'trial_paywall',
+            feature: 'numerologie_vyklad'
+        });
+
+        await submitRegistration(page, 'result-paywall-numerology@example.com');
+
+        await expectCheckoutState(state, {
+            email: 'result-paywall-numerology@example.com',
+            source: 'trial_paywall',
+            feature: 'numerologie_vyklad'
+        });
+        expect(await page.evaluate(() => sessionStorage.getItem('pending_plan'))).toBeNull();
+    });
+
     test('numerology inline paywall preserves checkout context through registration', async ({ page }) => {
         const state = await setupCheckoutRoutes(page, {
             userId: 'inline-paywall-numerology-user',
