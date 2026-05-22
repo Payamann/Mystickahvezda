@@ -67,6 +67,26 @@ const SCENARIOS = [
         mockCheckoutSubmit: true
     },
     {
+        name: 'register-partner-match-result-bridge',
+        path: '/prihlaseni.html',
+        params: {
+            mode: 'register',
+            redirect: '/cenik.html',
+            plan: 'pruvodce',
+            source: 'partner_match_result',
+            feature: 'partnerska_detail',
+            entry_source: 'partner_match_result',
+            entry_feature: 'partnerska_detail'
+        },
+        expectedMode: 'register',
+        entryFlow: {
+            type: 'synastry-result-bridge',
+            path: '/partnerska-shoda.html',
+            triggerSelector: '[data-synastry-upgrade]'
+        },
+        mockCheckoutSubmit: true
+    },
+    {
         name: 'register-paid-runes',
         path: '/prihlaseni.html',
         params: {
@@ -331,6 +351,52 @@ async function waitForPaymentFunnelEvent(telemetry, startIndex, eventName, scena
     return null;
 }
 
+async function enterSynastryResultBridge(page, baseUrl, scenario) {
+    const entryUrl = new URL(scenario.entryFlow.path, `${baseUrl}/`);
+    entryUrl.searchParams.set('cache', String(Date.now()));
+    await page.goto(entryUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.waitForSelector('#synastry-form', { state: 'visible', timeout: 10_000 });
+    await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+        Object.assign(window.Auth || {}, {
+            isLoggedIn: () => false,
+            isPremium: () => false,
+            getProfile: async () => null,
+            showToast: () => {}
+        });
+        window.callAPI = async () => ({
+            synastry: {
+                scores: {
+                    total: 82,
+                    emotion: 84,
+                    communication: 76,
+                    passion: 88,
+                    stability: 79
+                },
+                engine: {
+                    precision: 'birth_date',
+                    version: 'production-auth-handoff-smoke'
+                }
+            }
+        });
+    });
+    await page.locator('#p1-name').fill('Anna');
+    await page.locator('#p1-date').fill('1990-01-01');
+    await page.locator('#p2-name').fill('Pavel');
+    await page.locator('#p2-date').fill('1992-07-15');
+    await page.locator('#synastry-form button[type="submit"]').click();
+    await page.waitForSelector('#synastry-next-step', { state: 'visible', timeout: 10_000 });
+    await page.waitForSelector(scenario.entryFlow.triggerSelector, { state: 'visible', timeout: 10_000 });
+    await Promise.all([
+        page.waitForURL(url => url.pathname === scenario.path, {
+            timeout: 10_000,
+            waitUntil: 'domcontentloaded'
+        }),
+        page.locator(scenario.entryFlow.triggerSelector).first().click()
+    ]);
+}
+
 function validatePaymentFunnelEvent(events, eventName, scenario, errors, expectedMetadata = {}) {
     const event = findPaymentFunnelEvent(events, eventName, scenario);
     if (!event) {
@@ -355,19 +421,23 @@ async function inspectScenario(page, scenario, viewportName, baseUrl, telemetry)
         : null;
     const paymentFunnelStartIndex = telemetry.events('payment_funnel').length;
     if (scenario.entryFlow) {
-        const entryUrl = new URL(scenario.entryFlow.path, `${baseUrl}/`);
-        entryUrl.searchParams.set('cache', String(Date.now()));
-        await page.goto(entryUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 30_000 });
-        await page.waitForSelector(`[data-tab="${scenario.entryFlow.tab}"]`, { state: 'visible', timeout: 10_000 });
-        await page.locator(`[data-tab="${scenario.entryFlow.tab}"]`).click();
-        await page.waitForSelector(scenario.entryFlow.triggerSelector, { state: 'visible', timeout: 10_000 });
-        await Promise.all([
-            page.waitForURL(url => url.pathname === scenario.path, {
-                timeout: 10_000,
-                waitUntil: 'domcontentloaded'
-            }),
-            page.locator(scenario.entryFlow.triggerSelector).click()
-        ]);
+        if (scenario.entryFlow.type === 'synastry-result-bridge') {
+            await enterSynastryResultBridge(page, baseUrl, scenario);
+        } else {
+            const entryUrl = new URL(scenario.entryFlow.path, `${baseUrl}/`);
+            entryUrl.searchParams.set('cache', String(Date.now()));
+            await page.goto(entryUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+            await page.waitForSelector(`[data-tab="${scenario.entryFlow.tab}"]`, { state: 'visible', timeout: 10_000 });
+            await page.locator(`[data-tab="${scenario.entryFlow.tab}"]`).click();
+            await page.waitForSelector(scenario.entryFlow.triggerSelector, { state: 'visible', timeout: 10_000 });
+            await Promise.all([
+                page.waitForURL(url => url.pathname === scenario.path, {
+                    timeout: 10_000,
+                    waitUntil: 'domcontentloaded'
+                }),
+                page.locator(scenario.entryFlow.triggerSelector).click()
+            ]);
+        }
     } else {
         const targetUrl = scenarioUrl(baseUrl, scenario);
         await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });

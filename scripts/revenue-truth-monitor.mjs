@@ -44,6 +44,12 @@ const AUTH_HANDOFF_SMOKE_COVERAGE = [
         step_ids: ['auth_handoff_to_checkout_request', 'auth_page_to_auth_form_submit']
     },
     {
+        source: 'partner_match_result',
+        feature: 'partnerska_detail',
+        scenario: 'register-partner-match-result-bridge',
+        step_ids: ['paywall_to_pricing_intent', 'paywall_to_checkout']
+    },
+    {
         source: 'runes_auth_gate',
         feature: 'runy_hluboky_vyklad',
         scenario: 'register-paid-runes',

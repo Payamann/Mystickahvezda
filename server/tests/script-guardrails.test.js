@@ -157,6 +157,9 @@ describe('manual script guardrails', () => {
         expect(source).toContain('AUTH_HANDOFF_SMOKE_COVERAGE');
         expect(source).toContain('findAuthHandoffSmokeCoverage');
         expect(source).toContain("scenario: 'register-weekly-horoscope-inline-flow'");
+        expect(source).toContain("scenario: 'register-partner-match-result-bridge'");
+        expect(source).toContain("'paywall_to_pricing_intent'");
+        expect(source).toContain("'paywall_to_checkout'");
         expect(source).toContain('production_smoke_coverage');
         expect(source).toContain('skipCoveredHistoricalAuth');
         expect(source).toContain('Next uncovered diagnostic slice');
@@ -190,6 +193,9 @@ describe('manual script guardrails', () => {
         expect(authHandoff).toMatch(/name: 'register-paid-natal'[\s\S]*?source: 'natal_teaser_gate'[\s\S]*?feature: 'natalni_interpretace'[\s\S]*?mockCheckoutSubmit: true/);
         expect(authHandoff).toContain("name: 'register-paid-partner-match'");
         expect(authHandoff).toMatch(/name: 'register-paid-partner-match'[\s\S]*?source: 'partner_match_result'[\s\S]*?feature: 'partnerska_detail'[\s\S]*?mockCheckoutSubmit: true/);
+        expect(authHandoff).toContain("name: 'register-partner-match-result-bridge'");
+        expect(authHandoff).toMatch(/name: 'register-partner-match-result-bridge'[\s\S]*?source: 'partner_match_result'[\s\S]*?feature: 'partnerska_detail'[\s\S]*?type: 'synastry-result-bridge'[\s\S]*?mockCheckoutSubmit: true/);
+        expect(authHandoff).toContain('enterSynastryResultBridge');
         expect(authHandoff).toContain("name: 'register-paid-runes'");
         expect(authHandoff).toMatch(/name: 'register-paid-runes'[\s\S]*?source: 'runes_auth_gate'[\s\S]*?feature: 'runy_hluboky_vyklad'[\s\S]*?mockCheckoutSubmit: true/);
         expect(authHandoff).toContain("name: 'register-paid-angel-cards'");
