@@ -10,6 +10,14 @@ const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const CLAUDE_MODEL = 'claude-sonnet-4-5';
 const PERSONAL_MAP_TIMEOUT_MS = 120000;
 
+function getChromiumLaunchOptions() {
+    const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH?.trim();
+    return {
+        args: ['--no-sandbox'],
+        ...(executablePath ? { executablePath } : {})
+    };
+}
+
 const SIGN_NAMES = {
     beran: 'Beran',
     byk: 'Býk',
@@ -1476,7 +1484,7 @@ body {
 
 export async function renderPersonalMapPdf(input, outputPath = null) {
     const html = buildPersonalMapHtml(input);
-    const browser = await chromium.launch({ args: ['--no-sandbox'] });
+    const browser = await chromium.launch(getChromiumLaunchOptions());
 
     try {
         const page = await browser.newPage();
@@ -1494,7 +1502,7 @@ export async function renderPersonalMapPdf(input, outputPath = null) {
 
 export async function renderPersonalMapCoverPreview(input, outputPath) {
     const html = buildPersonalMapHtml(input);
-    const browser = await chromium.launch({ args: ['--no-sandbox'] });
+    const browser = await chromium.launch(getChromiumLaunchOptions());
 
     try {
         const page = await browser.newPage({ viewport: { width: 1200, height: 1700 }, deviceScaleFactor: 1 });
@@ -1507,7 +1515,7 @@ export async function renderPersonalMapCoverPreview(input, outputPath) {
 
 export async function renderPersonalMapPagePreview(input, outputPath, selector = '.mh-pdf-page--essence') {
     const html = buildPersonalMapHtml(input);
-    const browser = await chromium.launch({ args: ['--no-sandbox'] });
+    const browser = await chromium.launch(getChromiumLaunchOptions());
 
     try {
         const page = await browser.newPage({ viewport: { width: 1200, height: 1700 }, deviceScaleFactor: 1 });
