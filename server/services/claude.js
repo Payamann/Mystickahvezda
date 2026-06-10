@@ -1,22 +1,26 @@
-// Native fetch is used in Node 18+
+// Native fetch is used in Node 20+.
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { getAIProfile } from '../config/ai-profiles.js';
+import {
+    normalizeDailyAICallLimit,
+    recordAIRequestOutcome,
+    reserveAIRequest,
+    reserveDailyAIRequest,
+    resetDailyAIRequestBudget
+} from './ai-budget.js';
+import {
+    getCachedAIResponse,
+    setCachedAIResponse
+} from './ai-response-cache.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
-const CLAUDE_MODEL = 'claude-sonnet-4-5';
-
-const REQUEST_TIMEOUT_MS = 30000;
-const MAX_RETRIES = 2;
-const DEFAULT_DAILY_AI_CALL_LIMIT = 120;
-const MAX_DAILY_AI_CALL_LIMIT = 10000;
 const USE_MOCK_AI = process.env.MOCK_AI === 'true' || process.env.NODE_ENV === 'test';
-let aiBudgetDate = null;
-let aiRequestsReserved = 0;
 
 const API_KEY = (() => {
     const key = process.env.ANTHROPIC_API_KEY;
@@ -26,47 +30,51 @@ const API_KEY = (() => {
     return key;
 })();
 
-export function normalizeDailyAICallLimit(value) {
-    const parsed = Number.parseInt(value, 10);
-    if (!Number.isFinite(parsed)) return DEFAULT_DAILY_AI_CALL_LIMIT;
-    return Math.min(MAX_DAILY_AI_CALL_LIMIT, Math.max(1, parsed));
-}
+export {
+    normalizeDailyAICallLimit,
+    reserveDailyAIRequest,
+    resetDailyAIRequestBudget
+};
 
-export function reserveDailyAIRequest({
-    now = new Date(),
-    limit = normalizeDailyAICallLimit(process.env.AI_DAILY_CALL_LIMIT)
-} = {}) {
-    const dateKey = now.toISOString().slice(0, 10);
-    if (aiBudgetDate !== dateKey) {
-        aiBudgetDate = dateKey;
-        aiRequestsReserved = 0;
+function appendContext(systemPrompt, contextData) {
+    let fullSystem = systemPrompt;
+    if (!contextData || typeof contextData !== 'object' || Array.isArray(contextData)) {
+        return fullSystem;
     }
 
-    if (aiRequestsReserved >= limit) {
-        const error = new Error(`Daily AI request limit reached (${limit}).`);
-        error.code = 'AI_DAILY_BUDGET_EXHAUSTED';
-        throw error;
+    const { userContext, appContext } = contextData;
+    if (userContext) {
+        fullSystem += [
+            '',
+            '',
+            'PROFIL UŽIVATELE:',
+            `Jméno: ${userContext.name || 'Neznámé'}`,
+            `Znamení: ${userContext.zodiacSign || 'Neznámé'}`,
+            `Datum narození: ${userContext.birthDate || 'Neznámé'}`
+        ].join('\n');
     }
-
-    aiRequestsReserved += 1;
-    return {
-        date: aiBudgetDate,
-        limit,
-        used: aiRequestsReserved,
-        remaining: limit - aiRequestsReserved
-    };
+    if (appContext) {
+        fullSystem += `\n\nKONTEXT APLIKACE:\n${appContext}`;
+    }
+    return fullSystem;
 }
 
-export function resetDailyAIRequestBudget() {
-    aiBudgetDate = null;
-    aiRequestsReserved = 0;
+function normalizeMessages(messageOrHistory) {
+    if (!Array.isArray(messageOrHistory)) {
+        return [{ role: 'user', content: String(messageOrHistory || '') }];
+    }
+
+    return messageOrHistory.map((message) => ({
+        role: message.role === 'mentor' || message.role === 'model' ? 'assistant' : 'user',
+        content: String(message.content || '')
+    }));
 }
 
 /**
- * Calls the Claude API with a system prompt and user message.
- * Drop-in replacement for callGemini.
+ * Calls Claude through the shared budget, model routing and telemetry layer.
+ * Existing three-argument calls remain supported; feature options are the fourth argument.
  */
-export async function callClaude(systemPrompt, messageOrHistory, contextData = null) {
+export async function callClaude(systemPrompt, messageOrHistory, contextData = null, options = {}) {
     if (USE_MOCK_AI) {
         if (process.env.MOCK_AI_FORCE_ERROR === 'true') {
             throw new Error('Forced mock AI error.');
@@ -74,99 +82,130 @@ export async function callClaude(systemPrompt, messageOrHistory, contextData = n
         return buildMockClaudeResponse(systemPrompt);
     }
 
+    const profile = getAIProfile(options.feature || 'default', options);
+    const cacheInput = options.cacheTtlSeconds
+        ? (options.cacheInput || {
+            systemPrompt,
+            messageOrHistory,
+            contextData,
+            model: profile.model
+        })
+        : null;
+    const cacheNamespace = options.cacheNamespace || profile.feature;
+
+    if (cacheInput) {
+        const cached = await getCachedAIResponse(cacheNamespace, cacheInput);
+        if (cached) return cached.value;
+    }
+
     if (!API_KEY) {
         throw new Error('ANTHROPIC_API_KEY is not defined in environment variables.');
     }
 
-    let fullSystem = systemPrompt;
-    if (contextData) {
-        const { userContext, appContext } = contextData;
-        if (userContext) {
-            fullSystem += `\n\nPROFIL UŽIVATELE:\nJméno: ${userContext.name || 'Neznámé'}\nZnamení: ${userContext.zodiacSign || 'Neznámé'}\nDatum narození: ${userContext.birthDate || 'Neznámé'}\n`;
-        }
-        if (appContext) {
-            fullSystem += `\n\nKONTEXT APLIKACE:\n${appContext}`;
-        }
-    }
-
-    let messages;
-    if (Array.isArray(messageOrHistory)) {
-        messages = messageOrHistory.map(msg => ({
-            role: msg.role === 'mentor' || msg.role === 'model' ? 'assistant' : 'user',
-            content: msg.content
-        }));
-    } else {
-        messages = [{ role: 'user', content: messageOrHistory }];
-    }
-
     const requestBody = {
-        model: CLAUDE_MODEL,
-        max_tokens: 2048,
-        system: fullSystem,
-        messages
+        model: profile.model,
+        max_tokens: profile.maxTokens,
+        system: appendContext(systemPrompt, contextData),
+        messages: normalizeMessages(messageOrHistory)
     };
 
     let lastError;
-    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    for (let attempt = 0; attempt <= profile.maxRetries; attempt += 1) {
+        const startedAt = Date.now();
+        let statusCode = null;
+        let reservationDate = new Date().toISOString().slice(0, 10);
+
         try {
-            reserveDailyAIRequest();
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
-            const response = await fetch(CLAUDE_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': API_KEY,
-                    'anthropic-version': '2023-06-01'
-                },
-                body: JSON.stringify(requestBody),
-                signal: controller.signal
+            const reservation = await reserveAIRequest({
+                feature: profile.feature,
+                model: profile.model
             });
+            reservationDate = reservation.date;
 
-            clearTimeout(timeoutId);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), profile.timeoutMs);
+            let response;
+            try {
+                response = await fetch(CLAUDE_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY,
+                        'anthropic-version': '2023-06-01'
+                    },
+                    body: JSON.stringify(requestBody),
+                    signal: controller.signal
+                });
+            } finally {
+                clearTimeout(timeoutId);
+            }
 
+            statusCode = response.status;
             if (!response.ok) {
-                const status = response.status;
-                if ((status === 429 || status === 529) && attempt < MAX_RETRIES) {
-                    const delay = Math.pow(2, attempt + 1) * 1000;
-                    console.warn(`[Claude Service] ${status} error, retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES})`);
-                    await new Promise(r => setTimeout(r, delay));
-                    continue;
-                }
-                const errorText = await response.text();
-                throw new Error(`Claude API Error (${status}): ${errorText}`);
+                const apiError = new Error(
+                    `Claude API Error (${response.status}): ${await response.text()}`
+                );
+                apiError.retryable = response.status === 429
+                    || response.status === 529
+                    || response.status >= 500;
+                throw apiError;
             }
 
             const data = await response.json();
             const text = data.content?.[0]?.text;
+            if (!text) throw new Error('No content returned from Claude.');
 
-            if (!text) {
-                throw new Error('No content returned from Claude.');
+            recordAIRequestOutcome({
+                dateKey: reservationDate,
+                feature: profile.feature,
+                model: profile.model,
+                modelTier: profile.modelTier,
+                success: true,
+                usage: data.usage || {},
+                durationMs: Date.now() - startedAt,
+                statusCode
+            }).catch(() => {});
+
+            if (cacheInput) {
+                setCachedAIResponse(
+                    cacheNamespace,
+                    cacheInput,
+                    text,
+                    options.cacheTtlSeconds
+                ).catch(() => {});
             }
 
             return text;
-
         } catch (error) {
             lastError = error;
             if (error.code === 'AI_DAILY_BUDGET_EXHAUSTED') {
                 console.error('[Claude Service] Daily request budget exhausted');
                 throw error;
             }
-            if (error.name === 'AbortError') {
-                console.error('[Claude Service] Request timed out');
-                if (attempt < MAX_RETRIES) {
-                    const delay = Math.pow(2, attempt + 1) * 1000;
-                    console.warn(`[Claude Service] Retrying after timeout (attempt ${attempt + 1}/${MAX_RETRIES})`);
-                    await new Promise(r => setTimeout(r, delay));
-                    continue;
-                }
-                throw new Error('Claude API request timed out');
-            }
-            if (attempt >= MAX_RETRIES) {
+
+            const timedOut = error.name === 'AbortError';
+            const retryable = timedOut || error.retryable === true || error instanceof TypeError;
+            recordAIRequestOutcome({
+                dateKey: reservationDate,
+                feature: profile.feature,
+                model: profile.model,
+                modelTier: profile.modelTier,
+                success: false,
+                durationMs: Date.now() - startedAt,
+                statusCode
+            }).catch(() => {});
+
+            if (!retryable || attempt >= profile.maxRetries) {
                 console.error('[Claude Service] Error:', error.message);
-                throw error;
+                throw timedOut ? new Error('Claude API request timed out') : error;
             }
+
+            const delay = Math.pow(2, attempt + 1) * 1000;
+            console.warn(
+                `[Claude Service] Retry in ${delay}ms `
+                + `(attempt ${attempt + 1}/${profile.maxRetries}, feature ${profile.feature})`
+            );
+            await new Promise(resolve => setTimeout(resolve, delay));
         }
     }
 

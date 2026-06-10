@@ -142,7 +142,9 @@ Vytvoř symbolický výklad minulého života této duše.`;
         let fallback = false;
 
         try {
-            const raw = await callClaude(SYSTEM_PROMPT, userMsg);
+            const raw = await callClaude(SYSTEM_PROMPT, userMsg, null, {
+                feature: 'past_life'
+            });
             const jsonMatch = raw.match(/\{[\s\S]*\}/);
             result = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
         } catch (e) {

@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { chromium } from '@playwright/test';
+import { callClaude } from './claude.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,40 +28,6 @@ const SECTIONS = [
     { key: 'mesice', title: 'Klíčové Měsíce', icon: '◐' },
     { key: 'slovo', title: `Slovo pro ${new Date().getFullYear()}`, icon: '✧' },
 ];
-
-/** Direct Claude call with 90s timeout — needed for long PDF content generation. */
-async function callClaudeExtended(systemPrompt, userPrompt) {
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
-
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 90000);
-
-    try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': apiKey,
-                'anthropic-version': '2023-06-01',
-            },
-            body: JSON.stringify({
-                model: 'claude-sonnet-4-5',
-                max_tokens: 4096,
-                system: systemPrompt,
-                messages: [{ role: 'user', content: userPrompt }],
-            }),
-            signal: controller.signal,
-        });
-        clearTimeout(timer);
-        if (!res.ok) throw new Error(`Claude API ${res.status}: ${await res.text()}`);
-        const data = await res.json();
-        return data.content?.[0]?.text || '';
-    } catch (err) {
-        clearTimeout(timer);
-        throw err;
-    }
-}
 
 /**
  * Calls Claude to generate 6-section personalized horoscope.
@@ -89,7 +56,9 @@ Pravidla pro každou sekci:
 
 Piš výhradně v češtině. Nepiš nadpisy sekcí, jen SEKCE:[klíč] a pak text.`;
 
-    const raw = await callClaudeExtended(systemPrompt, userPrompt);
+    const raw = await callClaude(systemPrompt, userPrompt, null, {
+        feature: 'annual_horoscope_pdf'
+    });
     return parseSections(raw);
 }
 

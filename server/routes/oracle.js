@@ -163,7 +163,10 @@ router.post('/crystal-ball', oracleLimiter, optionalPremiumCheck, async (req, re
         let response;
 
         try {
-            response = await callClaude(systemPrompt, contextMessage);
+            response = await callClaude(systemPrompt, contextMessage, null, {
+                feature: 'crystal_ball',
+                cacheTtlSeconds: 7 * 24 * 60 * 60
+            });
         } catch (aiError) {
             console.warn('Crystal Ball AI fallback used:', aiError.message);
             fallback = true;
@@ -215,7 +218,10 @@ router.post('/dream', oracleLimiter, authenticateToken, requirePremiumSoft, asyn
         let response;
 
         try {
-            response = await callClaude(systemPrompt, message);
+            response = await callClaude(systemPrompt, message, null, {
+                feature: 'dream_analysis',
+                cacheTtlSeconds: 30 * 24 * 60 * 60
+            });
         } catch (aiError) {
             console.warn('Dream Analysis AI fallback used:', aiError.message);
             fallback = true;
@@ -294,7 +300,10 @@ router.post('/tarot', oracleLimiter, authenticateToken, requirePremiumSoft, asyn
         let response;
 
         try {
-            response = await callClaude(systemPrompt, message);
+            response = await callClaude(systemPrompt, message, null, {
+                feature: cards.length === 1 ? 'tarot_single' : 'tarot_multi',
+                cacheTtlSeconds: 30 * 24 * 60 * 60
+            });
         } catch (aiError) {
             console.warn('Tarot AI fallback used:', aiError.message);
             fallback = true;
@@ -357,7 +366,10 @@ router.post('/tarot-summary', oracleLimiter, authenticateToken, requirePremiumSo
         let response;
 
         try {
-            response = await callClaude(systemPrompt, message);
+            response = await callClaude(systemPrompt, message, null, {
+                feature: 'tarot_summary',
+                cacheTtlSeconds: 30 * 24 * 60 * 60
+            });
         } catch (aiError) {
             console.warn('Tarot Summary AI fallback used:', aiError.message);
             fallback = true;
@@ -465,7 +477,10 @@ router.post('/natal-chart', oracleLimiter, optionalPremiumCheck, async (req, res
         let response;
 
         try {
-            response = await callClaude(systemPrompt, message);
+            response = await callClaude(systemPrompt, message, null, {
+                feature: 'natal_chart',
+                cacheTtlSeconds: 90 * 24 * 60 * 60
+            });
         } catch (aiError) {
             console.warn('Natal Chart AI fallback used:', aiError.message);
             fallback = true;
@@ -561,7 +576,10 @@ router.post('/synastry', oracleLimiter, authenticateToken, requirePremiumSoft, a
         let response;
 
         try {
-            response = await callClaude(systemPrompt, message);
+            response = await callClaude(systemPrompt, message, null, {
+                feature: 'synastry',
+                cacheTtlSeconds: 90 * 24 * 60 * 60
+            });
         } catch (aiError) {
             console.warn('Synastry AI fallback used:', aiError.message);
             fallback = true;
@@ -648,7 +666,10 @@ router.post('/astrocartography', oracleLimiter, authenticateToken, requireFeatur
         let response;
 
         try {
-            response = await callClaude(systemPrompt, message);
+            response = await callClaude(systemPrompt, message, null, {
+                feature: 'astrocartography',
+                cacheTtlSeconds: 30 * 24 * 60 * 60
+            });
         } catch (aiError) {
             console.warn('Astrocartography AI fallback used:', aiError.message);
             fallback = true;
@@ -714,7 +735,10 @@ router.post('/angel-card', oracleLimiter, authenticateToken, requirePremiumSoft,
         let response;
 
         try {
-            response = await callClaude(systemPrompt, message);
+            response = await callClaude(systemPrompt, message, null, {
+                feature: 'angel_card',
+                cacheTtlSeconds: 30 * 24 * 60 * 60
+            });
         } catch (aiError) {
             console.warn('Angel Card AI fallback used:', aiError.message);
             fallback = true;
@@ -782,7 +806,10 @@ router.post('/runes', oracleLimiter, authenticateToken, requirePremiumSoft, asyn
         let response;
 
         try {
-            response = await callClaude(systemPrompt, contextMessage);
+            response = await callClaude(systemPrompt, contextMessage, null, {
+                feature: 'runes',
+                cacheTtlSeconds: 30 * 24 * 60 * 60
+            });
         } catch (aiError) {
             console.warn('Runes AI fallback used:', aiError.message);
             fallback = true;
@@ -840,7 +867,16 @@ router.post('/daily-wisdom', oracleLimiter, authenticateToken, requirePremiumSof
         let response;
 
         try {
-            response = await callClaude(systemPrompt, message);
+            response = await callClaude(systemPrompt, message, null, {
+                feature: 'daily_wisdom',
+                cacheTtlSeconds: 26 * 60 * 60,
+                cacheInput: {
+                    date: new Date().toISOString().slice(0, 10),
+                    sign: safeSign,
+                    moonPhase: safeMoonPhase,
+                    lang
+                }
+            });
         } catch (aiError) {
             console.warn('Daily Wisdom AI fallback used:', aiError.message);
             fallback = true;

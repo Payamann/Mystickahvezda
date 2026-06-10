@@ -180,7 +180,9 @@ router.post('/', authenticateToken, requireFeature('numerologie_vyklad'), async 
         let fallback = false;
 
         try {
-            response = await callClaude(SYSTEM_PROMPTS.numerology, message);
+            response = await callClaude(SYSTEM_PROMPTS.numerology, message, null, {
+                feature: 'numerology'
+            });
 
             await saveCachedNumerology(cacheKey, {
                 name: cleanName,

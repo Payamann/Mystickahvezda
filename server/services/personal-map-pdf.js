@@ -2,13 +2,11 @@ import { chromium } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
+import { callClaude } from './claude.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '../../');
-const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
-const CLAUDE_MODEL = 'claude-sonnet-4-5';
-const PERSONAL_MAP_TIMEOUT_MS = 120000;
 
 function getChromiumLaunchOptions() {
     const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH?.trim();
@@ -200,43 +198,6 @@ function imageDataUri(relativePath) {
             : 'image/png';
     const imagePath = path.join(rootDir, relativePath);
     return `data:${mimeType};base64,${fs.readFileSync(imagePath).toString('base64')}`;
-}
-
-async function callClaudeForPersonalMap(systemPrompt, userPrompt) {
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) {
-        throw new Error('ANTHROPIC_API_KEY not set');
-    }
-
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), PERSONAL_MAP_TIMEOUT_MS);
-
-    try {
-        const response = await fetch(CLAUDE_API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': apiKey,
-                'anthropic-version': '2023-06-01'
-            },
-            body: JSON.stringify({
-                model: CLAUDE_MODEL,
-                max_tokens: 8192,
-                system: systemPrompt,
-                messages: [{ role: 'user', content: userPrompt }]
-            }),
-            signal: controller.signal
-        });
-
-        if (!response.ok) {
-            throw new Error(`Claude API ${response.status}: ${await response.text()}`);
-        }
-
-        const data = await response.json();
-        return data.content?.[0]?.text || '';
-    } finally {
-        clearTimeout(timer);
-    }
 }
 
 function extractJsonPayload(raw) {
@@ -554,7 +515,9 @@ export async function generatePersonalMapContent(input = {}) {
 
     const { system, user } = buildPersonalMapGenerationPrompt(input);
     try {
-        const raw = await callClaudeForPersonalMap(system, user);
+        const raw = await callClaude(system, user, null, {
+            feature: 'personal_map_pdf'
+        });
         const parsed = JSON.parse(extractJsonPayload(raw));
         const sections = parsed?.sections && typeof parsed.sections === 'object' ? parsed.sections : parsed;
         const normalized = normalizePersonalMapSections(sections);

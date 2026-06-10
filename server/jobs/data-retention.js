@@ -6,6 +6,7 @@ const TABLE_RETENTION_TARGETS = Object.freeze([
     { table: 'cache_numerology', dateColumn: 'generated_at' },
     { table: 'cache_past_life', dateColumn: 'generated_at' },
     { table: 'cache_medicine_wheel', dateColumn: 'generated_at' },
+    { table: 'ai_response_cache', dateColumn: 'updated_at', envKey: 'AI_RESPONSE_CACHE_RETENTION_DAYS' },
     { table: 'one_time_order_inputs', dateColumn: 'created_at', envKey: 'ONE_TIME_ORDER_RETENTION_DAYS' },
     { table: 'analytics_events', dateColumn: 'created_at', envKey: 'ANALYTICS_RETENTION_DAYS' },
     { table: 'login_attempts', dateColumn: 'created_at', envKey: 'LOGIN_ATTEMPTS_RETENTION_DAYS', defaultDays: 30 },

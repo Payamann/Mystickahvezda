@@ -115,7 +115,9 @@ Přečti duchovní cestu tohoto člověka na Medicínském Kolečku.`;
         let fallback = false;
 
         try {
-            const raw = await callClaude(SYSTEM_PROMPT, userMsg);
+            const raw = await callClaude(SYSTEM_PROMPT, userMsg, null, {
+                feature: 'medicine_wheel'
+            });
             const jsonMatch = raw.match(/\{[\s\S]*\}/);
             result = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
         } catch (e) {

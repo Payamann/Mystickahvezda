@@ -86,7 +86,9 @@ async function generateAndCache(sign) {
     const message = `Vygeneruj horoskop pro znamení ${sign} na ${dateStr}.`;
     const systemPrompt = SYSTEM_PROMPTS?.horoscope || 'Jsi astrologický asistent.';
 
-    const rawResponse = await callClaude(systemPrompt, message, prompt);
+    const rawResponse = await callClaude(systemPrompt, message, null, {
+        feature: 'horoscope_daily'
+    });
 
     // Parse JSON response
     let parsed;

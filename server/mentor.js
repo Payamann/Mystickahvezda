@@ -3,14 +3,15 @@ import { calculateMoonPhase } from './services/astrology.js';
 import { supabase } from './db-supabase.js';
 import { authenticateToken, requirePremiumSoft, trackPaywallHit } from './middleware.js';
 import { callClaude } from './services/claude.js';
+import {
+    buildCompactMentorHistory,
+    buildCompactReadingContext
+} from './services/mentor-context.js';
 import { SYSTEM_PROMPTS } from './config/prompts.js';
 import xss from 'xss';
 
 const router = express.Router();
 
-// ... (imports remain)
-
-// POST /chat - Chat with Mentor (PREMIUM ONLY)
 router.post('/chat', authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const { message } = req.body;
@@ -19,46 +20,39 @@ router.post('/chat', authenticateToken, requirePremiumSoft, async (req, res) => 
         if (!message || typeof message !== 'string') {
             return res.status(400).json({ error: 'Zpráva chybí.' });
         }
-
         if (message.length > 2000) {
             return res.status(400).json({ error: 'Zpráva je příliš dlouhá (max 2000 znaků).' });
         }
 
-        // PREMIUM GATE: Free users limited to 3 messages per day
         if (!req.isPremium) {
-            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-
+            const today = new Date().toISOString().split('T')[0];
             const { count: messageCount = 0, error: countError } = await supabase
                 .from('mentor_messages')
                 .select('id', { count: 'exact', head: true })
                 .eq('user_id', userId)
-                .eq('role', 'user') // Only count user messages, not AI responses
+                .eq('role', 'user')
                 .gte('created_at', `${today}T00:00:00`);
 
             if (countError) {
                 console.error('Mentor message count error:', countError);
-            } else {
-                if (messageCount >= 3) {
-                    trackPaywallHit(userId, 'mentor_unlimited').catch(() => {});
-                    return res.status(402).json({
-                        error: 'Denní limit 3 zpráv byl vyčerpán. Upgrade na Premium pro neomezený přístup.',
-                        code: 'PREMIUM_REQUIRED',
-                        feature: 'mentor_unlimited'
-                    });
-                }
+            } else if (messageCount >= 3) {
+                trackPaywallHit(userId, 'mentor_unlimited').catch(() => {});
+                return res.status(402).json({
+                    error: 'Denní limit 3 zpráv byl vyčerpán. Upgrade na Premium pro neomezený přístup.',
+                    code: 'PREMIUM_REQUIRED',
+                    feature: 'mentor_unlimited'
+                });
             }
         }
 
-        // Sanitize: strip control characters and XSS attempts
         const sanitizedMessage = xss(message, {
-            whiteList: {}, // No HTML tags allowed
-            stripIgnoredTag: true,
+            whiteList: {},
+            stripIgnoredTag: true
         }).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
             .trim();
 
         console.log(`[Mentor] Request received from user ${userId}`);
 
-        // 1. Fetch User Profile
         let userContext = {};
         try {
             const { data: profile } = await supabase
@@ -74,140 +68,100 @@ router.post('/chat', authenticateToken, requirePremiumSoft, async (req, res) => 
                     zodiacSign: null
                 };
             }
-        } catch (e) {
-            console.warn('[Mentor] Could not fetch profile for context', e);
+        } catch (error) {
+            console.warn('[Mentor] Could not fetch profile for context', error);
         }
 
-        // 2. Fetch Chat History (Last 10 messages)
         let history = [];
+        let historySummary = '';
         try {
-            // ... (history fetching logic remains same)
-            const { data: msgs } = await supabase
+            const { data: messages } = await supabase
                 .from('mentor_messages')
                 .select('role, content')
                 .eq('user_id', userId)
                 .order('created_at', { ascending: false })
-                .limit(10);
+                .limit(12);
 
-            if (msgs) {
-                history = msgs.reverse();
+            if (messages) {
+                const compacted = buildCompactMentorHistory(messages.reverse());
+                history = compacted.recent;
+                historySummary = compacted.summary;
             }
-        } catch (e) {
-            console.warn('[Mentor] Could not fetch chat history', e);
+        } catch (error) {
+            console.warn('[Mentor] Could not fetch chat history', error);
         }
 
-        // 3. Fetch Recent App Context (Last 5 readings)
-        // ENHANCED: Get more detail and more items
-        let appContext = "";
+        let appContext = '';
         try {
             const { data: readings } = await supabase
                 .from('readings')
                 .select('type, created_at, data')
                 .eq('user_id', userId)
                 .order('created_at', { ascending: false })
-                .limit(5);
+                .limit(3);
 
-            if (readings && readings.length > 0) {
-                const contextItems = readings.map(r => {
-                    const date = new Date(r.created_at).toLocaleDateString('cs-CZ');
-                    let summary = r.type;
-
-                    // Detailed extraction
-                    if (r.type === 'tarot') {
-                        // Extract cards with positions if available
-                        const cards = r.data.cards || [];
-                        const cardDetails = cards.map(c => {
-                            if (typeof c === 'object') return `${c.position || ''}: ${c.name} (${c.meaning || ''})`;
-                            return c; // legacy string array
-                        }).join(', ');
-                        summary = `Tarot výklad (${r.data.spreadType || 'Neznámý typ'}): ${cardDetails}`;
-                        if (r.data.response) summary += `\n   -> AI Shrnutí: "${r.data.response.substring(0, 100)}..."`;
-
-                    } else if (r.type === 'crystal-ball') {
-                        summary = `Křišťálová koule: Otázka "${r.data.question}" -> Odpověď: "${r.data.response ? r.data.response.substring(0, 50) + '...' : ''}"`;
-
-                    } else if (r.type === 'numerology') {
-                        summary = `Numerologie: Životní číslo ${r.data.lifePath}, Osudové číslo ${r.data.destiny}`;
-
-                    } else if (r.type === 'horoscope') {
-                        summary = `Horoskop (${r.data.period}): Znamení ${r.data.sign}`;
-                    }
-
-                    return `[${date}] ${summary}`;
-                });
-
-                // Add Moon Phase
-                const moonPhase = calculateMoonPhase();
-
-                appContext = `
-AKTUÁLNÍ ASTRONOMICKÁ SITUACE:
-- Fáze měsíce: ${moonPhase}
-
-HISTORIE UŽIVATELOVÝCH VÝKLADŮ (DŮLEŽITÉ - ODKAZUJ NA TO):
-${contextItems.join('\n')}
-
-(Pokud se uživatel ptá na radu, podívej se, zda nedávný výklad (např. Tarot) nenabízí odpověď. SPOJUJ SOUVISLOSTI.)`;
+            const contextParts = [`Aktuální fáze Měsíce: ${calculateMoonPhase()}`];
+            const readingContext = buildCompactReadingContext(readings || []);
+            if (readingContext) contextParts.push(`Nedávné výklady:\n${readingContext}`);
+            if (historySummary) contextParts.push(`Souhrn starší konverzace:\n${historySummary}`);
+            appContext = contextParts.join('\n\n');
+        } catch (error) {
+            console.warn('[Mentor] Could not fetch reading context', error);
+            if (historySummary) {
+                appContext = `Souhrn starší konverzace:\n${historySummary}`;
             }
-        } catch (e) {
-            console.warn('[Mentor] Could not fetch reading context', e);
         }
 
-        // 4. Save User Message to DB
-        // ... (saving logic remains same)
         try {
             await supabase.from('mentor_messages').insert({
                 user_id: userId,
                 role: 'user',
                 content: sanitizedMessage
             });
-        } catch (dbError) { }
+        } catch {
+            // A temporary history write failure must not block the answer.
+        }
 
-        // 5. Generate Response
-        console.log('[Mentor] Calling Claude API with enhanced context...');
-        const systemPrompt = SYSTEM_PROMPTS.mentor;
+        console.log('[Mentor] Calling Claude API with compact context...');
         const responseText = await callClaude(
-            systemPrompt,
+            SYSTEM_PROMPTS.mentor,
             [...history, { role: 'user', content: sanitizedMessage }],
-            { userContext, appContext }
+            { userContext, appContext },
+            { feature: 'mentor' }
         );
 
-        // 6. Save AI Response to DB
-        // ... (saving logic remains same)
         try {
             await supabase.from('mentor_messages').insert({
                 user_id: userId,
                 role: 'mentor',
                 content: responseText
             });
-        } catch (dbError) { }
+        } catch {
+            // A temporary history write failure must not hide a valid answer.
+        }
 
         res.json({ success: true, reply: responseText });
-
     } catch (error) {
         console.error('Mentor Chat API Critical Error:', error);
         res.status(500).json({ error: 'Spojení s mentorem se nezdařilo.' });
     }
 });
 
-// GET /history - Fetch chat history for frontend (PREMIUM ONLY)
 router.get('/history', authenticateToken, requirePremiumSoft, async (req, res) => {
     try {
         const userId = req.user.id;
-
-        const { data: msgs, error } = await supabase
+        const { data: messages, error } = await supabase
             .from('mentor_messages')
             .select('role, content, created_at')
             .eq('user_id', userId)
-            .order('created_at', { ascending: false }) // Get newest first
+            .order('created_at', { ascending: false })
             .limit(50);
 
         if (error) throw error;
-
-        // Return oldest first for chat UI
-        res.json({ success: true, history: (msgs || []).reverse() });
+        res.json({ success: true, history: (messages || []).reverse() });
     } catch (error) {
         console.error('Mentor History Error:', error);
-        res.status(500).json({ error: 'Historie se nepodařilo načíst.' });
+        res.status(500).json({ error: 'Historie se nepodařila načíst.' });
     }
 });
 

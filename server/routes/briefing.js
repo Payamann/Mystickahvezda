@@ -35,7 +35,9 @@ router.post('/briefing', async (req, res) => {
         const cacheKey = generalAICache.generateKey('briefing', {
             zodiacSign: safeZodiacSign,
             name: safeName,
-            tarotCard: safeTarotCard
+            tarotCard: safeTarotCard,
+            birthDate: safeBirthDate,
+            date: new Date().toISOString().slice(0, 10)
         });
         const cachedResponse = generalAICache.get(cacheKey);
 
@@ -62,7 +64,10 @@ Pokyny pro text:
         let fallback = false;
 
         try {
-            text = await callClaude(systemPrompt, userMessage);
+            text = await callClaude(systemPrompt, userMessage, null, {
+                feature: 'briefing',
+                cacheTtlSeconds: 26 * 60 * 60
+            });
         } catch (aiError) {
             console.warn('[BRIEFING] AI fallback:', aiError.message);
             fallback = true;

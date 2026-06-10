@@ -227,7 +227,9 @@ router.post('/', optionalPremiumCheck, async (req, res) => {
 
         const message = `Vygeneruj horoskop pro znamení ${sign} na ${dateStr}.`;
 
-        const response = await callClaude(periodPrompt, message);
+        const response = await callClaude(periodPrompt, message, null, {
+            feature: `horoscope_${period}`
+        });
 
         const { serialized: cleanResponse } = normalizeHoroscopeAiResponse(response);
 

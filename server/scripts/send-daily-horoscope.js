@@ -156,7 +156,9 @@ async function getOrGenerateHoroscope(sign) {
     let text;
 
     try {
-        text = await callClaude(systemPrompt, userMsg);
+        text = await callClaude(systemPrompt, userMsg, null, {
+            feature: 'horoscope_daily'
+        });
     } catch (claudeError) {
         console.warn(`[DailyHoroscope] Claude unavailable for ${sign}: ${claudeError.message}`);
         try {
