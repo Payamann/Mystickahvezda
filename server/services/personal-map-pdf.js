@@ -16,6 +16,19 @@ function getChromiumLaunchOptions() {
     };
 }
 
+async function setPdfPageContent(page, html) {
+    await page.setContent(html, { waitUntil: 'load', timeout: 30000 });
+    await page.evaluate(() => {
+        if (!document.fonts?.ready) return true;
+        return document.fonts.ready.then(() => true);
+    });
+}
+
+async function closePage(page) {
+    if (!page) return;
+    await page.close({ runBeforeUnload: false });
+}
+
 const SIGN_NAMES = {
     beran: 'Beran',
     byk: 'Býk',
@@ -1448,17 +1461,20 @@ body {
 export async function renderPersonalMapPdf(input, outputPath = null) {
     const html = buildPersonalMapHtml(input);
     const browser = await chromium.launch(getChromiumLaunchOptions());
+    let page = null;
 
     try {
-        const page = await browser.newPage();
-        await page.setContent(html, { waitUntil: 'networkidle' });
+        page = await browser.newPage();
+        await setPdfPageContent(page, html);
         return await page.pdf({
             ...(outputPath ? { path: outputPath } : {}),
             format: 'A4',
             printBackground: true,
-            margin: { top: '0', right: '0', bottom: '0', left: '0' }
+            margin: { top: '0', right: '0', bottom: '0', left: '0' },
+            timeout: 120000
         });
     } finally {
+        await closePage(page);
         await browser.close();
     }
 }
@@ -1466,12 +1482,14 @@ export async function renderPersonalMapPdf(input, outputPath = null) {
 export async function renderPersonalMapCoverPreview(input, outputPath) {
     const html = buildPersonalMapHtml(input);
     const browser = await chromium.launch(getChromiumLaunchOptions());
+    let page = null;
 
     try {
-        const page = await browser.newPage({ viewport: { width: 1200, height: 1700 }, deviceScaleFactor: 1 });
-        await page.setContent(html, { waitUntil: 'networkidle' });
+        page = await browser.newPage({ viewport: { width: 1200, height: 1700 }, deviceScaleFactor: 1 });
+        await setPdfPageContent(page, html);
         await page.locator('.mh-pdf-page--cover').screenshot({ path: outputPath });
     } finally {
+        await closePage(page);
         await browser.close();
     }
 }
@@ -1479,12 +1497,14 @@ export async function renderPersonalMapCoverPreview(input, outputPath) {
 export async function renderPersonalMapPagePreview(input, outputPath, selector = '.mh-pdf-page--essence') {
     const html = buildPersonalMapHtml(input);
     const browser = await chromium.launch(getChromiumLaunchOptions());
+    let page = null;
 
     try {
-        const page = await browser.newPage({ viewport: { width: 1200, height: 1700 }, deviceScaleFactor: 1 });
-        await page.setContent(html, { waitUntil: 'networkidle' });
+        page = await browser.newPage({ viewport: { width: 1200, height: 1700 }, deviceScaleFactor: 1 });
+        await setPdfPageContent(page, html);
         await page.locator(selector).first().screenshot({ path: outputPath });
     } finally {
+        await closePage(page);
         await browser.close();
     }
 }
