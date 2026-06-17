@@ -45,6 +45,7 @@ import {
     PLAN_TYPES,
     PREMIUM_PLAN_TYPES,
     SUBSCRIPTION_PLANS,
+    getPlanTypeForPlanId,
     isPremiumPlanType,
     normalizePlanType
 } from './config/constants.js';
@@ -100,6 +101,186 @@ function buildSubscriptionLineItem(plan, stripePriceId) {
         },
         quantity: 1,
     };
+}
+
+function stripeTimestampToIso(timestamp) {
+    const seconds = Number(timestamp);
+    if (!Number.isFinite(seconds) || seconds <= 0) return null;
+    const date = new Date(seconds * 1000);
+    return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function getStripeSubscriptionItems(subscription = {}) {
+    const items = subscription?.items?.data;
+    return Array.isArray(items) ? items : [];
+}
+
+function getStripeSubscriptionPeriodEnd(subscription = {}) {
+    if (subscription.current_period_end) return stripeTimestampToIso(subscription.current_period_end);
+
+    const itemPeriodEnds = getStripeSubscriptionItems(subscription)
+        .map((item) => Number(item?.current_period_end))
+        .filter((value) => Number.isFinite(value) && value > 0);
+    if (itemPeriodEnds.length === 0) return null;
+
+    return stripeTimestampToIso(Math.max(...itemPeriodEnds));
+}
+
+function getPlanIdForStripePrice(priceId) {
+    if (!priceId) return null;
+
+    for (const [planId, configuredPriceId] of Object.entries(LIVE_STRIPE_PRICE_IDS)) {
+        if (configuredPriceId === priceId) return planId;
+    }
+
+    for (const planId of Object.keys(STRIPE_PRICE_ENV_KEYS)) {
+        if (getConfiguredStripePriceId(planId) === priceId) return planId;
+    }
+
+    return null;
+}
+
+function inferSubscriptionPlanTypeFromStripe(subscription = {}) {
+    const metadataPlanType = normalizePlanType(subscription.metadata?.planType, null);
+    if (metadataPlanType && PREMIUM_PLAN_TYPES.includes(metadataPlanType)) return metadataPlanType;
+
+    const metadataPlanId = subscription.metadata?.planId;
+    if (metadataPlanId && PLANS[metadataPlanId]) {
+        return getPlanTypeForPlanId(metadataPlanId, DEFAULT_PREMIUM_PLAN_TYPE);
+    }
+
+    for (const item of getStripeSubscriptionItems(subscription)) {
+        const priceId = item?.price?.id || item?.plan?.id;
+        const planId = getPlanIdForStripePrice(priceId);
+        if (planId && PLANS[planId]) return getPlanTypeForPlanId(planId, DEFAULT_PREMIUM_PLAN_TYPE);
+    }
+
+    return DEFAULT_PREMIUM_PLAN_TYPE;
+}
+
+function inferSubscriptionPlanIdFromStripe(subscription = {}) {
+    if (subscription.metadata?.planId && PLANS[subscription.metadata.planId]) return subscription.metadata.planId;
+
+    for (const item of getStripeSubscriptionItems(subscription)) {
+        const priceId = item?.price?.id || item?.plan?.id;
+        const planId = getPlanIdForStripePrice(priceId);
+        if (planId) return planId;
+    }
+
+    return null;
+}
+
+function normalizeStripeSubscriptionStatus(subscription = {}) {
+    let status = subscription.status || 'active';
+    if (subscription.cancel_at_period_end && (status === 'active' || status === 'trialing')) {
+        status = 'cancel_pending';
+    }
+    return status;
+}
+
+function isEntitlingStripeSubscriptionStatus(status) {
+    return status === 'active' || status === 'trialing' || status === 'cancel_pending' || status === 'past_due';
+}
+
+function getStripeCustomerId(customer) {
+    if (!customer) return null;
+    return typeof customer === 'string' ? customer : customer.id || null;
+}
+
+function getStripeSubscriptionIdFromInvoice(invoice = {}) {
+    if (typeof invoice.subscription === 'string') return invoice.subscription;
+    if (invoice.subscription?.id) return invoice.subscription.id;
+    if (typeof invoice.parent?.subscription_details?.subscription === 'string') {
+        return invoice.parent.subscription_details.subscription;
+    }
+
+    const lineItems = Array.isArray(invoice.lines?.data) ? invoice.lines.data : [];
+    for (const line of lineItems) {
+        if (typeof line.subscription === 'string') return line.subscription;
+        if (typeof line.parent?.subscription_item_details?.subscription === 'string') {
+            return line.parent.subscription_item_details.subscription;
+        }
+    }
+
+    return null;
+}
+
+async function findUserForStripeSubscription(subscription, { handler, stripeEventId = null } = {}) {
+    const stripeSubscriptionId = subscription?.id || null;
+    if (stripeSubscriptionId) {
+        const { data: localSubscription, error: subscriptionLookupError } = await supabase
+            .from('subscriptions')
+            .select('user_id')
+            .eq('stripe_subscription_id', stripeSubscriptionId)
+            .maybeSingle();
+        await throwOnEntitlementWriteError(subscriptionLookupError, {
+            handler,
+            operation: 'subscriptions.lookup_by_stripe_subscription_id',
+            stripeEventId,
+            stripeSubscriptionId
+        });
+        if (localSubscription?.user_id) {
+            return {
+                userId: localSubscription.user_id,
+                matchedBy: 'stripe_subscription_id'
+            };
+        }
+    }
+
+    const stripeCustomerId = getStripeCustomerId(subscription?.customer);
+    if (stripeCustomerId) {
+        const { data: userByCustomer, error: userByCustomerError } = await supabase
+            .from('users')
+            .select('id')
+            .eq('stripe_customer_id', stripeCustomerId)
+            .maybeSingle();
+        await throwOnEntitlementWriteError(userByCustomerError, {
+            handler,
+            operation: 'users.lookup_by_stripe_customer_id',
+            stripeEventId,
+            stripeSubscriptionId
+        });
+        if (userByCustomer?.id) {
+            return {
+                userId: userByCustomer.id,
+                matchedBy: 'stripe_customer_id'
+            };
+        }
+
+        let customer = typeof subscription.customer === 'object' ? subscription.customer : null;
+        if (!customer) {
+            try {
+                customer = await stripe.customers.retrieve(stripeCustomerId);
+            } catch (error) {
+                console.warn('[STRIPE] Could not retrieve customer during subscription user lookup:', error.message);
+            }
+        }
+
+        const customerEmail = customer && !customer.deleted
+            ? String(customer.email || '').trim().toLowerCase()
+            : '';
+        if (customerEmail) {
+            const { data: userByEmail, error: userByEmailError } = await supabase
+                .from('users')
+                .select('id')
+                .eq('email', customerEmail)
+                .maybeSingle();
+            await throwOnEntitlementWriteError(userByEmailError, {
+                handler,
+                operation: 'users.lookup_by_customer_email',
+                stripeEventId,
+                stripeSubscriptionId
+            });
+            if (userByEmail?.id) {
+                return {
+                    userId: userByEmail.id,
+                    matchedBy: 'stripe_customer_email'
+                };
+            }
+        }
+    }
+
+    return null;
 }
 
 export function buildPricingCancelUrl({ planId = null, source = null, feature = null, metadata = {} } = {}) {
@@ -548,16 +729,206 @@ async function getOrCreateStripeCustomer(userId, email) {
     return customer.id;
 }
 
+async function reconcileSubscriptionFromStripeCustomer(userId, stripeCustomerId, localSubscription = null) {
+    if (!userId || !stripeCustomerId) return localSubscription;
+
+    const subscriptions = await stripe.subscriptions.list({
+        customer: stripeCustomerId,
+        status: 'all',
+        limit: 10
+    });
+
+    const activeSubscription = (subscriptions.data || [])
+        .map((subscription) => ({
+            subscription,
+            status: normalizeStripeSubscriptionStatus(subscription),
+            periodEnd: getStripeSubscriptionPeriodEnd(subscription)
+        }))
+        .filter(({ status }) => isEntitlingStripeSubscriptionStatus(status))
+        .sort((left, right) => {
+            const rightEnd = Date.parse(right.periodEnd || '') || 0;
+            const leftEnd = Date.parse(left.periodEnd || '') || 0;
+            return rightEnd - leftEnd || (right.subscription.created || 0) - (left.subscription.created || 0);
+        })[0];
+
+    if (!activeSubscription) return localSubscription;
+
+    const { subscription, status, periodEnd } = activeSubscription;
+    const planType = inferSubscriptionPlanTypeFromStripe(subscription);
+    const planId = inferSubscriptionPlanIdFromStripe(subscription);
+    if (!PREMIUM_PLAN_TYPES.includes(planType)) return localSubscription;
+
+    const subscriptionData = {
+        user_id: userId,
+        plan_type: planType,
+        status,
+        current_period_end: periodEnd,
+        stripe_subscription_id: subscription.id
+    };
+
+    const { error: userUpdateError } = await supabase
+        .from('users')
+        .update({ stripe_customer_id: stripeCustomerId, is_premium: true })
+        .eq('id', userId);
+    if (userUpdateError) throw userUpdateError;
+
+    const { error: subscriptionUpsertError } = await supabase
+        .from('subscriptions')
+        .upsert(subscriptionData, { onConflict: 'user_id' });
+    if (subscriptionUpsertError) throw subscriptionUpsertError;
+
+    await recordFunnelEvent('subscription_entitlement_reconciled', {
+        userId,
+        source: 'subscription_status_fallback',
+        feature: 'premium_membership',
+        planId,
+        planType,
+        metadata: {
+            stripeSubscriptionId: subscription.id,
+            stripeCustomerId,
+            status,
+            currentPeriodEnd: periodEnd,
+            previousPlanType: localSubscription?.plan_type || null,
+            previousStatus: localSubscription?.status || null,
+            previousStripeSubscriptionId: localSubscription?.stripe_subscription_id || null
+        }
+    });
+
+    return subscriptionData;
+}
+
+async function syncLocalSubscriptionFromStripeSubscription(subscription, {
+    handler,
+    stripeEventId = null,
+    eventName = 'subscription_updated',
+    statusOverride = null,
+    metadata = {}
+} = {}) {
+    const stripeSubscriptionId = subscription?.id || null;
+    const stripeCustomerId = getStripeCustomerId(subscription?.customer);
+    const resolvedUser = await findUserForStripeSubscription(subscription, { handler, stripeEventId });
+    if (!resolvedUser?.userId) {
+        await sendOperationalAlert('stripe_webhook_failed', {
+            severity: 'critical',
+            summary: 'Stripe subscription webhook has no matching local user',
+            dedupeKey: `stripe_webhook_failed:missing_local_user:${handler || 'unknown'}:${stripeEventId || stripeSubscriptionId || 'unknown'}`,
+            metadata: {
+                stage: 'missing_local_user',
+                handler,
+                stripeEventId,
+                stripeSubscriptionId,
+                stripeCustomerId
+            }
+        });
+        throw new Error(`[STRIPE] ${handler || 'subscription sync'} could not match subscription to a local user`);
+    }
+
+    const currentPeriodEnd = getStripeSubscriptionPeriodEnd(subscription);
+    if (!currentPeriodEnd) {
+        throw new Error('Stripe subscription period end is missing');
+    }
+
+    const status = statusOverride || normalizeStripeSubscriptionStatus(subscription);
+    const inferredPlanType = inferSubscriptionPlanTypeFromStripe(subscription);
+    const planType = isEntitlingStripeSubscriptionStatus(status) ? inferredPlanType : PLAN_TYPES.FREE;
+    const isPremium = isPremiumPlanType(planType) && isEntitlingStripeSubscriptionStatus(status);
+    const planId = inferSubscriptionPlanIdFromStripe(subscription);
+
+    const userUpdate = {
+        ...(stripeCustomerId ? { stripe_customer_id: stripeCustomerId } : {}),
+        is_premium: isPremium
+    };
+    const { error: userUpdateError } = await supabase
+        .from('users')
+        .update(userUpdate)
+        .eq('id', resolvedUser.userId);
+    await throwOnEntitlementWriteError(userUpdateError, {
+        handler,
+        operation: 'users.update_subscription_entitlement',
+        stripeEventId,
+        stripeSubscriptionId,
+        userId: resolvedUser.userId
+    });
+
+    const subscriptionData = {
+        user_id: resolvedUser.userId,
+        plan_type: planType,
+        status,
+        current_period_end: currentPeriodEnd,
+        stripe_subscription_id: stripeSubscriptionId || null
+    };
+    const { error: subscriptionUpsertError } = await supabase
+        .from('subscriptions')
+        .upsert(subscriptionData, { onConflict: 'user_id' });
+    await throwOnEntitlementWriteError(subscriptionUpsertError, {
+        handler,
+        operation: 'subscriptions.upsert_from_stripe_subscription',
+        stripeEventId,
+        stripeSubscriptionId,
+        userId: resolvedUser.userId
+    });
+
+    await recordFunnelEvent(eventName, {
+        userId: resolvedUser.userId,
+        planId,
+        planType,
+        stripeEventId,
+        metadata: {
+            stripeSubscriptionId,
+            stripeCustomerId,
+            status,
+            isPremium,
+            currentPeriodEnd,
+            matchedBy: resolvedUser.matchedBy,
+            ...metadata
+        }
+    });
+
+    return {
+        userId: resolvedUser.userId,
+        status,
+        planType,
+        isPremium,
+        currentPeriodEnd,
+        matchedBy: resolvedUser.matchedBy
+    };
+}
+
 // ============================================
 // GET /subscription/status - Frontend calls this to check premium access
 // ============================================
 router.get('/subscription/status', authenticateToken, async (req, res) => {
     try {
-        const { data: subscription } = await supabase
+        const { data: userData } = await supabase
+            .from('users')
+            .select('stripe_customer_id')
+            .eq('id', req.user.id)
+            .maybeSingle();
+
+        const { data: localSubscription } = await supabase
             .from('subscriptions')
             .select('plan_type, status, current_period_end, stripe_subscription_id')
             .eq('user_id', req.user.id)
-            .single();
+            .maybeSingle();
+
+        let subscription = localSubscription;
+        const localHasSyncedPremium = subscription?.stripe_subscription_id &&
+            isPremiumPlanType(subscription.plan_type) &&
+            isEntitlingStripeSubscriptionStatus(subscription.status) &&
+            (!subscription.current_period_end || new Date(subscription.current_period_end) > new Date());
+
+        if (!localHasSyncedPremium && userData?.stripe_customer_id) {
+            try {
+                subscription = await reconcileSubscriptionFromStripeCustomer(
+                    req.user.id,
+                    userData.stripe_customer_id,
+                    localSubscription
+                );
+            } catch (reconcileError) {
+                console.warn('[STRIPE] Subscription status fallback reconciliation failed:', reconcileError.message);
+                subscription = localSubscription;
+            }
+        }
 
         if (!subscription) {
             return res.json({
@@ -943,6 +1314,9 @@ export async function handleStripeWebhook(rawBody, sig) {
                 break;
             case 'invoice.payment_failed':
                 await handleInvoicePaymentFailed(event.data.object, event.id);
+                break;
+            case 'customer.subscription.created':
+                await handleSubscriptionCreated(event.data.object, event.id);
                 break;
             case 'customer.subscription.updated':
                 await handleSubscriptionUpdated(event.data.object, event.id);
@@ -1393,13 +1767,13 @@ async function handleSubscriptionCheckoutCompleted(session, stripeEventId = null
     if (stripeSubscriptionId) {
         try {
             const stripeSub = await stripe.subscriptions.retrieve(stripeSubscriptionId);
-            currentPeriodEnd = new Date(stripeSub.current_period_end * 1000).toISOString();
+            currentPeriodEnd = getStripeSubscriptionPeriodEnd(stripeSub);
             subStatus = stripeSub.status || 'active'; // 'trialing', 'active', etc.
         } catch (e) {
             console.error('[STRIPE] Failed to retrieve subscription:', e.message);
             // Fallback: use webhook data or calculate
             if (session.subscription_details?.current_period_end) {
-                currentPeriodEnd = new Date(session.subscription_details.current_period_end * 1000).toISOString();
+                currentPeriodEnd = stripeTimestampToIso(session.subscription_details.current_period_end);
             } else {
                 const expiry = new Date();
                 if (billingInterval === 'year') {
@@ -1411,7 +1785,17 @@ async function handleSubscriptionCheckoutCompleted(session, stripeEventId = null
             }
         }
     } else if (session.subscription_details?.current_period_end) {
-        currentPeriodEnd = new Date(session.subscription_details.current_period_end * 1000).toISOString();
+        currentPeriodEnd = stripeTimestampToIso(session.subscription_details.current_period_end);
+    }
+
+    if (!currentPeriodEnd) {
+        const expiry = new Date();
+        if (billingInterval === 'year') {
+            expiry.setFullYear(expiry.getFullYear() + 1);
+        } else {
+            expiry.setMonth(expiry.getMonth() + 1);
+        }
+        currentPeriodEnd = expiry.toISOString();
     }
 
     // Save Stripe customer ID on the user
@@ -1580,73 +1964,43 @@ async function handleRefundEvent(refundOrCharge, stripeEventId, eventType) {
 }
 
 /**
+ * Handle customer.subscription.created - subscription created in Checkout, Portal or Dashboard
+ */
+async function handleSubscriptionCreated(subscription, stripeEventId = null) {
+    const result = await syncLocalSubscriptionFromStripeSubscription(subscription, {
+        handler: 'handleSubscriptionCreated',
+        stripeEventId,
+        eventName: 'subscription_created'
+    });
+
+    console.log(`[STRIPE] Subscription created/synced for user ${result.userId}: ${result.planType} (${result.status})`);
+}
+
+/**
  * Handle invoice.paid - recurring payment succeeded (subscription renewal)
  */
 async function handleInvoicePaid(invoice, stripeEventId = null) {
-    const stripeSubscriptionId = invoice.subscription;
+    const stripeSubscriptionId = getStripeSubscriptionIdFromInvoice(invoice);
     if (!stripeSubscriptionId) return;
 
-    // Find user by subscription ID
-    const { data: sub } = await supabase
-        .from('subscriptions')
-        .select('user_id')
-        .eq('stripe_subscription_id', stripeSubscriptionId)
-        .single();
-
-    if (!sub) {
-        console.log(`[STRIPE] invoice.paid: no local subscription found for ${stripeSubscriptionId}`);
-        return;
-    }
-
-    // Fetch updated period from Stripe
     try {
         const stripeSub = await stripe.subscriptions.retrieve(stripeSubscriptionId);
-        const currentPeriodEnd = new Date(stripeSub.current_period_end * 1000).toISOString();
-
-        const { error: subscriptionUpdateError } = await supabase
-            .from('subscriptions')
-            .update({
-                status: 'active',
-                current_period_end: currentPeriodEnd
-            })
-            .eq('stripe_subscription_id', stripeSubscriptionId);
-        await throwOnEntitlementWriteError(subscriptionUpdateError, {
+        const result = await syncLocalSubscriptionFromStripeSubscription(stripeSub, {
             handler: 'handleInvoicePaid',
-            operation: 'subscriptions.update_active_period_end',
             stripeEventId,
-            stripeSubscriptionId,
-            userId: sub.user_id
-        });
-
-        const { error: userPremiumUpdateError } = await supabase
-            .from('users')
-            .update({ is_premium: true })
-            .eq('id', sub.user_id);
-        await throwOnEntitlementWriteError(userPremiumUpdateError, {
-            handler: 'handleInvoicePaid',
-            operation: 'users.update_is_premium_true',
-            stripeEventId,
-            stripeSubscriptionId,
-            userId: sub.user_id
-        });
-
-        await recordFunnelEvent('subscription_invoice_paid', {
-            userId: sub.user_id,
-            stripeEventId,
+            eventName: 'subscription_invoice_paid',
             metadata: {
-                stripeSubscriptionId,
                 amountPaid: invoice.amount_paid || null,
                 currency: invoice.currency || null,
-                currentPeriodEnd
+                invoiceId: invoice.id || null,
+                billingReason: invoice.billing_reason || null
             }
         });
 
-        console.log(`[STRIPE] Subscription renewed for user ${sub.user_id} until ${currentPeriodEnd}`);
+        console.log(`[STRIPE] Subscription invoice paid for user ${result.userId} until ${result.currentPeriodEnd}`);
     } catch (e) {
         console.error('[STRIPE] Failed to process invoice.paid:', e.message);
-        if (e?.criticalEntitlementWrite) {
-            throw e;
-        }
+        throw e;
     }
 }
 
@@ -1654,100 +2008,40 @@ async function handleInvoicePaid(invoice, stripeEventId = null) {
  * Handle invoice.payment_failed - payment failed, mark as past_due
  */
 async function handleInvoicePaymentFailed(invoice, stripeEventId = null) {
-    const stripeSubscriptionId = invoice.subscription;
+    const stripeSubscriptionId = getStripeSubscriptionIdFromInvoice(invoice);
     if (!stripeSubscriptionId) return;
 
-    const { error } = await supabase
-        .from('subscriptions')
-        .update({ status: 'past_due' })
-        .eq('stripe_subscription_id', stripeSubscriptionId);
-
-    await throwOnEntitlementWriteError(error, {
+    const stripeSub = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+    const result = await syncLocalSubscriptionFromStripeSubscription(stripeSub, {
         handler: 'handleInvoicePaymentFailed',
-        operation: 'subscriptions.update_past_due',
         stripeEventId,
-        stripeSubscriptionId
-    });
-
-    await recordFunnelEvent('subscription_payment_failed', {
-        stripeEventId,
+        eventName: 'subscription_payment_failed',
+        statusOverride: 'past_due',
         metadata: {
-            stripeSubscriptionId,
             amountDue: invoice.amount_due || null,
             currency: invoice.currency || null,
+            invoiceId: invoice.id || null,
             attemptCount: invoice.attempt_count || null
         }
     });
-    console.log(`[STRIPE] Subscription ${stripeSubscriptionId} marked as past_due`);
+
+    console.log(`[STRIPE] Subscription ${stripeSubscriptionId} payment failed for user ${result.userId}`);
 }
 
 /**
  * Handle customer.subscription.updated - plan changes, trial end, etc.
  */
 async function handleSubscriptionUpdated(subscription, stripeEventId = null) {
-    const stripeSubscriptionId = subscription.id;
-
-    const { data: sub } = await supabase
-        .from('subscriptions')
-        .select('user_id')
-        .eq('stripe_subscription_id', stripeSubscriptionId)
-        .single();
-
-    if (!sub) {
-        console.log(`[STRIPE] subscription.updated: no local record for ${stripeSubscriptionId}`);
-        return;
-    }
-
-    const currentPeriodEnd = new Date(subscription.current_period_end * 1000).toISOString();
-    let status = subscription.status; // active, past_due, canceled, trialing, etc.
-
-    // Map Stripe statuses to our internal statuses
-    if (subscription.cancel_at_period_end && (status === 'active' || status === 'trialing')) {
-        status = 'cancel_pending';
-    }
-
-    const { error: subscriptionUpdateError } = await supabase
-        .from('subscriptions')
-        .update({
-            status,
-            current_period_end: currentPeriodEnd
-        })
-        .eq('stripe_subscription_id', stripeSubscriptionId);
-    await throwOnEntitlementWriteError(subscriptionUpdateError, {
+    const result = await syncLocalSubscriptionFromStripeSubscription(subscription, {
         handler: 'handleSubscriptionUpdated',
-        operation: 'subscriptions.update_status_period_end',
         stripeEventId,
-        stripeSubscriptionId,
-        userId: sub.user_id
-    });
-
-    // Update is_premium flag
-    const isPremium = (status === 'active' || status === 'trialing' || status === 'cancel_pending');
-    const { error: userPremiumUpdateError } = await supabase
-        .from('users')
-        .update({ is_premium: isPremium })
-        .eq('id', sub.user_id);
-    await throwOnEntitlementWriteError(userPremiumUpdateError, {
-        handler: 'handleSubscriptionUpdated',
-        operation: 'users.update_is_premium',
-        stripeEventId,
-        stripeSubscriptionId,
-        userId: sub.user_id
-    });
-
-    await recordFunnelEvent('subscription_updated', {
-        userId: sub.user_id,
-        stripeEventId,
+        eventName: 'subscription_updated',
         metadata: {
-            stripeSubscriptionId,
-            status,
-            isPremium,
-            cancelAtPeriodEnd: Boolean(subscription.cancel_at_period_end),
-            currentPeriodEnd
+            cancelAtPeriodEnd: Boolean(subscription.cancel_at_period_end)
         }
     });
 
-    console.log(`[STRIPE] Subscription ${stripeSubscriptionId} updated: status=${status}`);
+    console.log(`[STRIPE] Subscription ${subscription.id} updated for user ${result.userId}: status=${result.status}`);
 }
 
 /**
@@ -1756,15 +2050,25 @@ async function handleSubscriptionUpdated(subscription, stripeEventId = null) {
 async function handleSubscriptionDeleted(subscription, stripeEventId = null) {
     const stripeSubscriptionId = subscription.id;
 
-    const { data: sub } = await supabase
-        .from('subscriptions')
-        .select('user_id')
-        .eq('stripe_subscription_id', stripeSubscriptionId)
-        .single();
+    const resolvedUser = await findUserForStripeSubscription(subscription, {
+        handler: 'handleSubscriptionDeleted',
+        stripeEventId
+    });
 
-    if (!sub) {
-        console.log(`[STRIPE] subscription.deleted: no local record for ${stripeSubscriptionId}`);
-        return;
+    if (!resolvedUser?.userId) {
+        await sendOperationalAlert('stripe_webhook_failed', {
+            severity: 'critical',
+            summary: 'Stripe subscription deletion has no matching local user',
+            dedupeKey: `stripe_webhook_failed:missing_local_user:handleSubscriptionDeleted:${stripeEventId || stripeSubscriptionId || 'unknown'}`,
+            metadata: {
+                stage: 'missing_local_user',
+                handler: 'handleSubscriptionDeleted',
+                stripeEventId,
+                stripeSubscriptionId,
+                stripeCustomerId: getStripeCustomerId(subscription.customer)
+            }
+        });
+        throw new Error('[STRIPE] subscription.deleted could not match subscription to a local user');
     }
 
     const { error: subscriptionDeleteUpdateError } = await supabase
@@ -1774,38 +2078,39 @@ async function handleSubscriptionDeleted(subscription, stripeEventId = null) {
             plan_type: PLAN_TYPES.FREE,
             stripe_subscription_id: null
         })
-        .eq('user_id', sub.user_id);
+        .eq('user_id', resolvedUser.userId);
     await throwOnEntitlementWriteError(subscriptionDeleteUpdateError, {
         handler: 'handleSubscriptionDeleted',
         operation: 'subscriptions.update_cancelled_free',
         stripeEventId,
         stripeSubscriptionId,
-        userId: sub.user_id
+        userId: resolvedUser.userId
     });
 
     const { error: userPremiumDisableError } = await supabase
         .from('users')
         .update({ is_premium: false })
-        .eq('id', sub.user_id);
+        .eq('id', resolvedUser.userId);
     await throwOnEntitlementWriteError(userPremiumDisableError, {
         handler: 'handleSubscriptionDeleted',
         operation: 'users.update_is_premium_false',
         stripeEventId,
         stripeSubscriptionId,
-        userId: sub.user_id
+        userId: resolvedUser.userId
     });
 
     await recordFunnelEvent('subscription_cancelled', {
-        userId: sub.user_id,
+        userId: resolvedUser.userId,
         planType: PLAN_TYPES.FREE,
         stripeEventId,
         metadata: {
             stripeSubscriptionId,
-            status: subscription.status || 'deleted'
+            status: subscription.status || 'deleted',
+            matchedBy: resolvedUser.matchedBy
         }
     });
 
-    console.log(`[STRIPE] Subscription cancelled for user ${sub.user_id}`);
+    console.log(`[STRIPE] Subscription cancelled for user ${resolvedUser.userId}`);
 }
 
 /**

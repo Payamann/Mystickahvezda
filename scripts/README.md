@@ -9,6 +9,7 @@ This directory contains active project helper scripts.
 - `check-hooks.mjs` - smoke test for Claude hook validators.
 - `analyze-funnel-segments.mjs` - offline analysis for admin funnel segment CSV exports.
 - `audit-growth-loop.mjs` - static audit for paid CTA source/feature coverage and the shared growth-loop manifest. Use `--write` to export `tmp/growth-loop-cta-inventory.json`.
+- `reconcile-stripe-subscriptions.mjs` - live Stripe -> Supabase entitlement repair. Dry-run by default; use when Stripe shows a paid subscription but `users.is_premium` or `subscriptions.stripe_subscription_id` is not synced.
 - `generate-sitemap-from-canonicals.mjs` - safe sitemap helper that derives URLs from indexable canonical HTML pages, preserves existing metadata, writes a review file by default, and only overwrites `sitemap.xml` with `--write`.
 - `generate-ga-snippet.js` - manual GA4 snippet/config helper.
 - `update-service-worker-cache.mjs` - validates precache assets and updates the service worker cache version.
@@ -32,6 +33,21 @@ npm run analyze:funnel -- path\to\funnel-segmenty-30d.csv --top 12 --min-events 
 
 The report groups leaks by funnel step and prints concrete next actions for the
 worst source + feature combinations.
+
+### Stripe Subscription Reconciliation
+
+Use this after confirming a live Stripe subscription exists but Supabase has not
+activated the user. It refuses non-live Stripe keys unless you explicitly pass
+`--allow-test`.
+
+```powershell
+npm run reconcile:stripe-subscriptions -- --email user@example.com --json
+npm run reconcile:stripe-subscriptions -- --email user@example.com --execute
+```
+
+You can also target `--customer cus_...` or `--subscription sub_...`. The script
+checks for an enabled `/webhook/stripe` endpoint and writes a
+`subscription_entitlement_reconciled` funnel event when it repairs a row.
 
 ## Content Helpers
 

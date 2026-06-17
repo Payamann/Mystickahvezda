@@ -8,6 +8,9 @@ const entitlementRuntime = {
     calls: {
         paymentEventMarkSuccess: 0,
         paymentEventMarkFailed: 0,
+        subscriptionUpserts: [],
+        userUpdates: [],
+        funnelEvents: [],
     },
 };
 
@@ -16,6 +19,9 @@ function resetRuntime() {
     entitlementRuntime.calls = {
         paymentEventMarkSuccess: 0,
         paymentEventMarkFailed: 0,
+        subscriptionUpserts: [],
+        userUpdates: [],
+        funnelEvents: [],
     };
 }
 
@@ -74,7 +80,7 @@ function subscriptionsQuery() {
         select: () => ({
             eq: () => ({
                 maybeSingle: async () => ({
-                    data: entitlementRuntime.scenario.existingSubscription ?? null,
+                    data: entitlementRuntime.scenario.existingSubscription ?? entitlementRuntime.scenario.subscriptionLookup ?? null,
                     error: entitlementRuntime.scenario.existingSubscriptionError ?? null,
                 }),
                 single: async () => ({
@@ -83,9 +89,12 @@ function subscriptionsQuery() {
                 }),
             }),
         }),
-        upsert: async () => ({
-            error: entitlementRuntime.scenario.subscriptionUpsertError ?? null,
-        }),
+        upsert: async (payload) => {
+            entitlementRuntime.calls.subscriptionUpserts.push(payload);
+            return {
+                error: entitlementRuntime.scenario.subscriptionUpsertError ?? null,
+            };
+        },
         update: () => ({
             eq: async () => ({
                 error: entitlementRuntime.scenario.subscriptionStatusUpdateError ?? null,
@@ -96,19 +105,37 @@ function subscriptionsQuery() {
 
 function usersQuery() {
     return {
-        update: (payload) => ({
-            eq: async () => ({
-                error: Object.prototype.hasOwnProperty.call(payload ?? {}, 'is_premium')
-                    ? (entitlementRuntime.scenario.userPremiumWriteError ?? null)
-                    : (entitlementRuntime.scenario.userWriteError ?? null),
+        select: () => ({
+            eq: (_column, value) => ({
+                maybeSingle: async () => {
+                    const userByCustomer = entitlementRuntime.scenario.userByCustomerId?.[value] || null;
+                    const userByEmail = entitlementRuntime.scenario.userByEmail?.[value] || null;
+                    return {
+                        data: userByCustomer || userByEmail,
+                        error: entitlementRuntime.scenario.userLookupError ?? null,
+                    };
+                },
             }),
         }),
+        update: (payload) => {
+            entitlementRuntime.calls.userUpdates.push(payload);
+            return {
+                eq: async () => ({
+                    error: Object.prototype.hasOwnProperty.call(payload ?? {}, 'is_premium')
+                        ? (entitlementRuntime.scenario.userPremiumWriteError ?? null)
+                        : (entitlementRuntime.scenario.userWriteError ?? null),
+                }),
+            };
+        },
     };
 }
 
 function funnelEventsQuery() {
     return {
-        insert: async () => ({ error: entitlementRuntime.scenario.funnelEventInsertError ?? null }),
+        insert: async (payload) => {
+            entitlementRuntime.calls.funnelEvents.push(payload);
+            return { error: entitlementRuntime.scenario.funnelEventInsertError ?? null };
+        },
     };
 }
 
@@ -227,7 +254,7 @@ describe('Stripe webhook entitlement write failures', () => {
 
     test('customer.subscription.updated fails when user premium write fails', async () => {
         const eventId = `evt_sub_updated_user_fail_${Date.now()}`;
-        entitlementRuntime.scenario.subscriptionLookup = { user_id: 'user_sub_1' };
+        entitlementRuntime.scenario.existingSubscription = { user_id: 'user_sub_1' };
         entitlementRuntime.scenario.userPremiumWriteError = { message: 'users is_premium write failed' };
 
         const payload = JSON.stringify({
@@ -250,5 +277,61 @@ describe('Stripe webhook entitlement write failures', () => {
 
         expect(entitlementRuntime.calls.paymentEventMarkSuccess).toBe(0);
         expect(entitlementRuntime.calls.paymentEventMarkFailed).toBe(1);
+    });
+
+    test('customer.subscription.created syncs entitlement by stripe customer id when local subscription id is missing', async () => {
+        const eventId = `evt_sub_created_customer_match_${Date.now()}`;
+        entitlementRuntime.scenario.userByCustomerId = {
+            cus_existing_123: { id: 'user_customer_1' },
+        };
+
+        const periodEnd = Math.floor(Date.now() / 1000) + 86400;
+        const payload = JSON.stringify({
+            id: eventId,
+            type: 'customer.subscription.created',
+            data: {
+                object: {
+                    id: 'sub_customer_match_123',
+                    customer: 'cus_existing_123',
+                    status: 'active',
+                    cancel_at_period_end: false,
+                    metadata: {
+                        planId: 'pruvodce',
+                        planType: 'premium_monthly',
+                    },
+                    items: {
+                        data: [{
+                            current_period_end: periodEnd,
+                            price: {
+                                id: 'price_1TRBKpAo8bdbnsKapn6BM0Wj',
+                            },
+                        }],
+                    },
+                },
+            },
+            livemode: false,
+        });
+
+        await expect(
+            handleStripeWebhook(payload, computeStripeSignature(payload))
+        ).resolves.toBeUndefined();
+
+        expect(entitlementRuntime.calls.paymentEventMarkSuccess).toBe(1);
+        expect(entitlementRuntime.calls.paymentEventMarkFailed).toBe(0);
+        expect(entitlementRuntime.calls.userUpdates).toContainEqual({
+            stripe_customer_id: 'cus_existing_123',
+            is_premium: true,
+        });
+        expect(entitlementRuntime.calls.subscriptionUpserts).toContainEqual(expect.objectContaining({
+            user_id: 'user_customer_1',
+            plan_type: 'premium_monthly',
+            status: 'active',
+            stripe_subscription_id: 'sub_customer_match_123',
+        }));
+        expect(entitlementRuntime.calls.funnelEvents).toContainEqual(expect.objectContaining({
+            event_name: 'subscription_created',
+            user_id: 'user_customer_1',
+            plan_type: 'premium_monthly',
+        }));
     });
 });
