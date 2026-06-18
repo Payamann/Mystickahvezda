@@ -275,6 +275,15 @@ function createMockSupabaseClient() {
                 return { data: { user: { id: 'test-user', ...payload } }, error: null };
             },
             admin: {
+                async createUser({ email, user_metadata = {}, email_confirm = false }) {
+                    const user = makeUser(email, user_metadata);
+                    if (email_confirm) {
+                        const confirmedAt = now();
+                        user.email_confirmed_at = confirmedAt;
+                        user.confirmed_at = confirmedAt;
+                    }
+                    return { data: { user }, error: null };
+                },
                 async getUserById(id) {
                     return { data: { user: users.get(id) || { id, email: 'test@example.com' } }, error: null };
                 },

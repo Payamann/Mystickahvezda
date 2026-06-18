@@ -91,6 +91,7 @@ const sensitiveLimiter = rateLimit({
 const IS_PRODUCTION = isProductionRuntime();
 const APP_URL = process.env.APP_URL || 'http://localhost:3001';
 const DEV_AUTO_LOGIN_AFTER_REGISTER = !IS_PRODUCTION && process.env.DEV_AUTO_LOGIN_AFTER_REGISTER !== 'false';
+const REQUIRE_EMAIL_VERIFICATION = process.env.AUTH_REQUIRE_EMAIL_VERIFICATION === 'true';
 
 const logDebug = (msg) => {
     if (IS_PRODUCTION) return; // Skip debug logging in production
@@ -139,39 +140,55 @@ async function ensureUserRecordFromAuth(authUser) {
         user = retryUser;
     }
 
+    user.subscriptions = await ensureDefaultSubscriptionForUser(authUser.id);
+    return user;
+}
+
+export async function ensureDefaultSubscriptionForUser(userId) {
     const { data: existingSubscription, error: subError } = await supabase
         .from('subscriptions')
         .select('plan_type, status, credits, current_period_end')
-        .eq('user_id', authUser.id)
+        .eq('user_id', userId)
         .single();
-
-    let subscription = existingSubscription;
 
     if (subError && subError.code !== 'PGRST116') {
         throw subError;
     }
 
-    if (!subscription) {
-        const { data: createdSubscription, error: createSubError } = await supabase
-            .from('subscriptions')
-            .insert({ user_id: authUser.id, plan_type: 'free' })
-            .select('plan_type, status, credits, current_period_end')
-            .single();
-
-        if (createSubError && createSubError.code !== '23505') {
-            throw createSubError;
-        }
-
-        subscription = createdSubscription || {
-            plan_type: 'free',
-            status: null,
-            credits: null,
-            current_period_end: null
-        };
+    if (existingSubscription) {
+        return existingSubscription;
     }
 
-    user.subscriptions = subscription;
-    return user;
+    const { data: createdSubscription, error: createSubError } = await supabase
+        .from('subscriptions')
+        .insert({ user_id: userId, plan_type: 'free', status: 'active' })
+        .select('plan_type, status, credits, current_period_end')
+        .single();
+
+    if (createSubError && createSubError.code !== '23505') {
+        throw createSubError;
+    }
+
+    if (createdSubscription) {
+        return createdSubscription;
+    }
+
+    const { data: retrySubscription, error: retryError } = await supabase
+        .from('subscriptions')
+        .select('plan_type, status, credits, current_period_end')
+        .eq('user_id', userId)
+        .single();
+
+    if (retryError && retryError.code !== 'PGRST116') {
+        throw retryError;
+    }
+
+    return retrySubscription || {
+        plan_type: 'free',
+        status: 'active',
+        credits: null,
+        current_period_end: null
+    };
 }
 
 
@@ -182,7 +199,16 @@ router.post('/activate-premium', (req, res) => {
 
 // Register (Supabase Auth)
 router.post('/register', authLimiter, async (req, res) => {
-    const { email, password, confirm_password, first_name, birth_date, birth_time, birth_place } = req.body;
+    const {
+        email,
+        password,
+        confirm_password,
+        password_confirm,
+        first_name,
+        birth_date,
+        birth_time,
+        birth_place
+    } = req.body;
     const clientIp = req.ip || req.connection.remoteAddress;
     const userAgent = req.headers['user-agent'] || 'unknown';
 
@@ -192,7 +218,8 @@ router.post('/register', authLimiter, async (req, res) => {
         const validatedPassword = validatePassword(password);
 
         // Server-side password confirmation check
-        if (confirm_password !== undefined && password !== confirm_password) {
+        const passwordConfirmation = confirm_password ?? password_confirm;
+        if (passwordConfirmation !== undefined && password !== passwordConfirmation) {
             return res.status(400).json({ error: 'Hesla se neshodují.' });
         }
 
@@ -200,40 +227,61 @@ router.post('/register', authLimiter, async (req, res) => {
 
         // Birth date is optional during signup to reduce registration friction.
         const validatedBirthDate = birth_date ? validateBirthDate(birth_date) : null;
+        const userMetadata = {
+            first_name: validatedFirstName,
+            birth_date: validatedBirthDate,
+            birth_time: birth_time ? birth_time.substring(0, 5) : null,
+            birth_place: birth_place ? birth_place.substring(0, 100) : null
+        };
 
-        // 1. Sign Up via Supabase Auth
-        // This triggers the confirmation email automatically.
-        const { data, error } = await supabase.auth.signUp({
-            email: validatedEmail,
-            password: validatedPassword,
-            options: {
-                // Use APP_URL from environment for production flexibility
-                emailRedirectTo: APP_URL,
-                data: {
-                    first_name: validatedFirstName,
-                    birth_date: validatedBirthDate,
-                    birth_time: birth_time ? birth_time.substring(0, 5) : null, // HH:MM format
-                    birth_place: birth_place ? birth_place.substring(0, 100) : null
+        let data;
+        let error;
+
+        if (REQUIRE_EMAIL_VERIFICATION) {
+            // Supabase signUp sends the confirmation email when verification is enabled.
+            ({ data, error } = await supabase.auth.signUp({
+                email: validatedEmail,
+                password: validatedPassword,
+                options: {
+                    emailRedirectTo: APP_URL,
+                    data: userMetadata
                 }
-            }
-        });
+            }));
+        } else {
+            // Admin-created users are confirmed immediately and do not trigger signup email.
+            ({ data, error } = await supabase.auth.admin.createUser({
+                email: validatedEmail,
+                password: validatedPassword,
+                email_confirm: true,
+                user_metadata: userMetadata
+            }));
+        }
 
         if (error) {
             console.error('Supabase Auth Error:', error);
             // Return generic error to prevent user enumeration
-            if (error.message.includes('already registered') || error.message.includes('User already registered')) {
+            if (
+                error.message.includes('already registered')
+                || error.message.includes('already been registered')
+                || error.message.includes('User already registered')
+                || error.code === 'email_exists'
+            ) {
                 return res.status(400).json({ error: 'Registrace se nezdařila. Zkontrolujte email a heslo.' });
             }
             if (error.code === 'weak_password') {
                 return res.status(400).json({ error: 'Heslo musí mít alespoň 8 znaků.' });
             }
-            if (error.status === 400 || error.code === 400) {
+            if (error.status === 400 || error.status === 422 || error.code === 400) {
                 return res.status(400).json({ error: 'Registrace se nezdařila. Zkontrolujte email a heslo.' });
             }
             throw error;
         }
 
-        if (DEV_AUTO_LOGIN_AFTER_REGISTER && data?.user?.id) {
+        if (!REQUIRE_EMAIL_VERIFICATION && !data?.user?.id) {
+            throw new Error('Registration did not return a user.');
+        }
+
+        if ((!REQUIRE_EMAIL_VERIFICATION || DEV_AUTO_LOGIN_AFTER_REGISTER) && data?.user?.id) {
             const user = await ensureUserRecordFromAuth(data.user);
             const token = await generateToken(user.id);
             const subscriptionState = getAuthSubscriptionState(user.subscriptions);
@@ -245,8 +293,11 @@ router.post('/register', authLimiter, async (req, res) => {
 
             return res.json({
                 success: true,
-                devAutoLogin: true,
-                message: 'Registrace uspela. V lokalnim vyvoji jste byli rovnou prihlaseni.',
+                devAutoLogin: DEV_AUTO_LOGIN_AFTER_REGISTER && REQUIRE_EMAIL_VERIFICATION,
+                emailVerificationSkipped: !REQUIRE_EMAIL_VERIFICATION,
+                message: REQUIRE_EMAIL_VERIFICATION
+                    ? 'Registrace uspela. V lokalnim vyvoji jste byli rovnou prihlaseni.'
+                    : 'Registrace \u00fasp\u011b\u0161n\u00e1. Byli jste p\u0159ihl\u00e1\u0161eni.',
                 user: {
                     id: user.id,
                     email: user.email,
@@ -335,12 +386,15 @@ router.post('/login', authLimiter, async (req, res) => {
         if (users && users.length > 0) {
             user = users[0];
             // Fetch subs separately to be safe
-            const { data: sub } = await supabase
+            const { data: sub, error: subError } = await supabase
                 .from('subscriptions')
                 .select('plan_type, status, credits, current_period_end')
                 .eq('user_id', user.id)
                 .single();
-            if (sub) user.subscriptions = sub;
+            if (subError && subError.code !== 'PGRST116') {
+                throw subError;
+            }
+            user.subscriptions = sub || await ensureDefaultSubscriptionForUser(user.id);
         }
 
         if (dbError) {
@@ -384,10 +438,7 @@ router.post('/login', authLimiter, async (req, res) => {
             if (retryUser) {
                 logDebug(`JIT Repair successful.`);
                 user = retryUser;
-                // Create default subscription
-                await supabase
-                    .from('subscriptions')
-                    .insert({ user_id: user.id, plan_type: 'free' });
+                user.subscriptions = await ensureDefaultSubscriptionForUser(user.id);
             } else {
                 return res.status(500).json({ error: 'User sync failed after repair.' });
             }

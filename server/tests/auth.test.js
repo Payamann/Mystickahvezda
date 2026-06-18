@@ -8,7 +8,7 @@ import request from 'supertest';
 import app from '../index.js';
 import jwt from 'jsonwebtoken';
 import { supabase } from '../db-supabase.js';
-import { getAuthSubscriptionState } from '../auth.js';
+import { ensureDefaultSubscriptionForUser, getAuthSubscriptionState } from '../auth.js';
 
 async function getCsrfToken() {
     const res = await request(app).get('/api/csrf-token').expect(200);
@@ -51,6 +51,36 @@ describe('🔐 Auth Endpoint Tests', () => {
 
             expect(state.status).toBe('vip_majestrat');
             expect(state.isPremium).toBe(false);
+        });
+
+        test('creates active free subscription for legacy users missing one', async () => {
+            const userId = `legacy-subscription-${Date.now()}`;
+            const email = `${userId}@example.com`;
+
+            await supabase.from('users').insert({
+                id: userId,
+                email,
+                role: 'user'
+            });
+
+            const subscription = await ensureDefaultSubscriptionForUser(userId);
+
+            expect(subscription).toMatchObject({
+                plan_type: 'free',
+                status: 'active'
+            });
+
+            const { data: persisted } = await supabase
+                .from('subscriptions')
+                .select('user_id, plan_type, status')
+                .eq('user_id', userId)
+                .single();
+
+            expect(persisted).toMatchObject({
+                user_id: userId,
+                plan_type: 'free',
+                status: 'active'
+            });
         });
     });
 

@@ -29,7 +29,33 @@ describe('Auth edge cases', () => {
 
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
+        expect(res.body.requireEmailVerification).toBeUndefined();
+        expect(res.body.emailVerificationSkipped).toBe(true);
+        expect(res.body.user).toMatchObject({
+            email,
+            subscription_status: 'free',
+            first_name: 'Jana'
+        });
+        expect(res.headers['set-cookie']?.join(';')).toContain('auth_token=');
         expect(res.body.error).toBeUndefined();
+    });
+
+    test('registration validates password_confirm from standalone auth form', async () => {
+        const csrfToken = await getCsrfToken();
+
+        const res = await request(app)
+            .post('/api/auth/register')
+            .set('x-csrf-token', csrfToken)
+            .set('X-Forwarded-For', authIp('register-password-confirm-mismatch'))
+            .send({
+                email: `password-confirm-${Date.now()}@example.com`,
+                password: 'TestPassword123!',
+                password_confirm: 'DifferentPassword123!',
+                first_name: 'Jana'
+            });
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBeDefined();
     });
 
     test('forgot password keeps invalid emails non-enumerable', async () => {
