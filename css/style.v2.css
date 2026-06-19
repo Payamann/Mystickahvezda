@@ -4963,6 +4963,13 @@ body.page-mentor .header {
   text-underline-offset: 3px;
 }
 
+.footer__support-email a,
+.footer__support-line a {
+  color: var(--color-mystic-gold);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
 
 
 .footer__social {
@@ -5134,6 +5141,14 @@ body.page-mentor .header {
 
   color: var(--color-silver-mist);
 
+}
+
+.footer__bottom p {
+  margin-bottom: 0;
+}
+
+.footer__support-line {
+  text-align: center;
 }
 
 
