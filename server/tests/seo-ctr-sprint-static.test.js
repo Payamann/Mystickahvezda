@@ -35,7 +35,7 @@ describe('CTR sprint static SEO pages', () => {
     const html = await readPage('horoskop/beran.html');
 
     expectCoreMetadata(html);
-    expect(html).toContain('Beran znamení (Aries): vlastnosti, láska a kompatibilita');
+    expect(html).toContain('Aries znamení česky: Beran, datum, povaha a láska');
     expect(html).toContain('Beran je Aries, první znamení zvěrokruhu');
     expect(html).toContain('../natalni-karta.html?source=seo_zodiac_sign&feature=natal_chart&sign=beran');
     expect(html).toContain('application/ld+json');
@@ -45,7 +45,7 @@ describe('CTR sprint static SEO pages', () => {
     const html = await readPage('andelske-karty.html');
 
     expectCoreMetadata(html);
-    expect(html).toContain('Andělská karta dne zdarma online | 44 karet');
+    expect(html).toContain('Andělská karta dne zdarma | 44 andělských karet');
     expect(html).toContain('Andělská <span class="text-gradient">karta dne</span>');
     expect(html).toContain('Jaký je rozdíl mezi kartou dne a andělským výkladem?');
     expect(html).toContain('Vytáhnout andělskou kartu');
@@ -118,9 +118,9 @@ describe('CTR sprint static SEO pages', () => {
     const html = await readPage('tarot-vyznam/kralovna-poharu.html');
 
     expectCoreMetadata(html);
-    expect(html).toContain('Královna pohárů tarot význam: láska, práce, ano/ne');
+    expect(html).toContain('Královna pohárů tarot: význam, láska a ano/ne');
     expect(html).toContain('Královna pohárů jako odpověď ano/ne');
-    expect(html).toContain('Význam karty Královna pohárů v tarotu');
+    expect(html).toContain('Královna pohárů v tarotu znamená empatii, intuici a citovou hloubku');
     expect(html).toContain('/tarot.html?source=tarot_card_detail_next_step');
   });
 
