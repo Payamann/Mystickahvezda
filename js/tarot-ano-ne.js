@@ -389,6 +389,19 @@
                 });
             });
         });
+
+        document.querySelectorAll('[data-tarot-yes-no-register]').forEach((link) => {
+            if (link.dataset.tarotYesNoBound === 'true') return;
+            link.dataset.tarotYesNoBound = 'true';
+            link.addEventListener('click', () => {
+                window.MH_ANALYTICS?.trackCTA?.('tarot_yes_no_save_profile', {
+                    intent: link.dataset.tarotYesNoRegister,
+                    destination: link.getAttribute('href') || '',
+                    source: TAROT_YES_NO_RESULT_SOURCE,
+                    feature: TAROT_YES_NO_FEATURE
+                });
+            });
+        });
     }
 
     function flipCard(card, index) {
