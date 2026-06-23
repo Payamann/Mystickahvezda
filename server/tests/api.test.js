@@ -77,6 +77,15 @@ describe('API Endpoint Tests', () => {
             expect(res.headers.location).toBe('/shamansko-kolo.html?source=social_post');
         });
 
+        test('legacy compatibility page redirects to canonical partner pair page with query params', async () => {
+            const res = await request(app)
+                .get('/kompatibilita/lev-stir.html?utm_source=gsc')
+                .redirects(0)
+                .expect(301);
+
+            expect(res.headers.location).toBe('/partnerska-shoda/leo-scorpio.html?utm_source=gsc');
+        });
+
         test('production public HTML allows shared-cache revalidation', async () => {
             await withTemporaryEnv({
                 RAILWAY_ENVIRONMENT_NAME: 'production',

@@ -356,10 +356,22 @@ test.describe('Partnerská shoda', () => {
     test('partnerska shoda nabizi vztahovy intent cluster pred vypoctem', async ({ page }) => {
         const cluster = page.locator('.synastry-intent-section').first();
         await expect(cluster).toBeVisible();
-        await expect(cluster.locator('.synastry-intent-card')).toHaveCount(6);
+        await expect(cluster.locator('.synastry-intent-card')).toHaveCount(7);
         await expect(cluster.locator('[data-analytics-cta="synastry_intent_calculator"]')).toHaveAttribute('href', '#synastry-form-card');
         await expect(cluster.locator('[data-analytics-cta="synastry_intent_numerology"]')).toHaveAttribute('href', /partnerska-numerologie\.html/);
         await expect(cluster.locator('[data-analytics-cta="synastry_intent_love_tarot"]')).toHaveAttribute('href', /tarot-laska\.html/);
+        await expect(cluster.locator('[data-analytics-cta="synastry_intent_tarot_yes_no"]')).toHaveAttribute('href', /tarot-ano-ne\.html/);
+    });
+
+    test('partnerska shoda propojuje Stira a Skorpion dotazy', async ({ page }) => {
+        const cluster = page.locator('#synastry-scorpio-cluster');
+
+        await expect(cluster).toBeVisible();
+        await expect(cluster).toContainText('Štír / Skorpion');
+        await expect(cluster.locator('.synastry-intent-card')).toHaveCount(6);
+        await expect(cluster.locator('[data-analytics-cta="synastry_scorpio_leo"]')).toHaveAttribute('href', /partnerska-shoda\/leo-scorpio\.html/);
+        await expect(page.locator('.compat-index-section a[href="partnerska-shoda/leo-scorpio.html"]')).toBeVisible();
+        await expect(page.locator('.compat-index-section a[href^="kompatibilita/"]')).toHaveCount(0);
     });
 
     test('canonical link existuje', async ({ page }) => {

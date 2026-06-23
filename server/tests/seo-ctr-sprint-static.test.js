@@ -116,11 +116,30 @@ describe('CTR sprint static SEO pages', () => {
       ['partnerska-shoda/cancer-aquarius.html', 'Rak a Vodnář ve vztahu'],
       ['partnerska-shoda/scorpio-pisces.html', 'Štír a Ryby ve vztahu'],
       ['partnerska-shoda/gemini-sagittarius.html', 'Blíženci a Střelec ve vztahu'],
+      ['partnerska-shoda/leo-scorpio.html?source=synastry_scorpio_cluster&amp;feature=compatibility&amp;intent=leo_scorpio', 'Lev a Štír / Skorpion'],
+      ['partnerska-shoda/taurus-scorpio.html?source=synastry_scorpio_cluster&amp;feature=compatibility&amp;intent=taurus_scorpio', 'Býk a Štír'],
+      ['partnerska-shoda/aries-scorpio.html?source=synastry_scorpio_cluster&amp;feature=compatibility&amp;intent=aries_scorpio', 'Beran a Štír'],
       ['tarot-ano-ne.html?source=synastry_intent_cluster&amp;feature=tarot_yes_no&amp;intent=relationship_yes_no', 'Zeptat se jednou kartou']
     ].forEach(([href, anchor]) => {
       expect(html).toContain(href);
       expect(html).toContain(anchor);
     });
+
+    expect(html).toContain('id="synastry-scorpio-cluster"');
+    expect(html).toContain('Štír se v dotazech často píše i jako Skorpion');
+    expect(html).toContain('partnerska-shoda/aries-taurus.html');
+    expect(html).toContain('partnerska-shoda/leo-scorpio.html');
+    expect(html).not.toContain('href="kompatibilita/');
+  });
+
+  it('keeps legacy Czech compatibility cluster deindexed in favor of partnerska-shoda pages', async () => {
+    const legacyHtml = await readPage('kompatibilita/lev-stir.html');
+    const sitemap = await readPage('sitemap.xml');
+
+    expect(legacyHtml).toContain('<meta name="robots" content="noindex, follow">');
+    expect(legacyHtml).toContain('<link rel="canonical" href="https://www.mystickahvezda.cz/partnerska-shoda/leo-scorpio.html">');
+    expect(sitemap).not.toContain('https://www.mystickahvezda.cz/kompatibilita/lev-stir.html');
+    expect(sitemap).toContain('https://www.mystickahvezda.cz/partnerska-shoda/leo-scorpio.html');
   });
 
   it('links supporting angel-card topics from the angel card hub', async () => {
@@ -145,7 +164,10 @@ describe('CTR sprint static SEO pages', () => {
     ['partnerska-shoda/aries-virgo.html', 'Beran a Panna', 'aries-virgo'],
     ['partnerska-shoda/cancer-aquarius.html', 'Rak a Vodnář', 'cancer-aquarius'],
     ['partnerska-shoda/scorpio-pisces.html', 'Štír a Ryby', 'scorpio-pisces'],
-    ['partnerska-shoda/gemini-sagittarius.html', 'Blíženci a Střelec', 'gemini-sagittarius']
+    ['partnerska-shoda/gemini-sagittarius.html', 'Blíženci a Střelec', 'gemini-sagittarius'],
+    ['partnerska-shoda/taurus-scorpio.html', 'Býk a Štír', 'taurus-scorpio'],
+    ['partnerska-shoda/aries-scorpio.html', 'Beran a Štír', 'aries-scorpio'],
+    ['partnerska-shoda/scorpio-capricorn.html', 'Štír a Kozoroh', 'scorpio-capricorn']
   ])('updates partner pair metadata and measured CTA for %s', async (relativePath, pair, slug) => {
     const html = await readPage(relativePath);
 
@@ -154,6 +176,20 @@ describe('CTR sprint static SEO pages', () => {
     expect(html).toContain(`${pair} ve vztahu: láska, komunikace`);
     expect(html).toContain(`../partnerska-shoda.html?source=seo_partner_pair&feature=compatibility&pair=${slug}#form`);
     expect(html).toContain('application/ld+json');
+  });
+
+  it.each([
+    ['partnerska-shoda/leo-scorpio.html', 'Lev a Skorpion'],
+    ['partnerska-shoda/taurus-scorpio.html', 'Býk a Skorpion'],
+    ['partnerska-shoda/scorpio-cancer.html', 'Skorpion a Rak'],
+    ['partnerska-shoda/scorpio-capricorn.html', 'Skorpion a Kozoroh']
+  ])('keeps Skorpion query variant on %s', async (relativePath, alias) => {
+    const html = await readPage(relativePath);
+
+    expectCoreMetadata(html);
+    expect(html).toContain('Štír bývá hledaný i jako Skorpion');
+    expect(html).toContain(`<strong>Hledané také:</strong> ${alias}`);
+    expect(html).toContain('class="compatibility-search-note"');
   });
 
   it('expands tarot card detail snippets with Czech love work and yes-no intent', async () => {

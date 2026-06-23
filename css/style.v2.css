@@ -2597,6 +2597,32 @@ body.page-mentor .header {
 
 }
 
+.compatibility-search-note {
+
+  margin: 0 0 var(--space-lg);
+
+  padding: var(--space-md) var(--space-lg);
+
+  border: 1px solid rgba(212, 175, 55, 0.22);
+
+  border-radius: var(--radius-md);
+
+  background: rgba(212, 175, 55, 0.07);
+
+}
+
+.compatibility-search-note p {
+
+  margin: 0;
+
+}
+
+.compatibility-search-note strong {
+
+  color: var(--color-mystic-gold);
+
+}
+
 
 
 /* Service Card specifics */

@@ -694,6 +694,21 @@ const STATIC_PAGE_REDIRECTS = new Map([
     ['/blog/vidite-vsude-1111-poselstvi-andelu.html', '/blog/andelska-cisla-1111.html'],
 ]);
 
+const CZECH_COMPATIBILITY_SLUGS = new Map([
+    ['beran', 'aries'],
+    ['byk', 'taurus'],
+    ['blizenci', 'gemini'],
+    ['rak', 'cancer'],
+    ['lev', 'leo'],
+    ['panna', 'virgo'],
+    ['vahy', 'libra'],
+    ['stir', 'scorpio'],
+    ['strelec', 'sagittarius'],
+    ['kozoroh', 'capricorn'],
+    ['vodnar', 'aquarius'],
+    ['ryby', 'pisces']
+]);
+
 const HTML_PRIVATE_CACHE_CONTROL = 'no-cache, no-store, must-revalidate';
 const HTML_PUBLIC_CACHE_CONTROL = 'public, max-age=0, s-maxage=600, stale-while-revalidate=86400';
 
@@ -718,6 +733,21 @@ app.use((req, res, next) => {
     const queryIndex = req.originalUrl.indexOf('?');
     const queryString = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
     return res.redirect(301, `${targetPath}${queryString}`);
+});
+
+app.get(/^\/kompatibilita\/([a-z-]+)\.html$/u, (req, res, next) => {
+    const czechSlug = req.params[0];
+    const englishParts = czechSlug
+        .split('-')
+        .map((part) => CZECH_COMPATIBILITY_SLUGS.get(part));
+
+    if (englishParts.length !== 2 || englishParts.some((part) => !part)) return next();
+
+    const englishSlug = englishParts.join('-');
+
+    const queryIndex = req.originalUrl.indexOf('?');
+    const queryString = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
+    return res.redirect(301, `/partnerska-shoda/${englishSlug}.html${queryString}`);
 });
 
 // Serve static files from the parent directory (MystickaHvezda root)
