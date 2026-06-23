@@ -26,8 +26,17 @@ function createMockSupabaseClient() {
         return tables.get(table);
     };
 
+    function stableEmailHash(email) {
+        return [...String(email).toLowerCase()].reduce(
+            (hash, char) => (Math.imul(hash, 31) + char.charCodeAt(0)) >>> 0,
+            0
+        ).toString(16).padStart(8, '0');
+    }
+
     function makeUser(email, metadata = {}) {
-        const id = `test-user-${Buffer.from(email).toString('hex').slice(0, 16)}`;
+        const normalizedEmail = String(email).toLowerCase();
+        const emailPrefix = Buffer.from(normalizedEmail).toString('hex').slice(0, 24);
+        const id = `test-user-${emailPrefix}-${stableEmailHash(normalizedEmail)}`;
         const user = {
             id,
             email,

@@ -362,6 +362,8 @@ const PUBLIC_FUNNEL_EVENTS = new Set([
     'checkout_post_verification_pending',
     'checkout_post_verification_recovered',
     'first_value_completed',
+    'reading_save_clicked',
+    'reading_saved',
     'reading_feedback_submitted',
     'daily_ritual_completed',
     'activation_completed',

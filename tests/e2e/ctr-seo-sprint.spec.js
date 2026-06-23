@@ -1,54 +1,69 @@
 import { test, expect } from '@playwright/test';
 
+async function fetchHtml(request, pagePath) {
+    const response = await request.get(pagePath);
+    expect(response.status(), `${pagePath} should be served`).toBe(200);
+    return response.text();
+}
+
+function titleOf(html) {
+    const match = html.match(/<title>([^<]+)<\/title>/i);
+    expect(match, 'document title should exist').not.toBeNull();
+    return match[1];
+}
+
 test.describe('CTR SEO sprint smoke', () => {
-    test('/horoskop/beran.html matches Aries intent and measured natal CTA', async ({ page }) => {
-        const response = await page.goto('/horoskop/beran.html', { waitUntil: 'domcontentloaded' });
-        expect(response.status()).toBe(200);
+    test('/horoskop/beran.html matches Aries intent and measured natal CTA', async ({ request }) => {
+        const html = await fetchHtml(request, '/horoskop/beran.html');
 
-        await expect(page).toHaveTitle(/Beran \/ Aries znamení/);
-        await expect(page.getByText('Beran je Aries, první znamení zvěrokruhu')).toBeVisible();
-        await expect(page.getByRole('link', { name: 'Vygenerovat Natální kartu' })).toHaveAttribute(
-            'href',
-            '../natalni-karta.html?source=seo_zodiac_sign&feature=natal_chart&sign=beran'
-        );
+        expect(titleOf(html)).toMatch(/Aries znamení česky: Beran/);
+        expect(html).toContain('Beran je Aries, první znamení zvěrokruhu');
+        expect(html).toContain('href="../natalni-karta.html?source=seo_zodiac_sign&feature=natal_chart&sign=beran"');
+        expect(html).toContain('Vygenerovat Natální kartu');
     });
 
-    test('/andelske-karty.html separates daily angel card from deeper reading', async ({ page }) => {
-        const response = await page.goto('/andelske-karty.html', { waitUntil: 'domcontentloaded' });
-        expect(response.status()).toBe(200);
+    test('/andelske-karty.html separates daily angel card from deeper reading', async ({ request }) => {
+        const html = await fetchHtml(request, '/andelske-karty.html');
 
-        await expect(page).toHaveTitle(/Andělská karta dne online/);
-        await expect(page.locator('h1').first()).toContainText('Andělská karta dne');
-        await expect(page.locator('#draw-btn')).toHaveAttribute('aria-label', 'Vytáhnout andělskou kartu');
-        await expect(page.getByText('Jaký je rozdíl mezi kartou dne a andělským výkladem?')).toBeVisible();
+        expect(titleOf(html)).toMatch(/Andělská karta dne zdarma/);
+        expect(html).toContain('Andělská <span class="text-gradient">karta dne</span>');
+        expect(html).toContain('id="draw-btn"');
+        expect(html).toContain('aria-label="Vytáhnout andělskou kartu"');
+        expect(html).toContain('Jaký je rozdíl mezi kartou dne a andělským výkladem?');
     });
 
-    for (const slug of ['sagittarius-pisces', 'aquarius-taurus', 'capricorn-leo', 'virgo-leo']) {
-        test(`/partnerska-shoda/${slug}.html keeps measured pair CTA`, async ({ page }) => {
-            const response = await page.goto(`/partnerska-shoda/${slug}.html`, { waitUntil: 'domcontentloaded' });
-            expect(response.status()).toBe(200);
+    for (const slug of [
+        'sagittarius-pisces',
+        'aquarius-taurus',
+        'capricorn-leo',
+        'virgo-leo',
+        'leo-scorpio',
+        'aries-virgo',
+        'cancer-aquarius',
+        'scorpio-pisces',
+        'gemini-sagittarius',
+    ]) {
+        test(`/partnerska-shoda/${slug}.html keeps measured pair CTA`, async ({ request }) => {
+            const html = await fetchHtml(request, `/partnerska-shoda/${slug}.html`);
 
-            expect(await page.title()).toMatch(/ve vztahu \| Partnerská shoda/);
-            await expect(page.getByRole('link', { name: 'Vypočítat Synastrii Zdarma' })).toHaveAttribute(
-                'href',
-                `../partnerska-shoda.html?source=seo_partner_pair&feature=compatibility&pair=${slug}#form`
-            );
+            expect(titleOf(html)).toMatch(/láska, vztah a kompatibilita/);
+            expect(html).toContain(`href="../partnerska-shoda.html?source=seo_partner_pair&feature=compatibility&pair=${slug}#form"`);
+            expect(html).toContain('Vypočítat Synastrii Zdarma');
         });
     }
 
-    for (const [path, intent] of [
-        ['/sk/kristalova-koule.html', 'Krištáľová guľa áno alebo nie'],
-        ['/pl/kristalova-koule.html', 'Kryształowa kula tak czy nie']
+    for (const [pagePath, titleIntent, visibleIntent] of [
+        ['/sk/kristalova-koule.html', 'Krištáľová guľa áno nie online', 'Krištáľová guľa áno alebo nie'],
+        ['/pl/kristalova-koule.html', 'Kryształowa kula tak czy nie', 'Kryształowa kula tak czy nie'],
     ]) {
-        test(`${path} keeps yes-no intent and hreflang`, async ({ page }) => {
-            const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
-            expect(response.status()).toBe(200);
+        test(`${pagePath} keeps yes-no intent and hreflang`, async ({ request }) => {
+            const html = await fetchHtml(request, pagePath);
 
-            await expect(page).toHaveTitle(new RegExp(intent));
-            await expect(page.getByText(intent)).toBeVisible();
-            await expect(page.locator('link[rel="alternate"][hreflang="cs"]')).toHaveAttribute('href', /kristalova-koule\.html/);
-            await expect(page.locator('link[rel="alternate"][hreflang="sk"]')).toHaveAttribute('href', /sk\/kristalova-koule\.html/);
-            await expect(page.locator('link[rel="alternate"][hreflang="pl"]')).toHaveAttribute('href', /pl\/kristalova-koule\.html/);
+            expect(titleOf(html)).toMatch(new RegExp(titleIntent));
+            expect(html).toContain(visibleIntent);
+            expect(html).toMatch(/<link[^>]+rel="alternate"[^>]+hreflang="cs"[^>]+href="[^"]*kristalova-koule\.html"/i);
+            expect(html).toMatch(/<link[^>]+rel="alternate"[^>]+hreflang="sk"[^>]+href="[^"]*sk\/kristalova-koule\.html"/i);
+            expect(html).toMatch(/<link[^>]+rel="alternate"[^>]+hreflang="pl"[^>]+href="[^"]*pl\/kristalova-koule\.html"/i);
         });
     }
 });

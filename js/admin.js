@@ -32,6 +32,15 @@ document.addEventListener('click', (event) => {
     if (action === 'loadAngelMessages') {
         loadAngelMessages();
     }
+    if (action === 'loadSupportInbox') {
+        loadSupportInbox();
+    }
+    if (action === 'openSupportThread' && actionTarget.dataset.id) {
+        openSupportThread(actionTarget.dataset.id);
+    }
+    if (action === 'createSupportDraft') {
+        createSupportDraft();
+    }
     if (action === 'approveAngelMessage' && actionTarget.dataset.id) {
         moderateAngelMessage(actionTarget.dataset.id, true);
     }
@@ -68,6 +77,7 @@ const currencyFormatter = new Intl.NumberFormat('cs-CZ', {
     currency: 'CZK',
     maximumFractionDigits: 0
 });
+let currentSupportThreadId = null;
 
 async function checkAdminAccess() {
     const profile = await window.Auth.getProfile();
@@ -84,6 +94,7 @@ async function checkAdminAccess() {
 async function loadAdminData() {
     await Promise.all([
         loadUsers(),
+        loadSupportInbox(),
         loadBusiness(),
         loadFunnel(),
         loadAnalytics(),
@@ -172,6 +183,191 @@ function renderUsers(users) {
         tr.append(tdEmail, tdId, tdPlan, tdCredits, tdDate, tdActions);
         tbody.appendChild(tr);
     });
+}
+
+async function loadSupportInbox() {
+    const statusNode = document.getElementById('support-status');
+    const tbody = document.querySelector('#support-threads-table tbody');
+    const queryInput = document.getElementById('support-search-query');
+    const draftStatus = document.getElementById('support-draft-status');
+    const errorMsg = document.getElementById('error-msg');
+
+    if (!statusNode || !tbody) return;
+
+    statusNode.textContent = 'Nacitam Gmail support...';
+    tbody.replaceChildren(createTableMessageRow(5, 'Nacitam support...'));
+    if (draftStatus) draftStatus.textContent = '';
+
+    try {
+        const statusResponse = await fetch(`${API_CONFIG.BASE_URL}/admin/support/gmail/status`, {
+            credentials: 'include'
+        });
+        const statusData = await statusResponse.json();
+
+        if (statusResponse.status === 403) {
+            statusNode.textContent = 'Pristup odepren.';
+            tbody.replaceChildren(createTableMessageRow(5, 'Pristup odepren.', 'admin-table-error'));
+            return;
+        }
+
+        if (!statusData.success) throw new Error(statusData.error);
+        const status = statusData.status || {};
+
+        if (!status.configured) {
+            statusNode.textContent = `Gmail support neni nakonfigurovany. Chybi: ${(status.missing || []).join(', ') || 'OAuth udaje'}.`;
+            tbody.replaceChildren(createTableMessageRow(5, 'Dopln Gmail OAuth konfiguraci v Railway.', 'admin-table-error'));
+            return;
+        }
+
+        statusNode.textContent = `Gmail support aktivni pro ${status.supportEmail}.`;
+        const query = queryInput ? queryInput.value : '';
+        const response = await fetch(`${API_CONFIG.BASE_URL}/admin/support/gmail/threads?limit=10&q=${encodeURIComponent(query)}`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (!data.success) throw new Error(data.error);
+
+        renderSupportThreads(data.threads || []);
+        if (errorMsg) errorMsg.textContent = '';
+    } catch (error) {
+        console.error(error);
+        statusNode.textContent = 'Gmail support se nepodarilo nacist.';
+        tbody.replaceChildren(createTableMessageRow(5, 'Support inbox neni dostupny.', 'admin-table-error'));
+        if (errorMsg) errorMsg.textContent = 'Chyba pri nacitani support inboxu: ' + error.message;
+    }
+}
+
+function renderSupportThreads(threads) {
+    const tbody = document.querySelector('#support-threads-table tbody');
+    tbody.replaceChildren();
+
+    if (!threads || threads.length === 0) {
+        tbody.appendChild(createTableMessageRow(5, 'Zadne support e-maily k zobrazeni.'));
+        return;
+    }
+
+    threads.forEach(thread => {
+        const tr = document.createElement('tr');
+        const latest = thread.latestMessage || {};
+
+        appendCell(tr, formatDateTime(thread.lastInternalDate || latest.internalDate));
+        appendCell(tr, thread.subject || '(bez predmetu)');
+        appendCell(tr, formatEmailAddress(latest.from));
+        appendCell(tr, thread.snippet || '');
+
+        const actionCell = document.createElement('td');
+        const button = document.createElement('button');
+        button.className = 'action-btn btn-promote';
+        button.textContent = 'Otevrit';
+        button.dataset.action = 'openSupportThread';
+        button.dataset.id = thread.id;
+        actionCell.appendChild(button);
+        tr.appendChild(actionCell);
+
+        tbody.appendChild(tr);
+    });
+}
+
+async function openSupportThread(threadId) {
+    const title = document.getElementById('support-thread-title');
+    const messagesNode = document.getElementById('support-thread-messages');
+    const draftBody = document.getElementById('support-draft-body');
+    const draftStatus = document.getElementById('support-draft-status');
+    const errorMsg = document.getElementById('error-msg');
+
+    if (!messagesNode) return;
+
+    currentSupportThreadId = threadId;
+    messagesNode.textContent = 'Nacitam vlakno...';
+    if (draftStatus) draftStatus.textContent = '';
+
+    try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/admin/support/gmail/threads/${encodeURIComponent(threadId)}`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!data.success) throw new Error(data.error);
+
+        const thread = data.thread || {};
+        if (title) title.textContent = thread.subject || 'Detail vlakna';
+        renderSupportThreadMessages(thread.messages || []);
+        if (draftBody && !draftBody.value.trim()) {
+            draftBody.value = 'Dobry den,\\n\\n\\n\\nS pozdravem,\\nMysticka Hvezda';
+        }
+        if (errorMsg) errorMsg.textContent = '';
+    } catch (error) {
+        console.error(error);
+        messagesNode.textContent = 'Vlakno se nepodarilo nacist.';
+        if (errorMsg) errorMsg.textContent = 'Chyba pri nacitani support vlakna: ' + error.message;
+    }
+}
+
+function renderSupportThreadMessages(messages) {
+    const messagesNode = document.getElementById('support-thread-messages');
+    messagesNode.replaceChildren();
+
+    if (!messages || messages.length === 0) {
+        messagesNode.textContent = 'V tomto vlakne nejsou zpravy.';
+        return;
+    }
+
+    messages.forEach(message => {
+        const wrapper = document.createElement('article');
+        wrapper.className = 'admin-support-message';
+
+        const meta = document.createElement('div');
+        meta.className = 'admin-support-message__meta';
+        meta.textContent = `${formatEmailAddress(message.from)} | ${formatDateTime(message.internalDate || message.date)}`;
+
+        const body = document.createElement('pre');
+        body.className = 'admin-support-message__body';
+        body.textContent = message.body || message.snippet || '(bez textu)';
+
+        wrapper.append(meta, body);
+        messagesNode.appendChild(wrapper);
+    });
+}
+
+async function createSupportDraft() {
+    const draftBody = document.getElementById('support-draft-body');
+    const draftStatus = document.getElementById('support-draft-status');
+
+    if (!draftStatus || !draftBody) return;
+    if (!currentSupportThreadId) {
+        draftStatus.textContent = 'Nejdriv vyber support vlakno.';
+        return;
+    }
+    if (!draftBody.value.trim()) {
+        draftStatus.textContent = 'Dopln text odpovedi.';
+        return;
+    }
+
+    draftStatus.textContent = 'Vytvarim Gmail draft...';
+
+    try {
+        const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+        const response = await fetch(`${API_CONFIG.BASE_URL}/admin/support/gmail/drafts`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {})
+            },
+            body: JSON.stringify({
+                threadId: currentSupportThreadId,
+                body: draftBody.value
+            })
+        });
+
+        const data = await response.json();
+        if (!data.success) throw new Error(data.error);
+
+        draftStatus.textContent = `Draft vytvoren v Gmailu pro ${data.draft?.to || 'zakaznika'}. Zkontroluj ho a odesli rucne.`;
+    } catch (error) {
+        console.error(error);
+        draftStatus.textContent = 'Draft se nepodarilo vytvorit: ' + error.message;
+    }
 }
 
 async function loadBusiness() {
@@ -616,6 +812,7 @@ function renderFunnel(report) {
     const metricCards = [
         ['První hodnota', formatInteger(metrics.firstValueCompleted), `${formatPercent(metrics.firstValueToCheckoutRate)} do checkoutu`],
         ['Aktivace', formatInteger(metrics.activationCompleted), `${formatPercent(metrics.activationToCheckoutRate)} do checkoutu`],
+        ['Uložení výkladu', `${formatInteger(metrics.readingSaved)} / ${formatInteger(metrics.readingSaveClicked)}`, `${formatPercent(metrics.readingSaveRate)} kliků skončí uložením`],
         ['Feedback výkladů', formatInteger(metrics.readingFeedbackSubmitted), 'Reakce po uloženém výkladu'],
         ['Denní rituály', formatInteger(metrics.dailyRitualCompleted), 'Reflexe a návraty v profilu'],
         ['Paywall views', formatInteger(metrics.paywallViewed), `${formatPercent(metrics.paywallToPricingIntentRate)} klikne na placený plán`],
@@ -773,7 +970,7 @@ function renderFunnelSegments(rows) {
         appendCell(tr, formatMonetizationCounts(row));
         appendCell(tr, formatRatePair(row));
         appendCell(tr, formatRatePair(row.previous));
-        appendCell(tr, `${formatRateDelta(row.paywallToPricingIntentRateDelta)} / ${formatRateDelta(row.pricingIntentToCheckoutRateDelta)} / ${formatRateDelta(row.checkoutToPurchaseRateDelta)}`);
+        appendCell(tr, `${formatRateDelta(row.readingSaveRateDelta)} / ${formatRateDelta(row.paywallToPricingIntentRateDelta)} / ${formatRateDelta(row.pricingIntentToCheckoutRateDelta)} / ${formatRateDelta(row.checkoutToPurchaseRateDelta)}`);
         tbody.appendChild(tr);
     });
 }
@@ -930,6 +1127,8 @@ function formatActivationCounts(row = {}) {
     return [
         row.firstValueCompleted,
         row.activationCompleted,
+        row.readingSaveClicked,
+        row.readingSaved,
         row.readingFeedbackSubmitted,
         row.dailyRitualCompleted
     ].map(formatInteger).join(' / ');
@@ -962,7 +1161,7 @@ function formatDailyPurchaseCounts(row = {}) {
 }
 
 function formatRatePair(row = {}) {
-    return `${formatPercent(row.paywallToPricingIntentRate)} / ${formatPercent(row.pricingIntentToCheckoutRate)} / ${formatPercent(row.checkoutToPurchaseRate)}`;
+    return `${formatPercent(row.readingSaveRate)} / ${formatPercent(row.paywallToPricingIntentRate)} / ${formatPercent(row.pricingIntentToCheckoutRate)} / ${formatPercent(row.checkoutToPurchaseRate)}`;
 }
 
 function formatRateDelta(value) {
@@ -998,6 +1197,14 @@ function formatDimension(value) {
     if (!value || value === '(nezadano)') return 'Nezadáno';
     if (value === '(direct)') return 'Direct';
     return value;
+}
+
+function formatEmailAddress(value) {
+    if (!value) return '-';
+    const match = String(value).match(/<([^<>@\s]+@[^<>@\s]+)>/);
+    if (match) return match[1];
+    const direct = String(value).match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+    return direct ? direct[0] : String(value);
 }
 
 function formatDateTime(value) {

@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         profile_history: 'Historie výkladů',
         another_reading: 'Navazující výklad',
         tarot: 'Tarot',
+        tarot_yes_no: 'Tarot ano/ne',
         tarot_daily_card_profile_save: 'Tarot karta dne',
         tarot_multi_card: 'Vícekartový tarot',
         daily_angel_card: 'Karta dne',
@@ -152,6 +153,12 @@ document.addEventListener('DOMContentLoaded', () => {
             copy: 'Po vytvoření účtu budete pokračovat k tarotu a můžete si rovnou položit první otázku.',
             stepTitle: 'Otevřeme tarotový výklad',
             stepCopy: 'Navážete přímo na záměr, se kterým jste přišli.'
+        },
+        tarot_yes_no: {
+            title: 'Uložíme výklad do Deníku',
+            copy: 'Po registraci se vrátíte do profilu a odpověď z Tarotu ano/ne přidáme do Deníku výkladů.',
+            stepTitle: 'Otevřeme Deník výkladů',
+            stepCopy: 'Otázka, karta i odpověď zůstanou pohromadě, takže se k nim můžete vrátit.'
         },
         tarot_daily_card_profile_save: {
             title: 'Uložte kartu dne do profilu',

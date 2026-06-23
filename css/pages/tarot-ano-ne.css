@@ -459,6 +459,87 @@ html body .mh-inline-418361a818 { color:rgba(255,255,255,0.65);line-height:1.8; 
     line-height: 1.55;
 }
 
+.tarot-yes-no-query-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    max-width: 880px;
+    margin: -1.25rem auto 2.2rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(212, 175, 55, 0.18);
+    border-radius: 12px;
+    background: rgba(5, 5, 16, 0.42);
+    text-align: left;
+}
+
+.tarot-yes-no-query-strip strong {
+    flex: 0 0 auto;
+    color: var(--color-mystic-gold);
+}
+
+.tarot-yes-no-query-strip span {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.tarot-yes-no-intent-guide {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 1rem;
+    margin: 0 auto 2.4rem;
+    padding: 1.15rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.045);
+    text-align: left;
+}
+
+.tarot-yes-no-intent-guide h2 {
+    margin: 0.7rem 0 0.55rem;
+    font-family: 'Cinzel', serif;
+    color: #f5e7b6;
+    font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+    line-height: 1.25;
+}
+
+.tarot-yes-no-intent-guide p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.7;
+}
+
+.tarot-yes-no-intent-steps {
+    display: grid;
+    gap: 0.7rem;
+}
+
+.tarot-yes-no-intent-steps div {
+    min-width: 0;
+    padding: 0.85rem;
+    border: 1px solid rgba(212, 175, 55, 0.16);
+    border-radius: 12px;
+    background: rgba(5, 5, 16, 0.34);
+}
+
+.tarot-yes-no-intent-steps strong,
+.tarot-yes-no-intent-steps span {
+    display: block;
+}
+
+.tarot-yes-no-intent-steps strong {
+    color: #f3d98b;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+}
+
+.tarot-yes-no-intent-steps span {
+    color: rgba(255, 255, 255, 0.66);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
 .tarot-yes-no-next-step {
     max-width: 720px;
     margin: 2rem auto 0;
@@ -542,6 +623,63 @@ html body .mh-inline-418361a818 { color:rgba(255,255,255,0.65);line-height:1.8; 
     text-align: left;
 }
 
+.tarot-yes-no-related-section {
+    margin-top: 3rem;
+    text-align: left;
+}
+
+.tarot-yes-no-related-section h2 {
+    margin: 0.75rem 0 1.1rem;
+    font-family: 'Cinzel', serif;
+    color: #f5e7b6;
+    font-size: clamp(1.25rem, 2.8vw, 1.75rem);
+    line-height: 1.25;
+}
+
+.tarot-yes-no-related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+}
+
+.tarot-yes-no-related-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 118px;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.045);
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.tarot-yes-no-related-card:hover,
+.tarot-yes-no-related-card:focus-visible {
+    transform: translateY(-2px);
+    border-color: rgba(212, 175, 55, 0.42);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.tarot-yes-no-related-card strong,
+.tarot-yes-no-related-card span {
+    display: block;
+}
+
+.tarot-yes-no-related-card strong {
+    color: #f3d98b;
+    font-size: 0.98rem;
+    margin-bottom: 0.45rem;
+}
+
+.tarot-yes-no-related-card span {
+    color: rgba(255, 255, 255, 0.66);
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
 .tarot-yes-no-faq-section h2 {
     margin: 0.75rem 0 1.1rem;
     font-family: 'Cinzel', serif;
@@ -580,9 +718,17 @@ html body .mh-inline-418361a818 { color:rgba(255,255,255,0.65);line-height:1.8; 
 
 @media (max-width: 720px) {
     .tarot-yes-no-trust-strip,
+    .tarot-yes-no-intent-guide,
     .tarot-yes-no-next-grid,
+    .tarot-yes-no-related-grid,
     .tarot-yes-no-faq-grid {
         grid-template-columns: 1fr;
+    }
+
+    .tarot-yes-no-query-strip {
+        align-items: flex-start;
+        flex-direction: column;
+        margin-top: -1rem;
     }
 
     .tarot-yes-no-profile-cta {
@@ -602,6 +748,10 @@ html body .mh-inline-418361a818 { color:rgba(255,255,255,0.65);line-height:1.8; 
     }
 
     .tarot-yes-no-next-card {
+        min-height: auto;
+    }
+
+    .tarot-yes-no-related-card {
         min-height: auto;
     }
 }

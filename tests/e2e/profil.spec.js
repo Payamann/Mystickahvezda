@@ -464,19 +464,50 @@ test.describe('Profil aktivace', () => {
         await waitForPageReady(page);
 
         const history = page.locator('#readings-list .empty-state');
-        await expect(history).toContainText('první stopu');
-        await expect(history).toContainText('k čemu se máš vracet');
+        await expect(history).toContainText('první signál');
+        await expect(history).toContainText('otázky, odpovědi');
 
-        const tarotHref = await history.locator('a[href*="tarot.html"]').getAttribute('href');
+        const tarotHref = await history.locator('a[href*="tarot-ano-ne.html"]').getAttribute('href');
+        const threeCardsHref = await history.locator('a[href*="tarot-tri-karty.html"]').getAttribute('href');
         const crystalHref = await history.locator('a[href*="kristalova-koule.html"]').getAttribute('href');
-        const horoscopeHref = await history.locator('a[href*="horoskopy.html"]').getAttribute('href');
 
         expect(tarotHref).toContain('source=profile_history_empty');
-        expect(tarotHref).toContain('feature=tarot');
+        expect(tarotHref).toContain('feature=tarot_yes_no');
+        expect(threeCardsHref).toContain('source=profile_history_empty');
+        expect(threeCardsHref).toContain('feature=tarot_multi_card');
         expect(crystalHref).toContain('source=profile_history_empty');
         expect(crystalHref).toContain('feature=kristalova_koule');
-        expect(horoscopeHref).toContain('source=profile_history_empty');
-        expect(horoscopeHref).toContain('feature=daily_guidance');
+    });
+
+    test('pending tarot ano/ne vyklad se po prihlaseni ulozi a zvyrazni v historii', async ({ page }) => {
+        await mockLoggedInProfile(page);
+        await page.addInitScript(() => {
+            localStorage.setItem('mh_pending_reading', JSON.stringify({
+                type: 'tarot',
+                source: 'tarot_yes_no_save_journal',
+                feature: 'tarot_yes_no',
+                createdAt: Date.now(),
+                data: {
+                    tool: 'tarot_yes_no',
+                    source: 'tarot_yes_no_result',
+                    question: 'Mám se dnes ozvat?',
+                    answer: 'ANO: Udělej první malý krok.',
+                    result_label: 'ANO',
+                    result_key: 'yes',
+                    result_text: 'Udělej první malý krok.'
+                }
+            }));
+        });
+
+        await page.goto('/profil.html');
+        await waitForPageReady(page);
+
+        await expect.poll(() => page.evaluate(() => localStorage.getItem('mh_pending_reading'))).toBeNull();
+        const savedCard = page.locator('#readings-list .reading-item[data-reading-id="reading-1"]');
+        await expect(savedCard).toBeVisible();
+        await expect(savedCard).toHaveClass(/reading-item--just-saved/);
+        await expect(page.locator('#tab-btn-history')).toHaveAttribute('aria-selected', 'true');
+        await expect(page.locator('.profile-history-next-step')).toContainText('Další krok po uložení');
     });
 
     test('prazdne oblibene bez vykladu vedou k meritelne prvni akci', async ({ page }) => {

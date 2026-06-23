@@ -6,7 +6,9 @@ Goal: people can write to `support@mystickahvezda.cz`, transactional emails can 
 
 2026-06-18: Treat Resend as the app transactional email sender, not as the primary mailbox. Finish a real mailbox for `support@mystickahvezda.cz` through Google Workspace, Zoho, Fastmail, or another mailbox provider, then keep app emails on Resend with `Reply-To: support@mystickahvezda.cz`.
 
-2026-06-18 registration QA found Supabase Auth returning `over_email_send_rate_limit` after signup attempts. Supabase Auth confirmation emails must be moved to a custom SMTP sender, preferably the same Resend account/domain used by the app, before registration can be considered production-safe.
+2026-06-18 registration QA found Supabase Auth returning `over_email_send_rate_limit` after signup attempts. Registration now creates confirmed Supabase users by default and does not require a Supabase confirmation email. Set `AUTH_REQUIRE_EMAIL_VERIFICATION=true` only if custom SMTP is configured and email confirmation is intentionally re-enabled.
+
+2026-06-18 support cockpit: the admin app can read the Google Workspace support inbox and create Gmail draft replies for `support@mystickahvezda.cz`. It does not send replies automatically; every response must be reviewed and sent manually in Gmail.
 
 ## Runtime env
 
@@ -19,6 +21,36 @@ SUPPORT_EMAIL=support@mystickahvezda.cz
 REPLY_TO_EMAIL=support@mystickahvezda.cz
 ADMIN_EMAIL=real-team-inbox@example.com
 ```
+
+If Google Workspace/Gmail should be visible in the admin support cockpit, also set:
+
+```env
+GMAIL_SUPPORT_EMAIL=support@mystickahvezda.cz
+GMAIL_CLIENT_ID=...
+GMAIL_CLIENT_SECRET=...
+GMAIL_REFRESH_TOKEN=...
+GMAIL_REDIRECT_URI=...
+GMAIL_USER_ID=me
+```
+
+Required Gmail OAuth scopes:
+
+```text
+https://www.googleapis.com/auth/gmail.readonly
+https://www.googleapis.com/auth/gmail.compose
+```
+
+Use a refresh token for the `support@mystickahvezda.cz` mailbox. `gmail.compose` is enough for draft creation; do not grant `gmail.send` unless the product explicitly adds manual send controls later.
+
+## Gmail support cockpit setup
+
+1. In Google Cloud, enable the Gmail API for the project used by Mysticka Hvezda.
+2. Create an OAuth client for a web app or desktop app.
+3. Authorize the `support@mystickahvezda.cz` mailbox with the two scopes above and request offline access.
+4. Store the resulting refresh token and OAuth client values in Railway.
+5. Open `/admin.html` and use the Support inbox panel to confirm `configured: true`.
+
+If Google Workspace later supports domain-wide delegation for this mailbox, keep the same admin endpoints but replace the OAuth refresh-token client with delegated service-account auth.
 
 If Resend receives inbound mail for the root domain, also set:
 
@@ -94,3 +126,4 @@ _dmarc.mystickahvezda.cz TXT "v=DMARC1; p=quarantine"
 2. Reply to that email and confirm the reply reaches the real team inbox.
 3. Send a fresh email directly to `support@mystickahvezda.cz`.
 4. Submit the website contact form and confirm the admin notification reaches `ADMIN_EMAIL` or `SUPPORT_FORWARD_EMAIL`.
+5. Open `/admin.html`, confirm the Support inbox panel shows Gmail as active, open a thread, create a draft, then verify the draft appears in Gmail and is not sent automatically.

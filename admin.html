@@ -47,6 +47,92 @@
 
                 </div>
 
+                <section class="admin-panel admin-panel--support mb-xl" aria-labelledby="support-title">
+
+                    <div class="admin-panel__header">
+
+                        <div>
+
+                            <h2 id="support-title">Support inbox</h2>
+
+                            <p class="admin-panel__subtext">Cteni Gmailu a vytvareni draftu pro support@mystickahvezda.cz. Odeslani zustava rucni v Gmailu.</p>
+
+                        </div>
+
+                        <div class="admin-panel__controls">
+
+                            <label class="admin-select-label" for="support-search-query">Gmail dotaz</label>
+
+                            <input id="support-search-query" class="admin-select admin-support-query" type="search" value="in:inbox newer_than:30d">
+
+                            <button class="btn btn--secondary" data-action="loadSupportInbox">Obnovit support</button>
+
+                        </div>
+
+                    </div>
+
+                    <div id="support-status" class="admin-loading" aria-live="polite">Nacitam Gmail support...</div>
+
+                    <div class="admin-support-layout">
+
+                        <div class="admin-table-container admin-table-container--compact">
+
+                            <h3>Posledni vlakna</h3>
+
+                            <table id="support-threads-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Cas</th>
+
+                                        <th>Predmet</th>
+
+                                        <th>Od</th>
+
+                                        <th>Zprava</th>
+
+                                        <th>Akce</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    <tr><td colspan="5">Nacitam support...</td></tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        <div class="admin-support-detail">
+
+                            <h3 id="support-thread-title">Detail vlakna</h3>
+
+                            <div id="support-thread-messages" class="admin-support-messages">Vyber vlakno ze seznamu.</div>
+
+                            <label class="admin-select-label" for="support-draft-body">Navrh odpovedi</label>
+
+                            <textarea id="support-draft-body" class="admin-support-draft" rows="8" placeholder="Napis odpoved. Codex muze pomoct pripravit text, ale finalni odeslani udelej v Gmailu."></textarea>
+
+                            <div class="admin-support-actions">
+
+                                <button class="btn btn--primary" data-action="createSupportDraft">Vytvorit Gmail draft</button>
+
+                            </div>
+
+                            <p id="support-draft-status" class="admin-panel__subtext" aria-live="polite"></p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
                 <section class="admin-panel admin-panel--business mb-xl" aria-labelledby="business-title">
 
                     <div class="admin-panel__header">
@@ -257,15 +343,15 @@
 
                                     <th>Feature</th>
 
-                                    <th>Hodnota / Aktivace / Feedback / Ritu&aacute;l</th>
+                                    <th>Hodnota / Aktivace / Save click / Saved / Feedback / Ritu&aacute;l</th>
 
                                     <th>Paywall / Intent / Auth / Checkout / N&aacute;kup</th>
 
-                                    <th>Rate</th>
+                                    <th>Save / Paywall / Pricing / Purchase rate</th>
 
-                                    <th>Predchozi rate</th>
+                                    <th>Predchozi save / paywall / pricing / purchase</th>
 
-                                    <th>Delta rate</th>
+                                    <th>Delta save / paywall / pricing / purchase</th>
 
                                 </tr>
 
@@ -297,7 +383,7 @@
 
                                     <th>Den</th>
 
-                                    <th>Hodnota / Aktivace / Feedback / Ritu&aacute;l</th>
+                                    <th>Hodnota / Aktivace / Save click / Saved / Feedback / Ritu&aacute;l</th>
 
                                     <th>Paywall / Intent / Auth / Checkout</th>
 

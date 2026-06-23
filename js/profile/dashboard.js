@@ -23,6 +23,9 @@ import { viewReading, closeReadingModal, toggleFavoriteModal, toggleFavorite, de
 const PREMIUM_ACTIVATION_KEY = 'mh_premium_activation_seen';
 const SIGNUP_INTENT_KEY = 'mh_signup_intent';
 const SIGNUP_INTENT_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
+const PENDING_READING_KEY = 'mh_pending_reading';
+const PENDING_READING_FOCUS_KEY = 'mh_pending_reading_focus';
+const PENDING_READING_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 let ritualMemoryViewTracked = false;
 let dailyGuidanceViewTracked = false;
 let activationChecklistViewTracked = false;
@@ -36,7 +39,7 @@ function callProfileAnalytics(methodName, ...args) {
 
     try {
         method.apply(window.MH_ANALYTICS, args);
-        return true;
+        return savedReadingId || true;
     } catch (error) {
         console.warn(`[Profile analytics] ${methodName} failed:`, error?.message || error);
         return false;
@@ -55,6 +58,132 @@ function trackProfileEvent(eventName, payload = {}, attemptsLeft = 12) {
 
 function trackProfileCta(source, payload = {}) {
     callProfileAnalytics('trackCTA', source, payload);
+}
+
+async function trackProfileFunnelEvent(eventName, { source = 'profile', feature = 'profile_history', planId = null, metadata = {} } = {}) {
+    try {
+        const body = {
+            eventName,
+            source,
+            feature,
+            metadata: {
+                path: window.location.pathname,
+                ...metadata
+            }
+        };
+        if (planId) {
+            body.planId = planId;
+        }
+
+        await fetch(`${apiUrl()}/payment/funnel-event`, {
+            method: 'POST',
+            credentials: 'include',
+            keepalive: true,
+            headers: await authHeadersWithCsrf(true),
+            body: JSON.stringify(body)
+        });
+    } catch (error) {
+        console.warn('[Profile funnel] Could not record event:', error?.message || error);
+    }
+}
+
+function readPendingProfileReading() {
+    try {
+        const raw = localStorage.getItem(PENDING_READING_KEY);
+        if (!raw) return null;
+
+        const pending = JSON.parse(raw);
+        if (!pending || typeof pending !== 'object') {
+            localStorage.removeItem(PENDING_READING_KEY);
+            return null;
+        }
+
+        if (Date.now() - Number(pending.createdAt || 0) > PENDING_READING_MAX_AGE_MS) {
+            localStorage.removeItem(PENDING_READING_KEY);
+            return null;
+        }
+
+        if (typeof pending.type !== 'string' || pending.data === undefined || pending.data === null) {
+            localStorage.removeItem(PENDING_READING_KEY);
+            return null;
+        }
+
+        return pending;
+    } catch (error) {
+        console.warn('[Profile] Could not read pending reading:', error?.message || error);
+        try {
+            localStorage.removeItem(PENDING_READING_KEY);
+        } catch {}
+        return null;
+    }
+}
+
+async function savePendingProfileReading() {
+    const pending = readPendingProfileReading();
+    if (!pending) return false;
+
+    const readingData = pending.data && typeof pending.data === 'object' && !Array.isArray(pending.data)
+        ? {
+            ...pending.data,
+            restored_from: pending.source || 'pending_reading',
+            restored_at: new Date().toISOString()
+        }
+        : pending.data;
+
+    try {
+        const response = await fetch(`${apiUrl()}/user/readings`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: await authHeadersWithCsrf(true),
+            body: JSON.stringify({
+                type: pending.type,
+                data: readingData
+            })
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload?.success) {
+            throw new Error(payload?.error || 'Pending reading save failed');
+        }
+
+        localStorage.removeItem(PENDING_READING_KEY);
+        const savedReadingId = payload.id || payload.reading?.id || null;
+        if (savedReadingId) {
+            try {
+                sessionStorage.setItem(PENDING_READING_FOCUS_KEY, JSON.stringify({
+                    id: savedReadingId,
+                    source: pending.source || 'pending_reading',
+                    feature: pending.feature || pending.type,
+                    createdAt: Date.now()
+                }));
+            } catch {}
+        }
+        window.Auth?.showToast?.('Výklad uložen', 'Odpověď z tarotu jsme přidali do tvého deníku.', 'success');
+        trackProfileEvent('profile_pending_reading_saved', {
+            source: pending.source || 'pending_reading',
+            feature: pending.feature || pending.type,
+            reading_type: pending.type,
+            reading_id: savedReadingId
+        });
+        void trackProfileFunnelEvent('reading_saved', {
+            source: pending.source || 'pending_reading',
+            feature: pending.feature || pending.type,
+            metadata: {
+                reading_id: savedReadingId,
+                reading_type: pending.type,
+                restored_from: pending.source || 'pending_reading'
+            }
+        });
+        return true;
+    } catch (error) {
+        console.warn('[Profile] Could not save pending reading:', error?.message || error);
+        trackProfileEvent('profile_pending_reading_save_failed', {
+            source: pending.source || 'pending_reading',
+            feature: pending.feature || pending.type,
+            reading_type: pending.type
+        });
+        return false;
+    }
 }
 
 const PREMIUM_ACTIONS = {
@@ -359,6 +488,40 @@ function openProfileTab(tabId) {
     document.getElementById(`tab-${tabId}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+function focusPendingReadingInHistory(explicitReadingId = null) {
+    let focus = null;
+    if (explicitReadingId) {
+        focus = { id: explicitReadingId, source: 'pending_reading', feature: 'profile_history', createdAt: Date.now() };
+    } else {
+        try {
+            focus = JSON.parse(sessionStorage.getItem(PENDING_READING_FOCUS_KEY) || 'null');
+        } catch {
+            sessionStorage.removeItem(PENDING_READING_FOCUS_KEY);
+        }
+    }
+    if (!focus?.id) return;
+
+    const createdAt = Number(focus.createdAt || 0);
+    if (createdAt && Date.now() - createdAt > 10 * 60 * 1000) {
+        sessionStorage.removeItem(PENDING_READING_FOCUS_KEY);
+        return;
+    }
+
+    const card = [...document.querySelectorAll('.reading-item[data-reading-id]')]
+        .find(item => item.dataset.readingId === String(focus.id));
+    if (!card) return;
+
+    openProfileTab('history');
+    card.classList.add('reading-item--just-saved');
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    sessionStorage.removeItem(PENDING_READING_FOCUS_KEY);
+    trackProfileEvent('profile_pending_reading_focused', {
+        source: focus.source || 'pending_reading',
+        feature: focus.feature || 'profile_history',
+        reading_id: focus.id
+    });
+}
+
 function sanitizeProfileUrl(url) {
     const parsed = new URL(url, window.location.origin);
     parsed.searchParams.delete('payment');
@@ -660,6 +823,15 @@ function buildDailyHoroscopeHref(sign, source = 'profile_daily') {
     }
 
     const relativeUrl = `${url.pathname}${url.search}${url.hash}`;
+    return relativeUrl.startsWith('/') ? relativeUrl.slice(1) : relativeUrl;
+}
+
+function buildTarotYesNoHref(source = 'profile_activation', intent = 'first_reading') {
+    const url = new URL('/tarot-ano-ne.html', window.location.origin);
+    url.searchParams.set('source', source);
+    url.searchParams.set('feature', 'tarot_yes_no');
+    url.searchParams.set('intent', intent);
+    const relativeUrl = `${url.pathname}${url.search}`;
     return relativeUrl.startsWith('/') ? relativeUrl.slice(1) : relativeUrl;
 }
 
@@ -973,7 +1145,7 @@ function renderRitualMemory(user, readings, subscription) {
 
     if (!memory.totalReadings) {
         actions.push({
-            href: 'tarot.html?source=profile_memory&feature=ritual_memory',
+            href: buildTarotYesNoHref('profile_memory', 'first_saved_reading'),
             label: 'Uložit první výklad',
             description: 'Paměť začne pracovat ve chvíli, kdy má první stopu.',
             action: 'memory_first_reading',
@@ -1138,7 +1310,7 @@ function renderActivationChecklist(user, readings, subscription) {
     const signupIntentDestination = kinds.size ? null : getSignupIntentDestination(sign);
     const firstReadingHref = signupIntentDestination?.href || (sign
         ? buildDailyHoroscopeHref(sign, 'profile_activation')
-        : 'tarot.html?source=profile_activation&feature=tarot');
+        : buildTarotYesNoHref('profile_activation', 'first_reading'));
     const firstReadingDescription = kinds.size
         ? 'Už máte první stopu, ke které se dá vracet.'
         : sign
@@ -1428,6 +1600,17 @@ async function handleReadingListInteraction(event) {
         return;
     }
 
+    const historyNextStep = event.target.closest('[data-profile-history-next-step]');
+    if (historyNextStep && event.currentTarget.contains(historyNextStep)) {
+        trackProfileEvent('profile_history_next_step_clicked', {
+            source: 'profile_history',
+            feature: historyNextStep.dataset.analyticsFeature || 'profile_history',
+            intent: historyNextStep.dataset.profileHistoryNextStep || '',
+            destination: historyNextStep.getAttribute('href') || ''
+        });
+        return;
+    }
+
     const actionButton = event.target.closest('[data-reading-action]');
     if (actionButton) {
         event.preventDefault();
@@ -1484,6 +1667,7 @@ async function initProfile() {
     setProfileBlockVisible(loginRequired, false);
     setProfileBlockVisible(dashboard, true);
     await loadPlanManifest();
+    const pendingReadingSavedId = await savePendingProfileReading();
 
     if (user) {
         const displayName = user.first_name || user.email.split('@')[0];
@@ -1540,6 +1724,7 @@ async function initProfile() {
     renderRitualMemory(user, readings, subscription);
     updateStats(readings);
     renderJournalEntries(readings);
+    focusPendingReadingInHistory(typeof pendingReadingSavedId === 'string' ? pendingReadingSavedId : null);
 
     if (window.location.hash === '#journal-input') {
         focusJournalInput();

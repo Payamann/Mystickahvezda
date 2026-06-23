@@ -44,6 +44,7 @@
     "check:auth-feature-contexts": "node scripts/check-auth-feature-contexts.mjs",
     "check:ai-cost-control": "node scripts/check-ai-cost-control.mjs",
     "audit:growth-loop": "node scripts/audit-growth-loop.mjs",
+    "baseline:growth-sprint": "node scripts/build-growth-sprint-baseline.mjs",
     "check:paywall-trust": "node scripts/check-paywall-trust-copy.mjs",
     "analyze:funnel": "node scripts/analyze-funnel-segments.mjs",
     "analyze:gsc": "node scripts/analyze-gsc-search-performance.mjs",

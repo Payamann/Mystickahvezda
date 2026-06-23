@@ -14,6 +14,8 @@ const REQUIRED_COLUMNS = [
 const OPTIONAL_COLUMNS = [
     'first_value_completed',
     'activation_completed',
+    'reading_save_clicked',
+    'reading_saved',
     'paywall_viewed',
     'pricing_intent',
     'checkout_auth_required',
@@ -25,6 +27,7 @@ const OPTIONAL_COLUMNS = [
     'checkout_started',
     'purchase_completed',
     'failures',
+    'reading_save_rate',
     'paywall_to_pricing_intent_rate',
     'pricing_intent_to_auth_handoff_rate',
     'auth_handoff_to_checkout_request_rate',
@@ -35,6 +38,7 @@ const OPTIONAL_COLUMNS = [
     'paywall_to_checkout_request_rate',
     'first_value_to_checkout_rate',
     'activation_to_checkout_rate',
+    'reading_save_rate_delta',
     'paywall_to_checkout_rate',
     'checkout_to_purchase_rate'
 ];
@@ -62,6 +66,15 @@ function authHandoffAction(row) {
 }
 
 const STEP_DEFINITIONS = [
+    {
+        id: 'reading_save_to_saved',
+        label: 'save click -> saved reading',
+        fromColumn: 'reading_save_clicked',
+        toColumn: 'reading_saved',
+        rateColumn: 'reading_save_rate',
+        deltaColumn: 'reading_save_rate_delta',
+        action: ({ source, feature }) => `Audit the ${source}/${feature} save-to-profile path: preserve pending reading context, verify auth redirect, and make the journal return CTA visible after save.`
+    },
     {
         id: 'first_value_to_checkout',
         label: 'first value -> checkout',
@@ -361,6 +374,8 @@ function normalizeRow(record) {
         totalEvents: parseNumber(record.total_events),
         first_value_completed: parseNumber(record.first_value_completed),
         activation_completed: parseNumber(record.activation_completed),
+        reading_save_clicked: parseNumber(record.reading_save_clicked),
+        reading_saved: parseNumber(record.reading_saved),
         daily_ritual_completed: parseNumber(record.daily_ritual_completed),
         reading_feedback_submitted: parseNumber(record.reading_feedback_submitted),
         paywall_viewed: parseNumber(record.paywall_viewed),

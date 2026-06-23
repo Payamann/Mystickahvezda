@@ -71,11 +71,14 @@
 
     let used = false;
     let lastResult = null;
+    let savedReadingId = null;
     let firstValueTracked = false;
 
     const TAROT_YES_NO_FEATURE = 'tarot_multi_card';
     const TAROT_YES_NO_PLAN_ID = 'pruvodce';
     const TAROT_YES_NO_RESULT_SOURCE = 'tarot_yes_no_result';
+    const TAROT_YES_NO_TOOL = 'tarot_yes_no';
+    const PENDING_READING_STORAGE_KEY = 'mh_pending_reading';
 
     function buildTarotYesNoUpgradeUrl(source = TAROT_YES_NO_RESULT_SOURCE) {
         const pricingUrl = new URL('/cenik.html', window.location.origin);
@@ -87,10 +90,23 @@
         return `${pricingUrl.pathname}${pricingUrl.search}`;
     }
 
-    async function trackTarotYesNoFunnelEvent(eventName, source, metadata = {}) {
+    async function trackTarotYesNoFunnelEvent(eventName, source, metadata = {}, feature = TAROT_YES_NO_FEATURE, planId = TAROT_YES_NO_PLAN_ID) {
         try {
             const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
             if (!csrfToken) return;
+
+            const payload = {
+                eventName,
+                source,
+                feature,
+                metadata: {
+                    path: window.location.pathname,
+                    ...metadata
+                }
+            };
+            if (planId) {
+                payload.planId = planId;
+            }
 
             await fetch(`${window.API_CONFIG?.BASE_URL || '/api'}/payment/funnel-event`, {
                 method: 'POST',
@@ -100,16 +116,7 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-Token': csrfToken
                 },
-                body: JSON.stringify({
-                    eventName,
-                    source,
-                    feature: TAROT_YES_NO_FEATURE,
-                    planId: TAROT_YES_NO_PLAN_ID,
-                    metadata: {
-                        path: window.location.pathname,
-                        ...metadata
-                    }
-                })
+                body: JSON.stringify(payload)
             });
         } catch (error) {
             console.warn('[Tarot ANO/NE funnel] Could not record event:', error.message);
@@ -191,6 +198,129 @@
             has_question: Boolean(question),
             question_length: Math.min((question || '').length, 200)
         };
+    }
+
+    function trackTarotYesNoEvent(eventName, metadata = {}) {
+        window.MH_ANALYTICS?.trackEvent?.(eventName, {
+            source: TAROT_YES_NO_RESULT_SOURCE,
+            feature: TAROT_YES_NO_TOOL,
+            seo_cluster: 'tarot',
+            seo_page_type: 'free_tool',
+            ...metadata
+        });
+    }
+
+    function buildTarotYesNoReadingData(result = lastResult) {
+        if (!result) return null;
+
+        return {
+            tool: TAROT_YES_NO_TOOL,
+            source: TAROT_YES_NO_RESULT_SOURCE,
+            question: result.question,
+            answer: `${result.label}: ${result.text}`,
+            result_label: result.label,
+            result_key: result.answerKey,
+            result_text: result.text,
+            saved_at: new Date().toISOString()
+        };
+    }
+
+    function storePendingTarotYesNoReading(result = lastResult) {
+        const readingData = buildTarotYesNoReadingData(result);
+        if (!readingData) return false;
+
+        try {
+            localStorage.setItem(PENDING_READING_STORAGE_KEY, JSON.stringify({
+                type: 'tarot',
+                data: readingData,
+                source: 'tarot_yes_no_save_journal',
+                feature: TAROT_YES_NO_TOOL,
+                createdAt: Date.now()
+            }));
+            return true;
+        } catch (error) {
+            console.warn('[Tarot ANO/NE] Could not store pending reading:', error.message);
+            return false;
+        }
+    }
+
+    async function postTarotYesNoReading(result = lastResult) {
+        const readingData = buildTarotYesNoReadingData(result);
+        if (!readingData) throw new Error('Missing tarot result');
+
+        const headers = { 'Content-Type': 'application/json' };
+        const csrfToken = window.getCSRFToken ? await window.getCSRFToken() : null;
+        if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
+
+        const response = await fetch(`${window.API_CONFIG?.BASE_URL || '/api'}/user/readings`, {
+            method: 'POST',
+            credentials: 'include',
+            headers,
+            body: JSON.stringify({
+                type: 'tarot',
+                data: readingData
+            })
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload?.success) {
+            throw new Error(payload?.error || 'Reading save failed');
+        }
+
+        return payload;
+    }
+
+    async function saveTarotYesNoReading() {
+        const button = document.getElementById('btn-save-reading');
+        if (!lastResult || !button) return;
+
+        const metadata = {
+            ...getResultMetadata(lastResult.answerKey, lastResult, lastResult.question),
+            save_target: 'profile_journal'
+        };
+
+        trackTarotYesNoEvent('save_click', metadata);
+        await trackTarotYesNoFunnelEvent('reading_save_clicked', 'tarot_yes_no_save_journal', metadata, TAROT_YES_NO_TOOL, null);
+
+        if (savedReadingId) {
+            window.Auth?.showToast?.('Už uloženo', 'Tenhle výklad už je v deníku.', 'success');
+            return;
+        }
+
+        if (!window.Auth?.isLoggedIn?.()) {
+            storePendingTarotYesNoReading(lastResult);
+            trackTarotYesNoEvent('login_click', {
+                ...metadata,
+                auth_mode: 'register',
+                reason: 'save_reading'
+            });
+            window.location.href = 'prihlaseni.html?mode=register&source=tarot_yes_no_save_journal&feature=tarot_yes_no&redirect=/profil.html';
+            return;
+        }
+
+        const originalText = button.textContent;
+        button.disabled = true;
+        button.textContent = 'Ukládám...';
+
+        try {
+            const payload = await postTarotYesNoReading(lastResult);
+            savedReadingId = payload.id || payload.reading?.id || true;
+            button.textContent = 'Uloženo v deníku';
+            window.Auth?.showToast?.('Výklad uložen', 'Najdeš ho v profilu v historii výkladů.', 'success');
+            trackTarotYesNoEvent('reading_saved', {
+                ...metadata,
+                reading_id: payload.id || payload.reading?.id || null
+            });
+            void trackTarotYesNoFunnelEvent('reading_saved', 'tarot_yes_no_save_journal', {
+                ...metadata,
+                reading_id: payload.id || payload.reading?.id || null
+            }, TAROT_YES_NO_TOOL, null);
+        } catch (error) {
+            console.warn('[Tarot ANO/NE] Could not save reading:', error.message);
+            button.disabled = false;
+            button.textContent = originalText;
+            window.Auth?.showToast?.('Nepodařilo se uložit', 'Zkus to prosím znovu za chvíli.', 'error');
+        }
     }
 
     function trackTarotYesNoFirstValue(answerKey, ans, question) {
@@ -334,6 +464,11 @@
     function saveTarotYesNoResultImage() {
         if (!lastResult) return;
 
+        trackTarotYesNoEvent('save_click', {
+            ...getResultMetadata(lastResult.answerKey, lastResult, lastResult.question),
+            save_target: 'result_image'
+        });
+
         const canvas = drawTarotYesNoResultCard(lastResult);
         const link = document.createElement('a');
         link.download = `tarot-ano-ne-${lastResult.answerKey}.png`;
@@ -430,6 +565,14 @@
         inputEl.classList.remove('shake');
 
         used = true;
+        savedReadingId = null;
+        trackTarotYesNoEvent('reading_start', {
+            source: 'tarot_yes_no_card_pick',
+            feature: TAROT_YES_NO_TOOL,
+            has_question: true,
+            question_length: Math.min(q.length, 200),
+            selected_card_index: index
+        });
 
         // Uzamčeme ostatní karty
         document.querySelectorAll('.tarot-card').forEach(c => c.classList.add('tarot-card--locked'));
@@ -465,6 +608,10 @@
             document.getElementById('result-text').textContent = text;
             const panel = document.getElementById('result-panel');
             panel.classList.add('show');
+            trackTarotYesNoEvent('reading_complete', {
+                ...getResultMetadata(key, ans, q),
+                selected_card_index: index
+            });
             trackTarotYesNoFirstValue(key, ans, q);
             revealTarotYesNoNextStep(key, ans, q);
             scrollTarotResultIntoView(panel);
@@ -475,8 +622,14 @@
     function resetCards() {
         used = false;
         lastResult = null;
+        savedReadingId = null;
         window.__lastTarotYesNoShareResult = null;
         document.getElementById('question-input').value = '';
+        const saveReadingButton = document.getElementById('btn-save-reading');
+        if (saveReadingButton) {
+            saveReadingButton.disabled = false;
+            saveReadingButton.textContent = 'Uložit do deníku';
+        }
         document.getElementById('question-input').classList.remove('input--invalid');
         document.getElementById('result-panel').classList.remove('show');
         setBlockVisible(document.getElementById('tarot-yes-no-next-step'), false);
@@ -497,6 +650,7 @@
     function initTarotAnoNe() {
         const cardsArea = document.getElementById('cards-area');
         const btnReset = document.getElementById('btn-reset');
+        const btnSaveReading = document.getElementById('btn-save-reading');
         const btnSaveResultImage = document.getElementById('btn-save-result-image');
 
         if (cardsArea) {
@@ -513,6 +667,10 @@
 
         if (btnReset) {
             btnReset.addEventListener('click', resetCards);
+        }
+
+        if (btnSaveReading) {
+            btnSaveReading.addEventListener('click', saveTarotYesNoReading);
         }
 
         if (btnSaveResultImage) {

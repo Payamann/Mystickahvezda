@@ -52,6 +52,35 @@ describe('CTR sprint static SEO pages', () => {
     expect(html).toContain('application/ld+json');
   });
 
+  it('keeps tarot yes-no optimized for GSC intent and profile save flow', async () => {
+    const html = await readPage('tarot-ano-ne.html');
+    const js = await readPage('js/tarot-ano-ne.js');
+
+    expectCoreMetadata(html);
+    expect(html).toContain('Tarot ano/ne zdarma | Karty ano ne online');
+    expect(html).toContain('Tarot ano/ne zdarma online');
+    expect(html).toContain('id="btn-save-reading"');
+    expect(html).toContain('Hledáš ano ne tarot, karty ano ne nebo odpověď ano ne?');
+    expect(html).toContain('Nejlepší otázka je konkrétní a dnešní');
+    expect(html).toContain('Věštba ano ne funguje nejlépe');
+    expect(html).toContain('Kam pokračovat');
+    expect(html).toContain('Můžu použít karty ano ne jako věštbu?');
+    expect(html).toContain('Je to stejné jako karty ano ne?');
+    ['reading_start', 'reading_complete', 'save_click', 'reading_save_clicked', 'reading_saved', 'login_click', 'mh_pending_reading'].forEach((needle) => {
+      expect(js).toContain(needle);
+    });
+  });
+
+  it('keeps tarot hubs linking into the yes-no sprint page', async () => {
+    const tarotHub = await readPage('tarot.html');
+    const tarotFree = await readPage('tarot-zdarma.html');
+
+    expect(tarotHub).toContain('tarot-ano-ne.html?source=tarot_intent_cluster&amp;intent=yes_no');
+    expect(tarotHub).toContain('Tarot ano/ne');
+    expect(tarotFree).toContain('tarot-ano-ne.html?source=tarot_free_intent&amp;feature=tarot_yes_no&amp;intent=yes_no');
+    expect(tarotFree).toContain('Ano ne tarot zdarma');
+  });
+
   it('links high-opportunity horoscope and partner pages from the horoscope hub', async () => {
     const html = await readPage('horoskopy.html');
 
@@ -66,6 +95,8 @@ describe('CTR sprint static SEO pages', () => {
     expect(html).toContain('partnerska-shoda/capricorn-leo.html');
     expect(html).toContain('partnerska-shoda/virgo-leo.html');
     expect(html).toContain('natalni-karta.html?source=horoscope_priority_links&amp;feature=natal_chart');
+    expect(html).toContain('tarot-ano-ne.html?source=horoscope_priority_links&amp;feature=tarot_yes_no&amp;intent=yes_no');
+    expect(html).toContain('Tarot ano/ne pro dnešní rozhodnutí');
   });
 
   it('links priority partner pair pages from the public compatibility hub', async () => {
@@ -79,7 +110,13 @@ describe('CTR sprint static SEO pages', () => {
       ['partnerska-shoda/capricorn-leo.html', 'Kozoroh a Lev ve vztahu'],
       ['partnerska-shoda/virgo-leo.html', 'Panna a Lev ve vztahu'],
       ['partnerska-shoda/aries-aries.html', 'Beran a Beran ve vztahu'],
-      ['partnerska-shoda/scorpio-cancer.html', 'Štír a Rak ve vztahu']
+      ['partnerska-shoda/scorpio-cancer.html', 'Štír a Rak ve vztahu'],
+      ['partnerska-shoda/leo-scorpio.html', 'Lev a Štír ve vztahu'],
+      ['partnerska-shoda/aries-virgo.html', 'Beran a Panna ve vztahu'],
+      ['partnerska-shoda/cancer-aquarius.html', 'Rak a Vodnář ve vztahu'],
+      ['partnerska-shoda/scorpio-pisces.html', 'Štír a Ryby ve vztahu'],
+      ['partnerska-shoda/gemini-sagittarius.html', 'Blíženci a Střelec ve vztahu'],
+      ['tarot-ano-ne.html?source=synastry_intent_cluster&amp;feature=tarot_yes_no&amp;intent=relationship_yes_no', 'Zeptat se jednou kartou']
     ].forEach(([href, anchor]) => {
       expect(html).toContain(href);
       expect(html).toContain(anchor);
@@ -103,7 +140,12 @@ describe('CTR sprint static SEO pages', () => {
     ['partnerska-shoda/sagittarius-pisces.html', 'Střelec a Ryby', 'sagittarius-pisces'],
     ['partnerska-shoda/aquarius-taurus.html', 'Vodnář a Býk', 'aquarius-taurus'],
     ['partnerska-shoda/capricorn-leo.html', 'Kozoroh a Lev', 'capricorn-leo'],
-    ['partnerska-shoda/virgo-leo.html', 'Panna a Lev', 'virgo-leo']
+    ['partnerska-shoda/virgo-leo.html', 'Panna a Lev', 'virgo-leo'],
+    ['partnerska-shoda/leo-scorpio.html', 'Lev a Štír', 'leo-scorpio'],
+    ['partnerska-shoda/aries-virgo.html', 'Beran a Panna', 'aries-virgo'],
+    ['partnerska-shoda/cancer-aquarius.html', 'Rak a Vodnář', 'cancer-aquarius'],
+    ['partnerska-shoda/scorpio-pisces.html', 'Štír a Ryby', 'scorpio-pisces'],
+    ['partnerska-shoda/gemini-sagittarius.html', 'Blíženci a Střelec', 'gemini-sagittarius']
   ])('updates partner pair metadata and measured CTA for %s', async (relativePath, pair, slug) => {
     const html = await readPage(relativePath);
 

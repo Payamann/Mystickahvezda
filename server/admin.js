@@ -2,6 +2,12 @@ import express from 'express';
 import { supabase } from './db-supabase.js';
 import { authenticateToken, requireAdmin } from './middleware.js';
 import { PLAN_TYPES, SUBSCRIPTION_PLANS } from './config/constants.js';
+import {
+    createSupportDraftReply,
+    getGmailSupportStatus,
+    getSupportThread,
+    listRecentSupportThreads
+} from './services/gmail-support.js';
 
 const router = express.Router();
 
@@ -129,6 +135,8 @@ function createDailyBucket(date) {
         date,
         firstValueCompleted: 0,
         activationCompleted: 0,
+        readingSaveClicked: 0,
+        readingSaved: 0,
         dailyRitualCompleted: 0,
         readingFeedbackSubmitted: 0,
         paywallViewed: 0,
@@ -245,6 +253,8 @@ function createSourceFeatureSegment(source, feature) {
         totalEvents: 0,
         firstValueCompleted: 0,
         activationCompleted: 0,
+        readingSaveClicked: 0,
+        readingSaved: 0,
         dailyRitualCompleted: 0,
         readingFeedbackSubmitted: 0,
         paywallViewed: 0,
@@ -260,6 +270,7 @@ function createSourceFeatureSegment(source, feature) {
         oneTimePdfDelivered: 0,
         oneTimeLifecycleScheduled: 0,
         failures: 0,
+        readingSaveRate: 0,
         paywallToPricingIntentRate: 0,
         pricingIntentToAuthHandoffRate: 0,
         authHandoffToCheckoutRequestRate: 0,
@@ -283,6 +294,8 @@ function addFunnelConversionCounts(segment, eventName) {
     if (FUNNEL_PAYWALL_VIEW_EVENTS.has(eventName)) segment.paywallViewed += 1;
     if (eventName === 'first_value_completed') segment.firstValueCompleted += 1;
     if (eventName === 'activation_completed') segment.activationCompleted += 1;
+    if (eventName === 'reading_save_clicked') segment.readingSaveClicked += 1;
+    if (eventName === 'reading_saved') segment.readingSaved += 1;
     if (FUNNEL_RITUAL_COMPLETION_EVENTS.has(eventName)) segment.dailyRitualCompleted += 1;
     if (eventName === 'reading_feedback_submitted') segment.readingFeedbackSubmitted += 1;
     if (FUNNEL_PRICING_INTENT_EVENTS.has(eventName)) segment.pricingIntent += 1;
@@ -326,6 +339,9 @@ function buildSourceFeatureSegmentMap(events) {
 function applySourceFeatureRates(segment) {
     return {
         ...segment,
+        readingSaveRate: segment.readingSaveClicked > 0
+            ? Math.round((segment.readingSaved / segment.readingSaveClicked) * 1000) / 10
+            : 0,
         firstValueToCheckoutRate: segment.firstValueCompleted > 0
             ? Math.round((segment.checkoutStarted / segment.firstValueCompleted) * 1000) / 10
             : 0,
@@ -415,6 +431,9 @@ function buildSourceFeatureSegments(events, previousEvents = [], limit = 10) {
                 : null,
             checkoutToPurchaseRateDelta: segment.previous.checkoutStarted > 0
                 ? Math.round((segment.checkoutToPurchaseRate - segment.previous.checkoutToPurchaseRate) * 10) / 10
+                : null,
+            readingSaveRateDelta: segment.previous.readingSaveClicked > 0
+                ? Math.round((segment.readingSaveRate - segment.previous.readingSaveRate) * 10) / 10
                 : null
         }))
         .sort((a, b) => b.purchaseCompleted - a.purchaseCompleted
@@ -946,6 +965,8 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
 
             if (eventName === 'first_value_completed') byDay[date].firstValueCompleted += 1;
             if (eventName === 'activation_completed') byDay[date].activationCompleted += 1;
+            if (eventName === 'reading_save_clicked') byDay[date].readingSaveClicked += 1;
+            if (eventName === 'reading_saved') byDay[date].readingSaved += 1;
             if (FUNNEL_RITUAL_COMPLETION_EVENTS.has(eventName)) byDay[date].dailyRitualCompleted += 1;
             if (eventName === 'reading_feedback_submitted') byDay[date].readingFeedbackSubmitted += 1;
             if (FUNNEL_PAYWALL_VIEW_EVENTS.has(eventName)) byDay[date].paywallViewed += 1;
@@ -976,6 +997,8 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
     const checkoutRequested = [...FUNNEL_CHECKOUT_REQUEST_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
     const firstValueCompleted = byEvent.first_value_completed || 0;
     const activationCompleted = byEvent.activation_completed || 0;
+    const readingSaveClicked = byEvent.reading_save_clicked || 0;
+    const readingSaved = byEvent.reading_saved || 0;
     const dailyRitualCompleted = [...FUNNEL_RITUAL_COMPLETION_EVENTS].reduce((sum, eventName) => sum + (byEvent[eventName] || 0), 0);
     const readingFeedbackSubmitted = byEvent.reading_feedback_submitted || 0;
     const checkoutStarted = byEvent.checkout_session_created || 0;
@@ -1023,6 +1046,9 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
     const activationToCheckoutRate = activationCompleted > 0
         ? Math.round((checkoutStarted / activationCompleted) * 1000) / 10
         : 0;
+    const readingSaveRate = readingSaveClicked > 0
+        ? Math.round((readingSaved / readingSaveClicked) * 1000) / 10
+        : 0;
     const oneTimeDeliveryRate = oneTimeCompleted > 0
         ? Math.round((oneTimePdfDelivered / oneTimeCompleted) * 1000) / 10
         : 0;
@@ -1041,6 +1067,8 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
         metrics: {
             firstValueCompleted,
             activationCompleted,
+            readingSaveClicked,
+            readingSaved,
             dailyRitualCompleted,
             readingFeedbackSubmitted,
             paywallViewed,
@@ -1072,6 +1100,7 @@ export function buildFunnelReport(events = [], { days = DEFAULT_FUNNEL_DAYS, sin
             paywallToCheckoutRequestRate,
             firstValueToCheckoutRate,
             activationToCheckoutRate,
+            readingSaveRate,
             oneTimeDeliveryRate,
             oneTimeLifecycleScheduleRate,
             estimatedValueCzk: Math.round(estimatedMinorValue / 100)
@@ -1108,6 +1137,8 @@ export function buildFunnelDailyCsv(report) {
         'date',
         'first_value_completed',
         'activation_completed',
+        'reading_save_clicked',
+        'reading_saved',
         'daily_ritual_completed',
         'reading_feedback_submitted',
         'paywall_viewed',
@@ -1131,6 +1162,8 @@ export function buildFunnelDailyCsv(report) {
         row.date,
         row.firstValueCompleted,
         row.activationCompleted,
+        row.readingSaveClicked,
+        row.readingSaved,
         row.dailyRitualCompleted,
         row.readingFeedbackSubmitted,
         row.paywallViewed,
@@ -1162,6 +1195,8 @@ export function buildFunnelSegmentsCsv(report) {
         'total_events',
         'first_value_completed',
         'activation_completed',
+        'reading_save_clicked',
+        'reading_saved',
         'daily_ritual_completed',
         'reading_feedback_submitted',
         'paywall_viewed',
@@ -1177,6 +1212,7 @@ export function buildFunnelSegmentsCsv(report) {
         'one_time_pdf_delivered',
         'one_time_lifecycle_scheduled',
         'failures',
+        'reading_save_rate',
         'paywall_to_pricing_intent_rate',
         'pricing_intent_to_auth_handoff_rate',
         'auth_handoff_to_checkout_request_rate',
@@ -1198,6 +1234,7 @@ export function buildFunnelSegmentsCsv(report) {
         'previous_pricing_intent_to_checkout_rate',
         'previous_first_value_to_checkout_rate',
         'previous_activation_to_checkout_rate',
+        'previous_reading_save_rate',
         'previous_paywall_to_checkout_request_rate',
         'previous_paywall_to_checkout_rate',
         'previous_checkout_to_purchase_rate',
@@ -1210,6 +1247,7 @@ export function buildFunnelSegmentsCsv(report) {
         'pricing_intent_to_checkout_rate_delta',
         'first_value_to_checkout_rate_delta',
         'activation_to_checkout_rate_delta',
+        'reading_save_rate_delta',
         'paywall_to_checkout_request_rate_delta',
         'paywall_to_checkout_rate_delta',
         'checkout_to_purchase_rate_delta'
@@ -1221,6 +1259,8 @@ export function buildFunnelSegmentsCsv(report) {
         row.totalEvents,
         row.firstValueCompleted,
         row.activationCompleted,
+        row.readingSaveClicked,
+        row.readingSaved,
         row.dailyRitualCompleted,
         row.readingFeedbackSubmitted,
         row.paywallViewed,
@@ -1236,6 +1276,7 @@ export function buildFunnelSegmentsCsv(report) {
         row.oneTimePdfDelivered,
         row.oneTimeLifecycleScheduled,
         row.failures,
+        row.readingSaveRate,
         row.paywallToPricingIntentRate,
         row.pricingIntentToAuthHandoffRate,
         row.authHandoffToCheckoutRequestRate,
@@ -1257,6 +1298,7 @@ export function buildFunnelSegmentsCsv(report) {
         row.previous?.pricingIntentToCheckoutRate ?? 0,
         row.previous?.firstValueToCheckoutRate ?? 0,
         row.previous?.activationToCheckoutRate ?? 0,
+        row.previous?.readingSaveRate ?? 0,
         row.previous?.paywallToCheckoutRequestRate ?? 0,
         row.previous?.paywallToCheckoutRate ?? 0,
         row.previous?.checkoutToPurchaseRate ?? 0,
@@ -1269,6 +1311,7 @@ export function buildFunnelSegmentsCsv(report) {
         row.pricingIntentToCheckoutRateDelta,
         row.firstValueToCheckoutRateDelta,
         row.activationToCheckoutRateDelta,
+        row.readingSaveRateDelta,
         row.paywallToCheckoutRequestRateDelta,
         row.paywallToCheckoutRateDelta,
         row.checkoutToPurchaseRateDelta
@@ -1690,6 +1733,28 @@ function normalizeAdminListLimit(value, fallback = 50, max = 100) {
     return Math.min(max, Math.max(1, parsed));
 }
 
+function sendGmailSupportError(res, error, context = 'Admin Gmail Support Error:') {
+    const status = Number(error?.status) || (error?.code === 'GMAIL_SUPPORT_NOT_CONFIGURED' ? 503 : 502);
+    const code = error?.code || 'GMAIL_SUPPORT_ERROR';
+
+    console.error(context, {
+        code,
+        status,
+        message: error?.message,
+        googleStatus: error?.response?.status
+    });
+
+    const publicMessage = status === 503
+        ? 'Gmail support neni nakonfigurovany.'
+        : 'Gmail support se nepodarilo obslouzit.';
+
+    res.status(status).json({
+        success: false,
+        error: publicMessage,
+        code
+    });
+}
+
 function normalizePositiveIntegerId(value) {
     const parsed = Number.parseInt(value, 10);
     return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
@@ -1820,6 +1885,58 @@ router.get('/users', authenticateToken, requireAdmin, async (req, res) => {
     } catch (error) {
         console.error('Admin Users Error:', error);
         res.status(500).json({ success: false, error: 'Nepodařilo se načíst uživatele.' });
+    }
+});
+
+router.get('/support/gmail/status', authenticateToken, requireAdmin, (req, res) => {
+    res.json({
+        success: true,
+        status: getGmailSupportStatus()
+    });
+});
+
+router.get('/support/gmail/threads', authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        const result = await listRecentSupportThreads({
+            limit: req.query.limit,
+            query: req.query.q
+        });
+
+        res.json({
+            success: true,
+            ...result
+        });
+    } catch (error) {
+        sendGmailSupportError(res, error, 'Admin Gmail Threads Error:');
+    }
+});
+
+router.get('/support/gmail/threads/:threadId', authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        const thread = await getSupportThread(req.params.threadId);
+
+        res.json({
+            success: true,
+            thread
+        });
+    } catch (error) {
+        sendGmailSupportError(res, error, 'Admin Gmail Thread Detail Error:');
+    }
+});
+
+router.post('/support/gmail/drafts', authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        const draft = await createSupportDraftReply({
+            threadId: req.body?.threadId,
+            body: req.body?.body
+        });
+
+        res.json({
+            success: true,
+            draft
+        });
+    } catch (error) {
+        sendGmailSupportError(res, error, 'Admin Gmail Draft Error:');
     }
 });
 

@@ -181,6 +181,130 @@
 
         }
 
+        .admin-support-query {
+
+            min-width: min(360px, 100%);
+
+        }
+
+        .admin-support-layout {
+
+            display: grid;
+
+            grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+
+            gap: 1rem;
+
+            align-items: start;
+
+        }
+
+        .admin-support-detail {
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: 8px;
+
+            background: rgba(255, 255, 255, 0.045);
+
+            padding: 1rem;
+
+        }
+
+        .admin-support-detail h3 {
+
+            margin: 0 0 0.8rem;
+
+            color: var(--color-mystic-gold);
+
+            font-size: 1rem;
+
+        }
+
+        .admin-support-messages {
+
+            display: grid;
+
+            gap: 0.75rem;
+
+            max-height: 380px;
+
+            overflow: auto;
+
+            margin-bottom: 1rem;
+
+            color: var(--color-silver-mist);
+
+        }
+
+        .admin-support-message {
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: 8px;
+
+            background: rgba(0, 0, 0, 0.16);
+
+            padding: 0.75rem;
+
+        }
+
+        .admin-support-message__meta {
+
+            color: white;
+
+            font-size: 0.82rem;
+
+            margin-bottom: 0.5rem;
+
+        }
+
+        .admin-support-message__body {
+
+            margin: 0;
+
+            white-space: pre-wrap;
+
+            overflow-wrap: anywhere;
+
+            font: inherit;
+
+            color: var(--color-silver-mist);
+
+        }
+
+        .admin-support-draft {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            margin-top: 0.4rem;
+
+            border: 1px solid rgba(255, 255, 255, 0.22);
+
+            border-radius: 8px;
+
+            background: rgba(0, 0, 0, 0.2);
+
+            color: white;
+
+            padding: 0.75rem;
+
+            resize: vertical;
+
+        }
+
+        .admin-support-actions {
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            margin-top: 0.75rem;
+
+        }
+
         .admin-box {
 
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -554,6 +678,18 @@
             .admin-select {
 
                 flex: 1;
+
+            }
+
+            .admin-support-layout {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .admin-support-query {
+
+                width: 100%;
 
             }
 

@@ -1993,6 +1993,29 @@ test.describe('Login stránka', () => {
         expect(activationFlag).toBeNull();
     });
 
+    test('registrace z ulozeni tarot ano/ne vykladu zustane v profilu', async ({ page }) => {
+        await mockSuccessfulRegister(page, 'tarot-yes-no-save@example.com');
+
+        await page.goto('/prihlaseni.html?mode=register&source=tarot_yes_no_save_journal&feature=tarot_yes_no&redirect=/profil.html');
+        await waitForPageReady(page);
+
+        await expect(page.locator('#checkout-context-banner')).toBeVisible();
+        await expect(page.locator('#checkout-context-label')).toContainText('Tarot ano/ne');
+        await expect(page.locator('#checkout-context-title')).toContainText('Uložíme výklad do Deníku');
+        await expect(page.locator('#checkout-context-copy')).toContainText('odpověď z Tarotu ano/ne');
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/profil.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            submitRegisterForm(page, 'tarot-yes-no-save@example.com'),
+        ]);
+
+        const url = new URL(page.url());
+        expect(url.pathname).toBe('/profil.html');
+        expect(url.pathname).not.toBe('/tarot-ano-ne.html');
+        const activationFlag = await page.evaluate(() => sessionStorage.getItem('post_auth_activation'));
+        expect(activationFlag).toBeNull();
+    });
+
     const activationClusterScenarios = [
         {
             name: 'numerologie',
@@ -2294,6 +2317,83 @@ test.describe('Login stránka', () => {
         await waitForPageReady(page);
 
         expect(new URL(page.url()).pathname).toBe('/onboarding.html');
+    });
+
+    test('nova registrace bez potvrzovaciho emailu projde cely onboarding', async ({ page }) => {
+        const unique = Date.now();
+        const email = `onboarding-real-${unique}@example.com`;
+
+        await page.goto('/prihlaseni.html?mode=register&source=header_register&feature=account');
+        await waitForPageReady(page);
+
+        const registerResponsePromise = page.waitForResponse((response) => (
+            response.url().includes('/api/auth/register') && response.request().method() === 'POST'
+        )).then(async (response) => ({
+            status: response.status(),
+            body: await response.json()
+        }));
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/onboarding.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            submitRegisterForm(page, email),
+        ]);
+
+        const registerResponse = await registerResponsePromise;
+        expect(registerResponse.status).toBe(200);
+        const registerBody = registerResponse.body;
+        expect(registerBody).toEqual(expect.objectContaining({
+            success: true,
+            emailVerificationSkipped: true,
+            user: expect.objectContaining({
+                email,
+                subscription_status: 'free'
+            })
+        }));
+        expect(registerBody.requireEmailVerification).toBeUndefined();
+
+        const cookies = await page.context().cookies();
+        expect(cookies.find(cookie => cookie.name === 'logged_in')?.value).toBe('1');
+        await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('auth_user') || 'null')?.email)).toBe(email);
+
+        const onboardingUrl = new URL(page.url());
+        expect(onboardingUrl.searchParams.get('source')).toBe('header_register');
+        expect(onboardingUrl.searchParams.get('feature')).toBe('account');
+        await expect(page.locator('#step-1 .step-title')).toContainText(/ritu/i);
+
+        await page.locator('#step-1 [data-action="goStep"][data-step="2"]').click();
+        await expect(page.locator('#step-2')).toHaveClass(/active/);
+        await page.locator('.zodiac-btn[data-sign="lev"]').click();
+        await expect(page.locator('#btn-step2')).toBeEnabled();
+        await page.locator('#btn-step2').click();
+        await expect(page.locator('#step-3')).toHaveClass(/active/);
+
+        const tarotInterest = page.locator('.interest-chip[data-interest="tarot"]');
+        await tarotInterest.click();
+        await expect(tarotInterest).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.locator('#finish-onboarding-btn')).toContainText(/tarot/i);
+
+        const completionResponsePromise = page.waitForResponse((response) => (
+            response.url().includes('/api/auth/onboarding/complete') && response.request().method() === 'POST'
+        )).then(async (response) => ({
+            status: response.status()
+        }));
+
+        await Promise.all([
+            page.waitForURL(url => url.pathname === '/tarot.html', { timeout: 10000, waitUntil: 'domcontentloaded' }),
+            page.locator('#finish-onboarding-btn').click(),
+        ]);
+
+        const completionResponse = await completionResponsePromise;
+        expect(completionResponse.status).toBe(200);
+
+        const finalUrl = new URL(page.url());
+        expect(finalUrl.pathname).toBe('/tarot.html');
+        expect(finalUrl.searchParams.get('source')).toBe('onboarding_complete');
+        expect(finalUrl.searchParams.get('entry_source')).toBe('header_register');
+        expect(finalUrl.searchParams.get('entry_feature')).toBe('account');
+        expect(await page.evaluate(() => localStorage.getItem('mh_onboarded'))).toBe('1');
+        expect(await page.evaluate(() => localStorage.getItem('mh_zodiac'))).toBe('lev');
+        expect(await page.evaluate(() => JSON.parse(localStorage.getItem('mh_interests') || '[]'))).toContain('tarot');
     });
 
     test('registrace z headeru zachova kontext v onboardingu', async ({ page }) => {

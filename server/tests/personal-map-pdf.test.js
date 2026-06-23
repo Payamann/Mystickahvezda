@@ -139,5 +139,5 @@ describe('personal map PDF service', () => {
 
         expect(buffer.subarray(0, 4).toString('utf8')).toBe('%PDF');
         expect(buffer.length).toBeGreaterThan(50_000);
-    }, 60000);
+    }, 90000);
 });

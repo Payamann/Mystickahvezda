@@ -550,17 +550,20 @@
     },
 
     'tarot-ano-ne.html': () => {
-      document.title = 'Tarot ANO nebo NE | Okam\u017eit\u00e1 odpov\u011b\u010f zdarma | Mystick\u00e1 Hv\u011bzda';
+      document.title = 'Tarot ano/ne zdarma | Karty ano ne online';
       setMetaByName(
         'description',
-        'Tarot ANO nebo NE: polo\u017ete svou ot\u00e1zku, vyberte kartu a z\u00edskejte okam\u017eitou odpov\u011b\u010f zdarma. Rychl\u00fd tarot online bez registrace.'
+        'Tarot ano/ne zdarma online: polo\u017e ot\u00e1zku, vyber kartu a z\u00edskej odpov\u011b\u010f ano, ne nebo nejasn\u00e9. Karty ano ne a v\u011b\u0161tba ano ne bez registrace.'
       );
-      setMetaByProperty('og:title', 'Tarot ANO nebo NE | Okam\u017eit\u00e1 odpov\u011b\u010f | Mystick\u00e1 Hv\u011bzda');
+      setMetaByProperty('og:title', 'Tarot ano/ne zdarma | Karty ano ne online');
       setMetaByProperty(
         'og:description',
-        'Zeptejte se karet. ANO, NE nebo MO\u017dN\u00c1 s rychlou odpov\u011bd\u00ed zdarma.'
+        'Polo\u017e konkr\u00e9tn\u00ed ot\u00e1zku, vyber kartu a z\u00edskej odpov\u011b\u010f ano, ne nebo nejasn\u00e9. V\u00fdsledek si m\u016f\u017ee\u0161 ulo\u017eit do Den\u00edku v\u00fdklad\u016f.'
       );
-      setText('.section__text', 'Formulujte svou ot\u00e1zku, soust\u0159e\u010fte se na ni a vyberte jednu kartu.');
+      setText(
+        '.section__text',
+        'Polo\u017e jednu konkr\u00e9tn\u00ed ot\u00e1zku, soust\u0159e\u010f se na ni a vyber kartu pro rychlou odpov\u011b\u010f ano, ne nebo nejasn\u00e9. V\u00fdsledek si potom m\u016f\u017ee\u0161 ulo\u017eit do Den\u00edku v\u00fdklad\u016f.'
+      );
     },
 
     'soukromi.html': () => {

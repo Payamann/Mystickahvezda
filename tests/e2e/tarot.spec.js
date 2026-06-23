@@ -152,6 +152,7 @@ test.describe('Tarot', () => {
                 const url = typeof input === 'string' ? input : input?.url;
                 if (url && url.includes('/api/payment/funnel-event')) {
                     window.__tarotFunnelEvents.push(JSON.parse(init.body || '{}'));
+                    localStorage.setItem('mh_e2e_tarot_funnel_events', JSON.stringify(window.__tarotFunnelEvents));
                     return new Response(JSON.stringify({ success: true }), {
                         status: 200,
                         headers: { 'Content-Type': 'application/json' }
@@ -218,6 +219,7 @@ test.describe('Tarot', () => {
                 const url = typeof input === 'string' ? input : input?.url;
                 if (url && url.includes('/api/payment/funnel-event')) {
                     window.__tarotFunnelEvents.push(JSON.parse(init.body || '{}'));
+                    localStorage.setItem('mh_e2e_tarot_funnel_events', JSON.stringify(window.__tarotFunnelEvents));
                     return new Response(JSON.stringify({ success: true }), {
                         status: 200,
                         headers: { 'Content-Type': 'application/json' }
@@ -574,6 +576,16 @@ test.describe('Tarot Ano/Ne', () => {
     });
 
     test('SEO landing a prvni odpoved se propisi do analytics a funnelu', async ({ page }) => {
+        const funnelEvents = [];
+        await page.route('**/api/payment/funnel-event', async (route) => {
+            funnelEvents.push(JSON.parse(route.request().postData() || '{}'));
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
         await page.addInitScript(() => {
             localStorage.removeItem('mh_attribution_first_touch');
             sessionStorage.removeItem('mh_attribution_last_touch');
@@ -582,21 +594,7 @@ test.describe('Tarot Ano/Ne', () => {
         await waitForPageReady(page);
 
         await page.evaluate(() => {
-            window.__tarotFunnelEvents = [];
             window.getCSRFToken = async () => 'e2e-tarot-seo-token';
-
-            const originalFetch = window.fetch.bind(window);
-            window.fetch = async (input, init = {}) => {
-                const url = typeof input === 'string' ? input : input?.url;
-                if (url && url.includes('/api/payment/funnel-event')) {
-                    window.__tarotFunnelEvents.push(JSON.parse(init.body || '{}'));
-                    return new Response(JSON.stringify({ success: true }), {
-                        status: 200,
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                }
-                return originalFetch(input, init);
-            };
         });
 
         const seoLanding = await page.evaluate(() => window.MH_ANALYTICS_QUEUE.find((event) => event.name === 'seo_landing_viewed'));
@@ -612,11 +610,10 @@ test.describe('Tarot Ano/Ne', () => {
         await page.fill('#question-input', 'Mam dnes udelat prvni krok?');
         await page.locator('.tarot-card').first().click();
         await expect(page.locator('#result-panel')).toHaveClass(/show/, { timeout: 2500 });
-        await expect.poll(() => page.evaluate(() => window.__tarotFunnelEvents.some((event) => event.eventName === 'first_value_completed'))).toBe(true);
+        await expect.poll(() => funnelEvents.some((event) => event.eventName === 'first_value_completed')).toBe(true);
 
         const events = await page.evaluate(() => ({
-            firstValue: window.MH_ANALYTICS_QUEUE.find((event) => event.name === 'first_value_completed' && event.first_value_type === 'tarot_yes_no_result'),
-            funnelEvents: window.__tarotFunnelEvents
+            firstValue: window.MH_ANALYTICS_QUEUE.find((event) => event.name === 'first_value_completed' && event.first_value_type === 'tarot_yes_no_result')
         }));
 
         expect(events.firstValue).toEqual(expect.objectContaining({
@@ -627,11 +624,34 @@ test.describe('Tarot Ano/Ne', () => {
             first_medium: 'organic',
             first_campaign: 'tarot_ano_ne'
         }));
-        expect(events.funnelEvents).toContainEqual(expect.objectContaining({
+        expect(funnelEvents).toContainEqual(expect.objectContaining({
             eventName: 'first_value_completed',
             source: 'tarot_yes_no_result',
             feature: 'tarot_multi_card',
             planId: 'pruvodce'
+        }));
+
+        await page.locator('#btn-save-reading').click();
+        await expect(page).toHaveURL(/prihlaseni\.html\?mode=register/);
+        const authUrl = new URL(page.url());
+        expect(authUrl.searchParams.get('redirect')).toBe('/profil.html');
+        expect(authUrl.searchParams.get('source')).toBe('tarot_yes_no_save_journal');
+        expect(authUrl.searchParams.get('feature')).toBe('tarot_yes_no');
+        await expect.poll(() => funnelEvents.some((event) => event.eventName === 'reading_save_clicked')).toBe(true);
+
+        const pendingReading = await page.evaluate(() => JSON.parse(localStorage.getItem('mh_pending_reading') || 'null'));
+        expect(pendingReading).toEqual(expect.objectContaining({
+            type: 'tarot',
+            source: 'tarot_yes_no_save_journal',
+            feature: 'tarot_yes_no'
+        }));
+        expect(pendingReading.data).toEqual(expect.objectContaining({
+            tool: 'tarot_yes_no',
+            source: 'tarot_yes_no_result',
+            question: 'Mam dnes udelat prvni krok?',
+            result_label: expect.any(String),
+            result_key: expect.any(String),
+            result_text: expect.any(String)
         }));
     });
 
@@ -657,7 +677,9 @@ test.describe('Tarot Ano/Ne', () => {
         await waitForPageReady(page);
 
         await expect(page.locator('.tarot-yes-no-trust-item')).toHaveCount(3);
-        await expect(page.locator('.tarot-yes-no-faq-item')).toHaveCount(4);
+        await expect(page.locator('.tarot-yes-no-faq-item')).toHaveCount(5);
+        await expect(page.locator('.tarot-yes-no-intent-guide')).toContainText('Nejlepší otázka je konkrétní');
+        await expect(page.locator('a[href*="tarot_yes_no_related"]')).toHaveCount(3);
         await expect(page.locator('a[href*="tarot-zdarma.html?source=tarot_yes_no_faq"]')).toBeVisible();
 
         const ldTypes = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((script) => {

@@ -69,6 +69,14 @@
         return url.toString();
     }
 
+    function trackShareEvent(eventName, metadata = {}) {
+        window.MH_ANALYTICS?.trackEvent?.(eventName, {
+            source: 'result_share',
+            page_path: window.location.pathname,
+            ...metadata
+        });
+    }
+
     function addShareButton(container, title, text) {
         if (!container || container.querySelector('.share-result-btn')) return;
 
@@ -96,10 +104,21 @@
             const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
             const utmSource = isMobile ? 'mobile_share' : 'web_share';
             const shareUrl = buildShareUrl(utmSource);
+            const shareMetadata = {
+                share_method: navigator.share ? 'native' : 'clipboard',
+                utm_source: utmSource,
+                has_share_text: Boolean(shareText)
+            };
+
+            trackShareEvent('share_click', shareMetadata);
 
             if (navigator.share) {
                 try {
                     await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+                    trackShareEvent('share_completed', {
+                        ...shareMetadata,
+                        share_method: 'native'
+                    });
                     return;
                 } catch (e) { /* fallback */ }
             }
@@ -108,7 +127,12 @@
             try {
                 await navigator.clipboard.writeText(`${shareTitle}\n\n${shareUrl}`);
                 showToast(toast);
+                trackShareEvent('share_completed', {
+                    ...shareMetadata,
+                    share_method: 'clipboard'
+                });
             } catch (e) {
+                trackShareEvent('share_fallback_prompted', shareMetadata);
                 prompt('Zkopírujte odkaz:', shareUrl);
             }
         });

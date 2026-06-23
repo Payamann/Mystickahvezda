@@ -27,6 +27,8 @@ describe('Growth loop manifest', () => {
         expect(NORTH_STAR.requiredEvents).toEqual(expect.arrayContaining([
             'first_value_completed',
             'activation_completed',
+            'reading_save_clicked',
+            'reading_saved',
             'daily_ritual_completed',
             'paywall_viewed',
             'pricing_plan_cta_clicked',
@@ -43,6 +45,7 @@ describe('Growth loop manifest', () => {
         [
             'daily_guidance',
             'tarot',
+            'tarot_yes_no',
             'numerologie_vyklad',
             'natalni_interpretace',
             'partnerska_detail',

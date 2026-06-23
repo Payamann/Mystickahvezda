@@ -27,6 +27,8 @@ export const NORTH_STAR = Object.freeze({
     requiredEvents: Object.freeze([
         'first_value_completed',
         'activation_completed',
+        'reading_save_clicked',
+        'reading_saved',
         'daily_ritual_completed',
         'paywall_viewed',
         'pricing_plan_cta_clicked',
@@ -43,6 +45,8 @@ export const NORTH_STAR = Object.freeze({
 export const CORE_FUNNEL_EVENTS = Object.freeze([
     'first_value_completed',
     'activation_completed',
+    'reading_save_clicked',
+    'reading_saved',
     'daily_ritual_completed',
     'return_ritual_completed',
     'reading_feedback_submitted',
@@ -227,6 +231,14 @@ export const FEATURE_CATALOG = Object.freeze({
         primaryPath: '/tarot.html',
         freeValue: 'Draw a first card and receive a useful answer.',
         premiumValue: 'Unlock deeper spreads, context and saved history.'
+    }),
+    tarot_yes_no: feature({
+        id: 'tarot_yes_no',
+        label: 'Tarot yes/no',
+        cluster: 'tarot',
+        primaryPath: '/tarot-ano-ne.html',
+        freeValue: 'Ask one focused yes/no question and receive an immediate answer.',
+        premiumValue: 'Save the answer, connect it to history and continue into deeper tarot context.'
     }),
     tarot_daily_card_profile_save: feature({
         id: 'tarot_daily_card_profile_save',

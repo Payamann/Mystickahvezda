@@ -591,6 +591,11 @@
                     title: 'Vítejte v Mystické Hvězdě',
                     message: 'Vyzkoušejte hned první tarotový výklad. Je to nejrychlejší cesta k první hodnotě.'
                 },
+                tarot_yes_no: {
+                    path: '/tarot-ano-ne.html',
+                    title: 'Vítejte v Mystické Hvězdě',
+                    message: 'Začněte jednou konkrétní otázkou ano/ne a uložte odpověď do Deníku výkladů.'
+                },
                 tarot_multi_card: {
                     path: '/tarot.html',
                     title: 'Vítejte v Mystické Hvězdě',
@@ -881,6 +886,10 @@
             };
 
             if (options.mode === 'register') {
+                if (context.source === 'tarot_yes_no_save_journal' && safeRedirect === '/profil.html') {
+                    return safeRedirect;
+                }
+
                 const activation = this.getPostAuthActivationConfig(context);
                 if (activation?.path) {
                     this.setPostAuthActivation({
